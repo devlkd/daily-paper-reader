@@ -68,6 +68,66 @@ subscriptions:
           source: manual
           note: ''
       updated_at: '2026-05-28T04:33:46.435Z'
+    - tag: grav-offload
+      description: 空间机械臂重力卸载
+      enabled: true
+      paper_sources:
+        - arxiv
+        - biorxiv
+      keywords:
+        - keyword: gravity offloading
+          keyword_cn: 重力卸载
+          query: Gravity offloading methods for space manipulator testing
+        - keyword: space manipulator
+          keyword_cn: 空间机械臂
+          query: Space manipulator with gravity compensation system
+        - keyword: microgravity simulation
+          keyword_cn: 微重力仿真
+          query: Microgravity simulation for robotic arm testing
+        - keyword: ground testbed
+          keyword_cn: 地面试验台
+          query: Ground testbed for space robot gravity compensation
+        - keyword: active gravity compensation
+          keyword_cn: 主动重力补偿
+          query: Active gravity compensation techniques for space robots
+        - keyword: passive gravity compensation
+          keyword_cn: 被动重力补偿
+          query: Passive gravity compensation for robotic arm testing
+      intent_queries:
+        - query: How to simulate weightlessness for testing space robotic arms on Earth?
+          query_cn: 如何在地面模拟失重环境测试空间机械臂？
+          enabled: true
+          source: manual
+          note: ''
+        - query: Design of gravity unloading system for on ground space manipulator experiments
+          query_cn: 用于地面空间机械臂实验的重力卸载系统设计
+          enabled: true
+          source: manual
+          note: ''
+      updated_at: '2026-05-28T05:08:56.443Z'
+    - tag: TF-SAR
+      description: 薄膜SAR天线
+      enabled: true
+      paper_sources:
+        - biorxiv
+        - arxiv
+      keywords:
+        - keyword: thin film antenna
+          keyword_cn: 薄膜天线
+          query: thin film antenna design for synthetic aperture radar applications
+        - keyword: synthetic aperture radar
+          keyword_cn: 合成孔径雷达
+          query: synthetic aperture radar antenna system
+        - keyword: flexible antenna array
+          keyword_cn: 柔性天线阵列
+          query: flexible antenna array for spaceborne SAR
+      intent_queries:
+        - query: how to design thin film antenna for synthetic aperture radar
+          query_cn: 如何设计用于合成孔径雷达的薄膜天线
+          enabled: true
+          source: manual
+          note: ''
+      updated_at: '2026-05-28T05:10:21.396Z'
 source_backends:
   arxiv:
     papers_table: arxiv_papers
