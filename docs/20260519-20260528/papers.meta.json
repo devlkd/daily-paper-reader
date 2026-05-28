@@ -1,0 +1,24 @@
+{
+  "label": "2026-05-19 ~ 2026-05-28",
+  "date": "2026-05-19 ~ 2026-05-28",
+  "generated_at": "2026-05-28T04:43:30",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "20260519-20260528/2605.25407v1-towards-active-real-to-twin-inspection-a-new-paradigm-for-zero-shot-anomaly-detection",
+      "section": "quick",
+      "title_en": "Towards Active Real-to-Twin Inspection: A New Paradigm for Zero-Shot Anomaly Detection",
+      "authors": "Jiaxuan Liu, Yunkang Cao, Yufeng Chen, Chunyang Li, Yuhuan Du, Hui Zhang",
+      "date": "2026-05-25",
+      "pdf": "https://arxiv.org/pdf/2605.25407v1",
+      "score": "7.0",
+      "evidence": "基于CAD数字孪生的工业异常检测",
+      "tldr": "零样本异常检测在具身工业检测中受限于被动固定视角2D图像，难以适应主动动态观测。本文提出Real-to-Twin异常检测新范式，直接比对实物与CAD数字孪生。AVATAR框架利用无缺陷对学习语义对齐，将CAD先验转化为动态参考，以不可对齐偏差零样本定位异常。实验表明，AVATAR大幅超越SOTA基线，对严重视角变化鲁棒，为主动检测开辟新方向。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "The deployment of zero-shot anomaly detection (AD) in embodied industrial inspection is severely bottlenecked by its reliance on passive, fixed-viewpoint 2D imagery. Such formulations inherently fail to accommodate the active, dynamic observations required in real-world environments. To break this limitation, we introduce Real-to-Twin Anomaly Detection, a novel task that evaluates physical observations directly against geometrically matched CAD Digital Twins. To tackle this new task, we propose AVATAR, a framework designed to learn robust semantic alignment between Real and Digital Twins. By bridging benign Sim2Real domain gaps using only defect-free pairs, AVATAR effectively transforms CAD priors into dynamic, anomaly-free references. This elegant formulation enables the model to localize diverse anomalies in a zero-shot manner as unalignable deviations, eliminating the need for defect annotations. Extensive experiments demonstrate that AVATAR substantially outperforms adapted state-of-the-art baselines, exhibiting exceptional robustness to severe viewpoint variations. The code and dataset will be made publicly available.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

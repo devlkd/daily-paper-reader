@@ -1,0 +1,57 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-05-28T04:40:44.312439+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 1,
+    "deep_divecandidates": 0,
+    "deep_cap": 6,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 11,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2605.25407v1",
+      "source": "arxiv",
+      "title": "Towards Active Real-to-Twin Inspection: A New Paradigm for Zero-Shot Anomaly Detection",
+      "abstract": "The deployment of zero-shot anomaly detection (AD) in embodied industrial inspection is severely bottlenecked by its reliance on passive, fixed-viewpoint 2D imagery. Such formulations inherently fail to accommodate the active, dynamic observations required in real-world environments. To break this limitation, we introduce Real-to-Twin Anomaly Detection, a novel task that evaluates physical observations directly against geometrically matched CAD Digital Twins. To tackle this new task, we propose AVATAR, a framework designed to learn robust semantic alignment between Real and Digital Twins. By bridging benign Sim2Real domain gaps using only defect-free pairs, AVATAR effectively transforms CAD priors into dynamic, anomaly-free references. This elegant formulation enables the model to localize diverse anomalies in a zero-shot manner as unalignable deviations, eliminating the need for defect annotations. Extensive experiments demonstrate that AVATAR substantially outperforms adapted state-of-the-art baselines, exhibiting exceptional robustness to severe viewpoint variations. The code and dataset will be made publicly available.",
+      "authors": [
+        "Jiaxuan Liu",
+        "Yunkang Cao",
+        "Yufeng Chen",
+        "Chunyang Li",
+        "Yuhuan Du",
+        "Hui Zhang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-05-25T04:05:25+00:00",
+      "link": "https://arxiv.org/pdf/2605.25407v1",
+      "tags": [
+        "keyword:sat-asm-prec",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "CAD digital twin-based anomaly detection for industrial inspection",
+      "llm_evidence_cn": "基于CAD数字孪生的工业异常检测",
+      "llm_evidence": "基于CAD数字孪生的工业异常检测",
+      "canonical_evidence": "基于CAD数字孪生的工业异常检测",
+      "llm_tldr_en": "Introduces Real-to-Twin anomaly detection, a zero-shot method that compares real observations with CAD digital twins to find anomalies, improving inspection in dynamic environments.",
+      "llm_tldr_cn": "针对工业检测中被动式视觉检测的局限性，提出Real-to-Twin异常检测新范式，通过将实物观测与CAD数字孪生进行几何匹配，实现零样本异常检测。框架AVATAR利用无缺陷样本训练，学习真实与数字孪生之间的语义对齐，将CAD先验转化为动态的无异常参考，在主动式、动态观测场景中显著提升了检测精度与泛化能力，为卫星地面装配等高精度制造过程的在线质量监控提供了新方法。",
+      "llm_tldr": "针对工业检测中被动式视觉检测的局限性，提出Real-to-Twin异常检测新范式，通过将实物观测与CAD数字孪生进行几何匹配，实现零样本异常检测。框架AVATAR利用无缺陷样本训练，学习真实与数字孪生之间的语义对齐，将CAD先验转化为动态的无异常参考，在主动式、动态观测场景中显著提升了检测精度与泛化能力，为卫星地面装配等高精度制造过程的在线质量监控提供了新方法。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "dimensional metrology for satellite assembly accuracy",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
