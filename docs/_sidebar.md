@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-05-28 <!--dpr-date:20260528-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202605/28/2605.25362v1-prior-policy-guided-dual-agent-coordinated-manipulation-planning-of-spacecraft-manipulator-system" data-sidebar-item="{&quot;title&quot;: &quot;Prior Policy Guided Dual-Agent Coordinated Manipulation Planning of Spacecraft-Manipulator System&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2605.25362v1-prior-policy-guided-dual-agent-coordinated-manipulation-planning-of-spacecraft-manipulator-system&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;sat-asm-prec&quot;}], &quot;evidence&quot;: &quot;空间机械臂高精度末端执行器位姿达成&quot;}">Prior Policy Guided Dual-Agent Coordinated Manipulation Planning of Spacecraft-Manipulator System</a>
   * 2026-04-29 ~ 2026-05-28 <!--dpr-date:20260429-20260528-->
     * 精读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/20260429-20260528/2605.04649v1-from-reach-to-insert-tactile-augmented-precision-assembly-under-sub-millimeter-tolerances" data-sidebar-item="{&quot;title&quot;: &quot;From Reach to Insert: Tactile-Augmented Precision Assembly under Sub-Millimeter Tolerances&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2605.04649v1-from-reach-to-insert-tactile-augmented-precision-assembly-under-sub-millimeter-tolerances&quot;, &quot;score&quot;: &quot;8.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;sat-asm-prec&quot;}], &quot;evidence&quot;: &quot;亚毫米公差下的触觉增强精密装配&quot;}">From Reach to Insert: Tactile-Augmented Precision Assembly under Sub-Millimeter Tolerances</a>

@@ -1,0 +1,59 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-05-28T21:47:32.260282+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 0,
+    "deep_cap": 8,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 13,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2605.25362v1",
+      "source": "arxiv",
+      "title": "Prior Policy Guided Dual-Agent Coordinated Manipulation Planning of Spacecraft-Manipulator System",
+      "abstract": "The strong dynamic coupling between the manipulator and the base poses a significant challenge to maintaining spacecraft attitude stability, potentially compromising mission safety. In this paper, we propose a Dual-Agent Coordinated Manipulation Planning (DACMP) framework that simultaneously achieves high-precision end-effector pose reaching for a 6-DoF space manipulator and attitude stabilization of the base spacecraft. To enhance learning efficiency, we present a prior policy-guided Deep Reinforcement Learning algorithm incorporating the Timestep-level Expert Switching Guidance (TESG) mechanism, thereby promoting global convergence and improving task success rates. Extensive experiments demonstrate that DACMP significantly outperforms baseline DRL algorithms in terms of task success rate and control precision. Furthermore, the robustness of DACMP is validated under various challenging scenarios, including system constraints, environmental disturbances, and perception uncertainties. The code and simulation configurations are available on GitHub: https://github.com/HIT-YuhuiHu/DACMP.",
+      "authors": [
+        "Yuhui Hu",
+        "Dong Zhou",
+        "Kaihong Ouyang",
+        "Zhongliang Yu",
+        "Jianfeng Lv",
+        "Xiangyu Shao"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-05-25T02:32:23+00:00",
+      "link": "https://arxiv.org/pdf/2605.25362v1",
+      "tags": [
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "high-precision end-effector pose reaching for space manipulator",
+      "llm_evidence_cn": "空间机械臂高精度末端执行器位姿达成",
+      "llm_evidence": "空间机械臂高精度末端执行器位姿达成",
+      "canonical_evidence": "空间机械臂高精度末端执行器位姿达成",
+      "llm_tldr_en": "Proposes a dual-agent coordinated manipulation planning framework for spacecraft-manipulator system to achieve high-precision end-effector pose and base attitude stabilization using prior policy-guided deep reinforcement learning.",
+      "llm_tldr_cn": "针对航天器-机械臂系统的强动态耦合导致姿态难以稳定、影响任务安全的问题，本文提出了一种双智能体协同操作规划框架，同时实现6自由度空间机械臂末端执行器的高精度位姿达成与基座航天器的姿态稳定。方法采用专家切换引导的时间步级专家策略指导深度强化学习，提升全局收敛性和任务成功率。大量实验表明，该方法在高精度操作任务中显著优于传统方法，为空间装配等精细操作提供了有效的控制策略。",
+      "llm_tldr": "针对航天器-机械臂系统的强动态耦合导致姿态难以稳定、影响任务安全的问题，本文提出了一种双智能体协同操作规划框架，同时实现6自由度空间机械臂末端执行器的高精度位姿达成与基座航天器的姿态稳定。方法采用专家切换引导的时间步级专家策略指导深度强化学习，提升全局收敛性和任务成功率。大量实验表明，该方法在高精度操作任务中显著优于传统方法，为空间装配等精细操作提供了有效的控制策略。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "precision control in satellite assembly process",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}

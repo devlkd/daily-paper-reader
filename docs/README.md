@@ -6,37 +6,26 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-04-29 ~ 2026-05-28
-- 运行时间：2026-05-28 05:35:31 UTC
+- 最新运行日期：2026-05-28
+- 运行时间：2026-05-28 21:49:07 UTC
 - 运行状态：成功
-- 本次总论文数：5
-- 精读区：3
-- 速读区：2
+- 本次总论文数：1
+- 精读区：0
+- 速读区：1
 
 ### 今日简报（AI）
-本期聚焦机器人精密操作与航天Sim2Real，精读触觉引导亚毫米装配和卫星姿态估计风格迁移两项高分工作。  
-触觉反馈实现亚毫米容差插入、组件感知结构保持的风格迁移是两个最值得关注的方向。  
-建议读者从触觉传感器集成和风格迁移模拟数据入手，验证这些方法在实际装配与在轨场景的鲁棒性。
-- 详情：[/20260429-20260528/README](/20260429-20260528/README)
+今日速读了一篇航天器-机械臂系统协调操作规划的研究，探索双智能体协作新思路。  
+论文提出用先验策略引导双智能体协调规划，解决了航天器与机械臂在轨操作的复杂配合难题。  
+如果你对太空机器人或智能规划感兴趣，可以细看该方法如何兼顾稳定与高效。
+- 详情：[/202605/28/README](/202605/28/README)
 
 ### 精读区论文标签
-1. [From Reach to Insert: Tactile-Augmented Precision Assembly under Sub-Millimeter Tolerances](/20260429-20260528/2605.04649v1-from-reach-to-insert-tactile-augmented-precision-assembly-under-sub-millimeter-tolerances)  
-   标签：评分：8.0/10、query:sat-asm-prec
-   evidence：亚毫米公差下的触觉增强精密装配
-2. [Component-Aware Structure-Preserving Style Transfer for Satellite Sim2Real 6D Pose Estimation](/20260429-20260528/2605.19624v1-component-aware-structure-preserving-style-transfer-for-satellite-sim2real-6d-pose-estimation)  
-   标签：评分：8.0/10、query:sat-asm-prec
-   evidence：卫星6D姿态估计用于精密装配测量
-3. [Point Spread Function Optimization for Communication-assisted UAV-borne MIMO TomoSAR](/20260429-20260528/2605.27303v1-point-spread-function-optimization-for-communication-assisted-uav-borne-mimo-tomosar)  
-   标签：评分：8.0/10、query:tf-sar
-   evidence：针对无人机载MIMO SAR层析三维成像的天线阵列优化
+- 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Lie Group Formulation of Recursive Dynamics Algorithms of Higher Order for Floating-Base Robots](/20260429-20260528/2605.06498v1-lie-group-formulation-of-recursive-dynamics-algorithms-of-higher-order-for-floating-base-robots)  
-   标签：评分：6.0/10、query:grav-offload
-   evidence：为浮动基机器人提供了高阶递归动力学算法，可支持基于模型的重力补偿
-2. [AssemblyBench: Physics-Aware Assembly of Complex Industrial Objects](/20260429-20260528/2605.12845v1-assemblybench-physics-aware-assembly-of-complex-industrial-objects)  
-   标签：评分：6.0/10、query:sat-asm-prec
-   evidence：基于Transformer的模型预测复杂工业对象的装配顺序和轨迹，可迁移至卫星精密装配
+1. [Prior Policy Guided Dual-Agent Coordinated Manipulation Planning of Spacecraft-Manipulator System](/202605/28/2605.25362v1-prior-policy-guided-dual-agent-coordinated-manipulation-planning-of-spacecraft-manipulator-system)  
+   标签：评分：7.0/10、query:sat-asm-prec
+   evidence：空间机械臂高精度末端执行器位姿达成
 
 
 <div class="dpr-home-promo-card">

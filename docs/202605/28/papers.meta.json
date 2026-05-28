@@ -1,0 +1,24 @@
+{
+  "label": "2026-05-28",
+  "date": "2026-05-28",
+  "generated_at": "2026-05-28T21:49:18",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202605/28/2605.25362v1-prior-policy-guided-dual-agent-coordinated-manipulation-planning-of-spacecraft-manipulator-system",
+      "section": "quick",
+      "title_en": "Prior Policy Guided Dual-Agent Coordinated Manipulation Planning of Spacecraft-Manipulator System",
+      "authors": "Yuhui Hu, Dong Zhou, Kaihong Ouyang, Zhongliang Yu, Jianfeng Lv, Xiangyu Shao",
+      "date": "2026-05-25",
+      "pdf": "https://arxiv.org/pdf/2605.25362v1",
+      "score": "7.0",
+      "evidence": "空间机械臂高精度末端执行器位姿达成",
+      "tldr": "空间机械臂与基座航天器间的强动态耦合易导致姿态失稳，影响任务安全。本文提出双智能体协同操作规划框架DACMP，通过时间步级专家切换引导的先验策略加速深度强化学习，同时实现末端精确到达与基座姿态稳定。实验表明该方法在任务成功率和控制精度上显著优于基线算法，且对系统约束、环境扰动等具有鲁棒性，为航天器-机械臂高精度操作提供新思路。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "The strong dynamic coupling between the manipulator and the base poses a significant challenge to maintaining spacecraft attitude stability, potentially compromising mission safety. In this paper, we propose a Dual-Agent Coordinated Manipulation Planning (DACMP) framework that simultaneously achieves high-precision end-effector pose reaching for a 6-DoF space manipulator and attitude stabilization of the base spacecraft. To enhance learning efficiency, we present a prior policy-guided Deep Reinforcement Learning algorithm incorporating the Timestep-level Expert Switching Guidance (TESG) mechanism, thereby promoting global convergence and improving task success rates. Extensive experiments demonstrate that DACMP significantly outperforms baseline DRL algorithms in terms of task success rate and control precision. Furthermore, the robustness of DACMP is validated under various challenging scenarios, including system constraints, environmental disturbances, and perception uncertainties. The code and simulation configurations are available on GitHub: https://github.com/HIT-YuhuiHu/DACMP.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
