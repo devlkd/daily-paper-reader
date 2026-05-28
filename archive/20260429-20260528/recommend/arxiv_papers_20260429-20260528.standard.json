@@ -1,0 +1,226 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-05-28T05:29:03.439386+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 3,
+    "deep_cap": 8,
+    "deep_selected": 3,
+    "quick_candidates": 2,
+    "quick_skim_target": 13,
+    "quick_selected": 2
+  },
+  "deep_dive": [
+    {
+      "id": "2605.04649v1",
+      "source": "arxiv",
+      "title": "From Reach to Insert: Tactile-Augmented Precision Assembly under Sub-Millimeter Tolerances",
+      "abstract": "High-precision assembly frequently involves tight-tolerance insertions, where even slight pose errors can cause jamming or excessive interaction forces, making robust and safe insertion policies difficult to obtain. This paper proposes a tactile-augmented two-stage method that combines Imitation Learning (IL) and Reinforcement Learning (RL) for precision insertion tasks. In the first stage, IL learns a reaching policy with position generalization that grasps the peg and brings it to the vicinity of the target region. In the second stage, RL executes the insertion and enables recovery from failures during contact-rich interactions. To better exploit tactile feedback, we introduce tactile group sampling to increase coverage of critical contact segments during training, and design a tactile critic to more accurately evaluate policy values, improving insertion performance while maintaining low contact forces. We conduct systematic experiments across five hole geometries and three clearance settings. Results show that our method substantially improves insertion performance across all settings; under the most challenging 0.05\\,mm clearance, it achieves a 67\\% success rate while keeping contact forces low, reducing the maximum interaction force by 60\\% and torque by 44\\%, thereby validating both effectiveness and safety for precision assembly.",
+      "authors": [
+        "Xinpan Meng",
+        "Siyao Huang",
+        "JingPu Yang",
+        "Muyuan Ma",
+        "Zhenghua Ma",
+        "Lijun Han",
+        "Gao Yuan",
+        "Houcheng Li",
+        "Long Cheng"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-05-06T08:56:20+00:00",
+      "link": "https://arxiv.org/pdf/2605.04649v1",
+      "tags": [
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "tactile-augmented precision assembly under sub-millimeter tolerances",
+      "llm_evidence_cn": "亚毫米公差下的触觉增强精密装配",
+      "llm_evidence": "亚毫米公差下的触觉增强精密装配",
+      "canonical_evidence": "亚毫米公差下的触觉增强精密装配",
+      "llm_tldr_en": "This paper proposes a tactile-augmented approach for high-precision assembly tasks requiring sub-millimeter insertion tolerances, using a two-stage method that integrates imitation learning for reaching and reinforcement learning for contact-rich insertion, with tactile group sampling to improve robustness.",
+      "llm_tldr_cn": "该论文针对精密装配中常见的紧公差插入任务，位置误差易导致卡阻和过大交互力难题，提出了一种将模仿学习与强化学习相结合的触觉增强两阶段方法。第一阶段模仿学习训练到达策略，将销钉抓取并送至目标附近；第二阶段强化学习利用触觉反馈完成插入，并引入触觉群体采样以提升关键接触状态覆盖率。实验证明该方法可实现亚毫米级公差下的可靠精密装配，为高端装备地面装配提供了潜在的高精度自动化方案。同时，触觉群体采样显著增强了强化学习在复杂接触交互中的探索效率，研究成果对卫星等精密设备的自动化装配具有重要参考价值。",
+      "llm_tldr": "该论文针对精密装配中常见的紧公差插入任务，位置误差易导致卡阻和过大交互力难题，提出了一种将模仿学习与强化学习相结合的触觉增强两阶段方法。第一阶段模仿学习训练到达策略，将销钉抓取并送至目标附近；第二阶段强化学习利用触觉反馈完成插入，并引入触觉群体采样以提升关键接触状态覆盖率。实验证明该方法可实现亚毫米级公差下的可靠精密装配，为高端装备地面装配提供了潜在的高精度自动化方案。同时，触觉群体采样显著增强了强化学习在复杂接触交互中的探索效率，研究成果对卫星等精密设备的自动化装配具有重要参考价值。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "ground satellite assembly precision techniques",
+      "matched_requirement_id": "req-1",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.27303v1",
+      "source": "arxiv",
+      "title": "Point Spread Function Optimization for Communication-assisted UAV-borne MIMO TomoSAR",
+      "abstract": "This paper tackles the optimization of the point spread function (PSF) of unmanned aerial vehicle (UAV)-borne multiple-input multiple-output (MIMO) synthetic aperture radar (SAR) tomography systems. A swarm of UAV-borne SAR systems is deployed to image an area to obtain its height profile. To achieve a high-quality three-dimensional (3D) image of the scene, the PSF has to exhibit low sidelobes. The heavy computations, required for image generation, are performed on the ground. To this end, the sensor data collected by the UAV-SARs is offloaded in real time via a frequency division multiple access (FDMA) air-to-ground backhaul link. In this work, the UAV formation and the power allocated for offloading are jointly optimized for the minimization of the PSF sidelobe levels. To this end, we propose a novel solution based on the particle swarm optimization (PSO) algorithm, which meets practical sensing and communication constraints. Our simulation results demonstrate that the proposed solution can significantly improve sidelobe suppression compared to several benchmark schemes.",
+      "authors": [
+        "Pouya Fakharizadeh",
+        "Mohamed-Amine Lahmeri",
+        "Gerhard Krieger",
+        "Robert Schober"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP"
+      ],
+      "published": "2026-05-26T17:12:24+00:00",
+      "link": "https://arxiv.org/pdf/2605.27303v1",
+      "tags": [
+        "keyword:TF-SAR",
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:TF-SAR",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "optimization of UAV-borne MIMO SAR antenna array for tomographic 3D imaging",
+      "llm_evidence_cn": "针对无人机载MIMO SAR层析三维成像的天线阵列优化",
+      "llm_evidence": "针对无人机载MIMO SAR层析三维成像的天线阵列优化",
+      "canonical_evidence": "针对无人机载MIMO SAR层析三维成像的天线阵列优化",
+      "llm_tldr_en": "This paper optimizes the point spread function of a UAV-borne MIMO SAR tomography system by jointly designing UAV formation and communication power allocation, achieving low sidelobes for high-quality 3D imaging.",
+      "llm_tldr_cn": "本文针对无人机载MIMO SAR层析系统，通过联合优化无人机编队与通信功率分配来最小化点扩散函数的最大旁瓣，从而实现低旁瓣高质量三维成像，提升了SAR天线系统在环境三维重建中的性能。",
+      "llm_tldr": "本文针对无人机载MIMO SAR层析系统，通过联合优化无人机编队与通信功率分配来最小化点扩散函数的最大旁瓣，从而实现低旁瓣高质量三维成像，提升了SAR天线系统在环境三维重建中的性能。",
+      "llm_tags": [
+        "query:tf-sar"
+      ],
+      "matched_query_tag": "query:tf-sar",
+      "matched_query_text": "synthetic aperture radar antenna system",
+      "matched_requirement_id": "req-19",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "id": "2605.19624v1",
+      "source": "arxiv",
+      "title": "Component-Aware Structure-Preserving Style Transfer for Satellite Sim2Real 6D Pose Estimation",
+      "abstract": "Monocular 6D pose estimation for non-cooperative satellites depends heavily on annotated training data, yet real satellite images with reliable pose labels and component-level masks are difficult to acquire at scale. Synthetic rendering can provide exact geometric annotations, but the appearance gap between rendered and real observations limits direct transfer to the real domain. This paper presents a component-aware structure-preserving style transfer framework for satellite synthetic-to-real data construction. The method builds weakly paired real--synthetic samples from calibrated real acquisition, ArUco-based camera-pose measurement, CAD rendering, and component masks. It then extracts part-wise real-domain style codes from unlabeled real images and injects them into corresponding synthetic satellite regions through mask-aligned modulation. To keep the generated images usable for downstream supervision, adversarial training is combined with local contrastive consistency, self-regularization, and edge-preserving constraints. Experiments are conducted on 5,000 rendered satellite images and 100 real images captured in a calibrated setup. The real images provide target-domain appearance references and final evaluation images, while the downstream GDRNet pose estimator is trained only on synthetic or translated synthetic images. Compared with representative image-translation baselines, the proposed method achieves the lowest image distribution discrepancy, with an FID of 54.32 and a KID of 0.048. When the translated data are used to train GDRNet in this target-domain adaptation setting, the ADD pass rate improves to 0.260 and the AUC improves to 0.611. These results indicate that component-level appearance transfer can improve satellite Sim2Real pose estimation in the considered calibrated setup while retaining simulation-derived geometric annotations.",
+      "authors": [
+        "Yonglong Zhang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-05-19T10:01:17+00:00",
+      "link": "https://arxiv.org/pdf/2605.19624v1",
+      "tags": [
+        "keyword:TF-SAR",
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:TF-SAR",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Satellite 6D pose estimation for precision assembly metrology",
+      "llm_evidence_cn": "卫星6D姿态估计用于精密装配测量",
+      "llm_evidence": "卫星6D姿态估计用于精密装配测量",
+      "canonical_evidence": "卫星6D姿态估计用于精密装配测量",
+      "llm_tldr_en": "This paper introduces a style transfer method for generating realistic satellite training data to improve 6D pose estimation, enabling accurate alignment measurement in satellite ground assembly.",
+      "llm_tldr_cn": "该文提出一种组件感知且保持结构信息的风格迁移方法，用于生成逼真的卫星训练图像，以提升单目6D姿态估计精度。所提方法通过弱配对真实-合成样本和部组件域风格代码，弥合渲染与真实域间外观差异，从而为卫星地面装配中的精密对准提供可靠的位姿测量手段，实测表明其结合关键点回归器可大幅提升姿态估计准确性。",
+      "llm_tldr": "该文提出一种组件感知且保持结构信息的风格迁移方法，用于生成逼真的卫星训练图像，以提升单目6D姿态估计精度。所提方法通过弱配对真实-合成样本和部组件域风格代码，弥合渲染与真实域间外观差异，从而为卫星地面装配中的精密对准提供可靠的位姿测量手段，实测表明其结合关键点回归器可大幅提升姿态估计准确性。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "dimensional metrology for satellite assembly accuracy",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2605.06498v1",
+      "source": "arxiv",
+      "title": "Lie Group Formulation of Recursive Dynamics Algorithms of Higher Order for Floating-Base Robots",
+      "abstract": "In this paper, we describe procedures for computing higher-order time derivatives of the Lie-group Newton-Euler, Articulated-Body Inertia, and hybrid dynamics algorithms for floating-base trees, where the base configuration evolves on SE(3) and the attached mechanism is an open kinematic tree with configuration on the (n1+n2)-dimensional manifold T^{n1} \\times R^{n2}, using spatial representation of twists. After presenting the algorithms, we collect the resulting recursions into closed-form equations of motion, identifying an admissible Coriolis matrix satisfying the passivity property, and showing that the articulated inertia tensor remains unchanged across all time derivatives. We then apply the developed methods to a 12-DoF aerial manipulator to derive analytical expressions for its geometric forward and inverse dynamics along with their first time derivatives whereas the numerical simulations successfully evaluate these dynamics up to fifth order. Finally, to demonstrate their practical utility, we benchmark the proposed extensions and show that, in the considered tests, their computational cost scales quadratically with the derivative order, whereas the automatic-differentiation baseline exhibits exponential scaling.",
+      "authors": [
+        "Ahmed Ali",
+        "Chiara Gabellieri",
+        "Antonio Franchi"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "eess.SY"
+      ],
+      "published": "2026-05-07T16:17:39+00:00",
+      "link": "https://arxiv.org/pdf/2605.06498v1",
+      "tags": [
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Provides higher-order recursive dynamics algorithms for floating-base robots, enabling model-based active gravity compensation",
+      "llm_evidence_cn": "为浮动基机器人提供了高阶递归动力学算法，可支持基于模型的重力补偿",
+      "llm_evidence": "为浮动基机器人提供了高阶递归动力学算法，可支持基于模型的重力补偿",
+      "canonical_evidence": "为浮动基机器人提供了高阶递归动力学算法，可支持基于模型的重力补偿",
+      "llm_tldr_en": "Presents efficient recursive algorithms for higher-order time derivatives of dynamics for floating-base robotic systems, providing closed-form equations of motion that can be used in active gravity compensation control",
+      "llm_tldr_cn": "本文针对浮动基机器人系统，提出了高效的高阶时间导数递归动力学算法，给出了满足无源性条件的封闭式运动方程。该方法通过李群表述统一处理运动学和动力学，适用于空间机械臂等需要在微重力环境下进行精密控制的场景。实验部分在12自由度浮动基机械臂上验证了模型精度。该工作为基于模型的重力补偿控制提供了精确的动力学基础。",
+      "llm_tldr": "本文针对浮动基机器人系统，提出了高效的高阶时间导数递归动力学算法，给出了满足无源性条件的封闭式运动方程。该方法通过李群表述统一处理运动学和动力学，适用于空间机械臂等需要在微重力环境下进行精密控制的场景。实验部分在12自由度浮动基机械臂上验证了模型精度。该工作为基于模型的重力补偿控制提供了精确的动力学基础。",
+      "llm_tags": [
+        "query:grav-offload"
+      ],
+      "matched_query_tag": "query:grav-offload",
+      "matched_query_text": "Active gravity compensation techniques for space robots",
+      "matched_requirement_id": "req-14",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2605.12845v1",
+      "source": "arxiv",
+      "title": "AssemblyBench: Physics-Aware Assembly of Complex Industrial Objects",
+      "abstract": "Assembling objects from parts requires understanding multimodal instructions, linking them to 3D components, and predicting physically plausible 6-DoF motions for each assembly step. Existing datasets focus on simplified scenarios, overlooking shape complexities and assembly trajectories in industrial assemblies. We introduce AssemblyBench, a synthetic dataset of 2,789 industrial objects with multimodal instruction manuals, corresponding 3D part models, and part assembly trajectories. We also propose a transformer-based model, AssemblyDyno, which uses the instructional manual and the 3D shape of each part to jointly predict assembly order and part assembly trajectories. AssemblyDyno outperforms prior works in both assembly pose estimation and trajectory feasibility, where the latter is evaluated by our physics-based simulations.",
+      "authors": [
+        "Danrui Li",
+        "Jiahao Zhang",
+        "Bernhard Egger",
+        "Moitreya Chatterjee",
+        "Suhas Lohit",
+        "Tim K. Marks",
+        "Anoop Cherian"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-05-13T00:44:09+00:00",
+      "link": "https://arxiv.org/pdf/2605.12845v1",
+      "tags": [
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Transformer-based model predicts assembly order and trajectories for complex industrial objects, transferable to satellite precision assembly",
+      "llm_evidence_cn": "基于Transformer的模型预测复杂工业对象的装配顺序和轨迹，可迁移至卫星精密装配",
+      "llm_evidence": "基于Transformer的模型预测复杂工业对象的装配顺序和轨迹，可迁移至卫星精密装配",
+      "canonical_evidence": "基于Transformer的模型预测复杂工业对象的装配顺序和轨迹，可迁移至卫星精密装配",
+      "llm_tldr_en": "AssemblyBench introduces a dataset of 2,789 industrial objects with multimodal instructions and AssemblyDyno, a model that jointly predicts assembly order and trajectories, outperforming prior works in pose estimation and trajectory forecasting.",
+      "llm_tldr_cn": "针对现有装配数据集简化流程、忽略工业装配中形状复杂性和轨迹的问题，本文构建了AssemblyBench数据集（含2789个工业对象及多模态指令），并提出基于Transformer的AssemblyDyno模型，利用手册和部件形状联合预测装配顺序和轨迹。模型在装配姿态估计和轨迹预测上均优于现有方法，为复杂工业对象（如卫星）的物理合理装配提供了自动化手段。",
+      "llm_tldr": "针对现有装配数据集简化流程、忽略工业装配中形状复杂性和轨迹的问题，本文构建了AssemblyBench数据集（含2789个工业对象及多模态指令），并提出基于Transformer的AssemblyDyno模型，利用手册和部件形状联合预测装配顺序和轨迹。模型在装配姿态估计和轨迹预测上均优于现有方法，为复杂工业对象（如卫星）的物理合理装配提供了自动化手段。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "alignment and integration techniques for high precision satellite assembly",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

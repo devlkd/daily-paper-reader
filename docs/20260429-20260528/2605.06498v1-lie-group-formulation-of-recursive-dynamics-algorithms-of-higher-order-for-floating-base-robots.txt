@@ -1,0 +1,2794 @@
+Title: Lie Group Formulation of Recursive Dynamics Algorithms of Higher Order for Floating-Base Robots
+
+URL Source: https://arxiv.org/pdf/2605.06498v1
+
+Published Time: Fri, 08 May 2026 01:45:11 GMT
+
+Number of Pages: 17
+
+Markdown Content:
+# Ahmed Ali 1
+
+Robotics and Mechatronics Department, Electrical Engineering, Mathematics, and Computer Science (EEMCS) Faculty, University of Twente, 7500 AE Enschede, The Netherlands. Email: ahmed.ali@utwente.nl 
+
+# Chiara Gabellieri 
+
+Robotics and Mechatronics Department, EEMCS Faculty, University of Twente, 7500 AE Enschede, The Netherlands. Email: c.gabellieri@utwente.nl 
+
+# Antonio Franchi 
+
+Robotics and Mechatronics Department, EEMCS Faculty, University of Twente, 7500 AE Enschede, The Netherlands, and Department of Computer, Control and Management Engineering, Sapienza University of Rome, 00185 Rome, Italy. Email: schol@r.franchi.eu 
+
+# Lie Group Formulation of Recursive Dynamics Algorithms of Higher Order for Floating-Base Robots 
+
+In this paper, we describe procedures for computing higher-order time derivatives of the Lie-group Newton-Euler, Articulated-Body Inertia, and hybrid dynamics algorithms for floating-base trees, where the base configuration evolves on SE (3) and the attached mechanism is an open kinematic tree with configuration on the (𝑛 1 +𝑛 2)-dimensional man-ifold T𝑛 1 × R𝑛 2 , using spatial representation of twists. After presenting the algorithms, we collect the resulting recursions into closed-form equations of motion, identifying an admissible Coriolis matrix satisfying the passivity property, and showing that the artic-ulated inertia tensor remains unchanged across all time derivatives. We then apply the developed methods to a 12-DoF aerial manipulator to derive analytical expressions for its geometric forward and inverse dynamics along with their first time derivatives whereas the numerical simulations successfully evaluate these dynamics up to fifth order. Finally, to demonstrate their practical utility, we benchmark the proposed extensions and show that, in the considered tests, their computational cost scales quadratically with the derivative order, whereas the automatic-differentiation baseline exhibits exponential scaling. Keywords: Floating-base systems, Lie group formulation, higher-order forward dynamics, higher-order hybrid dynamics, higher-order inverse dynamics, admissible Coriolis matrix 
+
+1 Introduction 
+
+Rigid body dynamics has been a central area of study in the science of mechanics since the era of Galileo, and the field has now reached a mature stage of development [1,2]. There are sev-eral approaches for deriving the dynamics models of articulated rigid body systems, with the most prominent paradigms being La-grangian, Hamiltonian, and Newtonian frameworks. As robotic systems have grown increasingly complex, with designs charac-terized by having high degrees of freedom, different mechanisms of actuation and wider set of tasks they can perform, the demand for computationally efficient methods to model their dynamics has also surged [3]. Among these methods that are particularly suited for digital computation of dynamics is the Newtonian-based recur-sive approach. A comparison of the computational complexities of some of these methods applied to open chain serial kinematics is reported in [4]. Conventionally, this approach uses a 3D or 6D (spatial) vecto-rial representation of the kinematics to formulate the Newton-Euler equations of the dynamics between any two interconnected bodies, which can then be evaluated recursively [5,6]. This idea became the foundation behind a set of specialized recursive algorithms de-tailed in [7–11] that deal with the problem of computing inverse and forward dynamics of mechanisms. While this approach has achieved a huge success, which can be seen from its implementa-tion in widely-used software programs like MATLAB and ADAMS [12,13], it does not fully leverage the intrinsic geometric proper-ties of the quantities involved, remaining essentially coordinate-dependent and thereby limiting its application to a local chart of the configuration manifold. Other non-geometric approaches exist; an example is [14], where the authors presented a method exploit-ing a particular diagonal structure of the inverted mass matrix of serial manipulators to develop an efficient algorithm for its inver-sion, solving the forward dynamics problem for these manipulators. 
+
+> 1Corresponding Author. May 8, 2026
+
+Moreover, building on this classical the Newton-Euler frame-work, the authors of [15] derive an algorithm for computing the dynamics of floating-base systems when a modified De-navit–Hartenberg (DH) description is used for the kinematics. A related approach appears in [16], which applies a classical Newton-Euler-based model to snake robots operating in constrained envi-ronments. Their approaches employ a minimal parameterization of the base. In contrast, the work in [17] adopts a non-recursive ap-proach to the forward dynamics problem, although the base orienta-tion remains expressed using Euler angles. Similarly, [18] presents an algorithm that yields the dynamic model through symbolic dif-ferentiation, using spatial algebra in the kinematic description. To address this limitation, research into geometric representa-tions of rigid body mechanics has been carried out, enabling a global, coordinate-free formulation of dynamics. This line of re-search has produced a significant body of literature known as ge-ometric mechanics. A seminal contribution in this direction is the influential paper by Brockett [19], introducing the use of Lie alge-bra and screw theory in modeling the forward kinematics of manip-ulators through the concept of Product of Exponentials (PoE) as a geometric parallel to the classical Denavit–Hartenberg method. Lie groups and screw theory sit in the core of this geometric frame-work which is described in a number of textbooks [20–22]. In [23,24], an application of this approach is illustrated on a fixed-base closed-kinematics mechanism, and respectively, constructing an analysis for linkages’ mobility. In [25], singularity-free closed-form laws of motion are de-rived by formulating the Euler-Lagrange equations on global, non-Euclidean configuration space, while [26] extended the analysis further by providing a coordinate transformation by which the EoMs of articulated floating-base systems can be decoupled into two separate equations: one for the dynamics of whole system’s CoM, i.e. the centroidal dynamics [27], and one for the internal variables (joints). Employing Lie-theoretic tools for manipulators whose kinematics is represented by PoE, with the joint axes be-ing screws, the method in [28] calculates the corresponding inertia 
+
+Journal of Mechanisms and Robotics Copyright © 2026 by ASME / 1 
+
+> arXiv:2605.06498v1 [cs.RO] 7 May 2026
+
+matrix, Coriolis terms, and gravitational torque. Founded on the finite element concept [29], another geometric approach to obtain singularity-free closed-form EoM for multibody systems on 𝑆𝐸 (3)
+
+is proposed in [30,31]. It leads to a system of differential algebraic equations (DAEs), whose dimension is 6𝑁 𝐵 + 6𝑁 𝐽 with 𝑁 𝐵 and 
+
+𝑁 𝐽 denoting the number of bodies and joints in the system, re-spectively, due to representing the kinematical connection between bodies in the form of holonomic constraints with the help of La-grange multipliers. Although this method is well-suited to model complex kinematic constraints and flexibility in the interconnec-tion, it produces higher-dimensional EoMs compared to methods yielding ordinary differential equations (ODEs) EoMs with mini-mal dimension, equal the system’s DoFs, thanks to the use of the screw theory to describe kinematic pairs. Additional model re-duction techniques are needed to decrease the system dimension. Hence, this geometric finite element method can be more compu-tationally expensive than calculating closed-form EoMs from the geometric O(N) Newton-Euler method in [28]. On the other hand, algorithms that recast the recursive Newton-Euler approach for manipulators into the geometric setting are pre-sented in [32–34]. An overview of these algorithms for serial manipulators using hybrid, body-fixed and spatial reference frames is discussed in [35,36]. In [37], a compact inverse dynamic formu-lation is achieved thanks to the use of Lie group methods; however, the base remains parameterized, and the algorithm does not provide a recursive calculation for forward dynamics. Despite its extensive treatment of the manipulator case, this geometric recursive formu-lation does not explicitly consider articulated floating-base systems in which the base configuration is taken as the entire 𝑆𝐸 (3) instead of some parameterization of it, except the work in [38] where it is hinted out that EoM of a floating-base system can be obtained by recursively computing each term in the closed-form Hamel’s equations of motion [39] using the Newton-Euler algorithms [28]. Another representation of the base configuration can be quater-nion. The work in [40] utilizes a geometric formulation for inverse dynamics, using dual quaternion representation for kinematics. A similar treatment is observed in [41], where the Lagrangian equa-tions are casted in dual quaternions algebra. Despite its elegance, these methods inherit the issue of double covering in represent-ing the group of spatial rotations 𝑆𝑂 (3), which complicates the attitude modeling of free-floating bases. None of these works derive analytical time derivatives of in-verse or forward dynamics for floating-base trees with the base modeled on 𝑆𝐸 (3), despite many applications that require such derivatives. Although differentiation can be carried out via auto-matic, numerical, or analytical (closed-form or recursive) methods, analytical differentiation is often preferred for control design: e.g., feedback linearization of emerging multirotors [42] or manipula-tors with elastic joints requires second-order inverse dynamics, ob-tained either by time differentiating EoMs [43,44] or by computing second-order time derivatives of inverse dynamics via the classical Newton-Euler recursion [45]; similarly, many optimal trajectory planning problems [46,47] and optimal control [48] evaluate time derivatives of inverse dynamics. Existing motion-planning works do not fill this gap: [34] provides no analytical higher-order time 
+
+derivatives; [49] lacks an explicit 𝑆𝐸 (3) floating base and reports partial derivatives w.r.t. joint variables (not time derivatives); [50] derives only first-order partial derivatives of a Lie-group Newton-Euler model w.r.t. path parameters, while the authors in [51] treat a special SE (3) base case where all children attach directly to the base (or to a wing), thus excluding arbitrary open-tree topologies and time differentiation. Motivated by this, time derivatives of geo-metric inverse dynamics for manipulators are illustrated in [52–55]. This work fills the gap in recursive higher-order time differ-entiation of geometric inverse, forward and hybrid dynamics for floating-base systems with base configuration on 𝑆𝐸 (3) and an attached open kinematic tree with prismatic and revolute joints (internal variables in T𝑛 1 × R𝑛 2 ), using spatial representation of twists . Without loss of generality, the base may be actuated by a total propeller wrench applied at its CoM. In particular, the paper makes the following contributions: 
+
+• Algorithm 2 (H-GRNE-FBS): Extending the existing Recur-sive Newton-Euler formulation of [32,54] from fixed-base ma-nipulators to compute higher-order time derivatives of ge-ometric inverse dynamics for the aforementioned class of floating-base systems. 
+
+• Algorithm 3 (H-GABI-FBS): Extending the existing articulated-body inertia algorithm of Featherstone [7,33] to compute higher-order time derivatives of geometric forward dynamics for the aforementioned class of floating-base systems. 
+
+• Algorithm 4 (H-GHYB-FBS): Extending the existing hy-brid dynamics algorithm [7,33] to compute higher-order time derivatives of geometric hybrid dynamics for the aforemen-tioned class of floating-base systems. 
+
+• Proposition 1: Systematically collecting the resulting recur-sions into closed-form Lagrangian equations of motion and its time derivatives. 
+
+• Lemma 1: Stating that an admissible Coriolis matrix satisfy-ing the standard passivity property can be easily constructed from the recursions for this class. 
+
+• Lemma 2: Providing a structural insight into higher-order geometric forward dynamics: the articulated body inertia [7] remains unchanged across higher-order time derivatives of the dynamics, facilitating efficient time differentiation since this inertia can be computed once and transported to any order. 
+
+• Extensive simulation and benchmarking, including compari-son against the automatic differentiation method implemented in CasADi [56], providing evidence of the efficiency of the proposed extensions and their favorable performance over automatic differentiation for computing higher-order time derivatives of the geometrically-exact dynamics in large tree-structured systems. The advantages of this higher order formulation are inherited from those well-established in the Lie-group literature at the accel-eration order (0th order), namely coordinate-invariant expressions, singularity-free, global and unique representation of 𝑆𝐸 (3) base, and compact recursions [33] even for higher order time deriva-tives (see Table 5). At the same time, the resulting computations remain highly computationally tractable as the derivative order in-creases, as shown by the simulations in Sec. 7. Table 1 offers a non-exhaustive list contrasting some well-known methods against our proposed extensions. The rest of the paper is organized as follows. Section 2 gives a brief summary of fundamental concepts used throughout the paper. Afterwards, the two passes of the proposed Higher Order Geomet-ric Recursive Newton-Euler algorithm for Floating Base Systems (H-GRNE-FBS) are presented in Section 3 while the relation be-tween such algorithm and the closed-form EoM is explained in Section 4. We devote Section 5 for the introduction of the second algorithm: Higher Order Geometric Recursive Articulated Body Inertia algorithm for Floating Base Systems (H-GABI-FBS). Hy-brid dynamics and their time derivatives (H-GHYB-FBS) are the subject of Section 6. An application of these algorithms to an aerial manipulator is explained in Section 7 with simulations and benchmarking. We conclude by some remarks on implementation and future work in Section 8. 
+
+2 Preliminaries 
+
+In this section we briefly recall the definitions of some basic concepts from Lie group and screw theory literature which are used extensively throughout the paper. The unfamiliar reader is 
+
+2 / Transactions of the ASME Table 1 Existing Methods for Dynamics Modeling 
+
+Method 𝑆𝐸 (3) Geom. Closed Rec. Geom. Der. High Der. O( 𝑁 ) Spatial F/I 
+
+Park et. al [28,32,33] × ✓ ✓ ✓ × × ✓ × F/I Hollerbach et. al [4] × × × ✓ × × ✓ × ILilly, Orin [6,9] × × × ✓ × × ✓ × F/I Orin et al [27] × × ✓ ✓ × × ✓ × ILee, Chirikjian [14] × × ✓ × × × ✓ × FFeatherstone [7] × × × ✓ × × ✓ × F/I Rodriguez et. al [10, 11] 
+
+× × × ✓ × × ✓ × F/I Garofalo et. al [55] × ✓ ✓ ✓ ✓ × ✓ × IGarofalo et. al [26] ✓ ✓ ✓ × × × - × IKhalil et. al [15] × × × ✓ × × ✓ × F/I Kumar et. al [37] × ✓ ✓ ✓ × × ✓ ✓ IAfonso Silva et. al [40] × ✓ × ✓ × × ✓ × ICohen et. al [41] × ✓ ✓ × × × - × IMishra et. al [38] ✓ ✓ ✓ × × × - × IO. Brüls et. al [30] ✓ ✓ ✓ × × × - × IMüller [36] × ✓ ✓ ✓ × × ✓ ✓ IMüller [54] × ✓ × ✓ ✓ × ✓ ✓ IKumar, Müller [53] × ✓ ✓ ✓ ✓ ✓ ✓ × I
+
+Proposed method ✓ ✓ ✓ ✓ ✓ ✓ ✓ ✓ F/I           
+
+> 𝑆𝐸 (3): Singularity-free Floating-base Representation; Geom. : Frame/coordinate Invariance of the EoM; Closed : Transformation to Closed-form Lagrangian EoM; Rec. :Recursive Formulation; Geom. Der. : Exact Geometric Time Derivatives; High Der. : higher-order time Derivatives; O( 𝑁 ): Linear Complexity; Spatial : Spatial frame representation; F/I : Computes Forward/Inverse Dynamics.
+
+encouraged to consult [1,7,19,21,22,28,35,36,57,58] and references therein for a more formal introduction. Free rigid body motion in the 3D Euclidean space has a configuration manifold that can be characterized by the set of homogeneous transformation matrices, that also form a matrix Lie group, called the special Euclidean group, denoted by 𝑆𝐸 (3) and defined as 
+
+𝑆𝐸 (3) ={︂ (R, 𝒙 ) =(︂ R 𝒙  
+
+> 01×31
+
+)︂ ∈ GL (4, R) | 
+
+𝒙 ∈ R3, R𝑇 R = RR 𝑇 = I3×3, det (R) = +1}︂ 
+
+where GL (4, R) is the general linear group of the set of real invert-ible matrices in R4×4. The associated Lie algebra is a vector space tangent to the group identity and equipped with a Lie bracket as an extra structure. It is denoted by 𝑠𝑒 (3) and given as 
+
+𝑠𝑒 (3) ={︂(︂ [𝝎 ] 𝒗  
+
+> 01×30
+
+)︂ ∈ R4×4 | [ 𝝎 ] + [ 𝝎 ]𝑇 = 0, (𝝎 , 𝒗 ) ∈ R6}︂ 
+
+where the operator [·] is a linear isomorphism from the vec-tor space R𝑝 into the corresponding Lie algebra. Since 𝑠𝑒 (3)
+
+is isomorphic to R6, [𝒈 ] ∈ 𝑠𝑒 (3) can take the vector form 
+
+𝒈 = (𝝎 , 𝒗 )𝑇 ∈ R6. The adjoint action of the Lie group 𝑆𝐸 (3)
+
+on its Lie algebra 𝑠𝑒 (3) can be expressed in a matrix form, called the adjoint representation of the Lie group, which is modulated by the group element and denoted by Ad C. It is defined as 
+
+Ad C : 𝑆𝐸 (3) × 𝑠𝑒 (3) → 𝑠𝑒 (3), Ad C
+
+𝒈 = C[𝒈 ]C−1, [𝒈 ] ∈ 𝑠𝑒 (3), C ∈ 𝑆𝐸 (3)
+
+Ad C =(︃ R 0
+
+[𝒙 ]R R)︃ , and for 𝑆𝐸 (3) Ad ∗ 
+
+> C
+
+:= Ad 𝑇 
+
+> C
+
+where Ad ∗ 
+
+> C
+
+is the co-adjoint matrix. The Lie bracketing of two 
+
+𝑠𝑒 (3) elements 𝒈 1 and 𝒈 2, denoted by [𝒈 1, 𝒈 2], introduces a non-commutative and non-associative skew-symmetric multiplication operation on the vector space, that is modulated by Lie algebra elements, as follows 
+
+ad 𝒈 1 : 𝑠𝑒 (3) × 𝑠𝑒 (3) → 𝑠𝑒 (3)[𝒈 1, 𝒈 2] = ad 𝒈 1 𝒈 2, 𝒈 1, 𝒈 2 ∈ 𝑠𝑒 (3)
+
+where the adjoint ad 𝒈 and the co-adjoint ad ∗ 
+
+> 𝒈
+
+can then be put in this matrix form for the 𝑆𝐸 (3) group 
+
+ad 𝒈 =(︃ [𝝎 ] 0
+
+[𝒗 ] [𝝎 ])︃ , and for 𝑠𝑒 (3) ad ∗ 
+
+> 𝒈
+
+:= ad 𝑇 
+
+> 𝒈
+
+If C(𝑡 ) ∈ 𝑆𝐸 (3) changes over time 𝑡 , then the time derivatives of the inverse of the adjoint map Ad C(𝑡 ) and the Lie algebra adjoint 
+
+ad 𝑽 are related to the right-invariant (spatial) twist 𝑽 𝑠 ∈ 𝑠𝑒 (3) by ̇
+
+Ad −1  
+
+> C(𝑡 )
+
+= −Ad −1 
+
+> C
+
+ad 𝑽 𝑠 , and ̇ ad 𝑽 = ad ̇𝑽 (1) The following properties of the adjoint maps ad 𝑽 and Ad C are useful in the subsequent development 
+
+ad 𝑽 1+𝑽 2 = ad 𝑽 1 + ad 𝑽 2 ,
+
+ad 𝑟 𝑽 = 𝑟 ad 𝑽 , 𝑟 ∈ R, and ad 𝑽 𝑽 = 0,
+
+Ad C1C2 = Ad C1 Ad C2 ,
+
+Ad −1 
+
+> C
+
+= Ad C−1 ,
+
+Ad C [𝒈 1, 𝒈 2] = [Ad C 𝒈 1, Ad C 𝒈 2], (Lie group homomorphism) 
+
+ad [𝒈 1 ,𝒈 2 ] = [ad 𝒈 1 , ad 𝒈 2 ] (Lie algebra homomorphism) (2) Mozzi–Chasles’ theorem states that any rigid body motion can be fully described by a translation along a line, called the screw axis, 
+
+Journal of Mechanisms and Robotics / 3 Fig. 1 Directed graph with the nodes representing the rigid bodies while the edges are the joints ∈ Tn1 × Rn2 , where (n1 +
+
+n2) is number of joints and B1 is the floating base. Notice that each body has only 1 parent. 
+
+followed by a rotation around an axis parallel to that line. This composes a screw displacement. Screws are elements ∈ 𝑠𝑒 (3) that are naturally suited to encode the kinematical constraints between two interconnected rigid bodies imposed by the connecting joints. In this work we express the screw coordinates relative to the inertial frame. The spatial representation of a joint screw is measured in the reference (home) configuration of the mechanism, i.e., when all joint variables are zeros, and expressed in the inertial frame [59]. This spatial screw [𝒀 ] ∈ 𝑠𝑒 (3) is constant and given by 
+
+𝒀 = (𝒆 , [ 𝒑 ]𝒆 )𝑇 ∈ R6 for a revolute joint with parameter 𝑞 ∈ S1,
+
+𝒀 = (0, 𝒆 )𝑇 ∈ R6 for a prismatic joint with parameter 𝑞 ∈ R
+
+(3) where 𝒆 and 𝒑 are a unit axis in the direction of the joint’s mo-tion and the position of any point on that axis, respectively, both expressed in the inertial frame and measured when the robot is at home configuration. A fundamental tool that we utilize later to express rigid body motions in terms of screws is the exponential map exp ( 𝒈 ) defined as 
+
+exp ( 𝒈 ) : 𝒈 ↦ → C, 𝒈 ∈ 𝑠𝑒 (3), C ∈ 𝑆𝐸 (3).
+
+This map can be computed in a closed form. It is a local diffeo-morphism that associates elements from the Lie algebra 𝑠𝑒 (3) to corresponding elements in the Lie group 𝑆𝐸 (3). For this group, this map is globally surjective and locally bijective in a neighbor-hood around the origin of 𝑠𝑒 (3).
+
+3 H-GRNE-FBS: Higher Order Inverse Dynamics 
+
+We present higher order time derivatives of geometric Newton-Euler algorithm for inverse dynamics [28] adapted to floating-base robots in a computationally-efficient and compact manner. This extends the 𝑂 (𝑛 ) algorithm appeared in [32,54] to yield the time derivatives of dynamics for trees with a floating base. In particu-lar, we restrict our analysis to the case where the system has one main base evolving on 𝑆𝐸 (3) that is connected to kinematic chains living in the (𝑛 1 + 𝑛 2)-dimensional manifold T𝑛 1 × R𝑛 2 , with joint leading to body 𝑗 denoted by 𝑞 𝑗 , each of which has an open tree topology. In other words, as depicted with the directed graph in Fig. 1, the links attached to the floating-base form trees with no loop closure constraints (closed kinematical loops), meaning that each body has only one parent. The algorithm starts by a forward recursion to compute the higher order kinematics which is followed by a backward pass to obtain the corresponding order of inverse dy-namics. Let C 𝑗 𝑖 , A 𝑗 𝑖 , V0 
+
+> 𝑖
+
+, (𝑽 0 
+
+> 𝑗
+
+) (𝑖 ) denote the relative configuration from frame F𝑖 to F𝑗 , their relative constant home configuration, and spatial twist of F𝑖 and its 𝑖 -th component-wise time derivative, respectively. The total number of attached bodies is 𝑁 whereas the children and parent lists of 𝑗 are, respectively, 𝑐 { 𝑗 } and 𝑝 { 𝑗 }.
+
+(∗) (𝑟 ) signifies 𝑟 -th time derivative of ∗.
+
+3.1 Higher-order Forward Kinematics: Forward Recur-sion. The first recursion is traditionally called the forward recur-sion since the kinematics of each body on the tree depends on quantities that are deduced from its parent’s parameters. There-fore, the kinematics can then be iteratively computed starting from the base body and passing once on each body by typically follow-ing a pre-order Depth-First Search (DFS) approach. We clarify initialization steps in Appendix D needed to run Algorithm (1). Afterwards, the 𝑟 th-order kinematics of body 𝑖 , with the help of the product of exponential (PoE) [19] and the formulas (2), can be recursively computed by Algorithm (1). 
+
+Algorithm 1 Higher-order Recursive Forward Kinematics for Floating-base Trees, extension of [32,54]. 
+
+Input: 𝑁, 𝑐 { 𝑗 }, 𝑝 { 𝑗 }, A01, A𝑝 { 𝑗 } 
+
+> 𝑗
+
+, C01, 𝑽 01 · · · ( 𝑽 01 ) (𝑟 ) ,
+
+𝒒 · · · ̇ 𝒒 · · · 𝒒 (𝑟 +1) , 𝒀 1 𝒀 2 · · · 𝒀 𝑛 
+
+Call: Forward( 1); % pre-order DFS. 
+
+function Forward( 𝑗 )
+
+if 𝑗 > 1 then 0-th order (position) kinematics: 
+
+F𝑗 = F𝑝 { 𝑗 } exp ([ 𝒀 𝑗 ] 𝑞 𝑗 ), with F1 = C01
+
+A0 
+
+> 𝑗
+
+= A0   
+
+> 𝑝 {𝑗 }
+
+A𝑝 { 𝑗 } 
+
+> 𝑗
+
+% Computed once and used throughout. 
+
+C0 
+
+> 𝑗
+
+= F𝑗 A0
+
+> 𝑗
+
+𝑺 𝑗 = Ad F𝑗 𝒀 𝑗 
+
+1-st order (velocity) kinematics: 
+
+𝑽 0 
+
+> 𝑗
+
+= 𝑽 0   
+
+> 𝑝 {𝑗 }
+
++ 𝑺 𝑗 ̇ 𝑞 𝑗 ̇
+
+𝑺 𝑗 = ad 𝑽 0
+
+> 𝑗
+
+𝑺 𝑗 
+
+2-nd order (acceleration) kinematics: ̇
+
+𝑽 0 
+
+> 𝑗
+
+=̇ 𝑽 0   
+
+> 𝑝 {𝑗 }
+
++ 𝑺 𝑗 ̈𝑞 𝑗 +̇ 𝑺 𝑗 ̇ 𝑞 𝑗 ̈
+
+𝑺 𝑗 = ad ̇𝑽 0
+
+> 𝑗
+
+𝑺 𝑗 + ad 𝑽 0
+
+> 𝑗
+
+̇ 𝑺 𝑗 
+
+General (𝑟 1 − 1)-th order kinematics 
+
+𝑺 (𝑟 1 ) 
+
+> 𝑗
+
+=∑︁ 𝑟 1 −1
+
+> 𝑟 2=0
+
+(︁ 𝑟 1 −1
+
+> 𝑟 2
+
+)︁ ad (𝑽 0    
+
+> 𝑗 )(𝑟 2)
+
+𝑺 (𝑟 1 −1−𝑟 2 )
+
+> 𝑗
+
+(𝑽 0 
+
+> 𝑗
+
+) (𝑟 1 ) = (𝑽 0   
+
+> 𝑝 {𝑗 }
+
+) (𝑟 1 ) +∑︁ 𝑟 1
+
+> 𝑟 2=0
+
+(︁ 𝑟 1
+
+> 𝑟 2
+
+)︁ 𝑺 (𝑟 2 ) 
+
+> 𝑗
+
+𝑞 (𝑟 1 −𝑟 2+1)
+
+with the binomial coefficient (︁ 𝑟 1
+
+> 𝑟 2
+
+)︁ = 𝑟 1!  
+
+> 𝑟 2!(𝑟 1−𝑟 2)!
+
+end if for ∀𝑖 = 1 : length (𝑐 {j}) do 
+
+Forward (︁ c{ 𝑗 }( 𝑖 ))︁ % i-th child of body j 
+
+end for end function 3.2 Higher-order Inverse Dynamics: Backward Recursion. 
+
+The second recursion starts from the last node in each branch of the tree and proceeds backward until it ends at the base, following a post-order DFS or a reversed breadth-first traversal. This is because the wrenches are transferred through the joints to the base. This recursion computing the higher-order geometric inverse dynamics can be implemented by Algorithm (2). For the ease of exposition, explicit derivations are moved to Appendix E. Let 𝑾 0
+
+> 𝑗, app
+
+, 𝑾 01,prop ,
+
+𝑾 0
+
+> 𝑗, grav
+
+, and 𝑾 0 
+
+> 𝑗
+
+be the sum of applied external wrenches at body 𝑗 ,propeller wrench at the base 1, the gravitational wrench applied at body 𝑗 , the constraint wrench that is transmitted through the joint 
+
+𝑗 from body 𝑗 to its parent (equals zero for the 𝑆𝐸 (3) floating base), respectively. 𝜏 𝑗, ext is total non-conservative external torques on joint 𝑗 whereas 𝜏 𝑗 is its actuation torque if present. 
+
+4 / Transactions of the ASME Algorithm 2 H-GRNE-FBS: Higher-order Geometric Recursive Inverse Dynamics for Floating-base Systems, extension of [32,54]. 
+
+Input: Kinematics Algorithm 1, (𝜏 𝑗, ext ) (𝑟 ) and (𝑾 0
+
+> 𝑗, app
+
+) (𝑟 ) .
+
+Output: (𝑸 𝑗 ) (𝑟 ) % generalized forces. 
+
+Call: Backward( 1); % post-order DFS. 
+
+function Backward( 𝑗 )
+
+for ∀𝑖 = 1 : length (𝑐 {j}) do 
+
+Backward (︁ c{ 𝑗 }( 𝑖 ))︁ % i-th child of body j 
+
+end for 
+
+(𝑾 0 
+
+> 𝑗
+
+) (𝑟 ) = (𝚷 0 
+
+> 𝑗
+
+) (𝑟 +1) (E3) − ( 𝑾 0
+
+> 𝑗, app
+
+) (𝑟 ) (E5) − ( 𝑾 0
+
+> 𝑗, grav
+
+) (𝑟 ) (E4) +∑︁    
+
+> 𝑖 ∈𝑐 {𝑗 }
+
+(𝑾 0 
+
+> 𝑖
+
+) (𝑟 )
+
+if 𝑗 = 1 then 
+
+(𝑸 1) (𝑟 ) := (𝑾 01 ) (𝑟 ) ,
+
+hence (𝑾 01,prop ) (𝑟 ) = (𝑸 1) (𝑟 )
+
+else 
+
+(𝑸 𝑗 ) (𝑟 ) :=∑︁ 𝑟 𝑘 =0(︁ 𝑟 𝑘 )︁ (𝑺 𝑇 𝑗 ) (𝑟 −𝑘 ) (𝑾 0 
+
+> 𝑗
+
+) (𝑘 ) ,hence (𝜏 𝑗 ) (𝑟 ) = (𝑸 𝑗 ) (𝑟 ) − ( 𝜏 𝑗, ext ) (𝑟 )
+
+end if end function 
+
+Table 2 Definitions for Grouping Recursions 
+
+G𝑐 := G𝑇 𝑝 
+
+𝑽 := ( 𝑽 01 , 𝑽 02 , 𝑽 03 , · · · , 𝑽 0 
+
+> 𝑁
+
+)𝑇 
+
+ad 𝑽 := blockdiag ( ad 𝑽 01
+
+, ad 𝑽 02
+
+, ad 𝑽 03
+
+, · · · , ad 𝑽 0
+
+> 𝑁
+
+)
+
+Ad C := blockdiag ( Ad C01
+
+, Ad C02
+
+, Ad C03
+
+, · · · , Ad C0
+
+> 𝑁
+
+)̇
+
+𝑽 := (̇ 𝑽 01 ,̇ 𝑽 02 ,̇ 𝑽 03 , · · · ,̇ 𝑽 0 
+
+> 𝑁
+
+)𝑇 
+
+S := blockdiag (I6×6, 𝑺 2, 𝑺 3, · · · , 𝑺 𝑁 )̇
+
+S := blockdiag (06×6,̇ 𝑺 2,̇ 𝑺 3, · · · ,̇ 𝑺 𝑁 )
+
+M := blockdiag (M01, M02, M03, · · · , M0 
+
+> 𝑁
+
+)
+
+𝑾 0 
+
+> 𝐼, app
+
+:= ( 𝑾 01,app , 𝑾 02,app , 𝑾 03,app , · · · , 𝑾 0 
+
+> 𝑁 , app
+
+)𝑇 
+
+𝑾 𝑏 𝐼, app := ( 𝑾 𝑏 
+
+> 1,app
+
+, 𝑾 𝑏 
+
+> 2,app
+
+, 𝑾 𝑏 
+
+> 3,app
+
+, · · · , 𝑾 𝑏 𝑁 , app )𝑇 
+
+𝑾 0 
+
+> 𝐼, grav
+
+:= ( 𝑾 01,grav , 𝑾 02,grav , 𝑾 03,grav , · · · , 𝑾 0 
+
+> 𝑁 , grav
+
+)𝑇 
+
+𝑮 0 
+
+> 𝐼
+
+:= ( 𝑮 0, 𝑮 0, 𝑮 0, · · · , 𝑮 0 )𝑇 ∈ R6𝑁 ×1̇
+
+𝚷 𝐼 := (̇ 𝚷 01,̇ 𝚷 02,̇ 𝚷 03, · · · ,̇ 𝚷 0 
+
+> 𝑁
+
+)𝑇 
+
+¯𝝉 := ( 06×1, 𝜏 2 + 𝜏 2,ext , 𝜏 3 + 𝜏 3,ext , · · · , 𝜏 𝑁 + 𝜏 𝑁 , ext )𝑇 
+
+Q :=[︁ C01 𝒒 2 𝒒 3 · · · 𝒒 𝑁 ]︁ 
+
+𝝂 (𝑘 −1) :=[︂ (𝑽 01 ) (𝑘 −1) 𝒒 (𝑘 ) 
+
+> 2
+
+𝒒 (𝑘 ) 
+
+> 3
+
+· · · 𝒒 (𝑘 )
+
+> 𝑁
+
+]︂ 𝑘 ≥ 1
+
+4 Relation to Lagrangian Equations of Motion 
+
+Here we give an example of how to put the dynamics equations obtained from Algorithm (2) into the Lagrangian form of EoM. In Appendix B, we illustrate the derivations for the two cases laid out in Proposition 1: the 0-th and 1-th order inverse dynamics. The closed-form EoM for higher orders follow the same procedure. Moreover, an admissible Coriolis matrix satisfying the passivity property is given Lemma 1. Following [32], for the Algorithms 1 and 2 we can put all recursions in a matrix form. First, construct the two boolean matrices G𝑝 and G𝑐 such that the parents matrix 
+
+G𝑝 contains the identity matrix I6×6 in all parent indexes of body 𝑖 
+
+to the base 1 and the zero matrix 06×6 otherwise, while the children matrix G𝑐 contains the identity matrix I6×6 in all child indexes of body 𝑖 and the zero matrix otherwise. Both are obtained from the structure of the tree and are transpose of each other for this type of graphs. Here 𝑾 01,prop is included in 𝑾 01,app for brevity. Otherwise, the first entry in ¯𝝉 is replaced with 𝑾 01,prop . In the following, these definitions in Table 2 hold. Now, we give a result in Proposition 1 on transforming the higher order recursions to closed-form EoM for the considered class of floating base robots. 
+
+Proposition 1 (Transformation into closed-form EoM) . The 0-th and 1-st order geometric inverse dynamics computed from recur-sions of (Algorithm 2) can be written in closed form as follows: 
+
+• The 0-th order inverse dynamics 
+
+¯𝝉 = ¯M(Q)̇ 𝝂 + 𝒉 (Q, 𝝂 ) + 𝒈 (Q) + 𝝉 ext (Q). (4) With the mass matrix ¯M, Coriolis and centrifugal forces 𝒉 ,gravitational vector 𝒈 , and external torque 𝝉 ext defined as 
+
+¯M(Q) = S𝑇 G𝑐 MG 𝑝 S,
+
+𝒉 (Q, 𝝂 ) = S𝑇 G𝑐 MG 𝑝 ̇ S 𝝂 − S𝑇 G𝑐 ad 𝑇   
+
+> G𝑝 S𝝂
+
+MG 𝑝 S 𝝂 ,
+
+𝒈 (Q) = −S𝑇 G𝑐 𝑾 0 
+
+> 𝐼, grav
+
+= −S𝑇 G𝑐 M𝑮 0 
+
+> 𝐼
+
+,
+
+𝝉 ext (Q) = −S𝑇 G𝑐 𝑾 0 
+
+> 𝐼, app
+
+= −S𝑇 G𝑐 Ad 𝑇  
+
+> C−1
+
+𝑾 𝑏 𝐼, app . (5) 
+
+• The 1st order inverse dynamics 
+
+¯M(Q)̈ 𝝂 +̇ ¯𝒉 (Q, 𝝂 ,̇ 𝝂 ) + ̇ 𝒈 (Q, 𝝂 ) + ̇ 𝝉 ext (Q, 𝝂 ) =̇ ¯𝝉 . (6) where 
+
+¯M(Q) = S𝑇 G𝑐 MG 𝑝 S,̇¯𝒉 (Q, 𝝂 ,̇ 𝝂 ) = S𝑇 ad 𝑇  
+
+> G𝑝 S𝝂
+
+(︁ G𝑐 MG 𝑝 Ṡ 𝝂 + G𝑐 MG 𝑝 ad G𝑝 S𝝂 S𝝂 
+
+− G𝑐 ad 𝑇   
+
+> G𝑝 S𝝂
+
+MG 𝑝 S𝝂 )︁ + S𝑇 ˜̈𝚷 (Q, 𝝂 ,̇ 𝝂 ),̇
+
+𝒈 (Q, 𝝂 ) = −S𝑇 ad 𝑇   
+
+> G𝑝 S𝝂
+
+G𝑐 M𝑮 0
+
+> 𝐼
+
++ S𝑇 G𝑐 (Mad G𝑝 S𝝂 + ad 𝑇   
+
+> G𝑝 S𝝂
+
+M)𝑮 0 
+
+> 𝐼
+
+,̇
+
+𝝉 ext (Q, 𝝂 ) = S𝑇 (G𝑐 ad 𝑇   
+
+> G𝑝 S𝝂
+
+Ad 𝑇  
+
+> C−1
+
+− ad 𝑇   
+
+> G𝑝 S𝝂
+
+G𝑐 Ad 𝑇  
+
+> C−1
+
+)𝑾 𝑏 𝐼, app 
+
+− S𝑇 G𝑐 Ad 𝑇 
+
+> C−1
+
+̇ 𝑾 𝑏 𝐼, app . (7) Proof. See Appendix B. 
+
+Remark 1. The notation used in Table 2 follows the right-invariant (spatial) representation of the floating-base velocity 𝑉 01 ∈ 𝑠𝑒 (3).Hence, the first component of the generalized velocity 𝝂 is not the matrix derivative ̇ 𝐶 01 ∈ 𝑇 𝐶 01
+
+𝑆𝐸 (3). If tangent-space 𝑟 -th derivative 
+
+(𝐶 01 ) (𝑟 ) is needed, it can be retrieved using Leibniz’ rule from 
+
+(𝐶 01 ) (𝑟 ) = 
+
+> 𝑟 −1
+
+∑︂ 
+
+> 𝑘 =0
+
+(︃ 
+
+𝑟 − 1
+
+𝑘 )︃ [( 𝑉 01 ) (𝑘 ) ] ( 𝐶 01 ) (𝑟 −1−𝑘 ) , 𝑟 ≥ 1
+
+C&C forces 𝒉 in the 0-th order EoM can be compactly factorized with this admissible Coriolis matrix C given in the next Lemma 1, which can also be computed recursively. 
+
+Lemma 1 (Admissible Coriolis Matrix) . This matrix CC(Q, 𝝂 ) = S𝑇 G𝑐 MG 𝑝 ̇ S − S𝑇 G𝑐 ad 𝑇   
+
+> G𝑝 S𝝂
+
+MG 𝑝 S. (8) satisfies the skew-symmetric property of the presented class of the Lagrangian systems 12̇ ¯M − C.Proof. See Appendix A. 
+
+Journal of Mechanisms and Robotics / 5 5 H-GABI-FBS: Higher Order Forward Dynamics 
+
+The forward dynamics and its time derivatives are not only required for simulation purposes, but also can be necessary for dynamic control schemes [42,45]. We can obtain these dynam-ics either from running the inverse dynamics algorithm and then solve a system of linear equations at each step or by using more computationally-efficient recursive algorithms such as composite inertia and articulated body inertia [7]. In this section, we adapt the articulated-body algorithm (ABA) presented in [7,32] which is the fastest forward dynamics algorithm for kinematic trees with 
+
+𝑁 ≥ 6, to compute higher order geometric forward dynamics for the aforementioned class of floating-base trees using Lie group theory and spatial representation of screws. This screw represen-tation allows a more compact formulation when compared to its body-fixed representation counterpart [32] as it does not involve intermediate frame transformations of twists and wrenches. As with the inverse dynamics, the algorithm requires calculating the forward kinematics first. Then, it proceeds with a backward re-cursion in which the articulated inertia, which remains unchanged across orders as shown in Lemma 2 enabling efficient computation by calculating it once and carrying it over across orders, and bias wrench are evaluated for each body and propagated back to the floating base. The derivatives of the wrenches, inertia tensors, 𝑽 0
+
+> 𝑖, bias
+
+, 𝚷 𝑗, bias ,and the momentum map are calculated in Appendix E. Algorithm 3 provides the general procedure. 
+
+Lemma 2 (Articulated-body inertia as an invariant leading coef-ficient under time differentiation) . For a rigid body 𝑖 , denote the spatial articulated inertia by M𝐴 𝑗 and the spatial bias wrench at or-der 𝑟 by 𝑾 𝐴 𝑗,𝑟 . Then, for any 𝑟 ≥ 0, the 𝑟 -th derivative of equations of motion are 
+
+(𝑾 𝑗 ) (𝑟 ) = M𝐴 𝑗 (𝑽 0 
+
+> 𝑗
+
+) (𝑟 +1) + 𝑾 𝐴 𝑗,𝑟 ,
+
+where M𝐴 𝑗 , ∀𝑟 ≥ 0, is given by 
+
+M𝐴 𝑗 = M0 
+
+> 𝑗
+
++∑︂   
+
+> 𝑖 ∈𝑐 {𝑗 }
+
+M𝐴 𝑖 (︂ I − 𝑺 𝑖 (𝑺 𝑇 𝑖 M𝐴 𝑖 𝑺 𝑖 )−1 𝑺 𝑇 𝑖 M𝐴 𝑖 )︂ ,
+
+Proof. See Appendix C. 
+
+6 H-GHYB-FBS: Higher Order Hybrid Dynamics 
+
+For completeness, Algorithm 4 provides higher order time derivatives of Featherstone’s hybrid dynamics algorithm [7] and adapt it for floating-base trees using Lie groups, where joints in J𝑞 
+
+have prescribed accelerations and higher derivatives while joints in J𝜏 have prescribed torques with their corresponding derivatives. For the SE (3) base, the propeller wrench can be given so that the algorithm yields the base acceleration twist and its derivatives, or the vice versa. This is useful, e.g., for trees with passive joints while the base tracks a desired twist trajectory, allowing computa-tion of the propeller wrench and the evolution of the passive joints along that base trajectory. 
+
+7 Simulations and Benchmarking 
+
+Aerial manipulation is typically enabled by an open kinematic chain mounted on a multirotor aerial vehicle [61,62]. In general, expressing their geometrically-exact dynamics and its time deriva-tives in a compact form that can also be efficiently computed in recursions is challenging due to the high DoFs and the presence of a free-floating base. The aerial manipulator in Fig. 2(a) provides an instance of the class of floating-base systems considered herein. In order to validate the proposed methods, we provide numerical simulations, whose results are depicted in Fig. 3 and Fig. 3( a), of the higher-order inverse dynamics (H-GRNE-FBS), and forward 
+
+Algorithm 3 H-GABI-FBS: Higher-Order Geometric Recursive Forward Dynamics for Floating-base Systems, extension of [7,32]. 
+
+Input: Alg. 1, (𝑾 01,prop ) (𝑟 ) , ( 𝜏 𝑗 ) (𝑟 ) ,( 𝜏 𝑗, ext ) (𝑟 ) (𝑾 0 
+
+> 𝑗, app
+
+) (𝑟 ) .
+
+Output: 𝒒 (𝑟 +2) , (𝑽 0 ) (𝑟 +1)
+
+Call: Backward (1); % post-order DFS 
+
+function Backward ( 𝑗 )
+
+for ∀𝑖 = 1 : length (𝑐 { 𝑗 } ) do 
+
+Backward (︁ c{j}(i) )︁ % i-th child of body 𝑗 
+
+end for 
+
+M𝐴 𝑗 = M0 
+
+> 𝑗
+
++∑︂  
+
+> 𝑖 ∈𝑐 {𝑗 }
+
+M𝐴 𝑖 (︂ I − 𝑺 𝑖 (𝑺 𝑇 𝑖 M𝐴 𝑖 𝑺 𝑖 ) −1 𝑺 𝑇 𝑖 M𝐴 𝑖 )︂ ,
+
+(𝑾 𝐴 𝑗 ) (𝑟 ) = −𝑾 (𝑟 ) 
+
+> 𝑗, app
+
+− 𝑾 (𝑟 ) 
+
+> 𝑗, grav
+
++ 𝚷 (𝑟 +1) 
+
+> 𝑗, bias
+
++∑︂  
+
+> 𝑖 ∈𝑐 {𝑗 }
+
+(︂ 
+
+(𝑾 𝐴 𝑖 ) (𝑟 )
+
++ M𝐴 𝑖 (𝑺 𝑖 ˜𝒒 (𝑟 +2) 
+
+> 𝑖
+
++ ( 𝑽 0 
+
+> 𝑖, bias
+
+) (𝑟 +1))︂ 
+
+where ˜𝒒 (𝑟 +2) 
+
+> 𝑖
+
+and ˜𝝉 (𝑟 ) 
+
+> 𝑖
+
+are given by 
+
+˜𝒒 (𝑟 +2) 
+
+> 𝑖
+
+=(︂ 𝑺 𝑇 𝑖 M𝐴 𝑖 𝑺 𝑖 )︂ 
+
+> −1
+
+(︂ 𝝉 (𝑟 ) 
+
+> 𝑖
+
++ ( 𝜏 𝑖, ext ) (𝑟 ) − ˜𝝉 (𝑟 )
+
+> 𝑖
+
+− 𝑺 𝑇 𝑖 (M𝐴 𝑖 (𝑽 0 
+
+> 𝑖, bias
+
+) (𝑟 +1) + ( 𝑾 𝐴 𝑖 ) (𝑟 ) ))︂ ,
+
+where ˜𝝉 (0) 
+
+> 𝑖
+
+= 0 otherwise given by 
+
+˜𝝉 (𝑟 ) 
+
+> 𝑖
+
+= 
+
+> 𝑟 −1
+
+∑︂ 
+
+> 𝑘 =0
+
+(︃ 
+
+𝑟 𝑘 )︃ (𝑺 𝑇 𝑖 ) (𝑟 −𝑘 )(︂ M𝐴 𝑖 (𝑽 0 
+
+> 𝑖
+
+) (𝑘 +1) + ( 𝑾 𝐴 𝑖 ) (𝑘 ))︂ .
+
+(9) 
+
+end function Call: Forward (1); % pre-order DFS 
+
+function Forward ( 𝑗 )
+
+if 𝑗 = 1 then 
+
+Solve (𝑾 01,prop ) (𝑟 ) = M𝐴  
+
+> 1
+
+(𝑽 01 ) (𝑟 +1) + ( 𝑾 𝐴  
+
+> 1
+
+) (𝑟 ) for (𝑽 01 ) (𝑟 +1) using 
+
+𝐿𝐷𝐿 𝑇 .
+
+else 
+
+𝒒 (𝑟 +2) 
+
+> 𝑗
+
+= −(︂ 𝑺 𝑇 𝑗 M𝐴 𝑗 𝑺 𝑗 )︂ 
+
+> −1
+
+𝑺 𝑇 𝑗 M𝐴 𝑗 (𝑽 0  
+
+> 𝑝 {𝑗 }
+
+) (𝑟 +1) + ˜𝒒 (𝑟 +2) 
+
+> 𝑗
+
+,
+
+(𝑽 0 
+
+> 𝑗
+
+) (𝑟 +1) = (𝑽 0  
+
+> 𝑝 {𝑗 }
+
+) (𝑟 +1) + 𝑺 𝑗 𝒒 (𝑟 +2) 
+
+> 𝑗
+
++ ( 𝑽 0 
+
+> 𝑗, bias
+
+) (𝑟 +1) .
+
+end if for ∀𝑖 = 1 : length (𝑐 { 𝑗 } ) do 
+
+Forward (︁ c{j}(i) )︁ % i-th child of body 𝑗 
+
+end for end function 
+
+dynamics algorithms (H-GABI-FBS) applied on this aerial manip-ulator robot, with the order ranging from the acceleration-level dynamics ( 𝑟 = 0) up to its 5th time derivatives ( 𝑟 = 5). We first describe the robot structure and the analytical application of the algorithms, summarized in Table 5. As an input to H-GRNE-FBS, we generate smooth reference trajectories for the floating-base con-figuration and joints, together with their derivatives, and plot them in Fig. 3( a). Afterwards, the resulting higher-order base wrench and joint torques, shown in Fig. 3( b), are fed to H-GABI-FBS, which reproduces these reference trajectories and their derivatives at its output, as illustrated by the dashed lines in Fig. 3( a). This confirms the successful operation of the algorithms. All simulation parameters are provided in Table 3. All computations are run on an Intel Core i7-12700H CPU (14 cores, up to 4.70 GHz). Moreover, we benchmark the computational cost of the proposed routines by measuring the mean time per call over 1000 repeated calls across multiple derivative orders 𝑟 and increasing number of bodies in the tree. This reports a quantitative indication of the practical complexity as a function of both the tree size and the derivative order. The benchmark setup settings are listed in Table 4. As shown in Fig. 4( a) and Fig. 4( b), for a fixed order 𝑟 ,
+
+6 / Transactions of the ASME (a) Fully-actuated base carrying 2 identical manipulators (b) Graph of the system 
+
+Fig. 2 a) Schematic representation of the floating base system in home configuration H0. The base is a fully-actuated hexarotor called TiltHex [60], and the attached manipulators have 3 revolute joints each, composing two 3-DoF flying end-effectors. The propeller pi is rigidly attached to the base and tilted around 2 axes. Frames FBi are at the configuration H0
+
+and oriented identically to Fw . b) Kinematic tree representing the system, with B denoting a body (node) and q a revolute joint (edge). 
+
+the algorithm computational time grows linearly in 𝑁 , i.e. 𝑂 (𝑁 ),while for a fixed 𝑁 , they scale quadratically 𝑂 (𝑟 2) in 𝑟 when tested on the tree of Fig. 2 but with the increased size of 5 branches and 20 bodies per branch. Although these results already highlight satisfactory scaling trends on par with other available packages such as Pinocchio [63], we note that further speed-ups can be possible through dedicated low-level implementations and code optimization techniques. Possible implementation is available at https://github.com/ahmed11406/Dynamics/. Finally, we report a comparison against a baseline software: CasADi [56], to quantify the cost of obtaining higher-order time derivatives via automatic differentiation of the 0-th order dynamic versus our proposed algorithms. Specifically, we implement the tree in Fig. 2 with the same increased size as used for bench-marking our proposed algorithms, symbolically in CasADi, and define the inverse-dynamics map 𝑦 ID (𝑡 ) =[︁ 𝑾 0 
+
+> prop ,𝐵 1
+
+(𝑡 ); 𝝉 (𝑡 )]︁ and the forward-dynamics map 𝑦 FD (𝑡 ) =[︁ ̇ 𝑽 0 
+
+> 𝐵 1
+
+(𝑡 );̈ 𝒒 (𝑡 )]︁ . All CasADi evaluations are performed at 𝑡 0 = 0 with JIT compilation disabled. For each derivative order 𝑟 , we generate the 𝑟 -th time derivative 
+
+𝑑 𝑟 𝑦 /𝑑𝑡 𝑟 once using CasADi’s built-in directional derivative op-erator jtimes , and we time only the subsequent repeated evalua-tions over 1000 calls, hence CasADi exponential time complexity displayed in Fig. 4( c) reflects the evaluation cost of an already-constructed 𝑟 -th derivative expression graph without the one-time symbolic differentiation and graph-construction overhead. This isolates the online cost of evaluating higher-order derivatives when their expressions are built offline. Compared with Fig. 4( a) and Fig. 4( b), the results suggest that the proposed algorithms can pro-vide computational advantages over automatic differentiation in the considered benchmarks when evaluating geometrically exact higher-order time derivatives of large floating-base tree dynamics. 
+
+7.1 Initialization. The robot has a base with a relative config-uration C0 
+
+> 𝐵 1
+
+∈ 𝑆𝐸 (3), denoted by 𝐵 1 and equipped with 6 rigidly attached and tilted propellers labeled 𝑝 1 to 𝑝 6 [60]. Two ma-nipulator arms are attached to the base vertically at a distance 𝑏 
+
+below its CoM location. One arm has 3 revolute joints labeled 
+
+𝑞 2, 𝑞 3, and 𝑞 4 ∈ S1 connecting 𝐵 1 to 𝐵 2, 𝐵 2 to 𝐵 3, and 𝐵 3 to 𝐵 4,respectively. The other arm is similarly attached, as depicted in Fig. 2, forming an aerial manipulator with 2 parallel arms. Frame 
+
+F𝐵 𝑖 := {𝑥 𝐵 𝑖 , 𝑦 𝐵 𝑖 , 𝑧 𝐵 𝑖 } is placed at 𝐵 𝑖 ’s CoM, while F𝑤 is the in-ertial frame. The configuration of the system is thus described by Q = (C0 
+
+> 𝐵 1
+
+, 𝒒 ) ∈ 𝑆𝐸 (3) × T6, while the configuration velocity is V = (𝑽 0 
+
+> 𝐵 1
+
+,̇ 𝒒 ) ∈ 𝑠𝑒 (3) × 𝑇 𝑞 T6 ≅ 𝑠𝑒 (3) × R6, where 𝑽 0 
+
+> 𝐵 1
+
+is the spatial (right-invariant) base twist. We start by laying down the description of the system needed for the initialization of the algorithms. The graph has 2 branches, each having 3 nodes, amounting to 7 bodies ( 𝑁 = 7). Let 𝑃 (1, 𝑗 ),
+
+𝐸 𝑃 (1, 𝑗 ) , 𝑐 ( 𝑗 ), and 𝑝 ( 𝑗 ) denote the ordered set of nodes (bodies) from 𝐵 1 to 𝐵 𝑗 in Fig. 2(b), the associated directed path (joints) set, the child set of body 𝐵 𝑗 , and the parent set of body 𝐵 𝑗 , respectively. For each 𝑗 ∈ { 1, · · · , 7}, they are given by                                                                                
+
+> 𝑐 (1)={2,5}, 𝑐 (2)={3}, 𝑐 (3)={4}, 𝑐 (5)={6}, 𝑐 (6)={7}, 𝑐 (7)={𝜙 },𝑝 (1)={𝜙 }, 𝑝 (2)={1}, 𝑝 (3)={2}, 𝑝 (4)={3}, 𝑝 (5)={1}, 𝑝 (6)={5}, 𝑝 (7)={6},𝑃 (1,1)={𝐵 1}, 𝑃 (1,2)={𝐵 1, 𝐵 2}, 𝑃 (1,3)={𝐵 1, 𝐵 2, 𝐵 3},𝑃 (1,4)={𝐵 1, 𝐵 2, 𝐵 3, 𝐵 4}, 𝑃 (1,5)={𝐵 1, 𝐵 5}, 𝑃 (1,6)={𝐵 1, 𝐵 5, 𝐵 6},𝑃 (1,7)={𝐵 1, 𝐵 5, 𝐵 6, 𝐵 7}, 𝐸 𝑃 (1,2)={𝑞 2}, 𝐸 𝑃 (1,3)={𝑞 2, 𝑞 3},𝐸 𝑃 (1,4)={𝑞 2, 𝑞 3, 𝑞 4}, 𝐸 𝑃 (1,5)={𝑞 5}, 𝐸 𝑃 (1,6)={𝑞 5, 𝑞 6}, 𝐸 𝑃 (1,7)={𝑞 5, 𝑞 6, 𝑞 7}.
+
+The wrench of propeller 𝑝 𝑖 applied at and expressed in the base frame F𝐵 1 is given by 𝑾 𝐵 1 
+
+> 1, 𝑝 𝑖
+
+∈ 𝑠𝑒 (3)∗:
+
+𝑾 𝐵 1 
+
+> 1, 𝑝 𝑖
+
+= Ad −𝑇 
+
+> C𝐵 1
+> 𝑝 𝑖
+
+𝑾 𝑝 𝑖  
+
+> 1, 𝑝 𝑖
+
+, C𝐵 1 
+
+> 𝑝 𝑖
+
+= C𝑅 𝑧 (( 2 − 𝑖 )𝜋 /3)C𝑇 𝑥 (𝑎 )C𝑅 𝑥 (𝛼 )C𝑅 𝑦 (𝛽 ),𝑖 = {1, · · · , 6}, 𝑾 𝐵 1  
+
+> 𝐵 1,prop
+
+=
+
+> 6
+
+∑︂ 
+
+> 𝑖 =1
+
+𝑾 𝐵 1 
+
+> 1, 𝑝 𝑖
+
+.
+
+Here, 𝛼, 𝛽 ∈ S1 are fixed angles, C𝑅 𝑒 (𝑤 ) denotes a pure rotation transformation around axis 𝑒 with angle 𝑤 , and C𝑇 𝑒 (𝑤 ) denotes a 
+
+Journal of Mechanisms and Robotics / 7 Algorithm 4 H-GHYB-FBS: Higher-Order Geometric Recursive Hybrid Dynamics for Floating-base Systems, extension of [7] 
+
+Input: Alg. 1; J𝑞 , J𝜏 , where J𝑞 ∪ J𝜏 = {2, . . . , 𝑁 };
+
+¯𝒒 (𝑟 +2) 
+
+> 𝑗
+
+∀ 𝑗 ∈ J𝑞 ; ( ¯𝜏 𝑗 ) (𝑟 ) ∀ 𝑗 ∈ J𝜏 ; ( 𝜏 𝑗, ext ) (𝑟 ) ; (𝑾 0 
+
+> 𝑗, app
+
+) (𝑟 ) ;either (𝑾 01,prop ) (𝑟 ) or (𝑽 01 ) (𝑟 +1) .
+
+Output: 𝒒 (𝑟 +2) 
+
+> 𝑗
+
+∀ 𝑗 ∈ J𝜏 ;(𝑾 01,prop ) (𝑟 ) or (𝑽 01 ) (𝑟 +1) ; ( 𝜏 𝑗 ) (𝑟 ) ∀ 𝑗 ∈ J𝑞 ;
+
+(𝑽 0 ) (𝑟 +1) .
+
+Call: Backward (1); % post-order DFS 
+
+function Backward ( 𝑗 )
+
+for ∀𝑖 = 1 : length (𝑐 { 𝑗 } ) do 
+
+Backward (︁ 𝑐 { 𝑗 } ( 𝑖 ))︁ 
+
+end for 
+
+M𝐴 𝑗 = M0 
+
+> 𝑗
+
++∑︂  
+
+> 𝑖 ∈𝑐 {𝑗 }∩ J𝑞
+
+M𝐴 𝑖 +∑︂  
+
+> 𝑖 ∈𝑐 {𝑗 }∩ J𝜏
+
+M𝐴 𝑖 (︂ I − 𝑺 𝑖 (𝑺 𝑇 𝑖 M𝐴 𝑖 𝑺 𝑖 ) −1 𝑺 𝑇 𝑖 M𝐴 𝑖 )︂ .
+
+(𝑾 𝐴 𝑗 ) (𝑟 ) = − ( 𝑾 0 
+
+> 𝑗, app
+
+) (𝑟 ) − ( 𝑾 0 
+
+> 𝑗, grav
+
+) (𝑟 ) + 𝚷 (𝑟 +1)
+
+> 𝑗, bias
+
++∑︂  
+
+> 𝑖 ∈𝑐 {𝑗 }∩ J𝑞
+
+(︂ 
+
+(𝑾 𝐴 𝑖 ) (𝑟 ) + M𝐴 𝑖 (𝑺 𝑖 ¯𝒒 (𝑟 +2) 
+
+> 𝑖
+
++ ( 𝑽 0 
+
+> 𝑖, bias
+
+) (𝑟 +1))︂ 
+
++∑︂  
+
+> 𝑖 ∈𝑐 {𝑗 }∩ J𝜏
+
+(︂ 
+
+(𝑾 𝐴 𝑖 ) (𝑟 ) + M𝐴 𝑖 (𝑺 𝑖 ˜𝒒 (𝑟 +2) 
+
+> 𝑖
+
++ ( 𝑽 0 
+
+> 𝑖, bias
+
+) (𝑟 +1) ))︂ .
+
+where ˜𝒒 (𝑟 +2) 
+
+> 𝑖
+
+, ˜𝝉 (𝑟 ) 
+
+> 𝑖
+
+are from (9) with ( 𝜏 𝑖 ) (𝑟 ) := ( ¯𝜏 𝑖 ) (𝑟 ) for 𝑖 ∈ J𝜏 .
+
+end function Call: Forward (1); % pre-order DFS 
+
+function Forward ( 𝑗 )
+
+if 𝑗 = 1 then if (𝑾 01,prop ) (𝑟 ) is given then 
+
+Solve (𝑾 01,prop ) (𝑟 ) = M𝐴  
+
+> 1
+
+(𝑽 01 ) (𝑟 +1) + ( 𝑾 𝐴  
+
+> 1
+
+) (𝑟 ) for (𝑽 01 ) (𝑟 +1) .
+
+else 
+
+(𝑾 01,prop ) (𝑟 ) := M𝐴  
+
+> 1
+
+(𝑽 01 ) (𝑟 +1) + ( 𝑾 𝐴  
+
+> 1
+
+) (𝑟 ) .
+
+end if else if 𝑗 ∈ J𝜏 then 
+
+𝒒 (𝑟 +2) 
+
+> 𝑗
+
+:= − ( 𝑺 𝑇 𝑗 M𝐴 𝑗 𝑺 𝑗 ) −1 𝑺 𝑇 𝑗 M𝐴 𝑗 (𝑽 0  
+
+> 𝑝 {𝑗 }
+
+) (𝑟 +1) + ˜𝒒 (𝑟 +2) 
+
+> 𝑗
+
+.
+
+else 
+
+𝒒 (𝑟 +2) 
+
+> 𝑗
+
+:= ¯𝒒 (𝑟 +2) 
+
+> 𝑗
+
+.
+
+end if 
+
+(𝑽 0 
+
+> 𝑗
+
+) (𝑟 +1) := (𝑽 0  
+
+> 𝑝 {𝑗 }
+
+) (𝑟 +1) + 𝑺 𝑗 𝒒 (𝑟 +2) 
+
+> 𝑗
+
++ ( 𝑽 0 
+
+> 𝑗, bias
+
+) (𝑟 +1) .
+
+if 𝑗 ∈ J𝑞 then 
+
+(𝑸 𝑗 ) (𝑟 ) :=
+
+> 𝑟
+
+∑︂ 
+
+> 𝑘 =0
+
+(︃ 
+
+𝑟 𝑘 )︃ (𝑺 𝑇 𝑗 ) (𝑟 −𝑘 ) (𝑾 0 
+
+> 𝑗
+
+) (𝑘 ) ;hence ( 𝜏 𝑗 ) (𝑟 ) := (𝑸 𝑗 ) (𝑟 ) − ( 𝜏 𝑗, ext ) (𝑟 ) .
+
+end if end if for ∀𝑖 = 1 : length (𝑐 { 𝑗 } ) do 
+
+Forward (︁ 𝑐 { 𝑗 } ( 𝑖 ))︁ 
+
+end for end function 
+
+pure translation transformation along axis 𝑒 with displacement 𝑤 .The local propeller wrench is 𝑾 𝑝 𝑖 
+
+1, 𝑝 𝑖 = ( 0 0 𝑐 𝑑 𝑖 0 0 𝑐 𝑓 𝑖 )𝑇 𝜔 2
+
+𝑝 𝑖 ,where 𝑐 𝑓 and 𝑐 𝑑 are the thrust and drag coefficients, respectively, and 𝜔 𝑝 𝑖 is the propeller speed (control input). The total propeller wrench in the base frame is denoted 𝑾 𝐵 1
+
+𝐵 1 ,prop . Moreover, joint 
+
+𝑞 𝑗 can have several sources of external torques applied at it, the summation of which is denoted by ¯𝝉 𝑗 .Initially, at home configuration H0 shown in Fig. 2(a), all frames 
+
+F𝐵 𝑗 , 𝑗 = {1, .., 7}, are oriented identically with the world frame F𝑤 
+
+for ease of computation. Thus, the constant home configurations of A𝑝 (𝐵 𝑗 )
+
+𝐵 𝑗 are, with 𝑖 = {2, 5} and 𝑘 = {3, 4, 6, 7}:
+
+A𝐵 𝑝 (𝑖 )
+
+𝐵 𝑖 = C𝑇 𝑧 (− 𝑏 − 𝑑 )C𝑇 𝑥 (︁ (− 1)𝑖 𝑐 
+
+2)︁ , A𝐵 𝑝 (𝑘 )
+
+𝐵 𝑘 = C𝑇 𝑧 (− 2𝑑 ).
+
+Finally, let ¯𝒑 𝑗 = (0, 0, 𝑑 )𝑇 be the position vector in frame F𝐵 𝑗 ,
+
+𝑗 = {2, .., 7}, of a point on the respective joint axis, expressed in 
+
+Table 3 Simulation Parameters.    
+
+> Category Symbol Value / definition
+> Simulation horizon and dynamics orders
+> Simulation horizon
+
+𝑇 30 s  
+
+> Time step
+
+Δ𝑡 0.01 s  
+
+> Number of algorithm calls
+
+𝑁 𝑡 3000  
+
+> Orders
+
+𝑟 0, 1, 2, 3, 4, 5 
+
+> Base reference pose (used to generate
+
+C0 
+
+> 𝐵 1
+
+(𝑡 )) 
+
+> Position: Planar circle at
+
+𝑧 = 0 with radius − 1.0 m  
+
+> Position: Trajectory phase
+
+− 2 𝜋 /20 rad /s 
+
+> Attitude: Yaw angular frequency
+
+− 2 𝜋 /30 rad /s 
+
+> Attitude: Yaw amplitude
+
+− 25 ◦ 
+
+> Joint reference trajectories (half-cosine),
+
+𝑗 ∈ { 2, . . . , 7} 
+
+> Trajectory form
+
+𝑞 𝑗 (𝑡 ) 𝑞 0, 𝑗 + 𝜂 𝑗 
+
+2(︁ 1 − cos ( 𝜋𝑡 /𝑇 ))︁  
+
+> Initial joint angles
+
+𝒒 0 deg2rad ( [ 0, 10 , −5, 15 , −10 , 7, −12 ] )  
+
+> Half-cosine amplitudes
+
+𝜼 deg2rad ( [ 0, 60 , 50 , 40 , 55 , 45 , 35 ] )  
+
+> Geometry at home configuration (used in
+
+A𝐵 𝑝 ( 𝑗 )  
+
+> 𝐵 𝑗 and
+
+Y𝑗 ) 
+
+> Vertical offsets
+
+𝑏, 𝑑 𝑏 = 0.10 m , 𝑑 = 0.06 m  
+
+> Arm lateral spacing
+
+𝑐 𝑐 = 0.18 m  
+
+> Base home constant transform
+
+A0 
+
+> 𝐵 1
+
+A0 
+
+> 𝐵 1
+
+= I4 
+
+> Inertial parameters (used in
+
+M𝑏 𝐵 𝑗 ), with 𝑗 ∈ { 2, . . . , 7} 
+
+> Base mass
+
+𝑚 𝐵 1 2.5 kg  
+
+> Base angular moment of inertia
+
+J𝐵 1 diag (0.03 , 0.03 , 0.05 ) kg m 2 
+
+> Link mass
+
+𝑚 𝐵 𝑗 0.25 kg  
+
+> Link angular moment of inertia
+
+J𝐵 𝑗 diag (0.002 , 0.002 , 0.001 ) kg m 2 
+
+> Body-fixed inertia tensor at CoM
+
+M𝑏 𝐵 𝑗 M𝑏 𝐵 𝑗 =[︄ J𝐵 𝑗 00 𝑚 𝐵 𝑗 I3]︄  
+
+> External wrenches/torques
+
+∀ 𝑗  
+
+> External body wrenches
+
+𝑾 0 (𝑘 ) 
+
+> 𝐵 𝑗 ,app
+
+𝑾 0 (𝑘 ) 
+
+> 𝐵 𝑗 ,app
+
+= 0, 𝑘 = 0, . . . , 𝑟 
+
+the inertial frame F𝑤 at the home configuration H0:
+
+𝒆 𝑖 = (0, 1, 0)𝑇 , 𝒆 𝑘 = (1, 0, 0)𝑇 , 𝒆 𝑙 = (0, 0, 1)𝑇 ,
+
+where 𝑖 = {2, 5}, 𝑘 = {3, 6}, and 𝑙 = {4, 7}.
+
+7.2 H-GRNE-FBS Algorithm (𝒓 = {0, 1}) : Forward Re-cursion. Algorithm 1 yields C0
+
+𝐵 𝑗 and the (𝑟 + 2)-th order kine-matics (𝑽 0
+
+𝐵 𝑗 ) (𝑟 +1) and instantaneous screws 𝑺 (𝑟 +1)
+
+𝑞 𝑗 for each 𝑗 =
+
+{2, · · · , 7}. The forward kinematics of each body up to the 3rd order are computed by evaluating the expressions, for each 
+
+𝑗 ∈ 𝑃 (1, 4) and 𝑗 ∈ 𝑃 (1, 7) in parallel starting from 1 until reach-ing 4 and 7, respectively, shown in Table 5( a). The constant spatial (right-invariant) screws Y𝑗 ∈ 𝑠𝑒 (3), measured in the home config-uration H0 and represented in the inertial frame F𝑤 , are computed using (3) from quantities in the 0-th order kinematics. Since they are constant, they only need to be computed once. The time deriva-tives of M0
+
+𝐵 𝑗 are obtained from (E2). At the end of the backward recursion, the inverse dynamics and their first derivatives for each body are obtained. 
+
+7.3 H-GRNE-FBS Algorithm (𝒓 = {0, 1}) : Backward Re-cursion. Running Algorithm 2 up to the 1st order yields the equations of motion and their first time derivatives by executing these computations, displayed in Table 5( b), in parallel for each 
+
+𝑗 ∈ 𝑃 (4, 1) and 𝑗 ∈ 𝑃 (7, 1), starting from 4 and 7, respectively, and ending at 1. The time derivatives of the spatial momentum 𝚷 0
+
+𝐵 𝑗 , the gravita-tional wrench 𝑾 0grav ,𝐵 𝑗 , and the external wrench 𝑾 0ext ,𝐵 𝑗 applied at body 𝐵 𝑗 are given by (E3), (E4), and (E5), respectively. Observe that the 1-st order inverse dynamics block requires computing the 0-th order recursion first, as 𝑸 𝐵 𝑗 is passed from 𝑟 = 0 to 𝑟 = 1.As mentioned in Sec. 4, the equations of motion can be written in the conventional EoM form using the child and parent Boolean 
+
+8 / Transactions of the ASME Table 4 Benchmark setup. Model: aerial manipulator in Fig. 2 with NB =5 branches; kinematic and dynamics parameters are in Table 3. CasADi benchmark measures evaluation time of the r-differentiated dynamics; Automatic differentiation occurs once per r > 0 via built-in jtimes(dy,t,1) outside the timed loop.                                                                                                                                                              
+
+> Benchmark Setting Value / definition
+> H-GRNE-FBS Sweeps vs 𝑁 :𝑁 =1+5𝑁 BOD ,𝑁 BOD ∈ [ 1,199 ]per branch ( 𝑁 ≤996 ), total 100 sweeps per 𝑟 ,𝑟 ∈ { 0, . . . , 5}; vs 𝑟 : fixed 𝑁 =101 ,𝑟 ∈ { 0, . . . , 10 }.H-GRNE-FBS Inputs (C0_1,V0_1_derivs,q_derivs,W_app,r) with 𝐶 0_1=I4,𝑊 app =0,𝑉 0_1_𝑑𝑒𝑟𝑖𝑣𝑠 ∈R6×12 and 𝑞 _𝑑𝑒𝑟𝑖𝑣𝑠 ∈R𝑁 ×13 chosen randomly per sweep. H-GABI-FBS Sweeps vs 𝑁 : same 𝑁 range, 𝑟 ∈ { 0, . . . , 5}; vs 𝑟 : fixed 𝑁 =101 ,𝑟 ∈ { 0, . . . , 10 }.H-GABI-FBS Inputs (C0_1,V0_1,q0,qdot,Wprop,tau_bar,W_app,r) with 𝐶 0_1=I4,𝑉 0_1=0,𝑞, ̇𝑞 randomly chosen per sweep, and 𝜏 =0,𝑊 prop =0,𝑊 app =0.CasADi ID Problem size / orders Fixed 𝑁 =101 ,𝑟 ∈ { 0, . . . , 8},𝑁 rep =1000 , warmup =5, JIT disabled. CasADi ID Timing For each 𝑟 :build Function f(t,p){dy} once and time repeated evaluation f({t0,Pdm[i]}) .Here 𝑑𝑦 =𝑑 𝑟 𝑑𝑡 𝑟 𝑦 (𝑡 )obtained by repeated built-in
+> jtimes(dy,t,1) (performed outside the timing loop). CasADi FD Problem size / orders Fixed 𝑁 =101 ,𝑟 ∈ { 0, . . . , 8},𝑁 rep =1000 , warmup =5, JIT disabled. CasADi FD Timing For each 𝑟 : time evaluation of Function f(t,p){dy} at 𝑡 0=0with random p;𝑑𝑦 =𝑑 𝑟 𝑑𝑡 𝑟 𝑦 (𝑡 )generated once per 𝑟 via jtimes . The FD graph includes CasADi built-ins mtimes and solve (for base twist). All Timing metric Mean seconds/call: elapsed_time/1000 .
+
+matrices G𝑐 and G𝑝 :
+
+G𝑝 =
+
+⎛⎜⎜⎜⎜⎜⎜⎜⎜⎝
+
+I6 06 06 06 06 06 06
+
+I6 I6 06 06 06 06 06
+
+I6 I6 I6 06 06 06 06
+
+I6 I6 I6 I6 06 06 06
+
+I6 06 06 06 I6 06 06
+
+I6 06 06 06 I6 I6 06
+
+I6 06 06 06 I6 I6 I6
+
+⎞⎟⎟⎟⎟⎟⎟⎟⎟⎠
+
+, G𝑐 = G𝑇 𝑝 .
+
+7.4 H-GABI-FBS Algorithm (𝒓 = {0, 1}) : Backward Re-cursion. Running Algorithms 3 yields the 0-th order forward dy-namics (̇ 𝑽 0
+
+𝐵 1 ,̈ 𝒒 𝑗 ) and their time derivatives (̈ 𝑽 0
+
+𝐵 1 ,⃛ 𝒒 𝑗 ) for each body in the graph of Fig. 2(b). Table 5( c) illustrates the backward re-cursion, executed in parallel for each 𝑗 ∈ 𝑃 (4, 1) and 𝑗 ∈ 𝑃 (7, 1),starting from 4 and 7, respectively, and ending at 1. Observe that the 1-st order forward dynamics block requires calculating both the backward and forward recursions of the 0-th order forward dynamics first, as (̇ 𝑽 0
+
+𝐵 1 ,̈ 𝒒 𝑗 ) and (M𝐴 𝐵 𝑗 , 𝑾 𝐴 𝐵 𝑗 ) are passed forward from 𝑟 = 0 to 𝑟 = 1.
+
+7.5 H-GABI-FBS Algorithm (𝒓 = {0, 1}) : Forward Recur-sion. The algorithm concludes by executing the expressions in Ta-ble 5( d) for each 𝑗 ∈ 𝑃 (1, 4) and 𝑗 ∈ 𝑃 (1, 7) in parallel, starting from 1 until reaching 4 and 7, respectively. 
+
+8 Conclusion 
+
+We presented novel extensions of the three widely-used 𝑂 (𝑁 )
+
+algorithms in the literature on rigid-body dynamics—the recur-sive Newton-Euler algorithm for inverse dynamics, the Articu-lated Body Inertia method for forward dynamics and hybrid dy-namics algorithm—that compute geometrically-exact higher-order forward and inverse dynamics for floating-base open kinematics systems, where the base configuration is in 𝑆𝐸 (3), in a compact and computationally-efficient form. This is accomplished draw-ing upon tools from lie groups and screw theory extending the approaches in [7,32,54] which are intended for fixed-base manip-ulators or a floating-base system with some parameterization of 
+
+𝑆𝐸 (3). Closed-form EoM and their first time derivatives were then derived from quantities evaluated in the recursive algorithm. We also showed how an admissible Coriolis matrix satisfying the passivity property can conveniently be constructed from such quan-tities. An interesting insight reducing computational burden is that the articulated body inertia assumes the same value in any or-der. Moreover, the developed theory is applied to simulate the higher order dynamics of a 12-DoF floating base system, show-ing a successful comparably fast implementation of the algorithms. Benchmarking indicates our methods can be applied in practice and preferable over automatic differentiation since they converge faster and scale better. Future work may focus on expanding the class of floating-base systems considered herein to include the case of floating-base systems with closed kinematics chains similar to [64], and where the attached mechanism having a different configuration than the manifold T𝑛 1 × R𝑛 2 , adapting these algorithms to compute the partial derivatives of the higher-order forward dynamics, and carrying a comparison against body-frame or hybrid-frame higher-order formulations for the considered class of robots to highlight the trade-offs in compactness and computational complexities. 
+
+Acknowledgement 
+
+This work was partially funded by the Horizon Europe research agreement no. 101120732 (AUTOASSESS) and by the NWO OTP project AVIATOR. 
+
+References 
+
+[1] Bottema, O. and Roth, B., 1990, Theoretical kinematics , Vol. 24, Courier Cor-poration. [2] Siciliano, B., Sciavicco, L., Villani, L., and Oriolo, G., 2010, Robotics: Mod-elling, Planning and Control , Advanced Textbooks in Control and Signal Pro-cessing, Springer London. [3] Angeles, J., 2003, Fundamentals of robotic mechanical systems: theory, meth-ods, and algorithms , Springer. [4] Hollerbach, J. M., 1980, “A Recursive Lagrangian Formulation of Maniputator Dynamics and a Comparative Study of Dynamics Formulation Complexity,” IEEE Transactions on Systems, Man, and Cybernetics, 10 (11), pp. 730–736. [5] Stepanenko, Y. and Vukobratović, M., 1976, “Dynamics of articulated open-chain active mechanisms,” Mathematical Biosciences, 28 (1), pp. 137–170. [6] Orin, D., McGhee, R., Vukobratović, M., and Hartoch, G., 1979, “Kinematic and kinetic analysis of open-chain linkages utilizing Newton-Euler methods,” Mathematical Biosciences, 43 (1), pp. 107–130. [7] Featherstone, R., 2014, Rigid body dynamics algorithms , Springer. [8] Jain, A., 2010, Robot and multibody dynamics: analysis and algorithms ,Springer Science & Business Media. [9] Lilly, K. W. and Orin, D. E., 2002, “Efficient O (n) recursive computation of the operational space inertia matrix,” IEEE Transactions on Systems, Man, and Cybernetics, 23 (5), pp. 1384–1391. [10] Rodriguez, G., 1987, “Kalman filtering, smoothing, and recursive robot arm forward and inverse dynamics,” IEEE Journal on Robotics and Automation, 
+
+3(6), pp. 624–639. [11] Rodriguez, G. and Kreutz-Delgado, K., 1992, “Spatial operator factorization and inversion of the manipulator mass matrix,” IEEE Transactions on Robotics and Automation, 8(1), pp. 65–76. [12] Paul, B., 1975, “Analytical dynamics of mechanisms—a computer oriented overview,” Mechanism and Machine Theory, 10 (6), pp. 481–507. [13] Orlandea, N., Chace, M. A., and Calahan, D. A., 1977, “A Sparsity-Oriented Approach to the Dynamic Analysis and Design of Mechanical Systems—Part 1,” Journal of Engineering for Industry, 99 (3), pp. 773–779. [14] Lee, K. and Chirikjian, G. S., 2005, “A new perspective on O (n) mass-matrix inversion for serial revolute manipulators,” Proceedings of the 2005 IEEE Inter-national Conference on Robotics and Automation , IEEE, pp. 4722–4726. [15] Khalil, W., Boyer, F., and Morsli, F., 2017, “General Dynamic Algorithm for Floating Base Tree Structure Robots With Flexible Joints and Links,” Journal of Mechanisms and Robotics, 9(3), p. 031003. [16] Tang, C., Li, P., Zhou, G., Meng, D., Shu, X., Guo, S., and Li, Z., 2019, “Modeling and Mechanical Analysis of Snake Robots on Cylinders,” Journal of Mechanisms and Robotics, 11 (4), p. 041013. [17] Fass, T. H., Hao, G., and Cantillon-Murphy, P., 2022, “Vectorized Formula-tion of Newton-Euler Dynamics for Efficiently Computing Three-Dimensional Folding Chains,” Journal of Mechanisms and Robotics, 14 (6), p. 060911. [18] Do, T.-T., Vu, V.-H., and Liu, Z., 2021, “Symbolic Differentiation Algorithm for Inverse Dynamics of Serial Robots With Flexible Joints,” Journal of Mechanisms and Robotics, 13 (6), p. 064501. 
+
+Journal of Mechanisms and Robotics / 9 0 10 20 30 -1 01p [m] x y z0 10 20 30 -20 020 [deg] 0 10 20 30 -0.1 00.1 [deg/s] x y z0 10 20 30 -0.02 00.02 (1)  [deg/s  2 ]0 10 20 30 -5 05(2)  [deg/s  3 ] 10 -3 0 10 20 30 -1 01(3)  [deg/s  4 ]10 -3 0 10 20 30 -2 02(4)  [deg/s  5 ]10 -4 0 10 20 30 -5 05(5)  [deg/s  6 ]10 -5 0 10 20 30 -1 01(6)  [deg/s  7 ]10 -5 0 10 20 30 -0.5 00.5 v [m/s] v x v y v z0 10 20 30 -0.1 00.1 v (1)  [m/s  2 ]0 10 20 30 -0.05 00.05 v (2)  [m/s  3 ]0 10 20 30 -0.02 00.02 v (3)  [m/s  4 ]0 10 20 30 -5 05v (4)  [m/s  5 ]10 -3 0 10 20 30 -2 02v (5)  [m/s  6 ]10 -3 0 10 20 30 -1 01v (6)  [m/s  7 ]10 -3 0 10 20 30 020 40 60 q [deg] j2 j3 j4 j5 j6 j7 0 10 20 30 0123q (1)  [deg/s] 0 10 20 30 Time [s] -0.2 00.2 q (2)  [deg/s  2 ]0 10 20 30 Time [s] -0.04 -0.02 0q (3)  [deg/s  3 ]0 10 20 30 Time [s] -5 05q (4)  [deg/s  4 ]10 -3 0 10 20 30 Time [s] 024q (5)  [deg/s  5 ]10 -4 0 10 20 30 Time [s] -5 05q (6)  [deg/s  6 ]10 -5 0 10 20 30 Time [s] -4 -2 0q (7)  [deg/s  7 ]10 -6 (a) Input to H-GRNE-FBS (solid) and output of H-GABI-FBS (dashed) for r = 0 to r = 50 10 20 30 -50 050 B 1[Nm] x y z0 10 20 30 -10 010 (1) B 1[Nm/s] 0 10 20 30 -5 05(2) B 1[Nm/s  2 ]0 10 20 30 -1 01(3) B 1[Nm/s  3 ]0 10 20 30 -0.5 00.5 (4) B 1[Nm/s  4 ]0 10 20 30 -0.1 00.1 (5) B 1[Nm/s  5 ]0 10 20 30 020 40 f [N] f x f y f z0 10 20 30 -0.1 00.1 f (1)  [N/s] 0 10 20 30 -0.05 00.05 f (2)  [N/s  2 ]0 10 20 30 -0.01 00.01 f (3)  [N/s  3 ]0 10 20 30 -5 05f (4)  [N/s  4 ]10 -3 0 10 20 30 -1 01f (5)  [N/s  5 ]10 -3 0 10 20 30 00.5 1j [Nm] j2 j3 j4 j5 j6 j7 0 10 20 30 Time [s] 00.02 0.04 0.06 j(1)  [Nm/s] 0 10 20 30 Time [s] -0.01 00.01 j(2)  [Nm/s  2 ]0 10 20 30 Time [s] -2 -1 01j(3)  [Nm/s  3 ]10 -3 0 10 20 30 Time [s] -5 05j(4)  [Nm/s  4 ]10 -4 0 10 20 30 Time [s] -2 024j(5)  [Nm/s  5 ]10 -4 
+
+(b) Output of H-GRNE-FBS (which is given as input to H-GABI-FBS as well) for r = 0 to r = 5
+
+Fig. 3 Inputs and outputs of H-GRNE-FBS and H-GABI-FBS up to order r = 5. 𝑾 0
+
+B1,prop = (τB1 , f ) is ob-tained via Q1 while τj is joint j torque given by Qj from Alog. 2. Output of H-GABI-FBS up to r=5 is shown in dashed lines in (a). Observe that it retrieved back the input trajectories, as demonstrated by the dashed trajecto-ries coinciding with their solid counterparts in (a), when given the state (C 0
+
+B1 (t ),V 0
+
+B1 (t ), q (t )) , base wrench and joint torques in (b), verifying successful operation of our higher-order algorithms. For r = 0, . . . , 5, the average run-time per call for H-GRNE-FBS is (2.326 , 3.078 , 2.867 , 4.355 , 5.960 , 8.171 )[ μs], respectively, while for H-GABI-FBS it is 
+
+(4.106 , 4.802 , 6.486 , 6.461 , 8.589 , 11 .085 )[ μs], respectively. 
+
+10 / Transactions of the ASME Table 5 Application of H-GRNE-FBS and H-GABI-FBS to aerial manipulator in Fig. 2 
+
+(a) Recursive Kinematic Relations up to Third Order 
+
+0-th Order (Position Kinematics) 1-st Order (Velocity Kinematics) 
+
+A0
+
+𝐵 𝑗 =∏︁ 𝐵 𝑖 ∈ 𝑃 (1, 𝑗 ) A𝐵 𝑝 (𝑖 )
+
+𝐵 𝑖 , F𝐵 𝑗 = exp (Y𝑗 𝑞 𝑗 ), F𝐵 1 = I4 𝑽 0
+
+𝐵 𝑗 = 𝑽 0
+
+𝐵 1 +∑︁ 𝑖 ∈𝐸 𝑃 (1, 𝑗 ) 𝑺 𝑞 𝑖 ̇ 𝑞 𝑖 
+
+C0
+
+𝐵 𝑗 = C0
+
+𝐵 1(︂∏︁ 𝐵 𝑖 ∈ 𝑃 (1, 𝑗 ) F𝐵 𝑖 )︂ A0
+
+𝐵 𝑗 𝚷 0
+
+𝐵 𝑗 = M0
+
+𝐵 𝑗 𝑽 0
+
+𝐵 𝑗 
+
+( 𝑝 𝑗 1)𝑇 = A0
+
+𝐵 𝑗 ( ¯𝒑 𝑗 1)𝑇 , Y𝑗 = (𝒆 𝑗 , [ 𝑝 𝑗 ]𝒆 𝑗 ), 𝑺 𝑞 𝑗 =
+
+Ad C0 
+
+> 𝐵 𝑗
+
+(A0 
+
+> 𝐵 𝑗
+
+) −1 Y𝑗 ̇
+
+𝑺 𝑞 𝑗 = ad 𝑽 0
+
+> 𝐵 𝑗
+
+𝑺 𝑞 𝑗 
+
+2-nd Order (Acceleration Kinematics) 3-rd Order (Jerk Kinematics) ̇
+
+𝑽 0
+
+𝐵 𝑗 =̇ 𝑽 0
+
+𝐵 1 +∑︁ 𝑖 ∈𝐸 𝑃 (1, 𝑗 ) (𝑺 𝑞 𝑖 ̈𝑞 𝑖 +̇ 𝑺 𝑞 𝑖 ̇ 𝑞 𝑖 )̈ 𝑽 0
+
+𝐵 𝑗 =̈ 𝑽 0
+
+𝐵 1 +∑︁ 𝑖 ∈𝐸 𝑃 (1, 𝑗 ) (𝑺 𝑞 𝑖 ⃛𝑞 𝑖 + 2̇ 𝑺 𝑞 𝑖 ̈𝑞 𝑖 +̈ 𝑺 𝑞 𝑖 ̇ 𝑞 𝑖 )̇
+
+𝚷 0
+
+𝐵 𝑗 = M0
+
+𝐵 𝑗 ̇ 𝑽 0
+
+𝐵 𝑗 +̇ M0
+
+𝐵 𝑗 𝑽 0
+
+𝐵 𝑗 ̈ 𝚷 0
+
+𝐵 𝑗 = M0
+
+𝐵 𝑗 ̈ 𝑽 0
+
+𝐵 𝑗 + 2̇ M0
+
+𝐵 𝑗 ̇ 𝑽 0
+
+𝐵 𝑗 +̈ M0
+
+𝐵 𝑗 𝑽 0
+
+𝐵 𝑗 ̈
+
+𝑺 𝑞 𝑗 = ad ̇𝑽 0
+
+> 𝐵 𝑗
+
+𝑺 𝑞 𝑗 + ad 𝑽 0
+
+> 𝐵 𝑗
+
+̇ 𝑺 𝑞 𝑗 ⃛ 𝑺 𝑞 𝑗 = ad ̈𝑽 0
+
+> 𝐵 𝑗
+
+𝑺 𝑞 𝑗 + 2 ad ̇𝑽 0
+
+> 𝐵 𝑗
+
+̇ 𝑺 𝑞 𝑗 + ad 𝑽 0
+
+> 𝐵 𝑗
+
+̈ 𝑺 𝑞 𝑗 
+
+(b) Recursive Inverse Dynamics Relations up to First Order 
+
+0-th Order Inverse Dynamics 1-st Order Inverse Dynamics 
+
+˜𝑾 𝑗 =̇ 𝚷 0
+
+𝐵 𝑗 − 𝑾 0grav ,𝐵 𝑗 − 𝑾 0ext ,𝐵 𝑗 , 𝑸 𝑗 = ˜𝑾 𝑗 +∑︁ 𝑖 ∈𝑐 ( 𝑗 ) 𝑸 𝑖 ̇ ˜𝑾 𝑗 =̈ 𝚷 0
+
+𝐵 𝑗 −̇ 𝑾 0grav ,𝐵 𝑗 −̇ 𝑾 0ext ,𝐵 𝑗 ,̇ 𝑸 𝑗 =̇ ˜𝑾 𝑗 +∑︁ 𝑖 ∈𝑐 ( 𝑗 )̇ 𝑸 𝑖 
+
+¯𝝉 𝑗 = 𝑺 𝑇 𝑞 𝑗 𝑸 𝑗 ̇ ¯𝝉 𝑗 =̇ 𝑺 𝑇 𝑞 𝑗 𝑸 𝑗 + 𝑺 𝑇 𝑞 𝑗 ̇ 𝑸 𝑗 
+
+When 𝑗 = 1: 𝑾 𝐵 1
+
+𝐵 1 ,prop = Ad 𝑇 
+
+C0
+
+> 𝐵 1
+
+𝑸 𝐵 1 When 𝑗 = 1:̇ 𝑾 𝐵 1
+
+𝐵 1 ,prop = Ad 𝑇 
+
+C0
+
+> 𝐵 1
+
+(︃ 
+
+ad 𝑇 
+
+𝑽 0
+
+> 𝐵 1
+
+𝑸 𝐵 1 +̇ 𝑸 𝐵 1)︃ 
+
+(c) Recursive Forward Dynamics (Backward Recursion) up to First Order 
+
+0-th Order Forward Dynamics (Backward Recursion) 1-st Order Forward Dynamics (Backward Recursion) 
+
+˜𝑾 𝐵 𝑗 = − ad 𝑇 
+
+𝑽 0
+
+> 𝐵 𝑗
+
+M0
+
+𝐵 𝑗 𝑽 0
+
+𝐵 𝑗 − 𝑾 0grav ,𝐵 𝑗 − 𝑾 0ext ,𝐵 𝑗 ,
+
+˜M𝐵 𝑗 = M0
+
+𝐵 𝑗 ,
+
+M𝐴 𝐵 𝑗 = ˜M𝐵 𝑗 +∑︂ 
+
+𝑖 ∈𝑐 ( 𝑗 )(︂ 
+
+M𝐴 𝐵 𝑖 − M𝐴 𝐵 𝑖 𝑺 𝑞 𝑖 (︁ 𝑺 𝑇 𝑞 𝑖 M𝐴 𝐵 𝑖 𝑺 𝑞 𝑖 )︁ −1 𝑺 𝑇 𝑞 𝑖 M𝐴 𝐵 𝑖 )︂ ,
+
+𝑾 𝐴 𝐵 𝑗 = ˜𝑾 𝐵 𝑗 +∑︂ 
+
+𝑖 ∈𝑐 ( 𝑗 )
+
+𝑾 𝐴 𝐵 𝑖 + M𝐴 𝐵 𝑖 (︁ 𝑺 𝑞 𝑖 ̈ ˜𝑞 𝑖 +̇ 𝑺 𝑞 𝑖 ̇ 𝑞 𝑖 )︁ ,̈
+
+˜𝑞 𝑖 =(︁ 𝑺 𝑇 𝑞 𝑖 M𝐴 𝐵 𝑖 𝑺 𝑞 𝑖 )︁ −1(︂ ¯𝝉 𝑖 − 𝑺 𝑇 𝑞 𝑖 (︁ M𝐴 𝐵 𝑖 ̇ 𝑺 𝑞 𝑖 ̇ 𝑞 𝑖 + 𝑾 𝐴 𝐵 𝑖 )︁)︂ ̇˜𝑾 𝐵 𝑗 = 2̇ M0
+
+𝐵 𝑗 ̇ 𝑽 0
+
+𝐵 𝑗 +̈ M0
+
+𝐵 𝑗 𝑽 0
+
+𝐵 𝑗 −̇ 𝑾 0grav ,𝐵 𝑗 −̇ 𝑾 0ext ,𝐵 𝑗 ,̇
+
+𝑾 𝐴 𝐵 𝑗 =̇ ˜𝑾 𝐵 𝑗 +∑︂ 
+
+𝑖 ∈𝑐 ( 𝑗 )̇
+
+𝑾 𝐴 𝐵 𝑖 + M𝐴 𝐵 𝑖 (︁ 𝑺 𝑞 𝑖 ⃛ ˜𝑞 𝑖 + 2̇ 𝑺 𝑞 𝑖 ̈𝑞 𝑖 +̈ 𝑺 𝑞 𝑖 ̇ 𝑞 𝑖 )︁ ,⃛
+
+˜𝑞 𝑖 =(︁ 𝑺 𝑇 𝑞 𝑖 M𝐴 𝐵 𝑖 𝑺 𝑞 𝑖 )︁ −1(︂ ̇ ¯𝝉 𝑖 −̇ ˜𝝉 𝑖 − 𝑺 𝑇 𝑞 𝑖 (︁ M𝐴 𝐵 𝑖 (2̇ 𝑺 𝑞 𝑖 ̈𝑞 𝑖 
+
++̈ 𝑺 𝑞 𝑖 ̇ 𝑞 𝑖 ) + ̇ 𝑾 𝐴 𝐵 𝑖 )︁)︂ ,̇˜𝝉 𝑖 =̇ 𝑺 𝑇 𝑞 𝑖 (︁ M𝐴 𝐵 𝑖 ̇ 𝑽 0
+
+𝐵 𝑖 + 𝑾 𝐴 𝐵 𝑖 )︁ 
+
+(d) Recursive Forward Dynamics (Forward Recursion) up to First Order 
+
+0-th Order Forward Dynamics (Forward Recursion) 1-st Order Forward Dynamics (Forward Recursion) 
+
+when 𝑗 = 1 : ̇ 𝑽 0
+
+𝐵 1 = (M𝐴 𝐵 1 )−1(︂ Ad −𝑇 
+
+C0
+
+> 𝐵 1
+
+𝑾 𝐵 1
+
+𝐵 1 ,prop − 𝑾 𝐴 𝐵 1)︂ ,̈
+
+𝒒 𝑗 = −(︁ 𝑺 𝑇 𝑞 𝑗 M𝐴 𝐵 𝑗 𝑺 𝑞 𝑗 )︁ −1 𝑺 𝑇 𝑞 𝑗 M𝐴 𝐵 𝑗 ̇ 𝑽 0
+
+𝐵 𝑝 ( 𝑗 ) +̈ ˜𝒒 𝑗 ,̇
+
+𝑽 0
+
+𝐵 𝑗 =̇ 𝑽 0
+
+𝐵 1 +∑︂ 
+
+𝑖 ∈𝐸 𝑃 (1, 𝑗 )(︁ 
+
+𝑺 𝑞 𝑖 ̈𝑞 𝑖 +̇ 𝑺 𝑞 𝑖 ̇ 𝑞 𝑖 )︁ 
+
+when 𝑗 = 1 : ̈ 𝑽 0
+
+𝐵 1 = (M𝐴 𝐵 1 )−1(︂ Ad −𝑇 
+
+C0
+
+> 𝐵 1
+
+̇ 𝑾 𝐵 1
+
+𝐵 1 ,prop −̇ 𝑾 𝐴 𝐵 1
+
+− ad 𝑇 
+
+𝑽 0
+
+> 𝐵 1
+
+(M𝐴 𝐵 1̇ 𝑽 0
+
+𝐵 1 + 𝑾 𝐴 𝐵 1 ))︂ ,⃛
+
+𝒒 𝑗 = −(︁ 𝑺 𝑇 𝑞 𝑗 M𝐴 𝐵 𝑗 𝑺 𝑞 𝑗 )︁ −1 𝑺 𝑇 𝑞 𝑗 M𝐴 𝐵 𝑗 ̈ 𝑽 0
+
+𝐵 𝑝 ( 𝑗 ) +⃛ ˜𝒒 𝑗 ,̈
+
+𝑽 0
+
+𝐵 𝑗 =̈ 𝑽 0
+
+𝐵 1 +∑︂ 
+
+𝑖 ∈𝐸 𝑃 (1, 𝑗 )(︁ 
+
+𝑺 𝑞 𝑖 ⃛𝑞 𝑖 + 2̇ 𝑺 𝑞 𝑖 ̈𝑞 𝑖 +̈ 𝑺 𝑞 𝑖 ̇ 𝑞 𝑖 )︁ 
+
+Journal of Mechanisms and Robotics / 11 0 1 2 3 4 5 6 7 8 9 10      
+
+> r
+> 012345
+> Time per call [s]
+> 10 -4
+> 0200 400 600 800 1000
+> Number of bodies N
+> 00.5 11.5
+> Time per call [s]
+> 10 -3
+> r=5
+> r=3
+> r=0
+> r=4
+> r=2
+> r=1
+
+(a) H-GRNE-FBS 0 1 2 3 4 5 6 7 8 9 10      
+
+> r
+> 0123456
+> Time per call [s]
+> 10 -4
+> 0200 400 600 800 1000
+> Number of bodies N
+> 00.5 11.5 22.5
+> Time per call [s]
+> 10 -3
+> r=0
+> r=1
+> r=2
+> r=3
+> r=4
+> r=5
+
+(b) H-GABI-FBS 0 1 2 3 4 5 6 7 8
+
+r
+
+00.25 0.5 0.75 11.25 1.5 1.75 22.25 2.5 
+
+> Time per call [s]
+> FD ID
+
+10 -3 
+
+(c) CasADi 
+
+Fig. 4 Benchmark results demonstrate that time differen-tiating geometric dynamics of floating-base robots through our proposed methods becomes significantly faster than au-tomatic differentiation when the order increases for the same tree size. 
+
+[19] Brockett, R. W., 2005, “Robotic manipulators and the product of exponen-tials formula,” Mathematical Theory of Networks and Systems: Proceedings of the MTNS-83 International Symposium Beer Sheva, Israel, June 20–24, 1983 ,Springer, pp. 120–129. [20] Davidson, J. K., Hunt, K. H., and Pennock, G. R., 2004, “Robots and screw theory: applications of kinematics and statics to robotics,” J. Mech. Des., 126 (4), pp. 763–764. [21] Murray, R. M., Li, Z., and Sastry, S. S., 2017, A mathematical introduction to robotic manipulation , CRC press. [22] Lynch, K., 2017, Modern Robotics , Cambridge University Press. [23] Hervé, J., 1999, “The Lie group of rigid body displacements, a fundamental tool for mechanism design,” Mechanism and Machine Theory, 34 (5), pp. 719–730. [24] Müller, A., 2022, “An Analytic and Computational Condition for the Finite Degree-of-Freedom of Linkages, and Its Relation to Lie Group Methods,” Jour-nal of Mechanisms and Robotics, 14 (4), p. 041011. [25] Duindam, V. and Stramigioli, S., 2008, “Singularity-Free Dynamic Equations of Open-Chain Mechanisms With General Holonomic and Nonholonomic Joints,” IEEE Transactions on Robotics, 24 (3), pp. 517–526. [26] Garofalo, G., Henze, B., Englsberger, J., and Ott, C., 2015, “On the inertially decoupled structure of the floating base robot dynamics,” IFAC-PapersOnLine, 
+
+48 (1), pp. 322–327, 8th Vienna International Conference on Mathematical Mod-elling. [27] Orin, D. E., Goswami, A., and Lee, S.-H., 2013, “Centroidal dynamics of a humanoid robot,” Autonomous robots, 35 , pp. 161–176. [28] Park, F. C., Bobrow, J. E., and Ploen, S. R., 1995, “A Lie group formulation of robot dynamics,” The International journal of robotics research, 14 (6), pp. 609–618. [29] Geradin, M. and Cardona, A., 2001, Flexible multibody dynamics: A finite element approach , John Wiley. [30] 2011, Two Lie Group Formulations for Dynamic Multibody Systems With Large Rotations , Vol. Volume 4: 8th International Conference on Multibody Systems, Nonlinear Dynamics, and Control, Parts A and B of International Design Engi-neering Technical Conferences and Computers and Information in Engineering Conference. [31] Sonneville, V. and Brüls, O., 2014, “A Formulation on the Special Euclidean Group for Dynamic Analysis of Multibody Systems,” Journal of Computational and Nonlinear Dynamics, 9(4), p. 041002. [32] Ploen, S. and Park, F., 1999, “Coordinate-invariant algorithms for robot dynam-ics,” IEEE Transactions on Robotics and Automation, 15 (6), pp. 1130–1135. [33] Park, F. C., Kim, B., Jang, C., and Hong, J., 2018, “Geometric algorithms for robot dynamics: A tutorial review,” Applied Mechanics Reviews, 70 (1), p. 010803. [34] Bobrow, J., Park, F., and Sideris, A., 2006, Recent Advances on the Algorithmic Optimization of Robot Motion , Springer Berlin Heidelberg, Berlin, Heidelberg, pp. 21–41. [35] Müller, A., 2018, “Screw and Lie group theory in multibody kinematics: Motion representation and recursive kinematics of tree-topology systems,” Multibody System Dynamics, 43 (1), pp. 37–70. [36] Müller, A., 2018, “Screw and Lie group theory in multibody dynamics: recur-sive algorithms and equations of motion of tree-topology systems,” Multibody System Dynamics, 42 (2), pp. 219–248. [37] Kumar, S., Szadkowski, K. A. v., Mueller, A., and Kirchner, F., 2020, “An Ana-lytical and Modular Software Workbench for Solving Kinematics and Dynamics of Series-Parallel Hybrid Robots,” Journal of Mechanisms and Robotics, 12 (2), p. 021114. [38] Mishra, H., Garofalo, G., Giordano, A. M., De Stefano, M., Ott, C., and Kugi, A., 2023, “Reduced Euler-Lagrange Equations of Floating-Base Robots: Com-putation, Properties, & Applications,” IEEE Transactions on Robotics, 39 (2), pp. 1439–1457. [39] Hamel, G., 2013, Theoretische Mechanik: Eine einheitliche Einführung in die gesamte Mechanik , Grundlehren der mathematischen Wissenschaften, Springer Berlin Heidelberg. [40] Afonso Silva, F. F., José Quiroz-Omaña, J., and Vilhena Adorno, B., 2022, “Dynamics of Mobile Manipulators Using Dual Quaternion Algebra,” Journal of Mechanisms and Robotics, 14 (6), p. 061005. [41] Cohen, A., Taub, B., and Shoham, M., 2023, “Dual Quaternions Representation of Lagrange’s Dynamic Equations,” Journal of Mechanisms and Robotics, 16 (4), p. 041004. [42] Ali, A., Gabellieri, C., and Franchi, A., 2026, “The PenduMAV: A Six-Input Omnidirectional MAV without Internal Forces – Design, Dynamics, and SE(3) Control,” 2510.15071, https://arxiv.org/abs/2510.15071 [43] Palli, G., Melchiorri, C., and De Luca, A., 2008, “On the Feedback Linearization of Robots with Variable Joint Stiffness,” 2008 IEEE International Conference on Robotics and Automation , pp. 1753–1759, doi: 10.1109/ROBOT.2008.4543454. [44] Spong, M. W., 1987, “Modeling and Control of Elastic Joint Robots,” Journal of Dynamic Systems, Measurement, and Control, 109 (4), pp. 310–318. [45] Buondonno, G. and De Luca, A., 2015, “A recursive Newton-Euler algorithm for robots with elastic joints and its application to control,” 2015 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) , pp. 5526– 5532, doi: 10.1109/IROS.2015.7354160. [46] Constantinescu, D. and Croft, E. A., 2000, “Smooth and time-optimal trajectory planning for industrial manipulators along specified paths,” Journal of Robotic Systems, 17 (5), pp. 233–249. [47] Gasparetto, A., Boscariol, P., Lanzutti, A., and Vidoni, R., 2015, Path Planning and Trajectory Planning Algorithms: A General Overview , Springer Interna-tional Publishing, Cham, pp. 3–27. [48] Mastalli, C., Budhiraja, R., Merkt, W., Saurel, G., Hammoud, B., Naveau, M., Carpentier, J., Righetti, L., Vijayakumar, S., and Mansard, N., 2020, “Crocod-dyl: An efficient and versatile framework for multi-contact optimal control,” 
+
+2020 IEEE International Conference on Robotics and Automation (ICRA) , IEEE, pp. 2536–2542. [49] Lee, S.-H., Kim, J., Park, F., Kim, M., and Bobrow, J., 2005, “Newton-type al-gorithms for dynamics-based robot movement optimization,” IEEE Transactions on Robotics, 21 (4), pp. 657–667. [50] Bobrow, J. E., Martin, B., Sohl, G., Wang, E. C., Park, F. C., and Kim, J., 2001, “Optimal robot motions for physical criteria,” Journal of Robotic Systems, 
+
+18 (12), pp. 785–795. [51] Hong, Y., Rashad, R., Noh, S., Lee, T., Stramigioli, S., and Park, F. C., 2022, “A geometric formulation of multirotor aerial vehicle dynamics,” Nonlinear Dynamics, 107 (1), pp. 495–513. [52] Müller, A. and Kumar, S., 2021, “Closed-form time derivatives of the equations of motion of rigid body systems,” Multibody System Dynamics, 53 (3), pp. 257–273. [53] Kumar, S. and Müller, A., 2021, “Nth Order Analytical Time Derivatives of Inverse Dynamics in Recursive and Closed Forms,” 2021 IEEE Inter-national Conference on Robotics and Automation (ICRA) , pp. 1918–1924, doi: 10.1109/ICRA48506.2021.9561773. 
+
+12 / Transactions of the ASME [54] Müller, A., 2021, “An O(n)-Algorithm for the Higher-Order Kinematics and In-verse Dynamics of Serial Manipulators Using Spatial Representation of Twists,” IEEE Robotics and Automation Letters, 6(2), pp. 397–404. [55] Garofalo, G., Ott, C., and Albu-Schäffer, A., 2013, “On the closed form com-putation of the dynamic matrices and their differentiations,” 2013 IEEE/RSJ International Conference on Intelligent Robots and Systems , IEEE, pp. 2364– 2359. [56] Andersson, J. A. E., Gillis, J., Horn, G., Rawlings, J. B., and Diehl, M., 2018, “CasADi – A software framework for nonlinear optimization and optimal con-trol,” Mathematical Programming Computation. [57] Brockett, R., Stokes, A., and Park, F., 1993, “A geometrical formulation of the dynamical equations describing kinematic chains,” [1993] Proceedings IEEE International Conference on Robotics and Automation , pp. 637–641 vol.2, doi: 10.1109/ROBOT.1993.291887. [58] Sola, J., Deray, J., and Atchuthan, D., 2018, “A micro Lie theory for state estimation in robotics,” arXiv preprint arXiv:1812.01537. [59] Müller, A., 2014, “Higher derivatives of the kinematic mapping and some ap-plications,” Mechanism and Machine Theory, 76 , pp. 70–85. [60] Rajappa, S., Ryll, M., Bülthoff, H. H., and Franchi, A., 2015, “Modeling, control and design optimization for a fully-actuated hexarotor aerial vehicle with tilted propellers,” 2015 IEEE International Conference on Robotics and Automation (ICRA) , pp. 4006–4013, doi: 10.1109/ICRA.2015.7139759. [61] Ollero, A., Tognon, M., Suarez, A., Lee, D., and Franchi, A., 2021, “Past, present, and future of aerial robotic manipulators,” IEEE Transactions on Robotics, 38 (1), pp. 626–645. [62] Rong, Y. and Chou, W., 2023, “Design and Control of an Aerial Manipulator With Invariant Center of Gravity for Physical Interaction,” Journal of Mecha-nisms and Robotics, 16 (7), p. 071001. [63] Carpentier, J., Saurel, G., Buondonno, G., Mirabel, J., Lamiraux, F., Stasse, O., and Mansard, N., 2019, “The Pinocchio C++ library – A fast and flexible imple-mentation of rigid body dynamics algorithms and their analytical derivatives,” 
+
+IEEE International Symposium on System Integrations (SII) .[64] Müller, A., Kumar, S., and Kordik, T., 2023, “A Recursive Lie-Group For-mulation for the Second-Order Time Derivatives of the Inverse Dynamics of Parallel Kinematic Manipulators,” IEEE Robotics and Automation Letters, 8(6), pp. 3804–3811. [65] Selig, J. M., 2007, Geometric fundamentals of robotics , Springer Science & Business Media. [66] Marsden, J. and Ratiu, T., 2013, Introduction to Mechanics and Symmetry: A Basic Exposition of Classical Mechanical Systems , Texts in Applied Mathemat-ics, Springer New York. 
+
+Appendix A: Proof of Lemma 1 
+
+The proof follows from direct computation of the expression 
+
+> 12
+
+̇ ¯M − C with ¯M defined in (5). 
+
+> 12
+
+̇ ¯M − C = 12 (̇ S𝑇 G𝑐 MG 𝑝 S + S𝑇 G𝑐 ̇ MG 𝑝 S + S𝑇 G𝑐 MG 𝑝 ̇ S)− S𝑇 G𝑐 MG 𝑝 ̇ S + S𝑇 G𝑐 ad 𝑇   
+
+> G𝑝 S𝝂
+
+MG 𝑝 S
+
+= 12(︂ ̇ S𝑇 G𝑐 MG 𝑝 S + S𝑇 G𝑐 MG 𝑝 ̇ S
+
+− S𝑇 G𝑐 (Mad 𝑽 + ad 𝑇  
+
+> 𝑽
+
+M)G𝑝 S)︂ 
+
+− S𝑇 G𝑐 MG 𝑝 ̇ S + S𝑇 G𝑐 ad 𝑇  
+
+> 𝑽
+
+MG 𝑝 S.
+
+A straightforward calculations show that A1 and A2 are skew-symmetric matrices, provided that G𝑐 = G𝑇 𝑝 and M𝑇 = M, which is indeed the case for the multibody system in question. By using the fact that the difference of skew-symmetric matrices yields a skew-symmetric matrix, hence A1 − A2 is skew-symmetric. As a result, 12̇ ¯M − C is skew-symmetric. 
+
+Appendix B: Proof of Proposition 1 
+
+Observe that the 1st and 2nd order kinematics can be expressed as 
+
+𝑽 = G𝑝 S 𝝂 ,̇
+
+𝑽 = G𝑝 Ṡ 𝝂 + G𝑝 ad G𝑝 S𝝂 S 𝝂 ,̇
+
+𝚷 = G𝑐 ̇ 𝚷 𝐼 = G𝑐 Ṁ𝑽 − G𝑐 ad 𝑇   
+
+> G𝑝 S𝝂
+
+M𝑽 
+
+= G𝑐 MG 𝑝 Ṡ 𝝂 + G𝑐 MG 𝑝 ad G𝑝 S𝝂 S 𝝂 − G𝑐 ad 𝑇   
+
+> G𝑝 S𝝂
+
+MG 𝑝 S 𝝂 .
+
+For the 0-th order gravitational and external wrenches we have 
+
+𝑭 app = −G𝑐 𝑾 0
+
+> 𝐼, app
+
+, 𝑭 grav = −G𝑐 𝑾 0
+
+> 𝐼, grav
+
+.
+
+Thus, 0-th order inverse dynamics admits the closed form 
+
+¯𝝉 = S𝑇 (̇ 𝚷 + 𝑭 app + 𝑭 grav )
+
+= S𝑇 G𝑐 MG 𝑝 S
+
+⏞ˉˉˉˉˉˉˉˉˉˉ ⏟⏟ ˉˉˉˉˉˉˉˉˉˉ ⏞
+
+> ¯M(Q)
+
+̇
+
+𝝂 + S𝑇 G𝑐 MG 𝑝 ad G𝑝 S𝝂 S 𝝂 
+
+− S𝑇 G𝑐 ad 𝑇   
+
+> G𝑝 S𝝂
+
+MG 𝑝 S 𝝂 
+
+⏞ˉˉˉˉˉˉˉˉˉˉˉˉˉˉˉˉˉˉˉˉˉˉˉˉˉˉ ⏟⏟ ˉˉˉˉˉˉˉˉˉˉˉˉˉˉˉˉˉˉˉˉˉˉˉˉˉˉ ⏞  
+
+> 𝒉 (Q,𝝂 )
+
+− S𝑇 G𝑐 𝑾 0
+
+> 𝐼, grav
+
+⏞ˉˉˉˉˉˉˉˉˉˉ ⏟⏟ ˉˉˉˉˉˉˉˉˉˉ ⏞ 
+
+> 𝒈 (Q)
+
+− S𝑇 G𝑐 𝑾 0
+
+> 𝐼, app
+
+⏞ˉˉˉˉˉˉˉˉˉ ⏟⏟ ˉˉˉˉˉˉˉˉˉ ⏞ 
+
+> 𝝉 ext (Q)
+
+= ¯M(Q)̇ 𝝂 + 𝒉 (Q, 𝝂 ) + 𝒈 (Q) + 𝝉 ext (Q).
+
+(B1) with the mass matrix, Coriolis and centrifugal forces, gravitational vector, and external torque defined as (5). The Coriolis and cen-trifugal vector 𝒉 can be further factorized into an admissible Cori-olis matrix C as shown in (8). Higher order inverse dynamics can follow the same procedure. To illustrate, we further derive the 1-st order inverse dynamics in a closed form. Notice that by taking the first time derivative of (B1), it yields 
+
+¯M(Q)̈ 𝝂 +̇ ¯M(Q, 𝝂 )̇ 𝝂 +̇ 𝒉 (Q, 𝝂 ,̇ 𝝂 ) + ̇ 𝒈 (Q, 𝝂 ) + ̇ 𝝉 ext (Q, 𝝂 ) =̇ ¯𝝉 .
+
+Let ̇ ¯𝒉 (Q, 𝝂 ,̇ 𝝂 ) :=̇ ¯M(Q, 𝝂 )̇ 𝝂 +̇ 𝒉 (Q, 𝝂 ,̇ 𝝂 ), hence 
+
+¯M(Q)̈ 𝝂 +̇ ¯𝒉 (Q, 𝝂 ,̇ 𝝂 ) + ̇ 𝒈 (Q, 𝝂 ) + ̇ 𝝉 ext (Q, 𝝂 ) =̇ ¯𝝉 . (B2) The 3rd order recursion in kinematics Algorithm 1 in a matrix form is ̈
+
+𝑽 =G𝑝 S̈ 𝝂 + 2G𝑝 ad G𝑝 S𝝂 Ṡ 𝝂 
+
++ G𝑝 (ad G𝑝 Ṡ𝝂 + ad G𝑝 ad G𝑝 S𝝂 S𝝂 + ad 2  
+
+> G𝑝 S𝝂
+
+)S𝝂 ,̈
+
+𝚷 =G𝑐 M(︂ ̈ 𝑽 − ad G𝑝 S𝝂 (G𝑝 Ṡ 𝝂 + G𝑝 ad G𝑝 S𝝂 S𝝂 ))︂ 
+
+− 2G𝑐 ad 𝑇 
+
+> 𝑽
+
+̇ 𝚷 − G𝑐 (︁ ad ̇𝑽 + ad 2
+
+> 𝑽
+
+)︁ 𝑇 𝚷 
+
+=G𝑐 M(︂ G𝑝 S̈ 𝝂 + 2G𝑝 ad G𝑝 S𝝂 Ṡ 𝝂 
+
++ G𝑝 (ad G𝑝 Ṡ𝝂 + ad G𝑝 ad G𝑝 S𝝂 S𝝂 + ad 2  
+
+> G𝑝 S𝝂
+
+)S𝝂 
+
+− ad G𝑝 S𝝂 (G𝑝 Ṡ 𝝂 + G𝑝 ad G𝑝 S𝝂 S𝝂 ))︂ 
+
+− 2G𝑐 ad 𝑇  
+
+> G𝑝 S𝝂
+
+(︂ MG 𝑝 Ṡ 𝝂 + MG 𝑝 ad G𝑝 S𝝂 S𝝂 − ad 𝑇   
+
+> G𝑝 S𝝂
+
+MG 𝑝 S𝝂 )︂ 
+
+− G𝑐 (︁ ad G𝑝 Ṡ𝝂 + ad G𝑝 ad G𝑝 S𝝂 S𝝂 + ad 2 
+
+> G𝑝 S𝝂
+
+)︁ 𝑇 MG 𝑝 S𝝂 .
+
+Since the expressions for the 1-st order gravitational and external wrenches are given by, using (E5) and (E4), ̇
+
+𝑭 app = −G𝑐 ̇ 𝑾 0 
+
+> 𝐼, app
+
+= G𝑐 ad 𝑇   
+
+> G𝑝 S𝝂
+
+𝑾 0 
+
+> 𝐼, app
+
+− G𝑐 Ad 𝑇 
+
+> C−1
+
+̇ 𝑾 𝑏 𝐼, app ,̇
+
+𝑭 grav = −G𝑐 ̇ 𝑾 0 
+
+> 𝐼, grav
+
+= G𝑐 (Mad G𝑝 S𝝂 + ad 𝑇   
+
+> G𝑝 S𝝂
+
+M)𝑮 0 
+
+> 𝐼
+
+.
+
+Journal of Mechanisms and Robotics / 13 Thus, the 1-st order inverse dynamics admits the closed form 
+
+𝑾 = (̇ 𝚷 + 𝑭 app + 𝑭 grav ),̇
+
+𝑾 = (̈ 𝚷 +̇ 𝑭 app +̇ 𝑭 grav ),̇¯𝝉 =̇ S𝑇 𝑾 + S𝑇 ̇ 𝑾 
+
+= S𝑇 ad 𝑇  
+
+> G𝑝 S𝝂
+
+(︁ G𝑐 MG 𝑝 Ṡ 𝝂 + G𝑐 MG 𝑝 ad G𝑝 S𝝂 S𝝂 
+
+− G𝑐 ad 𝑇   
+
+> G𝑝 S𝝂
+
+MG 𝑝 S𝝂 − G𝑐 M𝑮 0 
+
+> 𝐼
+
+− G𝑐 Ad 𝑇  
+
+> C−1
+
+𝑾 𝑏 𝐼, app )︁ 
+
++ S𝑇 G𝑐 MG 𝑝 S̈ 𝝂 + S𝑇 ˜̈𝚷 (Q, 𝝂 ,̇ 𝝂 )+ S𝑇 G𝑐 ad 𝑇   
+
+> G𝑝 S𝝂
+
+Ad 𝑇  
+
+> C−1
+
+𝑾 𝑏 𝐼, app − S𝑇 G𝑐 Ad 𝑇 
+
+> C−1
+
+̇ 𝑾 𝑏 𝐼, app 
+
++ S𝑇 G𝑐 (Mad G𝑝 S𝝂 + ad 𝑇   
+
+> G𝑝 S𝝂
+
+M)𝑮 0
+
+> 𝐼
+
+= ¯M(Q)̈ 𝝂 +̇ ¯𝒉 (Q, 𝝂 ,̇ 𝝂 ) + ̇ 𝒈 (Q, 𝝂 ) + ̇ 𝝉 ext (Q, 𝝂 ),
+
+where ˜̈𝚷 (Q, 𝝂 ,̇ 𝝂 ) :=̈ 𝚷 − G𝑐 MG 𝑝 S̈ 𝝂 . Hence, the terms in (B2) can be explicitly expanded as in (7). 
+
+Appendix C: Proof of Lemma 2 
+
+We start from the equations of motion for a single isolated rigid body 𝐵 𝑖 , which can be recast as 
+
+𝑾 𝑖 = M0
+
+> 𝑖
+
+̇ 𝑽 0 
+
+> 𝑖
+
+− ad 𝑇  
+
+> 𝑽 0
+> 𝑖
+
+M0 
+
+> 𝑖
+
+𝑽 0 
+
+> 𝑖
+
+− 𝑾 0app ,𝑖 − 𝑾 0grav ,𝑖 = M𝐴 𝑖 ̇ 𝑽 0 
+
+> 𝑖
+
++ 𝑾 𝐴 𝑖 ,
+
+where M𝐴 𝑖 = M0 
+
+> 𝑖
+
+and 𝑾 𝐴 𝑖 = −ad 𝑇  
+
+> 𝑽 0
+> 𝑖
+
+M0 
+
+> 𝑖
+
+𝑽 0 
+
+> 𝑖
+
+− 𝑾 0app ,𝑖 − 𝑾 0grav ,𝑖 .Now, consider connecting two isolated rigid bodies 𝐵 1 and 𝐵 2
+
+through a joint 𝑗 2 such that 𝐵 2 is a child of 𝐵 1. The combined body, called an articulated body and labeled 𝐴 1, has 𝐵 1 as its handle. The algorithm recursively solves for the joint acceleration ̈
+
+𝑞 2 and base acceleration ̇ 𝑽 0base , given the state, the joint torque ¯𝝉 2
+
+and propeller wrench at the base 𝑾 01,prop .After connection through 𝑗 2, 𝑾 2 becomes 
+
+𝑾 2 = M02̇ 𝑽 01 + M02 (𝑺 2̈𝑞 2 +̇ 𝑺 2̇𝑞 2) − ad 𝑇  
+
+> 𝑽 02
+
+M02𝑽 02 − 𝑾 0app ,2 − 𝑾 0grav ,2.
+
+Projecting this wrench onto the screw axis 𝑺 2 yields 
+
+¯𝝉 2 = 𝑺 𝑇  
+
+> 2
+
+𝑾 2 = 𝑺 𝑇  
+
+> 2
+
+M02̇ 𝑽 01 + 𝑺 𝑇  
+
+> 2
+
+M02 𝑺 2̈𝑞 2 + 𝑺 𝑇  
+
+> 2
+
+M02̇ 𝑺 2̇𝑞 2
+
+− 𝑺 𝑇  
+
+> 2
+
+ad 𝑇  
+
+> 𝑽 02
+
+M02𝑽 02 − 𝑺 𝑇  
+
+> 2
+
+𝑾 0app ,2 − 𝑺 𝑇  
+
+> 2
+
+𝑾 0grav ,2.
+
+Rearranging, we extract ̈𝑞 2 as ̈
+
+𝑞 2 =(︁ 𝑺 𝑇  
+
+> 2
+
+M02 𝑺 2)︁ −1(︃ ¯𝝉 2 − 𝑺 𝑇 
+
+> 2
+
+(︁ M02̇ 𝑽 01 + M02̇ 𝑺 2̇𝑞 2
+
+− ad 𝑇  
+
+> 𝑽 02
+
+M02𝑽 02 − 𝑾 0app ,2 − 𝑾 0grav ,2)︁)︃ 
+
+= −(︁ 𝑺 𝑇  
+
+> 2
+
+M02 𝑺 2)︁ −1 𝑺 𝑇  
+
+> 2
+
+M02̇ 𝑽 01 +̈ ˜𝑞 2,
+
+(C1) where ̈ ˜𝑞 2 (𝒒 1, 𝒒 2, 𝑽 01 ,̇ 𝑞 2) :=̈𝑞 2 +(︁ 𝑺 𝑇  
+
+> 2
+
+M02 𝑺 2)︁ −1 𝑺 𝑇  
+
+> 2
+
+M02̇ 𝑽 01 . Note that the product (︁ 𝑺 𝑇  
+
+> 2
+
+M02 𝑺 2)︁ is a non-zero scalar when multi-DoF joints are treated as an arrangement of 1-DoF joints. Hence, the new value of the 𝑾 1, denoted by ¯𝑾 1, has to account for the wrench 𝑾 2
+
+coming from the child body 𝐵 2 as follows 
+
+¯𝑾 1 = 𝑾 1 + 𝑾 2
+
+=(︁ (M01 + M02) − M02 𝑺 2 (𝑺 𝑇  
+
+> 2
+
+M02 𝑺 2)−1 𝑺 𝑇  
+
+> 2
+
+M02)︁ ̇ 𝑽 01
+
++ M02 (𝑺 2̈ ˜𝑞 2 +̇ 𝑺 2̇𝑞 2) − ad 𝑇  
+
+> 𝑽 01
+
+M01𝑽 01 − ad 𝑇  
+
+> 𝑽 02
+
+M02𝑽 02
+
+− 𝑾 0app ,1 − 𝑾 0grav ,1 − 𝑾 0app ,2 − 𝑾 0grav ,2 = ¯M𝐴 
+
+> 1
+
+̇ 𝑽 01 + ¯𝑾 𝐴  
+
+> 1
+
+.
+
+(C2) where the articulated inertia M𝐴  
+
+> 1
+
+and bias 𝑾 𝐴  
+
+> 1
+
+change to these new values ¯M𝐴  
+
+> 1
+
+and ¯𝑾 𝐴  
+
+> 1
+
+, respectively 
+
+¯M𝐴  
+
+> 1
+
+=(︁ (M01 + M02) − M02 𝑺 2 (𝑺 𝑇  
+
+> 2
+
+M02 𝑺 2)−1 𝑺 𝑇  
+
+> 2
+
+M02)︁ ,
+
+¯𝑾 𝐴  
+
+> 1
+
+=M02 (𝑺 2̈ ˜𝑞 2 +̇ 𝑺 2̇𝑞 2) − ad 𝑇  
+
+> 𝑽 01
+
+M01𝑽 01 − ad 𝑇  
+
+> 𝑽 02
+
+M02𝑽 02
+
+− 𝑾 0app ,1 − 𝑾 0grav ,1 − 𝑾 0app ,2 − 𝑾 0grav ,2.
+
+The articulated body 𝐴 1 now has a handle 𝐵 1 with updated equations of motion (C2). Body 𝐴 1 can be connected to another body as its child or its parent through a joint between the handle 
+
+𝐵 1 and the new body. After reaching the root body of the tree, i.e., the floating base, the algorithm concludes this backward recursion with the articulated inertia of the root body M𝐴  
+
+> base
+
+accumulating all previous inertias, and its bias wrench 𝑾 𝐴  
+
+> base
+
+encompassing all other bodies’ wrenches. A forward recursion is then initiated by computing the twist of the base ̇ 𝑽 0base from this system of six linear equations using 𝐿𝐷 𝐿 𝑇 
+
+decomposition, since the articulated inertia M𝐴  
+
+> base
+
+is symmetric positive-definite [7], 
+
+𝑾 01,prop = M𝐴 
+
+> base
+
+̇ 𝑽 0base + 𝑾 𝐴 
+
+> base
+
+. (C3) The result is then propagated to the children in order to solve for the joint accelerations using (C1). The children twists are then updated, which will be needed to re-evaluate (C1) in the next iteration. Suppose now that it is desired to recursively calculate the 1-st time derivative of the joint and base accelerations, i.e., the joint ⃛𝑞 2
+
+and base ̈ 𝑽 0base jerks, given the state, ¯𝝉 2 and its time derivative ̇ ¯𝝉 2,
+
+𝑾 01,prop and its derivative ̇ 𝑾 01,prop , along with ̈𝑞 2 and ̇ 𝑽 0base obtained from (C1) and (C3). The 1-st time derivative of the constraint wrench between 𝐵 1
+
+and 𝐵 2,̇ 𝑾 2, is given by ̇
+
+𝑾 2 =̈ 𝚷 02 −̇ 𝑾 0app ,2 −̇ 𝑾 0grav ,2
+
+= M02(︂ ̈ ˜𝑽 02 +̈ 𝑽 01 + 𝑺 2⃛𝑞 2 − ad 𝑽 02̇ 𝑽 02)︂ 
+
+− 2ad 𝑇  
+
+> 𝑽 02
+
+(M02̇ 𝑽 02 − ad 𝑇  
+
+> 𝑽 02
+
+M02𝑽 02 )−(︃ ad ̇𝑽 02
+
++ ad 2 
+
+> 𝑽 02
+
+)︃ 
+
+> 𝑇
+
+M02𝑽 02 −̇ 𝑾 0app ,2 −̇ 𝑾 0grav ,2
+
+= M02̈ ˜𝑽 02 + M02̈ 𝑽 01 + M02 𝑺 2⃛𝑞 2 +̈ ˜𝚷 02 −̇ 𝑾 0app ,2 −̇ 𝑾 0grav ,2,
+
+where ̈ ˜𝑽 02 and ̈ ˜𝚷 02 are defined as ̈
+
+˜𝑽 02 := 2̇ 𝑺 2̈𝑞 2 +̈ 𝑺 2̇𝑞 2,̈ ˜𝚷 02 :=̈ 𝚷 02 − M02̈ 𝑽 02 .
+
+14 / Transactions of the ASME Hence, the time derivative of the joint torque is expressed as ̇¯𝝉 2 =̇ 𝑺 𝑇  
+
+> 2
+
+𝑾 2 + 𝑺 𝑇 
+
+> 2
+
+̇ 𝑾 2
+
+=̇ ˜𝝉 2 + 𝑺 𝑇  
+
+> 2
+
+M02̈ 𝑽 01 + 𝑺 𝑇  
+
+> 2
+
+M02 𝑺 2⃛𝑞 2 + 𝑺 𝑇  
+
+> 2
+
+M02̈ ˜𝑽 02
+
++ 𝑺 𝑇 
+
+> 2
+
+̈ ˜𝚷 02 − 𝑺 𝑇 
+
+> 2
+
+̇ 𝑾 0app ,2 − 𝑺 𝑇 
+
+> 2
+
+̇ 𝑾 0grav ,2,
+
+where ̇ ˜𝝉 2 :=̇ ¯𝝉 2 − 𝑺 𝑇 
+
+> 2
+
+̇ 𝑾 2.This yields the equation for ⃛𝑞 2 as ⃛
+
+𝑞 2 =(︁ 𝑺 𝑇  
+
+> 2
+
+M02 𝑺 2)︁ −1(︃ ̇ ¯𝝉 2 −̇ ˜𝝉 2 − 𝑺 𝑇 
+
+> 2
+
+(︁ M02̈ 𝑽 01 + M02̈ ˜𝑽 02
+
++̈ ˜𝚷 02 −̇ 𝑾 0app ,2 −̇ 𝑾 0grav ,2)︁)︃ 
+
+= −(︁ 𝑺 𝑇  
+
+> 2
+
+M02 𝑺 2)︁ −1 𝑺 𝑇  
+
+> 2
+
+M02̈ 𝑽 01 +⃛ ˜𝑞 2,
+
+(C4) where ⃛ ˜𝑞 2 :=⃛𝑞 2 +(︁ 𝑺 𝑇  
+
+> 2
+
+M02 𝑺 2)︁ −1 𝑺 𝑇  
+
+> 2
+
+M02̈ 𝑽 01 .When connected to 𝐵 1, the time derivative of the updated con-straint wrench transmitted to its parent ̇ ¯𝑾 1 becomes ̇¯𝑾 1 =̇ 𝑾 1 +̇ 𝑾 2
+
+=(︁ (M01 + M02) − M02 𝑺 2 (𝑺 𝑇  
+
+> 2
+
+M02 𝑺 2)−1 𝑺 𝑇  
+
+> 2
+
+M02)︁ ̈ 𝑽 01
+
++ M02̈ ˜𝑽 02 + M02 𝑺 2⃛ ˜𝑞 2 +̈ ˜𝚷 01 +̈ ˜𝚷 02
+
+−̇ 𝑾 0app ,1 −̇ 𝑾 0grav ,1 −̇ 𝑾 0app ,2 −̇ 𝑾 0grav ,2 = ¯M𝐴 
+
+> 1
+
+̈ 𝑽 01 +̇ ¯𝑾 𝐴  
+
+> 1
+
+,
+
+where ̈ ˜𝚷 01 :=̈ 𝚷 01 − M01̈ 𝑽 01 . with the property ¯M𝐴  
+
+> 1
+
+being the same as the acceleration level ( 𝑟 = 0). Hence, it can be calculated once and reused for any order. The procedure continues by connecting 𝐵 1 as a child to its pre-decessor in the chain until the base body is reached. Then, the following system of six linear equations is solved for ̈ 𝑽 0base using 
+
+𝐿𝐷 𝐿 𝑇 decomposition: ̇
+
+𝑾 01,prop = M𝐴 
+
+> base
+
+̈ 𝑽 0base +̇ 𝑾 𝐴 
+
+> base
+
+.
+
+Afterwards, the forward recursion begins by propagating the base jerk ̈ 𝑽 0base to its children to compute their joint jerks from (C4) and the corresponding link jerks. It proceeds until all terminal nodes in each branch are reached. The steps for 𝑟 ≥ 2 follow the exact same pattern by induction, which concludes the proof. 
+
+Appendix D: Initialization procedure 
+
+To obtain the kinematics and its higher orders, the robot has to be set up as following so that its model parameters can become available to Algo. 1. 
+
+• Step 1. Assign a reference frame F𝑖 to each body 𝑖 in the tree, preferably with the origin at CoM, and denote the inertial frame by F0 and the base frame by F1. Hence, C 𝑗 𝑖 ∈ 𝑆𝐸 (3)
+
+is a function of all the configuration variables in the path connecting 𝑖 to 𝑗 .
+
+• Step 2. Put the system at home configuration H0, i.e. a con-figuration where all joint variables 𝑞 𝑖 (0) ≡ 0, and C01 (0) =
+
+I4×4, which can be chosen arbitrary. Without loss of gener-ality, this assumes the inertial frame is coincident with the floating-base fixed frame at such configuration. 
+
+• Step 3. In the configuration H0, the spatial screws list 
+
+{𝒀 1, 𝒀 2, ..., 𝒀 𝑛 }, encoding geometric information about the joint models [7,35], is computed from (3) for all the 𝑛 1-DoF joints in the tree. Spatial representation is chosen here since it is right-invariant, meaning that the spatial twist of a body is invariant under a change of body-fixed frame [21]. If the joint is not lower pair [65], like universal joint, it may be represented by an arrangement of 1-DoF joints. For example, the 2 DoF universal joint can be modeled by 2 consecutive 1-DoF revolute joints 𝒒 ∈ T2 ≡ S1 × S1 such that their axes are always mutually-orthogonal. However, if the joint has a motion subgroup which is a gener-ator of subgroup in 𝑆𝐸 (3) and not isomorphic to T𝑛 1 × R𝑛 2 ,i.e. spherical joint 𝑆𝑂 (3), the relative configuration may be better described using the corresponding group element in-stead of the minimal coordinates to avoid parameterization singularities. For instance, let 𝒒 ∈ 𝑆𝑂 (3) be a spherical joint between bodies 𝑗 and 𝑖 , then C 𝑗 𝑖 (𝒒 (𝑡 )) =(︂ 𝒒 (𝑡 ) 𝒙  
+
+> 01
+
+)︂ , where 
+
+𝒙 ∈ R3 is the constant position of F𝑖 ’s origin expressed in 
+
+F𝑗 . Here, 𝒒 ∈ 𝑆𝑂 (3) is preferred over 𝒒 ∈ T3 since they are not isomorphic. Contrarily to Euler Angles parameteriza-tion, this characterization of the spherical joint is singularity-free. In a floating-base system, the base, indexed here by 1, is connected to the ground 0, i.e. inertial frame, by a free motion joint whose motion subgroup is the entire 𝑆𝐸 (3).Hence its relative configuration to the inertial frame is taken as C01 (𝑡 ) ∈ 𝑆𝐸 (3).
+
+• Step 4. Create 2 lists 𝑐 {𝑖 } and 𝑝 {𝑖 } for each body 𝑖 to store the indexes of children and parent of body 𝑖 . In the directed graph Fig. 1, with in-degree = 1 and out-degree ≥ 1, a child of body 𝑖 is any body (node) 𝑗 𝑐 ∈ 𝑐 (𝑖 ) connected to body 𝑖 
+
+by a joint (edge) 𝑗 𝑐 , whereas a parent of body 𝑖 is the body 
+
+𝑗 𝑝 ∈ 𝑝 (𝑖 ) whose connection to body 𝑖 is the joint 𝑖 .
+
+• Step 5. Let A𝑝 {𝑖 } 
+
+> 𝑖
+
+be the relative constant configuration of each body F𝑖 to its parent frame F𝑝 {𝑖 } in the configuration H0.Denote by 𝑺 𝑖 the instantaneous spatial screw vector of joint 𝑖 
+
+expressed in the inertial frame at the current configuration. 
+
+Appendix E: Derivations For H-GRNE-FBS and H-GABI-FBS 
+
+This section collects analytical expressions for the time deriva-tives of quantities used in both algorithms 2 and 3. According to Newton’s second law, body 𝑗 momentum time rate of change is equal to the total wrench acting on this body ̇
+
+𝚷 0 
+
+> 𝑗
+
+= (𝑾 0 
+
+> 𝑗
+
+)tot 
+
+where (𝑾 0 
+
+> 𝑗
+
+)tot is the total spatial wrench applied at body 𝑗 which can be calculated from 
+
+(𝑾 0 
+
+> 𝑗
+
+)tot = 𝑾 0 
+
+> 𝑗, app
+
++ 𝑾 0 
+
+> 𝑗, grav
+
++ 𝑾 0    
+
+> 𝑝 (𝑗 )
+
+−∑︂    
+
+> 𝑐 (𝑗 )
+
+𝑾 0   
+
+> 𝑐 (𝑗 )
+
+The spatial momentum 𝚷 0 
+
+> 𝑗
+
+and its higher-order time derivatives can be evaluated from kinematical quantities, computed in Algo-rithm (1), using Euler–Poincaré equation ̇ 𝚷 0 
+
+> 𝑗
+
+= M0
+
+> 𝑗
+
+̇ 𝑽 0 
+
+> 𝑗
+
+− ad 𝑽 0
+
+> 𝑗
+
+𝚷 0
+
+> 𝑗
+
+and its derivatives [66]. In the 0-th order it is readily given by 
+
+𝚷 0 
+
+> 𝑗
+
+= M0 
+
+> 𝑗
+
+𝑽 0 
+
+> 𝑗
+
+.
+
+where the spatial mass matrix M0 
+
+> 𝑗
+
+is related to the body-fixed con-stant mass matrix M𝑏 𝑗 by this frame transformation [21] 
+
+M0 
+
+> 𝑗
+
+= Ad −𝑇 
+
+> C0
+> 𝑗
+
+M𝑏 𝑗 Ad −1
+
+> C0
+> 𝑗
+
+(E1) 
+
+Journal of Mechanisms and Robotics / 15 The time derivatives of the matrix M0 
+
+> 𝑗
+
+can be expressed in terms of the transformation matrix and the higher-order spatial twists of the body. In general, its 𝑟 -th time derivative has the form, after some algebraic manipulation using (2) and dropping the indexes for clarity 
+
+M(𝑟 ) =
+
+⎧⎪⎪⎪⎪⎨⎪⎪⎪⎪⎩
+
+M, 𝑟 = 0,
+
+− 
+
+> 𝑟 −1
+
+∑︂ 
+
+> 𝑘 =0
+
+(︃ 
+
+𝑟 − 1
+
+𝑘 )︃(︂ M(𝑟 −1−𝑘 ) ad 𝑽 (𝑘 ) + ad 𝑇   
+
+> 𝑽 (𝑘 )
+
+M(𝑟 −1−𝑘 ))︂ , 𝑟 ≥ 1.
+
+(E2) Now, the 𝑟 -th time derivative of body’s 𝑗 momentum is obtained from this relation 
+
+𝚷 (𝑟 ) =
+
+> 𝑟
+
+∑︂ 
+
+> 𝑘 =0
+
+(︃ 
+
+𝑟 𝑘 )︃ M(𝑟 −𝑘 ) 𝑽 (𝑘 ) (E3) Also, the spatial gravity wrench on body 𝑗 can be calculated from the spatial mass matrix (E1) as 
+
+𝑾 0 
+
+> 𝑗, grav
+
+= M0 
+
+> 𝑗
+
+𝑮 0, 𝑮 0 = ( 0 0 0 0 0 −𝑔 )𝑇 
+
+where 𝑔 is the gravity acceleration constant. It is easily seen that its higher order time derivatives are a function of (E2) and given by 
+
+𝑾 (𝑟 ) = M(𝑟 ) 𝑮 0 (E4) The bias momentum 𝚷 (𝑟 ) 
+
+> 𝑗, bias
+
+is given by 
+
+𝚷 (𝑟 ) 
+
+> 𝑗, bias
+
+= 
+
+> 𝑟 −1
+
+∑︂ 
+
+> 𝑘 =0
+
+(︃ 
+
+𝑟 𝑘 )︃ (M0 
+
+> 𝑗
+
+) (𝑟 −𝑘 ) (𝑽 0 
+
+> 𝑗
+
+) (𝑘 )
+
+whereas the bias spatial twist of body 𝑖 , denoted by (𝑽 0
+
+> 𝑖, bias
+
+) (𝑟 ) , is calculated from 
+
+(𝑽 0
+
+> 𝑖, bias
+
+) (𝑟 ) =
+
+> 𝑟
+
+∑︂ 
+
+> 𝑘 =1
+
+(︃ 
+
+𝑟 𝑘 )︃ 𝑺 (𝑘 ) 
+
+> 𝑖
+
+𝒒 (𝑟 −𝑘 +1)
+
+> 𝑖
+
+Let 𝑾 𝑏 𝑗 denote the applied wrench at body 𝑗 expressed in its body-fixed frame F𝑗 , then the mapping to the spatial wrench is [22] 
+
+𝑾 0 
+
+> 𝑗
+
+= Ad 𝑇    
+
+> (C0
+> 𝑗 )−1
+
+𝑾 𝑏 𝑗 .
+
+Hence, its first time derivative is, after applying (1), ̇
+
+𝑾 0 
+
+> 𝑗
+
+= −ad 𝑇   
+
+> 𝑽 0
+
+Ad 𝑇  
+
+> C−1
+
+𝑾 𝑏 𝑗 + Ad 𝑇 
+
+> C−1
+
+̇ 𝑾 𝑏 𝑗 = −ad 𝑇   
+
+> 𝑽 0
+
+𝑾 0 
+
+> 𝑗
+
++ Ad 𝑇 
+
+> C−1
+
+̇ 𝑾 𝑏 𝑗 .
+
+Here, ̇ 𝑾 𝑏 𝑗 is the component-wise time derivative of 𝑾 𝑏 𝑗 . In general, the 𝑟 -th time derivative is                              
+
+> (𝑾 0)(𝑟 )=
+> ⎧⎪⎪⎪⎪⎨⎪⎪⎪⎪⎩
+> Ad 𝑇
+> C−1𝑾 𝑏 ,𝑟 =0,
+> 𝑟 −1∑︂
+> 𝑘 =0(︃
+> 𝑟 −1
+> 𝑘 )︃(︂ −ad 𝑇
+> (𝑽 0)(𝑘 )(𝑾 0)(𝑟 −𝑘 −1)+ ( Ad 𝑇
+> C−1)(𝑘 )(𝑾 𝑏 )(𝑟 −𝑘 ))︂ ,𝑟 ≥1.
+
+(E5) where the 𝑟 -th time derivative of Ad 𝑇  
+
+> C−1
+
+is given by applying the chain rule to (1), which yields 
+
+(Ad 𝑇  
+
+> C−1
+
+) (𝑟 ) = − 
+
+> 𝑟 −1
+
+∑︂ 
+
+> 𝑘 =0
+
+(︃ 
+
+𝑟 − 1
+
+𝑘 )︃ ad 𝑇     
+
+> (𝑽 0)(𝑘 )
+
+(Ad 𝑇  
+
+> C−1
+
+) (𝑟 −𝑘 −1) .
+
+16 / Transactions of the ASME List of Figures 
+
+1 Directed graph with the nodes representing the rigid bodies while the edges are the joints ∈ T𝑛 1 × R𝑛 2 , where (𝑛 1 + 𝑛 2)
+
+is number of joints and B1 is the floating base. Notice that each body has only 1 parent. . . . . . . . . . . . . . . . . . . 42 a) Schematic representation of the floating base system in home configuration H0. The base is a fully-actuated hexarotor called TiltHex [60], and the attached manipulators have 3 revolute joints each, composing two 3-DoF flying end-effectors. The propeller 𝑝 𝑖 is rigidly attached to the base and tilted around 2 axes. Frames F𝐵 𝑖 are at the configuration H0 and oriented identically to F𝑤 . b) Kinematic tree representing the system, with 𝐵 denoting a body (node) and 𝑞 a revolute joint (edge). . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 7(a) Fully-actuated base carrying 2 identical manipulators . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 7(b) Graph of the system . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 73 Inputs and outputs of H-GRNE-FBS and H-GABI-FBS up to order 𝑟 = 5. 𝑾 0  
+
+> 𝐵 1,prop
+
+= (𝜏 𝐵 1 , 𝑓 ) is obtained via 𝑄 1
+
+while 𝜏 𝑗 is joint 𝑗 torque given by 𝑄 𝑗 from Alog. 2. Output of H-GABI-FBS up to r=5 is shown in dashed lines in (a). Observe that it retrieved back the input trajectories, as demonstrated by the dashed trajectories co-inciding with their solid counterparts in (a), when given the state (𝐶 0 
+
+> 𝐵 1
+
+(𝑡 ), 𝑉 0 
+
+> 𝐵 1
+
+(𝑡 ), 𝑞 (𝑡 )) , base wrench and joint torques in (b), verifying successful operation of our higher-order algorithms. For 𝑟 = 0, . . . , 5, the average runtime per call for H-GRNE-FBS is (2.326 , 3.078 , 2.867 , 4.355 , 5.960 , 8.171 ) [ 𝜇 s], respectively, while for H-GABI-FBS it is 
+
+(4.106 , 4.802 , 6.486 , 6.461 , 8.589 , 11 .085 ) [ 𝜇 s], respectively. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 10 (a) Input to H-GRNE-FBS (solid) and output of H-GABI-FBS (dashed) for 𝑟 = 0 to 𝑟 = 5 . . . . . . . . . . . . . . 10 (b) Output of H-GRNE-FBS (which is given as input to H-GABI-FBS as well) for 𝑟 = 0 to 𝑟 = 5 . . . . . . . . . . . 10 4 Benchmark results demonstrate that time differentiating geometric dynamics of floating-base robots through our proposed methods becomes significantly faster than automatic differentiation when the order increases for the same tree size. . . . 12 (a) H-GRNE-FBS . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 12 (b) H-GABI-FBS . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 12 (c) CasADi . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 12 
+
+List of Tables 
+
+1 Existing Methods for Dynamics Modeling . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 32 Definitions for Grouping Recursions . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 53 Simulation Parameters. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 84 Benchmark setup. Model: aerial manipulator in Fig. 2 with 𝑁 𝐵 =5 branches; kinematic and dynamics parameters are in Table 3. CasADi benchmark measures evaluation time of the r-differentiated dynamics; Automatic differentiation occurs once per 𝑟 > 0 via built-in jtimes(dy,t,1) outside the timed loop. . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 95 Application of H-GRNE-FBS and H-GABI-FBS to aerial manipulator in Fig. 2 . . . . . . . . . . . . . . . . . . . . . . 11 (a) Recursive Kinematic Relations up to Third Order . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 11 (b) Recursive Inverse Dynamics Relations up to First Order . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 11 (c) Recursive Forward Dynamics (Backward Recursion) up to First Order . . . . . . . . . . . . . . . . . . . . . . . 11 (d) Recursive Forward Dynamics (Forward Recursion) up to First Order . . . . . . . . . . . . . . . . . . . . . . . . 11 
+
+Journal of Mechanisms and Robotics / 17

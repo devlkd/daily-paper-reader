@@ -1,0 +1,809 @@
+Title: Component-Aware Structure-Preserving Style Transfer for Satellite Sim2Real 6D Pose Estimation
+
+URL Source: https://arxiv.org/pdf/2605.19624v1
+
+Published Time: Wed, 20 May 2026 01:00:37 GMT
+
+Number of Pages: 11
+
+Markdown Content:
+> IEEE SENSORS JOURNAL, VOL. XX, NO. XX, XXXX 2024 1
+
+# Component-Aware Structure-Preserving Style Transfer for Satellite Sim2Real 6D Pose Estimation 
+
+Yonglong Zhang Synthetic image Real style reference  
+
+> Translated synthetic image
+> (annotations preserved )
+> Component mask
+> Component -aware style
+> transfer
+> Component -aware style
+> transfer
+> Synthetic image Real style reference
+> Translated synthetic image
+> (annotations preserved )
+> Component mask
+> Component -aware style
+> transfer
+
+Abstract — Monocular 6D pose estimation for non-cooperative satellites depends heavily on annotated training data, yet real satel-lite images with reliable pose labels and component-level masks are difficult to acquire at scale. Synthetic rendering can provide exact geometric annotations, but the appearance gap between rendered and real observations limits direct transfer to the real domain. This paper presents a component-aware structure-preserving style transfer framework for satellite synthetic-to-real data construction. The method builds weakly paired real–synthetic samples from cal-ibrated real acquisition, ArUco-based camera-pose measurement, CAD rendering, and component masks. It then extracts part-wise real-domain style codes from unlabeled real images and injects them into corresponding synthetic satellite regions through mask-aligned modulation. To keep the generated images usable for down-stream supervision, adversarial training is combined with local con-trastive consistency, self-regularization, and edge-preserving constraints. Experiments are conducted on 5,000 rendered satellite images and 100 real images captured in a calibrated setup. The real images provide target-domain appearance references and final evaluation images, while the downstream GDRNet pose estimator is trained only on synthetic or translated synthetic images. Compared with representative image-translation baselines, the proposed method achieves the lowest image distribution discrepancy, with an FID of 54.32 and a KID of 0.048. When the translated data are used to train GDRNet in this target-domain adaptation setting, the ADD pass rate improves to 0.260 and the AUC improves to 0.611. These results indicate that component-level appearance transfer can improve satellite Sim2Real pose estimation in the considered calibrated setup while retaining simulation-derived geometric annotations. 
+
+Index Terms — Satellite pose estimation, 6D object pose estimation, synthetic-to-real transfer, style transfer, synthetic data generation, component-aware image translation. 
+
+I. I NTRODUCTION 
+
+Reliable visual perception of non-cooperative satellites is a prerequisite for on-orbit servicing, autonomous rendezvous, proximity operations, and space situational awareness. In this setting, monocular 6D pose estimation is a particularly useful formulation because a single RGB image can provide the rela-tive position and attitude needed by downstream guidance and control modules. Reviews of cooperative and uncooperative spacecraft relative navigation, together with recent spaceborne pose benchmarks, show that learning-based methods can oper-ate from monocular imagery but remain sensitive to viewpoint coverage, illumination, target appearance, and the synthetic-to-real gap [1]–[6]. The central difficulty is not only pose estimation itself, but also the data required to train it. Deep pose estima-tors generally need large numbers of images with accurate object poses, silhouettes, bounding boxes, and sometimes 
+
+Yonglong Zhang is with the School of Mechatronics Engi-neering, Harbin Institute of Technology, Harbin, China (e-mail: zhangyl202601@163.com). 
+
+intermediate geometric cues. For satellite targets, obtaining such labels from real observations is difficult: the target is non-cooperative, the imaging geometry is hard to repeat, and component-level labels for solar panels, metallic bodies, antennas, docking rings, and nozzles require additional manual or semi-automatic annotation. Public spacecraft pose datasets and competitions have made this issue visible by combining synthetic images with limited real or hardware-in-the-loop data, while still emphasizing that the domain gap remains a major failure mode [5]–[7]. CAD-based rendering offers an attractive way around the annotation bottleneck. Once a satellite model and camera configuration are available, a renderer can produce large-scale images together with exact poses, object masks, bounding boxes, and component masks. This strategy is common in object viewpoint and pose-estimation research, and it is also used in spacecraft-specific dataset generation and photorealis-tic spacecraft pose rendering [8]–[10]. Yet rendered images do not automatically match real satellite observations. Material re-flectance, solar-panel texture, specular response, camera noise, illumination, and background statistics can differ substantially     
+
+> arXiv:2605.19624v1 [cs.CV] 19 May 2026 2IEEE SENSORS JOURNAL, VOL. XX, NO. XX, XXXX 2024 Weakly -Paired
+> Data
+> TransNet TransNet
+> Train
+> Component -level
+> style Transfer
+> Network
+> Train
+> Component -level
+> style Transfer
+> Network
+> Sim image
+> Sim mask
+> Real image
+> Real mask
+> Sim image Style transfer image
+> Weakly -Paired
+> Data
+> TransNet
+> Train
+> Component -level
+> style Transfer
+> Network
+> Sim image
+> Sim mask
+> Real image
+> Real mask
+> Sim image Style transfer image
+> Component -level
+> sim image
+> Component -level
+> real image
+> Weakly -Paired
+> Data
+> TransNet
+> Train
+> Component -level
+> style Transfer
+> Network
+> Sim image
+> Sim mask
+> Real image
+> Real mask
+> Sim image Style transfer image
+> Component -level
+> sim image
+> Component -level
+> real image
+
+Fig. 1. Illustration of the proposed component-level Sim2Real style transfer framework. Weakly paired real–synthetic samples and compo-nent masks are used to train a component-level style transfer network, which translates synthetic satellite images into realistic images while preserving structural annotations. 
+
+between simulation and acquisition, so a model trained only on synthetic data may learn appearance cues that are unreliable in the real domain. Several Sim2Real strategies attempt to reduce this gap. Domain randomization improves robustness by varying ren-dering parameters such as texture, lighting, viewpoint, and background [11], [12]; photorealistic rendering instead tries to make the simulator closer to the physical imaging process. Image-level translation provides another route: paired and unpaired methods such as pix2pix, CycleGAN, DRIT, MUNIT, and CUT translate synthetic images toward the real domain with different assumptions about correspondence and style diversity [13]–[17]. Region-adaptive synthesis methods such as SPADE and SEAN further show that semantic layouts can control where style information is injected [18], [19]. These methods are useful, but a satellite training image has a stricter requirement than visual plausibility. Its translated appearance must remain aligned with the pose, mask, and component annotations inherited from simulation. This requirement exposes a limitation of treating satellite Sim2Real as generic full-image translation. A satellite is a composition of visually heterogeneous parts. Solar pan-els, metallic bus surfaces, antennas, docking structures, and nozzles do not share the same radiometric behavior, and a single global style code can easily mix their statistics. In addition, full-image translation may alter the background, blur component boundaries, or introduce texture leakage across parts. Such changes are not merely cosmetic: they weaken the correspondence between the translated image and the original synthetic supervision. For downstream pose estima-tion, preserving the object silhouette, component layout, high-frequency boundaries, and pose consistency is as important as reducing the distributional distance to real images. To address this problem, we propose a component-level structure-preserving style transfer framework for satellite Sim2Real dataset construction. As shown in Fig. 1, the frame-work first constructs weakly paired real–synthetic samples through real image acquisition, ArUco-based camera-pose measurement [20], component mask construction, and CAD-based rendering. It then extracts part-wise real-domain style representations from real satellite images and injects them into the corresponding synthetic component regions through mask-aligned modulation. Structure-preserving losses are used to constrain the translation so that the generated images become more realistic while retaining the geometry and annotations of the synthetic source. The resulting dataset is evaluated by training a downstream GDRNet pose estimator [21] on translated synthetic images and testing it on real satellite observations from the same calibrated target domain. The main contributions of this work are:  
+
+> •
+
+A weakly paired real–synthetic construction pipeline for satellite Sim2Real style-transfer training, combining cal-ibrated real acquisition, component mask construction, CAD-based rendering, and viewpoint-consistent synthetic rendering.  
+
+> •
+
+A component-level, mask-aligned style transfer method that models part-specific real-domain appearance and translates synthetic satellite images while preserving simulation-derived geometric annotations.  
+
+> •
+
+A downstream Sim2Real evaluation on satellite 6D pose estimation in the constructed calibrated target domain, showing that the proposed dataset synthesis method im-proves real-image pose performance over representative image-translation baselines. 
+
+II. R ELATED WORK 
+
+A. Satellite 6D Pose Estimation 
+
+Monocular spacecraft pose estimation has been studied for non-cooperative rendezvous and close-proximity operations, where active markers or cooperative communication may be unavailable [1], [2]. Early learning-based systems such as Spacecraft Pose Network demonstrated that neural networks can estimate spacecraft pose from monocular images, and the SPEED dataset and satellite pose-estimation challenges estab-lished common benchmarks for this task [4], [5]. Landmark-regression and refinement pipelines, as well as photorealistic rendering for pose training, further show how geometric cues and synthetic imagery are combined in this field [10], [22]. SPEED+ later made the domain gap more explicit by adding hardware-in-the-loop images with substantially different ap-pearance from synthetic training data [6]. Recent surveys and challenge analyses report that deep spacecraft pose estimators still depend heavily on synthetic imagery, domain adaptation, and online refinement when real labeled data are scarce [3], [7]. Most spacecraft pose-estimation work focuses on the es-timator, the benchmark, or the adaptation strategy applied to the task network. In contrast, this paper focuses on the training data before the pose network is trained. We use a pose estimator only as the downstream evaluator and as a tool for weakly paired sample construction; the main contribution is a component-aware synthetic-to-real image generation process that keeps simulation-derived annotations usable for training. 
+
+B. Synthetic Data and Sim2Real Adaptation 
+
+Synthetic data are widely used in pose and viewpoint estimation because rendering from 3D models can provide ZHANG: COMPONENT-AWARE STRUCTURE-PRESERVING STYLE TRANSFER FOR SATELLITE SIM2REAL 6D POSE ESTIMATION 3
+
+dense labels at scale. Rendered views have been used to train CNNs for viewpoint estimation [8], and spacecraft-specific work has developed synthetic data generation and validation pipelines for monocular pose estimation [9]. The appeal is clear: a CAD model can yield accurate object pose, foreground mask, bounding box, and component-level labels without manual annotation. The drawback is equally clear in satellite settings, where illumination, material response, camera noise, and background statistics differ from the physical acquisition environment [3], [6]. Sim2Real adaptation addresses this discrepancy in several ways. Domain randomization deliberately varies rendering parameters so that the trained model becomes less sensitive to any single simulated appearance [11], [12]; pose systems trained with synthetic data have used this principle to improve transfer in robotic object pose estimation [23]. Render-and-compare methods such as MegaPose also illustrate the value of large-scale rendered hypotheses for 6D pose estimation when real annotations are limited [24]. More broadly, recent 3D perception and robotic manipulation studies have used point/voxel feature learning and generative models to improve geometric understanding and action generation [25], [26]. Other approaches improve rendering realism or adapt the task network through multi-task learning, online refinement, or semantic decomposition [7], [27]. These strategies can reduce the synthetic-to-real gap, but they do not directly solve the problem considered here: when synthetic images are translated into a real-like style, the translated image must still match the original pose, mask, and component annotations. Our work therefore treats synthetic data not only as a source of visual samples, but as a source of geometric supervision that must be protected during translation. 
+
+C. Image Translation for Sim2Real Dataset Construction 
+
+Image-to-image translation methods provide a natural tool for making synthetic images look more realistic. pix2pix established a paired conditional-GAN formulation, CycleGAN introduced cycle-consistent unpaired translation, DRIT and MUNIT disentangled content and style for diverse outputs, and CUT used contrastive learning to preserve local cor-respondence during unpaired translation [13]–[17]. In 6D pose estimation, instance-level Sim2Real style transfer has also been used to improve the realism of training images while retaining object-level supervision [28]. These methods motivate our use of image-level adaptation, but they usually operate at the full-image or object-instance level. For satellite data construction, full-image translation is often too coarse. It may change the background, shift illumination globally, or mix the appearance statistics of solar panels, metallic bodies, antennas, and nozzles. Even when the trans-lated image is visually plausible, these changes can weaken the consistency between the image and its inherited synthetic annotations. Our method keeps the translation on the satellite foreground and separates appearance transfer by component, so the generated image is designed for downstream annotation-preserving training rather than unconstrained visual realism. 
+
+D. Component-Aware and Structure-Preserving Translation 
+
+Semantic image synthesis shows that spatial labels can guide image generation more precisely than a global latent code. SPADE uses semantic layouts to modulate normalization layers, and SEAN extends this idea with region-adaptive style control [18], [19]. These methods provide useful building blocks for region-aware generation, but they are not designed specifically for satellite Sim2Real data construction. In par-ticular, they do not by themselves enforce that a translated CAD-rendered image remains aligned with the original pose and component annotations. Structure preservation is therefore a separate requirement. CUT’s PatchNCE objective encourages local feature corre-spondence during translation [17], and 6D pose-estimation metrics such as ADD ultimately evaluate whether geometric prediction remains accurate in the target domain [29]. In our framework, component masks define where each real-domain style code is injected, while PatchNCE, self-regularization, and edge-consistency losses constrain how much the synthetic structure can change. The resulting formulation combines region-aware style modulation with annotation-preserving con-straints, which is the main distinction from generic semantic image synthesis or full-image Sim2Real translation. Our method differs from these approaches by introducing component-level semantic constraints and structure-preserving objectives. It learns part-wise real-domain style representations and injects them into corresponding synthetic regions, thereby improving realism while preserving satellite geometry, com-ponent layout, and annotation consistency. 
+
+III. M ETHOD 
+
+We propose a part-aware structure-preserving style transfer framework for satellite Sim2Real dataset construction. Given large-scale synthetic images and a limited number of real images, our goal is to synthesize realistic satellite images that better match real observations while preserving the geometric annotations inherited from simulation. The key assumption is that the style transfer network requires substantially fewer real samples than downstream vision models. To this end, we introduce component-level semantic constraints into the trans-lation process, enabling fine-grained appearance modeling for different satellite parts while preventing structural degradation during style transfer. For brevity, the proposed component-level style transfer network is denoted as TransNet in the figures and the following descriptions. As shown in Fig. 2, the framework consists of four stages. First, real satellite images are captured in a calibrated en-vironment, where ArUco markers provide camera-pose ref-erences and camera-frame satellite poses for evaluation, and component-level masks are produced with SAM-assisted seg-mentation [30]. Second, synthetic images and component masks are rendered from the satellite CAD model in Blender using the measured camera viewpoints, followed by view consistency filtering to retain weakly paired real–synthetic samples. Third, the component-level style transfer network extracts part-wise style codes from real images and injects 4 IEEE SENSORS JOURNAL, VOL. XX, NO. XX, XXXX 2024 (d) Style transfer and evaluation 
+
+Simulation 
+
+image 
+
+Real image 
+
+PoseNet  
+
+> Eval
+> Train
+
+Style transfer 
+
+image 
+
+(c) Component -level style Transfer Network 
+
+> Real Component image and
+> mask
+> Sim Component image and
+> mask
+
+Region -wise 
+
+average 
+
+pooling 
+
+... 
+
+... 
+
+... 
+
+... 
+
+... 
+
+... 
+
+> R part vectors
+
+Style Matrix SrStyle Matrix Sr
+
+... 
+
+... 
+
+... 
+
+> R part vectors
+
+Style Matrix Sr
+
+... 
+
+... 
+
+... 
+
+> R part vectors
+
+Style Matrix Sr
+
+... 
+
+Style 
+
+Encoder 
+
+Style 
+
+Encoder 
+
+TransNet 
+
+Simulation image 
+
+Style transfer image 
+
+> Input
+> Input
+
+PoseNet 
+
+CAD model 
+
+Background 
+
+Blender 
+
+> Simulation image
+> Weakly -Paired Data
+
+Match the perspective 
+
+of real image 
+
+> Eval
+
+(b) Automated Weakly -Paired Data Generation 
+
+> Train
+> Real
+> image
+
+SAM 
+
+(a) Real image collection 
+
+Satellite 
+
+model               
+
+> D435
+> ArUco
+> marker
+> component -level
+> semantic real image
+> component -level semantic
+> mask
+> Solar panel Main body Antenna Nozzle Other
+> component -level
+> semantic mask
+> component -level semantic
+> simulation image
+> Simulation image
+> mask
+> Solar panel Main body Antenna Nozzle Other Solar panel Main body Antenna Nozzle Other
+> StyleGAN2
+> Discriminator
+> StyleGAN2
+> Discriminator
+> GG
+> SEAN
+> Generator
+> SEAN
+> Generator
+> Real sample
+> Generated sample
+
+(d) Style transfer and evaluation 
+
+Simulation 
+
+image 
+
+Real image 
+
+PoseNet  
+
+> Eval
+> Train
+
+Style transfer 
+
+image 
+
+(c) Component -level style Transfer Network 
+
+> Real Component image and
+> mask
+> Sim Component image and
+> mask
+
+Region -wise 
+
+average 
+
+pooling 
+
+... 
+
+... 
+
+> R part vectors
+
+Style Matrix Sr
+
+... 
+
+Style 
+
+Encoder 
+
+TransNet 
+
+Simulation image 
+
+Style transfer image 
+
+> Input
+> Input
+
+PoseNet 
+
+CAD model 
+
+Background 
+
+Blender 
+
+> Simulation image
+> Weakly -Paired Data
+
+Match the perspective 
+
+of real image 
+
+> Eval
+
+(b) Automated Weakly -Paired Data Generation 
+
+> Train
+> Real
+> image
+
+SAM 
+
+(a) Real image collection 
+
+Satellite 
+
+model           
+
+> D435
+> ArUco
+> marker
+> component -level
+> semantic real image
+> component -level semantic
+> mask
+> Solar panel Main body Antenna Nozzle Other
+> component -level
+> semantic mask
+> component -level semantic
+> simulation image
+> Simulation image
+> mask
+> Solar panel Main body Antenna Nozzle Other
+> StyleGAN2
+> Discriminator
+> G
+> SEAN
+> Generator
+> Real sample
+> Generated sample
+
+Fig. 2. Overview of the proposed framework. (a) Real satellite images and component masks are acquired in a calibrated environment. (b) Weakly paired real–synthetic samples are generated using ArUco-based camera-pose measurement, CAD-based rendering, and view consistency filtering. (c) TransNet, the proposed component-level style transfer network, extracts part-wise real style codes and synthesizes structure-preserving translated images. (d) The translated images are used for realistic dataset synthesis and downstream 6D pose estimation. 
+
+them into a SEAN-based generator to translate synthetic im-ages while preserving geometry. Finally, the trained network is applied to large-scale synthetic data, and the generated dataset is evaluated through satellite 6D pose estimation. PoseNet is used as the synthetic-trained Non-Adaptation baseline in the downstream evaluation rather than as the source of ground-truth poses for weak-pair construction. 
+
+A. Real Image Acquisition and Reference Data Construction 
+
+As illustrated in Fig. 2(a), real reference data are collected in a calibrated environment using an Intel RealSense D435 camera, a physical satellite model, and multiple ArUco mark-ers [20]. The markers are calibrated in a common environment coordinate system, which allows the camera pose of each captured image to be recorded. Since the satellite model is also registered to this coordinate frame, the marker-based calibration provides the satellite pose in the camera coordinate system. This camera-frame satellite pose is used as the ground-truth reference for downstream 6D pose evaluation. In addition to pose references, component-level semantic masks are constructed for real images. We use SAM-assisted segmentation [30] to obtain masks for satellite components such as the main body, solar panels, antennas, and nozzles. These masks provide real-domain component guidance for part-aware style representation learning. To improve viewpoint coverage, real images are captured from multiple viewing angles. 
+
+B. Automated Weakly-Paired Data Generation 
+
+As shown in Fig. 2(b), we automatically construct weakly paired real–synthetic samples for style transfer training with-out pixel-level registration. Given the ArUco-recovered camera pose in the world coordinate system and the satellite CAD model, Blender renders a synthetic view with a similar camera viewpoint and object layout. We first render a synthetic training set from the CAD model, where object poses and component-level masks are automatically generated. An initial PoseNet is trained solely on this synthetic set and is retained as the Non-Adaptation baseline in the downstream pose-estimation experiment. For weak-pair construction, the Blender virtual camera is driven by the measured camera pose rather than by style-transfer outputs, so the rendered synthetic image keeps the viewpoint coverage of the real acquisition sequence. To reduce mismatched pairs caused by unreliable pose predictions, we apply a view-wise instance consistency filter. For each real view i, we record the number of detected satellite instances as ni. Since our acquisition setup contains a single ZHANG: COMPONENT-AWARE STRUCTURE-PRESERVING STYLE TRANSFER FOR SATELLITE SIM2REAL 6D POSE ESTIMATION 5... 
+
+... 
+
+... 
+
+... 
+
+... 
+
+...       
+
+> R part vectors
+> Style Matrix SrStyle Matrix Sr
+> R part vectors
+> Style Matrix Sr
+
+... 
+
+... 
+
+...   
+
+> R part vectors
+> Style Matrix Sr
+
+... 
+
+... 
+
+...   
+
+> R part vectors
+> Style Matrix Sr
+
+... 
+
+Conv -
+
+Layers 
+
+Tconv -
+
+Layers 
+
+> ...  Region -wise
+> average
+> pooling
+> Style Encoder
+
+Conv -
+
+Layers 
+
+Tconv -
+
+Layers 
+
+> ...  Region -wise
+> average
+> pooling
+> Style Encoder
+> SEAN ResBLK
+> Upsample
+> Conv
+> SEAN ResBLK
+> Upsample
+> SEAN ResBLK
+> Upsample
+> SEAN ResBLK
+> Upsample
+> Conv
+> ...
+> SEAN ResBLK
+> Upsample
+> Conv
+> SEAN ResBLK
+> Upsample
+> SEAN ResBLK
+> Upsample
+> SEAN ResBLK
+> Upsample
+> Conv
+> ...
+> Sim Component mask
+> Real image
+> StyleGAN2
+> Discriminat
+> or
+> StyleGAN2
+> Discriminat
+> or
+
+(a) Generation Pipeline             
+
+> Sim image
+> Real Component mask
+> MrMr
+> IrIr
+> IsIs
+> MsMs
+> Translated image
+> Real image
+> Translated image
+> Sim image
+> IsIs
+> ^
+> Is
+> ^
+> IsIs
+> ^
+> Is
+> ^
+> IsIs
+> ^
+> Is
+> ^
+> IrIr
+> IsIs
+> Adversarial Loss
+> +R1
+> PatchNCE Loss
+> Edge Loss
+> Self -Reg Loss
+> Structure Loss
+> Total Objective ℒD=ℒadv
+> D+𝜆 R1ℒR1ℒG=ℒadv
+> +𝜆 nce ℒPatchNCE
+> +𝜆 reg ℒreg
+> +𝜆 edge ℒedge
+
+(b) Training Objectives 
+
+Fig. 3. Detailed architecture of the proposed component-level structure-preserving style transfer network. (a) Generation pipeline, where real component styles are encoded into a part-wise style matrix and injected into the synthetic image through a SEAN-based generator. (b) Training objectives, including adversarial supervision and structure-preserving losses. 
+
+target, valid samples should satisfy ni = ¯ n, where ¯n = 1 . We define 
+
+mi =
+
+(
+
+1, ni = ¯ n, 
+
+0, ni̸ = ¯ n, ¯n = 1 ,
+
+where mi denotes whether the i-th view is retained. Samples with mi = 0 are discarded as mismatched samples. The retained real–synthetic pairs share similar viewpoints, object layouts, and coarse pose configurations, but may still contain residual alignment errors. We therefore define them as weakly paired samples rather than strictly aligned pairs. In the current dataset, 60 weak pairs are retained to cover the ob-served viewing range and to provide geometrically consistent training data for the subsequent appearance translation stage. 
+
+C. Component-Level Structure-Preserving Style Transfer 
+
+For satellite Sim2Real dataset construction, style trans-fer should improve the visual realism of synthetic images while preserving the annotation consistency inherited from simulation. Since the translated images are used to train downstream vision models, their object masks, component layouts, bounding boxes, and poses should remain aligned with the original synthetic annotations. Therefore, our goal is to synthesize realistic satellite images without changing the object silhouette, component layout, or structural boundaries. Satellite targets contain multiple components with distinct material properties, such as solar panels, metallic main bodies, antennas, docking rings, and nozzles. A global instance-level style code may entangle the appearance statistics of different components, leading to cross-component texture con-tamination. To address this problem, we model each satellite component as an independent appearance unit and perform mask-aligned component-wise style transfer. As shown in Fig. 2(c) and Fig. 3(a), given a real reference image Ir and its component mask Mr , TransNet first uses a style encoder Es to extract real-domain appearance features. The component mask partitions the satellite into R semantic regions, and region-wise masked pooling is used to obtain a part-wise style matrix: 
+
+Sr = Es(Ir , M r ) ∈ RC×R,
+
+where C denotes the style feature dimension and each column of Sr represents the style code of one satellite component. In our implementation, C = 512 . The real component mask Mr
+
+defines how real-domain appearance statistics are decomposed, while the synthetic component mask Ms determines where the style codes are injected. Given a synthetic image Is, its component mask Ms, and the real style matrix Sr , the generator synthesizes a translated image: 
+
+ˆIs = G(Is, M s, S r ).
+
+We adopt a SEAN-based generator as the translation back-bone. At each modulation layer l, the synthetic component mask is resized to the corresponding feature resolution, de-noted as M ls, and used to route each component style code to its matching synthetic region. The modulation parameters are predicted as: 
+
+γl, β l = Φ l(M ls, S r ),
+
+and the intermediate feature map Fl is modulated by 
+
+ˆFl = γl ⊙ Norm( Fl) + βl,
+
+where ⊙ denotes element-wise multiplication. This mask-aligned modulation injects each real component style only into the corresponding synthetic component region, reducing texture leakage while preserving the synthetic pose, silhouette, and part layout. Fig. 4 visualizes the component-wise controllability of the proposed style representation. By selectively transferring the style of one semantic component, the network changes the appearance of the corresponding region while keeping the remaining components largely unchanged. This demonstrates that the learned representation supports fine-grained part-level appearance control. 6 IEEE SENSORS JOURNAL, VOL. XX, NO. XX, XXXX 2024 Sim mask Sim image Real image Component -wise Style Transfer         
+
+> Solar panel Main body Antenna Nozzle Other Solar panel Main body Antenna Nozzle Other
+
+## Sim mask Sim image Real image Component -wise Style Transfer      
+
+> Solar panel Main body Antenna Nozzle Other
+> Fig. 4. Component-wise style transfer visualization. Each intermediate result transfers the style of one selected satellite component while keeping the remaining components unchanged.
+
+As shown in Fig. 3(b), the network is trained with adversar-ial supervision and structure-preserving constraints. A Style-GAN2 discriminator D is used to encourage translated images to match the real image distribution, with R1 regularization for stable training [31]: 
+
+LD = LD 
+
+> adv
+
++ λR1 LR1 .
+
+To preserve the validity of synthetic annotations, we further impose structure-preserving losses between the synthetic input 
+
+Is and the translated output ˆIs. PatchNCE encourages local feature correspondence, self-regularization penalizes excessive pixel-level changes, and edge loss preserves high-frequency boundary cues. The generator objective is: 
+
+LG = Ladv + λnce LPatchNCE + λreg Lreg + λedge Ledge .
+
+The PatchNCE loss follows the local contrastive form used in contrastive unpaired translation. For feature layer l ∈ L and sampled patch index p, let qpl denote the projected feature of the translated image, kp, + 
+
+> l
+
+the corresponding positive feature from the synthetic input, and kp′,− 
+
+> l
+
+the features of other sampled patches. With temperature τ , the loss is 
+
+LPatchNCE = 1
+
+|L| 
+
+X
+
+> l∈L
+
+1
+
+PlPlX
+
+> p=1
+
+ℓpl ,ℓpl = − log exp( qpl · kp, + 
+
+> l
+
+/τ )
+
+Zpl
+
+,Zpl = exp( qpl · kp, + 
+
+> l
+
+/τ ) + X 
+
+> p′̸=p
+
+exp( qpl · kp′,− 
+
+> l
+
+/τ ).
+
+This term discourages local geometric drift by keeping corre-sponding synthetic and translated patches close in the feature space. The self-regularization loss is applied on the satellite fore-ground: 
+
+Lreg =
+
+M obj s ⊙ ( ˆIs − Is) 1
+
+M obj s 1
+
++ ϵ,
+
+where M obj s is the foreground mask and ϵ avoids division by zero. For edge consistency, we compute Sobel edge maps E(·)
+
+and penalize foreground boundary changes: 
+
+Ledge =
+
+M obj s ⊙ (E( ˆIs) − E(Is)) 1
+
+M obj s 1
+
++ ϵ.
+
+In our implementation, synthetic component masks are rendered from the CAD model, while real component masks are obtained using SAM-based automatic segmentation with refinement. This design enables scalable generation of realistic satellite training data while preserving the structural and an-notation consistency required by downstream Sim2Real tasks. 
+
+D. Style Transfer and Evaluation 
+
+After training, the component-level style transfer network is applied to large-scale synthetic satellite images for realistic dataset synthesis. As shown in Fig. 5, given a synthetic image 
+
+Is, its component mask Ms, and a sampled real-domain style matrix Sr , the generator produces a translated foreground image: ˜Is = G(Is, M s, S r ),
+
+where Sr is sampled from the learned component-wise style set extracted from real satellite observations. To preserve the original scene layout and avoid background artifacts, only the satellite foreground is translated. The final image is obtained by mask-based composition: 
+
+ˆIs = M obj s ⊙ ˜Is + (1 − M obj s ) ⊙ Is,
+
+where M obj s is the binary object mask derived from Ms, and ⊙
+
+denotes element-wise multiplication. In this way, the satellite appearance is transferred toward the real domain while the background remains unchanged. The generated images inherit the annotations of the original synthetic data, including object masks, component masks, bounding boxes, and object poses. Since the translation is conditioned on the synthetic structure and constrained by ZHANG: COMPONENT-AWARE STRUCTURE-PRESERVING STYLE TRANSFER FOR SATELLITE SIM2REAL 6D POSE ESTIMATION 7TransNet TransNet TransNet 
+
+> Sim image
+> Sim mask
+> Final translated image
+> Preserved background
+> TransNet
+> Sim image
+> Sim mask
+> Final translated image
+> Preserved background
+> Translated foreground
+> TransNet
+> Sim image
+> Sim mask
+> Final translated image
+> Preserved background
+> Translated foreground
+
+Fig. 5. Foreground-only style transfer during inference. TransNet trans-lates the satellite foreground conditioned on the synthetic image and component mask, while the original background is preserved through mask-based composition. 
+
+PatchNCE, self-regularization, and edge-consistency losses during training, the translated images preserve the object silhouette, component layout, and structural boundaries. For evaluation, we use satellite 6D pose estimation as the downstream Sim2Real task. A GDRNet pose estimator is trained on either original synthetic images or translated synthetic images and evaluated on the same real test set. Im-proved performance on real images indicates that the generated data reduce the visual domain gap while preserving geometric supervision from simulation. 
+
+IV. E XPERIMENTS 
+
+In this section, we evaluate the proposed component-level structure-preserving style transfer framework for satellite Sim2Real dataset construction. We first describe the datasets, implementation settings, baselines, and metrics. We then com-pare our method with representative translation baselines in terms of image fidelity, qualitative results, and downstream 6D pose estimation. Finally, ablation studies are conducted to analyze the effects of component mask guidance and structure-preserving losses. 
+
+A. Experimental Setup 
+
+We evaluate our method on a synthetic satellite dataset ren-dered from a self-built CAD model and a real satellite dataset captured in a calibrated environment. As shown in Fig. 2(a), the real acquisition setup consists of an Intel RealSense D435 camera, a physical satellite model, and eight ArUco markers for camera calibration and pose reference construction. We collect 100 real images from multiple viewpoints at a distance of approximately 3–5 m. These real images are used as unlabeled target-domain references for style transfer training and as test images for final evaluation, but their pose labels are not used to optimize the downstream pose estimator. This protocol should be interpreted as target-domain Sim2Real data construction rather than a held-out unseen-domain generaliza-tion test. The synthetic dataset contains 5,000 Blender-rendered im-ages at a resolution of 640 × 480 , with a 7:3 training-validation split. The virtual camera distance is also set to approximately 3–5 m to match the real acquisition setting. Space-image backgrounds and a single-side point light source are used for rendering. Each synthetic image is automatically Sim image Real image 
+
+Sim mask Real mask 
+
+Component -
+
+level image Component -
+
+level image         
+
+> Solar panel Main body Antenna Nozzle Other Solar panel Main body Antenna Nozzle Other
+
+Sim image Real image 
+
+Sim mask Real mask 
+
+Component -
+
+level image Component -
+
+level image     
+
+> Solar panel Main body Antenna Nozzle Other
+
+Fig. 6. Data samples and component masks. Synthetic and real images share the same component taxonomy, including solar panels, main body, antenna, nozzle, and other minor structures. 
+
+annotated with object pose, bounding box, foreground mask, and component-level semantic masks. Fig. 6 shows representative synthetic and real samples with their component masks. Both domains share the same component taxonomy, including solar panels, main body, antenna, nozzle, and other minor structures. Synthetic com-ponent masks are rendered from the CAD model, while real component masks are obtained using SAM-assisted automatic segmentation [30]. This consistent component definition en-ables component-aware style transfer across the synthetic and real domains. All experiments are conducted on a workstation equipped with a single NVIDIA RTX 4090 GPU. The proposed style-transfer network is trained for 100 epochs with batch size 8, Adam optimizer, learning rate 2 × 10 −4, and 512 × 512 input resolution. The loss weights are set to λR1 = 10 .0, λnce = 1 .0,
+
+λreg = 0 .1, and λedge = 0 .5. PatchNCE uses layers 1–4 as the multi-scale feature set, with temperature τ = 0 .07 .For downstream Sim2Real evaluation, we use GDRNet as the 6D pose estimator and evaluate all models on the same real test set. GDRNet is trained for 150 epochs with batch size 32, Adam optimizer, learning rate 1 × 10 −4, and 640 × 480 
+
+input resolution. The Non-Adaptation setting uses the original synthetic training split, while each adaptation method uses the translated version of the same synthetic training split, approximately 3,500 images. All downstream pose-estimation runs use a fixed random seed of 42 and are reported as a single deterministic run. The compared methods include Non-Adaptation, Cycle-GAN [14], DRIT [15], CUT [17], SEAN [19], and our method. Because these translation models have different architectures and training objectives, the comparison is controlled at the data and evaluation levels rather than by forcing identical optimizer schedules. All methods use the same synthetic training split and the same real reference set where applicable. Their translated outputs are resized to the same resolution and then used to train the same GDRNet model under the same downstream protocol. For methods that perform full-image translation, the output image is used directly; for the proposed method, foreground-only translation is composed 8 IEEE SENSORS JOURNAL, VOL. XX, NO. XX, XXXX 2024 Sim image Ours CycleGAN CUT DRIT SEAN Real image Sim image Ours CycleGAN CUT DRIT SEAN Real image  
+
+> Fig. 7. Qualitative comparison of different Sim2Real translation methods. CycleGAN, CUT, and DRIT perform full-image translation and may modify both the satellite and background. SEAN uses semantic masks for region-adaptive translation. Our method better preserves the original background, satellite geometry, and component layout while improving real-domain appearance.
+
+with the original synthetic background as described in Sec. III. This setting evaluates whether each data-construction strategy produces synthetic-derived images that are useful for real-domain pose estimation. 
+
+B. Evaluation Metrics 
+
+For image-level evaluation, we report FID [32] and KID [33] between translated synthetic images and real obser-vations. In our evaluation, the translated synthetic validation set, approximately 1,000 images, is compared with the 100 real images. Both metrics are computed from pretrained Inception-v3 features; FID measures the Frechet distance between Gaus-sian feature statistics, while KID estimates a kernel distance between feature distributions. For downstream pose evaluation, we use ADD over the satellite model point set M:
+
+ADD = 1
+
+|M| 
+
+X
+
+> x∈M
+
+(Rx + t) − ( ˆRx + ˆ t) 2
+
+,
+
+where R, t are the reference pose and ˆR, ˆt are the predicted pose. The ADD pass rate is reported at the 0.02 m threshold, meaning that a prediction is counted as correct when its average model-point distance is below 2 cm. AUC is computed from the ADD pass-rate curve over thresholds from 0 to 
+
+0.10 m .For structural consistency in the ablation study, Mask IoU compares the component mask inferred from the translated result with the original synthetic component mask, rather than with a real-image mask. Edge Error is computed as the foreground-masked Sobel edge difference between the translated image and the synthetic source, normalized by the number of foreground pixels. These two metrics evaluate whether the translation preserves the component layout and high-frequency boundaries needed for annotation-preserving training. 
+
+C. Comparative Experiments 
+
+We compare the proposed method with representative base-lines from two perspectives: image-level style transfer quality and downstream Sim2Real performance. 
+
+Qualitative comparison. We first compare the visual qual-ity and structural consistency of different Sim2Real translation methods. As shown in Fig. 7, CycleGAN, CUT, and DRIT perform full-image translation and therefore modify both the satellite foreground and the background. Although these methods introduce real-domain appearance cues, they also change the original space background and may weaken the consistency between the translated images and the synthetic annotations. In particular, the translated results show global color and illumination changes, and the satellite components are not explicitly controlled by their semantic regions. SEAN uses semantic masks for region-adaptive modula-tion and thus better preserves the foreground-background separation than full-image translation methods. However, its results still show limited component-specific realism and less stable fine details around solar panels, antennas, and the main body. In contrast, our method preserves the original synthetic background and satellite geometry while transferring realistic appearance to the corresponding components. The solar panels, main body, and small structures remain better aligned with the input layout, indicating that the proposed component-aware and structure-preserving translation is more suitable for annotation-preserving Sim2Real dataset synthesis. 
+
+Image fidelity evaluation. We further evaluate image-level realism using FID and KID between translated satel-lite images and real observations. As shown in Tab. I, our method achieves the lowest FID and KID, with scores of 54.32 and 0.048, respectively. Compared with the strongest baseline CUT, our method reduces FID from 62.85 to 54.32 and KID from 0.056 to 0.048, indicating that the proposed component-aware translation better matches the real image distribution. In contrast, DRIT produces the largest distribution discrepancy, suggesting that image-level translation without ZHANG: COMPONENT-AWARE STRUCTURE-PRESERVING STYLE TRANSFER FOR SATELLITE SIM2REAL 6D POSE ESTIMATION 9
+
+explicit structure-preserving constraints may be insufficient for satellite Sim2Real dataset construction. FID and KID are used as auxiliary indicators of image-level realism, since they measure distributional similarity but do not directly verify whether geometric annotations remain valid after translation. Therefore, downstream 6D pose estimation is used as the primary criterion for evaluating Sim2Real effectiveness.                       
+
+> TABLE I FID AND KID BETWEEN TRANSLATED SATELLITE IMAGES AND REAL OBSERVATIONS .
+> Method FID ↓KID ↓
+> CycleGAN [14] 78.64 0.071 DRIT [15] 117.41 0.111 CUT [17] 62.85 0.056 SEAN [19] 93.29 0.085 Ours 54.32 0.048
+
+Downstream 6D pose evaluation. To evaluate the Sim2Real effectiveness of the generated data, we train the same GDRNet pose estimator using different training sets and evaluate all models on the same real test set. The compared settings include Non-Adaptation, CycleGAN [14], DRIT [15], CUT [17], SEAN [19], and our method. For a fair comparison, all translation methods use the same synthetic training split and the same real reference set, while paired information is used only by methods that can explicitly exploit it. Fig. 8 shows the average distance threshold curves, and Tab. II reports the ADD pass rate at the 0.02 m threshold and the AUC score. Our method achieves the highest ADD pass rate of 0.260 and the highest AUC of 0.611. Compared with the strongest baseline CUT, our method improves the ADD pass rate from 0.182 to 0.260 and the AUC from 0.513 to 0.611. These results demonstrate that the proposed component-aware and structure-preserving translation improves down-stream pose estimation by reducing the synthetic-to-real ap-pearance gap while preserving useful geometric cues. 0.00 0.02 0.04 0.06 0.08 0.10                           
+
+> Average Distance Threshold (m)
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> ADD Pass Rate
+> satellite
+> Non-Adaptation
+> CycleGAN
+> CUT
+> DRIT
+> SEAN
+> Ours
+> Fig. 8. Average distance threshold curves of Non-Adaptation, our method, and other adaptation methods. The dashed vertical line de-notes the 0.02 m threshold used for the ADD values in Tab. II. TABLE II ADD PASS RATE AT 0.02 m AND AREA UNDER THE CURVE (AUC) FOR DOWNSTREAM 6D POSE ESTIMATION .
+> Training Data ADD ↑AUC ↑
+> Non-Adaptation 0.111 0.486 CycleGAN [14] 0.085 0.481 DRIT [15] 0.044 0.274 CUT [17] 0.182 0.513 SEAN [19] 0.098 0.417 Ours 0.260 0.611
+
+D. Ablation Study 
+
+We conduct ablation studies on four removable compo-nents in the implemented framework: component mask guid-ance, PatchNCE loss, pixel-level self-regularization, and edge-consistency loss. Since some ablated variants may weaken the alignment between translated images and the original synthetic annotations, we mainly evaluate the ablation results using vi-sual comparison and image-level structural consistency, rather than training a downstream pose estimator for every variant. The downstream pose experiment in Tab. II is therefore used to validate the full data-construction pipeline, while the ablation study isolates which translation constraints most affect image fidelity and structural preservation. Fig. 9 shows two representative visual examples. Removing component mask guidance weakens the semantic control over different satellite parts. As shown in the second column, the appearance of the solar panels and the main body becomes less clearly separated, and the translated texture tends to leak across component boundaries. Without PatchNCE loss, the global satellite pose is still preserved, but local details become less stable, especially around the solar-panel grid, the main body surface, and small protruding structures. Removing self-regularization introduces the most obvious appearance drift in the visualization: the satellite becomes overly dark and unstable, and the translated result deviates significantly from the input synthetic structure. Without edge-consistency loss, the overall appearance remains relatively reasonable, but the contours of the solar panels and the boundaries around the main body become softer and less distinct. In contrast, the full model produces more realistic component-specific appearance while better preserving the satellite pose, component layout, and structural boundaries.                                        
+
+> TABLE III ABLATION STUDY OF COMPONENT GUIDANCE AND STRUCTURE -
+> PRESERVING LOSSES .FID MEASURES IMAGE -LEVEL REALISM ,
+> WHILE MASK IOUAND EDGE ERROR MEASURE STRUCTURAL CONSISTENCY .
+> Variant FID ↓Mask IoU ↑Edge Err. ↓
+> w/o Component Mask 72.15 0.82 4.53 w/o PatchNCE 65.40 0.85 3.82 w/o Self-Reg 61.22 0.88 3.45 w/o Edge Loss 58.76 0.91 4.12 Full Model 54.32 0.95 2.15
+
+Tab. III provides quantitative evidence consistent with the visual results. Removing component mask guidance causes the largest overall degradation, increasing FID from 54.32 to 72.15 10 IEEE SENSORS JOURNAL, VOL. XX, NO. XX, XXXX 2024 Sim image w/o Component Mask w/o PatchNCE w/o Self -Reg w/o Edge Loss Full Model Sim image w/o Component Mask w/o PatchNCE w/o Self -Reg w/o Edge Loss Full Model 
+
+Fig. 9. Visual ablation study of the proposed framework. Each column shows the result of removing one component from the full model. The full model better preserves satellite geometry, component layout, and structural boundaries while transferring realistic appearance. 
+
+and reducing Mask IoU from 0.95 to 0.82. This confirms that component-level semantic guidance is important for both real-istic appearance transfer and structural consistency. Removing PatchNCE or self-regularization also degrades image fidelity and structural consistency, indicating that local contrastive consistency and pixel-level regularization help maintain the input structure during translation. When edge-consistency loss is removed, the Edge Error increases from 2.15 to 4.12, while the FID changes more moderately, suggesting that this loss mainly contributes to preserving sharp component boundaries and object contours. Overall, the full model achieves the best performance across all metrics, demonstrating the ef-fectiveness of the proposed component-aware and structure-preserving design. 
+
+V. C ONCLUSIONS 
+
+We proposed a component-level structure-preserving style transfer framework for satellite Sim2Real dataset construction. In the considered calibrated satellite setup, the method uses large-scale synthetic data and a limited number of unlabeled real observations to generate realistic satellite images while preserving the geometric annotations inherited from simula-tion. Component-level semantic guidance and mask-aligned style modulation are introduced to model part-specific appear-ance and reduce cross-component texture contamination. An automated weakly paired data generation pipeline is fur-ther developed using ArUco-based camera-pose information, CAD-based rendering, and view consistency filtering, avoiding manual pixel-level registration. Structure-preserving losses, including PatchNCE, self-regularization, and edge-consistency loss, are used to maintain local structures and component boundaries during translation. Experimental results show that, on this target-domain eval-uation set, our method improves image-level fidelity and downstream satellite 6D pose estimation performance com-pared with representative baselines. Ablation studies confirm the importance of component mask guidance and structure-preserving constraints for maintaining image fidelity and struc-tural consistency. Future work will investigate more robust component mask extraction, more diverse real-domain acqui-sition, additional satellite geometries, and evaluation under broader camera and illumination conditions. 
+
+REFERENCES 
+
+[1] R. Opromolla, G. Fasano, G. Rufino, and M. Grassi, “A review of cooperative and uncooperative spacecraft pose determination techniques for close-proximity operations,” Progress in Aerospace Sciences , vol. 93, pp. 53–72, 2017. [2] J. Song, D. Rondao, and N. Aouf, “Deep learning-based spacecraft relative navigation methods: A survey,” Acta Astronautica , vol. 191, pp. 22–40, 2022. [3] L. Pauly, W. Rharbaoui, C. Shneider, A. Rathinam, V. Gaudilli` ere, and D. Aouada, “A survey on deep learning-based monocular spacecraft pose estimation: Current state, limitations and prospects,” Acta Astronautica ,vol. 212, pp. 339–360, 2023. [4] S. Sharma and S. D’Amico, “Neural network-based pose estima-tion for noncooperative spacecraft rendezvous,” IEEE Transactions on Aerospace and Electronic Systems , vol. 56, no. 6, pp. 4638–4658, 2020. [5] M. Kisantal, S. Sharma, T. H. Park, D. Izzo, M. M¨ artens, and S. D’Amico, “Satellite pose estimation challenge: Dataset, competition design, and results,” IEEE Transactions on Aerospace and Electronic Systems , vol. 56, no. 5, pp. 4083–4098, 2020. [6] T. H. Park, M. M¨ artens, G. L´ ecuyer, D. Izzo, and S. D’Amico, “SPEED+: Next-generation dataset for spacecraft pose estimation across domain gap,” in 2022 IEEE Aerospace Conference (AERO) , 2022, pp. 1–15. [7] T. H. Park and S. D’Amico, “Robust multi-task learning and online refinement for spacecraft pose estimation across domain gap,” Advances in Space Research , vol. 73, no. 11, pp. 5726–5740, 2024. [8] H. Su, C. R. Qi, Y. Li, and L. J. Guibas, “Render for CNN: Viewpoint es-timation in images using CNNs trained with rendered 3d model views,” in Proceedings of the IEEE International Conference on Computer Vision , 2015, pp. 2686–2694. [9] M. Bechini, M. Lavagna, and P. Lunghi, “Dataset generation and vali-dation for spacecraft pose estimation via monocular images processing,” 
+
+Acta Astronautica , vol. 204, pp. 358–369, 2023. [10] P. F. Proenc ¸a and Y. Gao, “Deep learning for spacecraft pose estimation from photorealistic rendering,” in 2020 IEEE International Conference on Robotics and Automation (ICRA) , 2020, pp. 6007–6013. [11] J. Tobin, R. Fong, A. Ray, J. Schneider, W. Zaremba, and P. Abbeel, “Domain randomization for transferring deep neural networks from sim-ulation to the real world,” in 2017 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) , 2017, pp. 23–30. [12] J. Tremblay, A. Prakash, D. Acuna, M. Brophy, V. Jampani, C. Anil, T. To, E. Cameracci, S. Boochoon, and S. Birchfield, “Training deep networks with synthetic data: Bridging the reality gap by domain randomization,” in 2018 IEEE/CVF Conference on Computer Vision and Pattern Recognition Workshops (CVPRW) , 2018, pp. 969–977. [13] P. Isola, J.-Y. Zhu, T. Zhou, and A. A. Efros, “Image-to-image translation with conditional adversarial networks,” in Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition , 2017, pp. 5967–5976. [14] J.-Y. Zhu, T. Park, P. Isola, and A. A. Efros, “Unpaired image-to-image translation using cycle-consistent adversarial networks,” in Proceedings of the IEEE international conference on computer vision , 2017, pp. 2223–2232. ZHANG: COMPONENT-AWARE STRUCTURE-PRESERVING STYLE TRANSFER FOR SATELLITE SIM2REAL 6D POSE ESTIMATION 11 
+
+[15] H.-Y. Lee, H.-Y. Tseng, J.-B. Huang, M. Singh, and M.-H. Yang, “Diverse image-to-image translation via disentangled representations,” in Proceedings of the European conference on computer vision (ECCV) ,2018, pp. 35–51. [16] X. Huang, M.-Y. Liu, S. Belongie, and J. Kautz, “Multimodal unsu-pervised image-to-image translation,” in Proceedings of the European Conference on Computer Vision (ECCV) , 2018, pp. 172–189. [17] T. Park, A. A. Efros, R. Zhang, and J.-Y. Zhu, “Contrastive learning for unpaired image-to-image translation,” in European conference on computer vision . Springer, 2020, pp. 319–345. [18] T. Park, M.-Y. Liu, T.-C. Wang, and J.-Y. Zhu, “Semantic image synthesis with spatially-adaptive normalization,” in Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition ,2019, pp. 2337–2346. [19] P. Zhu, R. Abdal, Y. Qin, and P. Wonka, “Sean: Image synthesis with semantic region-adaptive normalization,” in Proceedings of the IEEE/CVF conference on computer vision and pattern recognition , 2020, pp. 5104–5113. [20] S. Garrido-Jurado, R. Mu˜ noz-Salinas, F. J. Madrid-Cuevas, and M. J. Mar´ ın-Jim´ enez, “Automatic generation and detection of highly reliable fiducial markers under occlusion,” Pattern Recognition , vol. 47, no. 6, pp. 2280–2292, 2014. [21] G. Wang, F. Manhardt, F. Tombari, and X. Ji, “GDR-Net: Geometry-guided direct regression network for monocular 6D object pose estima-tion,” in Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , 2021, pp. 16 606–16 616. [22] B. Chen, J. Cao, ´A. Parra Bustos, and T.-J. Chin, “Satellite pose estimation with deep landmark regression and nonlinear pose refine-ment,” in 2019 IEEE/CVF International Conference on Computer Vision Workshop (ICCVW) , 2019, pp. 2816–2824. [23] J. Tremblay, T. To, B. Sundaralingam, Y. Xiang, D. Fox, and S. Birchfield, “Deep object pose estimation for semantic robotic grasping of household objects,” in Proceedings of The 2nd Conference on Robot Learning , ser. Proceedings of Machine Learning Research, vol. 87. PMLR, 2018, pp. 306–316. [Online]. Available: https://proceedings.mlr.press/v87/tremblay18a.html [24] Y. Labb´ e, L. Manuelli, A. Mousavian, S. Tyree, S. Birchfield, J. Tremblay, J. Carpentier, M. Aubry, D. Fox, and J. Sivic, “MegaPose: 6d pose estimation of novel objects via render & compare,” in 
+
+Proceedings of The 6th Conference on Robot Learning , ser. Proceedings of Machine Learning Research, vol. 205. PMLR, 2023, pp. 715–725. [Online]. Available: https://proceedings.mlr.press/v205/labbe23a.html [25] G. Xie, Y. Liu, Y. Ji, Z. Xie, and B. Cao, “PSVMLP: Point and shifted voxel MLP for 3d deep learning,” Pattern Recognition Letters , vol. 185, pp. 1–7, 2024. [26] Z. Xie, G. Xie, Y. Liu, Y. Zhang, B. Cao, Y. Ji, Z. Wang, and H. Liu, “DexMGNet: Multi-mode dexterous grasping in cluttered scenes with generative models,” IEEE Robotics and Automation Letters , vol. 10, no. 8, pp. 8483–8490, 2025. [27] Z. Li, Y. Hu, M. Salzmann, and X. Ji, “SD-Pose: Semantic decompo-sition for cross-domain 6d object pose estimation,” Proceedings of the AAAI Conference on Artificial Intelligence , vol. 35, no. 3, pp. 2020– 2028, 2021. [28] T. Ikeda, S. Tanishige, A. Amma, M. Sudano, H. Audren, and K. Nishi-waki, “Sim2real instance-level style transfer for 6d pose estimation,” in 2022 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) . IEEE, 2022, pp. 3225–3232. [29] S. Hinterstoisser, V. Lepetit, S. Ilic, S. Holzer, G. Bradski, K. Konolige, and N. Navab, “Model based training, detection and pose estimation of texture-less 3d objects in heavily cluttered scenes,” in Computer Vision – ACCV 2012 , ser. Lecture Notes in Computer Science. Springer, 2013, vol. 7724, pp. 548–562. [30] A. Kirillov, E. Mintun, N. Ravi, H. Mao, C. Rolland, L. Gustafson, T. Xiao, S. Whitehead, A. C. Berg, W.-Y. Lo, P. Doll´ ar, and R. Girshick, “Segment anything,” in Proceedings of the IEEE/CVF International Conference on Computer Vision , 2023, pp. 4015–4026. [31] T. Karras, S. Laine, M. Aittala, J. Hellsten, J. Lehtinen, and T. Aila, “Analyzing and improving the image quality of StyleGAN,” in Pro-ceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , 2020, pp. 8110–8119. [32] M. Heusel, H. Ramsauer, T. Unterthiner, B. Nessler, and S. Hochreiter, “GANs trained by a two time-scale update rule converge to a local nash equilibrium,” in Advances in Neural Information Processing Systems ,vol. 30, 2017. [33] M. Bi´ nkowski, D. J. Sutherland, M. Arbel, and A. Gretton, “De-mystifying MMD GANs,” in International Conference on Learning Representations , 2018.

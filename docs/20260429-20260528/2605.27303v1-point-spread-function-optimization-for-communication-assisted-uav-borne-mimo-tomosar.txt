@@ -1,0 +1,810 @@
+Title: Point Spread Function Optimization for Communication-assisted UAV-borne MIMO TomoSAR
+
+URL Source: https://arxiv.org/pdf/2605.27303v1
+
+Published Time: Wed, 27 May 2026 01:34:01 GMT
+
+Number of Pages: 15
+
+Markdown Content:
+> 1
+
+# Point Spread Function Optimization for Communication-assisted UAV-borne MIMO TomoSAR 
+
+Pouya Fakharizadeh ∗, Mohamed-Amine Lahmeri ∗, Gerhard Krieger ∗† , and Robert Schober ∗∗Friedrich-Alexander-Universit¨ at Erlangen-N¨ urnberg (FAU), Germany 
+
+†German Aerospace Center (DLR), Microwaves and Radar Institute, Weßling, Germany 
+
+Abstract 
+
+This paper tackles the optimization of the point spread function (PSF) of unmanned aerial vehicle (UAV)-borne multiple-input multiple-output (MIMO) synthetic aperture radar (SAR) tomography systems. A swarm of UAV-borne SAR systems is deployed to image an area to obtain its height profile. To achieve a high-quality three-dimensional (3D) image of the scene, the PSF has to exhibit low sidelobes. The heavy computations, required for image generation, are performed on the ground. To this end, the sensor data collected by the UAV-SARs is offloaded in real time via a frequency division multiple access (FDMA) air-to-ground backhaul link. In this work, the UAV formation and the power allocated for offloading are jointly optimized for the minimization of the PSF sidelobe levels. To this end, we propose a novel solution based on the particle swarm optimization (PSO) algorithm, which meets practical sensing and communication constraints. Our simulation results demonstrate that the proposed solution can significantly improve sidelobe suppression compared to several benchmark schemes. 
+
+I. I NTRODUCTION 
+
+The deployment of unmanned aerial vehicle (UAV) swarms for remote sensing has garnered considerable attention in recent years. This growing interest has facilitated the broader application of UAVs across various domains, including mapping, traffic monitoring, and climate change analysis. To support these applications, UAV platforms are equipped with a range of sensors, including optical cameras, LiDAR systems, and radar instruments. Notably, the integration of synthetic aperture radar (SAR) into UAV systems has emerged as a particularly promising option, as it enables the generation of high-resolution imagery of local areas, even 
+
+This work was supported in part by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) GRK 2680 – Project-ID 437847244. 
+
+> arXiv:2605.27303v1 [eess.SP] 26 May 2026 2
+
+under adverse environmental conditions, thereby overcoming the constraints associated with conventional airborne and spaceborne SAR platforms. An important remote sensing application of UAV swarms is three-dimensional (3D) radar imaging. In particular, tomographic SAR (TomoSAR) exploits a synthetic aperture in elevation to retrieve the vertical distribution of scatterers [1]. One key performance metric in TomoSAR is the point spread function (PSF), which characterizes how a scatterer in elevation is mapped onto the reconstructed tomographic image [2]. Although the PSF is well established in the radar literature for Fourier-based tomography, where typically far-field conditions and uniform platform spacing are assumed [3], its extension to UAV-based systems with arbitrary platform formation has remained largely unexplored. The PSF determines essential imaging properties, including tomographic resolution, height of ambiguity, and sidelobe levels, all of which directly influence the quality of the resulting image. In particular, the sidelobe levels quantify the extent to which energy from a strong scatterer leaks into adjacent elevation bins. Strong sidelobes can mask weaker scatterers, generate ghost targets, and ultimately degrade the interpretability of complex scenes, such as urban or volumetric environments [4]. Other relevant metrics for TomoSAR include the signal-to-noise ratio (SNR) and coverage [5]. While TomoSAR has been extensively studied for spaceborne and airborne platforms [3], the optimization of TomoSAR performance for UAV-borne systems has remained unexplored. Furthermore, MIMO TomoSAR offers several advantages over conventional repeat-pass TomoSAR [3], in which a single SAR platform performs multiple acquisitions of the same scene. Notably, it enables improved discrimination between single-bounce and double-bounce scattering mechanisms [5] and exhibits enhanced robustness to pronounced sidelobes [6]. The optimization of UAV-based interferometric synthetic aperture radar (InSAR) was considered in [7]–[9]. However, these results are not directly applicable here, as InSAR relies on acquisition pairs. Consequently, it cannot recover the scatterer distribution along the elevation dimension and is therefore unable to resolve multiple scatterers within the same resolution cell. In contrast, TomoSAR is capable of reconstructing the full 3D image by using multiple acquisitions, thereby enabling the separation of scatterers located at different heights but projected onto the same resolution cell [10]. In this work, we study a UAV-borne MIMO TomoSAR system, where a swarm of UAVs, which transmit and receive radar waveforms, offloads the collected radar data to a ground station (GS) to generate a 3D image of an area. We investigate the joint optimization of the UAV formation and communication power allocation for minimization of the peak sidelobe level (PSL) of the PSF under communication and sensing constraints. Our main contributions can be summarized as follows:  
+
+> •
+
+We jointly optimize the UAV formation and communication power allocation for minimization of the PSL of the PSF, while satisfying sensing and communication constraints. 3𝑟 𝑖 (𝑛 ) 
+
+> 𝑟 𝑗 (𝑛 )
+> 𝑛
+> 𝑧
+> 𝑟 !(𝑛 )
+> 𝑦
+> GS
+> 𝑑 !,𝑘
+> 𝑑 𝑖 ,𝑘
+> 𝑑 𝑗 ,𝑘
+> 𝑥
+> 𝑟
+> 𝐩 t[𝑘 ]
+> Data offloading
+> 𝑈 𝑖
+> 𝑈 𝑗
+> 𝑈 !
+> 𝜌 !Σn(𝑛 )
+> ℎmax
+> −ℎmax
+> 𝕀
+> 𝛿 𝑛
+
+Fig. 1: UAV-borne MIMO TomoSAR sensing system comprising I UAV-SAR sensors and the GS for real-time data offloading. The UAV swarm’s flight direction is along the y-axis. The PSF Σn(n) is evaluated on the n-axis over the interval I. 
+
+> •
+
+We propose a particle swarm optimization (PSO) algorithm to solve the formulated optimization problem.  
+
+> •
+
+Our simulation results demonstrate the effectiveness of the proposed approach compared to several benchmark schemes, achieving PSLs between −17 dB and −33 dB. 
+
+Notations : In this paper, lower-case letters x refer to scalar variables, while boldface lower-case letters x
+
+denote vectors. {a, ..., b } denotes the set of all integers between a and b. |x| denotes the absolute value of x.
+
+RN represents the set of all N -dimensional vectors with real-valued entries. For a vector x = ( x1, ..., x N )T ∈
+
+RN , || x|| 2 denotes the Euclidean norm, whereas xT stands for the transpose of x. [x]+, x ∈ R, denotes 
+
+max( x, 0) . U(a, b) refers to a uniform distribution between the elements of a and b. x ⊙ y denotes the element-wise multiplication of the elements of vectors x and y.II. S YSTEM MODEL 
+
+We consider a set of I ∈ N, I ≥ 2, rotary-wing UAVs, denoted by Ui, i ∈ I = {1, ..., I }, performing TomoSAR over an area, see Fig. 1. Each UAV transmits radar waveforms and receives not only the echoes from its own transmission but also those originating from other UAVs, thereby forming a MIMO system. A 3D Cartesian coordinate system is adopted, where the x-, y-, and z-axes correspond to the range, azimuth, and altitude directions, respectively. The total mission time T is discretized into K slots of equal duration 
+
+δt, such that T = K · δt, and the set of time indices is defined as K = {1, ..., K }. The considered UAV-SAR system operates in stripmap mode [11], with all UAVs maintaining a constant velocity vy along linear 4
+
+trajectories parallel to reference line lt, which is aligned with the y-axis. At time slot k, this reference line passes through the point pt[k] = ( xt, y [k], 0) T ∈ R3, see Fig. 1. The position of Ui at time slot k ∈ K is given by qi[k] = ( xi, y [k], z i)T, where the azimuthal position vector y = ( y[1] = 0 , y [2] , ..., y [K]) T ∈ RK
+
+is defined as y[k + 1] = y[k] + vyδt, ∀k ∈ K \ { K}. For simplicity, we denote the position of Ui in the across-track plane (i.e., the xz −plane) by qi = ( xi, z i)T ∈ R2, ∀i ∈ I . The distance between sensors Ui
+
+and Uj is given by bi,j = ∥qi − qj ∥2 , ∀i, j ∈ I , i > j . Without loss of generality, U1 is selected as the reference UAV to define a local coordinate system, where the r- and n-axes correspond to the slant-range and normal directions, respectively, see Fig. 1. The r-axis is defined as the line connecting U1 to pt[k],while the n-axis lies in the xz -plane and is orthogonal to the r-axis and passes through pt[k].
+
+A. TomoSAR Performance Metrics 
+
+Next, we introduce the relevant TomoSAR performance metrics. 
+
+1) SAR Coverage: Let ρi, i ∈ I , denote Ui’s slant range with respect to (w.r.t.) pt[k]. The slant range is independent of time and is given by: 
+
+ρi =
+
+q
+
+(xi − xt)2 + z2 
+
+> i
+
+, ∀i ∈ I .
+
+The radar swath is designed to be centered w.r.t. lt. To this end, the look angles of the UAVs, denoted by 
+
+θi, i ∈ I , are adjusted such that the beam footprints are centered at pt[k], ∀k, i.e., θi = arctan 
+
+xt−xi
+
+> zi
+
+
+
+. The swath width of Ui can be approximated as follows [11]: 
+
+Si = Θ3dB ρi
+
+cos θi
+
+, ∀i ∈ I ,
+
+where Θ3dB is the -3 dB beamwidth in elevation. 
+
+2) Point Spread Function (PSF): TomoSAR’s capability to suppress the scattering contributions or leave a desired target undistorted can be quantified by the PSF. We derive an expression for the MIMO TomoSAR PSF assuming small bi-static angles |θi − θj |, ∀i, j , on the order of few degrees, which holds for TomoSAR applications [6]. Based on this assumption, the radar cross section is independent of θi, ∀i. The radar signal received at Ui from all UAVs Ul, l ∈ I , reflected by a point target on the n-axis with local coordinates 
+
+(0 , n )T is given by [12]: 
+
+yi = σ
+
+> I
+
+X
+
+> l=1
+
+αil exp 
+
+
+
+j 2πλ (ri(n) + rl(n)) 
+
+
+
++ wi, ∀i ∈ I ,
+
+where σ represents the backscattering coefficient along the n-axis and αil > 0, ∀i, l ∈ I is the attenuation coefficient associated with path loss from Ul to Ui. wi denotes the additive white Gaussian noise at Ui5
+
+and λ is the radar wavelength. ri(n) denotes the slant range from Ui to the respective point located on the 
+
+n-axis (see Fig. 1) and is given by: 
+
+ri(n) = 
+
+q
+
+(xi − (xt + n cos θ1)) 2 + ( zi − n sin θ1)2, ∀i ∈ I ,
+
+We can write the sum of all received signals normalized by the number of acquisitions, assuming αil =
+
+α, ∀i, l ∈ I [12], as follows: 
+
+y = 1
+
+I2
+
+> I
+
+X
+
+> i=1
+
+yi = α · σI2
+
+> I
+
+X
+
+> i=1
+> I
+
+X
+
+> l=1
+
+exp 
+
+
+
+j 2πλ (ri(n) + rl(n)) 
+
+
+
++
+
+> I
+
+X
+
+> i=1
+
+wi
+
+= α · σ · 1
+
+I2
+
+> I
+
+X
+
+> i=1
+
+exp 
+
+
+
+j 2πλ ri(n)
+
+!2
+
+| {z }
+
+> TomoSAR response
+
++
+
+> I
+
+X
+
+> i=1
+
+wi, ∀i ∈ I .
+
+The PSF, denoted by Σn(n), is defined as the magnitude of the TomoSAR response [12] and is given by: 
+
+Σn(n) = 1
+
+I2
+
+> I
+
+X
+
+> i=1
+
+exp 
+
+
+
+j 2πλ ri(n)
+
+ 2
+
+, ∀i ∈ I , (1) Using a similar procedure, we can derive the PSF along the r-axis as follows: 
+
+Σr(r) = 1
+
+I2
+
+> I
+
+X
+
+> i=1
+
+exp 
+
+
+
+j 2πλ li(r)
+
+ 2
+
+, ∀i ∈ I , (2) where li(r) = 
+
+q
+
+(xi − (xt + r sin θ1)) 2 + ( zi + r cos θ1)2, ∀i ∈ I , denotes the distance between Ui and a point located on the r-axis with al coordinates (r, 0) T. Since the primary objective of SAR tomography is the reconstruction of the height profile, in the remainder of this work, we focus on the function Σn(n) to characterize the height resolution and the PSL. Σr(r) is employed to evaluate the slant-range resolution. 
+
+3) TomoSAR Resolution: Key performance metrics for TomoSAR are the tomographic and slant-range resolutions, denoted by δn and δr, respectively. These metrics characterize the system’s ability to distin-guish scatterers along the n- and r-axes. In this work, we adopt the peak-to-null Rayleigh resolution [6]. Accordingly, the tomographic and slant-range resolutions are derived from their respective PSFs as follows: 
+
+δ∆ = 12
+
+min  
+
+> ∆>0
+
+{ ∆| Σ∆(∆) = 0 }
+
+| {z }
+
+> first positive null
+
+− max  
+
+> ∆<0
+
+{ ∆| Σ∆(∆) = 0 }
+
+| {z }
+
+> first negative null
+
+ , ∀∆ ∈ { n, r }. (3) 
+
+4) Peak Sidelobe Level (PSL): Since the tomographic height profile is characterized by the PSF along the n-axis, we focus on optimizing Σn(n). To quantify the sidelobes relevant for the height reconstruction, we define a symmetric interval, I = [ −hmax , h max ], along the n-axis. Within this interval, the main lobe is 6
+
+defined to reside in [−δn, δ n], whereas the remaining region corresponds to sidelobes, see Fig. 1. Accordingly, the PSL is defined as: 
+
+PSL = max  
+
+> n∈I\[−δn,δ n]
+
+Σn(n). (4) Note that hmax ∈ R is practically designed to meet the TomoSAR requirement on the minimum height of ambiguity, which is determined by the location of the first replica of Σn(n) [6]. Therefore, the choice of 
+
+hmax affects the maximum height that can be reliably reconstructed without ambiguity. 
+
+5) Signal-to-Noise Ratio (SNR): The SNR is another determining factor for the quality of the final SAR image. The received SNR from Ui to Uj is given by [11]: 
+
+SNR i,j = α
+
+ 1
+
+ρiρj
+
+2
+
+, ∀i, j ∈ I ,
+
+where α = σ0Ares PtGtGrλ2 
+
+> (4 π)3kbTsys Bnoise F L
+
+. Here, Ares = δr · δn represents the resolution cell size, i.e., the smallest area that the radar can distinguish. Pt is the radar transmit power for all Uis, Gt and Gr are the transmit and receive antenna gains for all Uis, respectively, kb is the Boltzmann constant, Tsys is the receiver temperature, 
+
+Bnoise is the effective noise bandwidth, F is the noise figure, and L represents the total radar losses. 
+
+B. Communication Performance 
+
+We consider real-time offloading of the radar data to the GS, see Fig. 1, where the UAVs employ frequency-division multiple-access (FDMA). The communication transmit power consumed by Ui is given by Pi = ( Pi, 1, ..., P i,K )T ∈ RK , i ∈ I . We denote the location of the GS by g = ( gx, g y, g z)T ∈ R3 and the distance from Ui to the GS by di,k (qi) = || qi[k] − g|| 2, ∀i ∈ I , ∀k ∈ K . Thus, adopting the free-space path loss model and FDMA, the instantaneous throughput from Ui to the GS is given by: 
+
+Ri,k = Bc,i log 2 1 + Pi,k βc,i 
+
+d2
+
+> i,k
+
+(qi)
+
+!
+
+, ∀k ∈ K , ∀i ∈ I ,
+
+where Bc,i is Ui’s fixed communication bandwidth and βc,i is the reference channel gain 1 divided by the noise variance. III. P ROBLEM FORMULATION 
+
+In this paper, we aim at minimizing the PSL of Σn(n) by jointly optimizing the UAV formation Q =
+
+{qi, ∀i ∈ I} and communication transmit powers P = {Pi, ∀i ∈ I} , while satisfying communication and sensing quality-of-service constraints. To this end, we formulate the following optimization problem: 
+
+(P) : min  
+
+> Q,P
+
+PSL 
+
+> 1The reference channel gain is the channel power gain at a reference distance of 1 m. 7
+
+s.t. C1 : Σ n(0) ≥ 1 − ϵ, 
+
+C2 : δn ≤ δmax  
+
+> n
+
+, δ r ≤ δmax  
+
+> r
+
+,
+
+C3 : zmin ≤ zi ≤ zmax , ∀i ∈ I ,
+
+C4 : θmin ≤ θi ≤ θmax , ∀i ∈ I ,
+
+C5 : bi,j ≥ dmin , ∀i, j ∈ I , i > j, 
+
+C6 : Si ≥ Smin , ∀i ∈ I ,
+
+C7 : SNR i,j ≥ SNR min , ∀i, j ∈ I , i ≥ j, 
+
+C8 : 0 ≤ Pi,k ≤ Pmax , ∀i ∈ I , ∀k ∈ K ,
+
+C9 : Ri,k ≥ Rmin , ∀i ∈ I , ∀k ∈ K ,
+
+C10 : Ei ≤ Emax , ∀i ∈ I .
+
+Constraint C1 enforces that the value of the PSF at the target location is close to 1 by choosing ϵ ∈ [0 , 0.05] ,thereby ensuring distortion-free reconstruction of the target. Constraints C2 impose a maximum tomographic and slant-range resolutions, denoted by δmax  
+
+> n
+
+and δmax  
+
+> r
+
+, respectively. Constraint C3 defines the permissible flight altitude range, bounded by zmin and zmax . Constraint C4 imposes limits on the allowable look angle, specified by θmin and θmax . Constraint C5 guarantees a minimum separation distance dmin between any pair of UAVs. Constraint C6 enforces a minimum radar swath width Smin . Constraint C7 ensures that both the monostatic and bi-static SNRs satisfy a minimum threshold SNR min . Constraint C8 limits the maximum communication transmit power to Pmax . Constraint C9 ensures that each UAV Ui, ∀i ∈ I , achieves a minimum required communication rate Rmin . Finally, constraint C10 restricts the total communication energy consumption of each UAV, defined as Ei = δt
+
+PKk=1 Pi,k , to not exceed Emax , ∀i ∈ I .Problem (P) is a challenging min-max optimization problem that is difficult to solve. In particular, the PSF expression is difficult to optimize due to its complex structure (see (1), (2), and (4)). Moreover, several constraints are non-convex, e.g., C1 , C2 , C5 , C6 , and C9 . Lastly, constraints C2 are intractable, since a closed-form expression for the zeros of the PSF in (3) is not available, which makes conventional optimization techniques inapplicable. IV. S OLUTION OF THE OPTIMIZATION PROBLEM 
+
+Given the non-tractability, complexity, and non-convexity of problem (P) , we approach it with stochastic optimization techniques. Motivated by the success of PSO methods in handling high-dimensional and 8
+
+complex optimization problems, we propose a modified PSO algorithm specifically tailored to solve problem 
+
+(P) .
+
+A. Particle Swarm Optimization 
+
+PSO is a population-based stochastic optimization algorithm inspired by the collective behavior of biological swarms (e.g., flocks of birds) [13]. Thus, a population of size O ∈ N explores the search space by iteratively updating a set of candidate solutions, also referred to as particles. In iteration m ∈ N,each particle is represented by p(m) = ( p(m)[1] , . . . , p (m)[D]) T ∈ RD, where D is the problem dimension. Each particle is updated using a velocity vector v(m) = ( v(m)[1] , . . . , v (m)[D]) T ∈ RD as follows: 
+
+p(m) = p(m−1) + v(m−1) , m ≥ 2, (5) where initial particles p(1) are uniformly distributed in [pmin , pmax ], such that pmin , pmax ∈ RD define the minimum and maximum boundary area for the PSO algorithm [13], respectively. The initial velocities are uniformly sampled as v(1) ∼ U (0, v max  
+
+> PSO
+
+1), where vmax  
+
+> PSO
+
+is the maximum particle velocity. Particles are evaluated in each iteration using a predefined fitness function F , designed to meet the objective of problem 
+
+(P) . The particle velocity is updated in each iteration m as follows: 
+
+v(m) = w(m−1) v(m−1) + c1r(m)1 ⊙
+
+
+
+p(m−1) best − p(m−1) 
+
+
+
++ c2r(m)2 ⊙
+
+
+
+g(m−1) best − p(m−1) 
+
+
+
+, (6) where c1 and c2 denote the cognitive and social learning factors, respectively. r(m)1 and r(m)2 are vectors whose elements are independently drawn from a uniform distribution over [0 , 1] , w(m−1) ∈ [0 , 1] is the linearly decreasing inertia weight, p(m−1) best denotes the particle’s previous best-known position, and g(m−1) best 
+
+represents the global best-known position [13]. In this work, we adopt a reflecting-wall mechanism and set the search boundaries based on constraints C3 and C4 to ensure their feasibility and to accelerate convergence as described in [8]. Readers are referred to [13] for further details about the implementation of the PSO algorithm. 
+
+B. Proposed Solution 
+
+To solve problem (P) , we reduce the problem dimension from I(K + 2) to 2I by observing that the PSL is independent of P and, thus, for a given UAV formation Q, problem (P) turns into a feasiblity problem w.r.t. power allocation P:
+
+(P ′) : min  
+
+> P
+
+1
+
+s.t. C8 , C9 , C10 .9
+
+We can reformulate constraints C8 , C9 , and C10 as follows [8]: 
+
+
+
+Pi,k ≤ Pmax , ∀k ∈ K , ∀i ∈ I ,Pi,k ≥ ηi,k , ∀k ∈ K , ∀i ∈ I ,
+
+> K
+
+X
+
+> k=1
+
+Pi,k ≤ Emax 
+
+δt
+
+, ∀i ∈ I ,
+
+where ηi,k = d2
+
+> i,k
+> βc,i
+
+
+
+2 
+
+> Rmin
+> Bc,i
+
+− 1
+
+
+
+. The minimum and maximum communication transmit power of Ui at time slot k are denoted by ηi,k and Pmax , respectively, and the total communication energy of Ui must not exceed 
+
+Emax /δ t. We can set the transmit power consumed by Ui to its minimum required level to obtain a trivial solution to the resource allocation problem as follows: 
+
+P∗ 
+
+> i
+
+= ( ηi, 1, . . . , η i,K )T, ∀i. (7) Therefore, the constraints C8 , C9 , and C10 are feasible if and only if the following constraints are met: 
+
+
+
+C11 : ηi,k ≤ Pmax , ∀k ∈ K , ∀i ∈ I ,
+
+C12 : 
+
+> K
+
+X
+
+> k=1
+
+ηi,k ≤ Emax 
+
+δt
+
+, ∀i ∈ I ,
+
+(8) In other words, It suffices to check if the values ηi,k satisfy constraints C11 and C12 . If the constraints are met, ηi,k , ∀i, ∀k is assigned as the solution to problem (P ′). Otherwise, the difference from Pmax is added to the fitness function as shown in (9). Based on this formulation, the PSO search space can be reduced such that each particle encodes only the UAV positions, i.e., Q, while the power allocation P is determined separately. In other words, in iteration m, a particle is given by p(m) =  qT1,m , . . . , qT
+
+> I,m
+
+T ∈ R2I , where 
+
+qi,m is the candidate across-track position of Ui. Therefore, for a candidate UAV formation selected by 
+
+p(m), the power allocation P∗ = {P∗ 
+
+> i
+
+, ∀i} is computed based on (7) and used to evaluate p(m) using the following non-parameterized fitness function [14]: 
+
+F (p(m)|P ∗) = 
+
+
+
+PSL( p(m)), if p(m) ∈ F ,
+
+PSL max + X
+
+> l∈L
+
+gl(p(m)|P ∗), otherwise ,
+
+(9) where F denotes the feasible set, PSL max is the worst PSL across the population, and gl, l ∈ L , L =
+
+{1, 2, 4, 5, 6, 7, 11 , 12 }, quantify constraint violations as follows: 
+
+g1 = [1 − ϵ − Σn(0)] +,g2 = [ δr − δmax  
+
+> r
+
+]+ + [ δn − δmax  
+
+> n
+
+]+,10 
+
+Algorithm 1 Proposed PSO-based Solution 
+
+Output: Solution to Problem (P) 
+
+Initialization:  
+
+> 1:
+
+Initialize iteration m ← 1, random PSO population of O particles, and random PSO velocities.  
+
+> 2:
+
+Set the best particle based on the fitness function F defined in (9).  
+
+> 3:
+
+while m ≤ M do  
+
+> 4:
+
+Update PSO population and velocities using (5) and (6), respectively.  
+
+> 5:
+
+Compute P∗ for each particle p(m) ∈ R2I using (7) and (8).  
+
+> 6:
+
+Evaluate the fitness of each particle p(m) given P∗ using (9).  
+
+> 7:
+
+Update and record the best particles pm 
+
+> best
+
+and their respective fitness and the worst fitness value 
+
+PSL max . 
+
+> 8:
+
+Update iteration number m ← m + 1 . 
+
+> 9:
+
+end while  
+
+> 10:
+
+return The best UAV formation pM 
+
+> best
+
+and its associated communication powers P∗.
+
+g4 =
+
+> I
+
+X
+
+> i=1
+
+ [θmin − θi]+ + [ θi − θmax ]+ ,g5 = X
+
+> i>j
+
+[dmin − bi,j ]+,g6 =
+
+> I
+
+X
+
+> i=1
+
+[Smin − Si]+,g7 =
+
+> I
+
+X
+
+> i=1
+
+X
+
+> j≤i
+
+[SNR min − SNR i,j ]+,g11 =
+
+> I
+
+X
+
+> i=1
+> K
+
+X
+
+> k=1
+
+[ηi,k − Pmax ]+,g12 =
+
+> I
+
+X
+
+> i=1
+> K
+
+X
+
+> k=1
+
+
+
+ηi,k − Emax 
+
+δt
+
++
+
+.
+
+The resulting proposed PSO-based algorithm is summarized in Algorithm 1. V. S IMULATION RESULTS 
+
+This section presents simulation results for the proposed PSO-based algorithm outlined in Algorithm 1. Unless otherwise specified, the parameters used are as listed in Table I. The algorithm was run for a 11 
+
+TABLE I: System parameters [16]–[18].                                                                                           
+
+> Parameter Value Parameter Value Parameter Value
+> I6hmin 5mσ0−10 dB
+> K200 Pmax 10 dB Pt10 dB
+> δt1sEmax 570 JGt5dBi
+> zmin 1mBc,i ,∀i1GHz Gr5dBi
+> zmax 100 mβc,i ,∀i20 dB λ12 cm
+> θmin 37 .24 ◦gx−85 mL6dB
+> θmax 48 .7◦gy400 mTsys 400 k
+> vy4.3m/s gz25 mF5dB
+> xt20 mRmin 6Mb/s Bnoise 3GHz
+> dmin 2mδmax
+> n1mθ3dB 40 ◦
+> Smin 55 mδmax
+> r20 cm SNR min −10 dBm
+
+maximum of M = 500 iterations with O = 500 particles. The learning factors are set to c1 = 2 and 
+
+c2 = 2 .5, and the maximum PSO velocity is constrained to vmax PSO = 1 .
+
+A. Benchmark Schemes 
+
+To evaluate performance, we compare the proposed solution with the conventional PSO algorithm as well as two state-of-the-art evolutionary algorithms as benchmark schemes to solve problem (P) :
+
+1) Continuous Genetic Algorithm (CGA) [15]: This benchmark scheme employs CGA to solve prob-lem (P) , incorporating a natural selection mechanism with a selection rate of 0.5, Gaussian mutation with a mutation rate of 0.1, and blend crossover ( αb-BLX) with αb = 0 .3. The algorithm is executed for a maximum of 300 generations. For brevity, the implementation details of the CGA are omitted, and interested readers are referred to [15] for a comprehensive description. 
+
+2) Genetic Algorithm for Numerical Optimization of Constrained Problems (Genocop II) [14]: Genocop II is an extension to the Genocop I algorithm [19], designed for constrained optimization problems. We set the initial temperature to 10 5. The uniform, non-uniform, and boundary rates are set to 0.2, 0.7, and 
+
+0.7, respectively. The population size is 100 , and the maximum number of generations for Genocop I and Genocop II is 300 and 100 , respectively. Detailed descriptions of Genocop I and Genocop II can be found in [19] and [14], respectively. 
+
+3) Particle Swarm Optimization [13]: In this scheme, we implement the conventional PSO algorithm using the same parameters used in the proposed solution but without reducing the problem dimension, i.e., 12 −10 −5 0 5 10   
+
+> n(m)
+> −25
+> −20
+> −15
+> −10
+> −50Σn(n) (dB)
+> 11 dB
+> 2δn
+> PSL PSL
+> IProposed PSO ULA
+> I
+
+Fig. 2: Comparison of the optimized PSF Σn(n) obtained using the proposed scheme, the PSO benchmark, and a conventional ULA for hmax = 5 m and δn = 1 m. a particle p(m) ∈ R(K+2) I encodes both the UAV formation and communication powers as follows: 
+
+p(m) =
+
+p(m)[1] , · · · , p (m)[2 I]
+
+| {z }
+
+> Q
+
+, p (m)[2 I + 1] , · · · , p (m)[( K + 2) I]
+
+| {z }
+
+> P
+
+
+
+> T
+
+.
+
+B. Numerical Results 
+
+Fig. 2 shows the optimized PSF, Σn(n), obtained using the proposed scheme and the conventional PSO algorithm. In addition, the PSF of a uniform linear array (ULA), which is commonly used for performing TomoSAR, with a uniform UAV spacing of 12 .6 m, is included for comparison. It can be observed that, by effectively limiting the search space, the proposed scheme achieves a performance gain of 11 dB compared to the PSO benchmark scheme. Furthermore, although the ULA achieves a PSL comparable to that of the proposed scheme, this performance is attained at the cost of a significantly wider mainlobe, resulting in reduced height resolution. Fig. 3 shows the PSL of Σn(n) achieved by the proposed approach and the benchmark schemes for different maximum heights, hmax . It can be observed that the PSL increases as hmax increases. This indicates a fundamental trade-off, whereby achieving a larger hmax results in more pronounced sidelobes. Among the benchmark methods, both Genocop II and CGA outperform the conventional PSO, but neither matches the performance of the proposed scheme. This performance gain can be attributed to the reduction of variable coupling through the restriction of the search space, which enables more effective sidelobe suppression. 13 2 4 6 8 10 
+
+hmax (m) 
+
+−30 
+
+−25 
+
+−20 
+
+−15 
+
+−10 
+
+−5PSL (dB) 
+
+> Proposed GenocopII PSO cGA
+
+Fig. 3: PSL achieved using the proposed scheme and the benchmark methods versus different maximum height hmax .Fig. 4 shows the PSL as a function of the minimum required data rate, Rmin . It can be observed that more stringent data rate requirements lead to higher sidelobes. This can be attributed to the fact that higher data rate requirements impose stricter constraints on the distances between Ui, ∀i and the GS, which in turn activates constraint C9 . Moreover, the infeasibility of all benchmark schemes for Rmin > 6.18 
+
+Mb/s underscores the critical role of efficient communication power allocation in enabling real-time data offloading. Finally, Fig. 4 demonstrates that the proposed scheme consistently outperforms all benchmark approaches. VI. CONCLUSION 
+
+In this work, we investigated a UAV-borne MIMO TomoSAR system to produce 3D image of an area by acquiring I2 independent observations from different angles. We formulated an optimization problem aimed at minimizing the PSL of the PSF, accounting for the relevant sensing and communication quality-of-service constraints, thereby enhancing the quality of the reconstructed image.. We proposed a modified PSO-based approach that jointly optimizes the UAV formation as well as the communication power allocation, while fulfilling sensing and communication constraints. Simulation results showed that the proposed scheme significantly improves the PSL suppression compared to several benchmark schemes. 14 6.0 6.1 6.2 6.3 6.4
+
+Rmin (b/s) ×10 6
+
+−18 
+
+−16 
+
+−14 
+
+−12 
+
+−10 
+
+−8
+
+−6PSL (dB) 
+
+Proposed GenocopII PSO cGA 
+
+Fig. 4: PSL achieved using the proposed scheme and the benchmark methods versus different minimum required data rate Rmin .REFERENCES 
+
+[1] A. Moreira et al. , “A tutorial on synthetic aperture radar,” IEEE Geosci. Remote Sens. Mag. , vol. 1, no. 1, pp. 6–43, 2013. [2] G. Fornaro, F. Serafino, and F. Soldovieri, “Three-dimensional focusing with multipass SAR data,” IEEE Trans. Geosci. Remote Sens. ,vol. 41, no. 3, pp. 507–517, 2003. [3] A. Reigber and A. Moreira, “First demonstration of airborne SAR tomography using multibaseline L-band data,” IEEE Trans. Geosci. Remote Sens. , vol. 38, no. 5, pp. 2142–2152, 2000. [4] X. X. Zhu and R. Bamler, “Very high resolution spaceborne SAR tomography in urban environment,” IEEE Trans. Geosci. Remote Sens. ,vol. 48, no. 12, pp. 4296–4308, 2010. [5] G. Krieger, T. Rommel, and A. Moreira, “MIMO-SAR tomography,” in Proc. 11th Europ. Conf. on Synthetic Aperture Radar , 2016, pp. 1–6. [6] I. Seker and M. Lavalle, “Tomographic performance of multi-static radar formations: Theory and simulations,” Remote Sensing , vol. 13, no. 4, 2021. [7] M.-A. Lahmeri et al. , “UAV formation optimization for communication-assisted InSAR sensing,” in Proc. IEEE Int. Conf. Commun. ,2024, pp. 3913–3918. [8] ——, “Sensing accuracy optimization for multi-UAV SAR interferometry with data offloading,” 2025. [Online]. Available: https://arxiv.org/abs/2507.11284 [9] ——, “Sensing accuracy optimization for communication-assisted dual-baseline UAV-InSAR,” in Proc. IEEE Int. Conf. Commun. , 2025, pp. 6573–6578. [10] C. Rambour et al. , “From interferometric to tomographic SAR: A review of synthetic aperture radar tomography-processing techniques for scatterer unmixing in urban areas,” IEEE Geosci. Remote Sens. Mag. , vol. 8, no. 2, pp. 6–29, 2020. [11] M. I. Skolnik et al. , Introduction to Radar Systems . McGraw-hill New York, 1980, vol. 3. 15 
+
+[12] G. Fornaro et al. , Multi-Dimensional Imaging with Synthetic Aperture Radar: Theory and Applications . Academic Press, 2024. [13] J. Kennedy and R. Eberhart, “Particle swarm optimization,” in Proc. Int. Conf. Neural Netw. , vol. 4, 1995, pp. 1942–1948. [14] Z. Michalewicz and N. Attia, “Evolutionary optimization of constrained problems,” in Proc. 3rd Annu. Conf. Evol. Programming . World Scientific Publishing, 1994, pp. 98–108. [15] R. L. Haupt and S. E. Haupt, Practical Genetic Algorithms . John Wiley & Sons, 2004. [16] V. Mustieles-Perez et al. , “New insights into wideband synthetic aperture radar interferometry,” IEEE Geosci. Remote Sens. Lett. , vol. 21, pp. 1–5, 2024. [17] G. Krieger et al. , “TanDEM-X: A satellite formation for high-resolution SAR interferometry,” IEEE Trans. Geosci. Remote Sens. , vol. 45, no. 11, pp. 3317–3341, 2007. [18] M. Martone et al. , “Coherence evaluation of TanDEM-X interferometric data,” ISPRS J. Photogramm. Remote Sens. , vol. 73, pp. 21–29, 2012. [19] Z. Michalewicz and C. Z. Janikow, “GENOCOP: a genetic algorithm for numerical optimization problems with linear constraints,” 
+
+Commun. ACM , vol. 39, no. 12, pp. 175–185, 1996.
