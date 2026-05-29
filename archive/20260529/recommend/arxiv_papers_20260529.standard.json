@@ -1,0 +1,58 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-05-29T20:54:53.593505+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 0,
+    "deep_cap": 8,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 13,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2605.24147v1",
+      "source": "arxiv",
+      "title": "Efficient Nonlinear Uncertainty Quantification for Spaceflight Leveraging Nonlinear Expansions",
+      "abstract": "This paper provides a comparative study of modern uncertainty quantification (UQ) methods. To greatly enhance real-time performance, both differential algebra (DA) and a directional differential algebra (DDA) approach are employed. This can enable fast UQ in the case of non-Gaussian statistics. Higher-order moments, namely skew and kurtosis, can be computed quickly by several means. This motivates their implementation in an analytic approximation of the confidence bounds for the so-called \"banana-shaped\" non-Gaussian distributions encountered often in nonlinear astrodynamics problems. This method improves greatly on a linear covariance approach, with only 5x its runtime in numerical tests, even before DA methods are employed. Test problems in this work include a restricted three-body cislunar example and an Earth-return aerocapture example.",
+      "authors": [
+        "Ethan R. Burnett",
+        "Spencer Boone"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY",
+        "astro-ph.IM"
+      ],
+      "published": "2026-05-22T19:10:40+00:00",
+      "link": "https://arxiv.org/pdf/2605.24147v1",
+      "tags": [
+        "keyword:TF-SAR",
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:TF-SAR",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "nonlinear uncertainty quantification methods for spaceflight are applicable to tolerance analysis in satellite assembly",
+      "llm_evidence_cn": "用于航天飞行的非线性不确定性量化方法可应用于卫星装配中的公差分析",
+      "llm_evidence": "用于航天飞行的非线性不确定性量化方法可应用于卫星装配中的公差分析",
+      "canonical_evidence": "用于航天飞行的非线性不确定性量化方法可应用于卫星装配中的公差分析",
+      "llm_tldr_en": "This paper presents efficient nonlinear uncertainty quantification techniques using differential algebra for spaceflight, enabling fast computation of non-Gaussian confidence bounds that can be applied to tolerance analysis in satellite ground assembly.",
+      "llm_tldr_cn": "本文提出了一种利用微分代数的非线性不确定性量化方法，用于航天飞行的快速不确定性传播和非高斯置信区间计算。该方法通过计算高阶矩来近似非高斯分布，为航天器装配过程中的公差分析和控制提供了有效的工具。数值测试表明，该方法相比线性协方差方法大幅提高了精度，仅需约五倍运行时间。这为卫星地面装配精度控制中的不确定性管理提供了可行的途径。",
+      "llm_tldr": "本文提出了一种利用微分代数的非线性不确定性量化方法，用于航天飞行的快速不确定性传播和非高斯置信区间计算。该方法通过计算高阶矩来近似非高斯分布，为航天器装配过程中的公差分析和控制提供了有效的工具。数值测试表明，该方法相比线性协方差方法大幅提高了精度，仅需约五倍运行时间。这为卫星地面装配精度控制中的不确定性管理提供了可行的途径。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "tolerance analysis and control in satellite ground assembly processes",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

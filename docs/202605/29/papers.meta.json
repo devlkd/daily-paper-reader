@@ -1,0 +1,24 @@
+{
+  "label": "2026-05-29",
+  "date": "2026-05-29",
+  "generated_at": "2026-05-29T20:56:40",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202605/29/2605.24147v1-efficient-nonlinear-uncertainty-quantification-for-spaceflight-leveraging-nonlinear-expansions",
+      "section": "quick",
+      "title_en": "Efficient Nonlinear Uncertainty Quantification for Spaceflight Leveraging Nonlinear Expansions",
+      "authors": "Ethan R. Burnett, Spencer Boone",
+      "date": "2026-05-22",
+      "pdf": "https://arxiv.org/pdf/2605.24147v1",
+      "score": "6.0",
+      "evidence": "用于航天飞行的非线性不确定性量化方法可应用于卫星装配中的公差分析",
+      "tldr": "航天动力学非线性问题常导致非高斯不确定性，传统线性方法精度不足。本文结合微分代数和方向微分代数技术，快速计算高阶矩（偏度和峰度），并以此解析近似“香蕉形”置信边界。数值测试（地月三体和大气捕获）表明，该方法仅需线性协方差5倍计算时间，却极大提升了非高斯量化精度，为实时不确定性管理提供了高效途径。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "This paper provides a comparative study of modern uncertainty quantification (UQ) methods. To greatly enhance real-time performance, both differential algebra (DA) and a directional differential algebra (DDA) approach are employed. This can enable fast UQ in the case of non-Gaussian statistics. Higher-order moments, namely skew and kurtosis, can be computed quickly by several means. This motivates their implementation in an analytic approximation of the confidence bounds for the so-called \"banana-shaped\" non-Gaussian distributions encountered often in nonlinear astrodynamics problems. This method improves greatly on a linear covariance approach, with only 5x its runtime in numerical tests, even before DA methods are employed. Test problems in this work include a restricted three-body cislunar example and an Earth-return aerocapture example.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

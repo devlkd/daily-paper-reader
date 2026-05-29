@@ -1,0 +1,588 @@
+Title: Efficient Nonlinear Uncertainty Quantification for Spaceflight Leveraging Nonlinear Expansions
+
+URL Source: https://arxiv.org/pdf/2605.24147v1
+
+Published Time: Tue, 26 May 2026 00:11:35 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+Efficient Nonlinear Uncertainty Quantification for Spaceflight Leveraging Nonlinear Expansions 
+
+Ethan R. Burnett (1) , Spencer Boone (2) 
+
+> (1)
+
+University of Texas at Austin Austin, TX, United States Email: ethan.burnett@utexas.edu  
+
+> (2)
+
+ISAE-SUPAERO Toulouse, France Email: spencer.boone@isae-supaero.fr 
+
+Abstract – This paper provides a comparative study of modern uncertainty quantification (UQ) methods. To greatly enhance real-time performance, both differential algebra (DA) and a directional differential algebra (DDA) approach are employed. This can enable fast UQ in the case of non-Gaussian statistics. Higher-order moments, namely skew and kurtosis, can be computed quickly by several means. This motivates their implementation in an analytic approximation of the confidence bounds for the so-called “banana-shaped" non-Gaussian distributions encountered often in nonlinear astrodynamics problems. This method improves greatly on a linear covariance approach, with only ∼5× its runtime in numerical tests, even before DA methods are employed. Test problems in this work include a restricted three-body cislunar example and an Earth-return aerocapture example. 
+
+I. INTRODUCTION 
+
+Reliable and efficient uncertainty quantification (UQ) is a persistent challenge in modern astrodynamics, especially for nonlinear and weakly stable regimes. Modern astrodynamics encompasses cislunar flight, close-proximity operations around small-bodies, entry, descent, and landing (EDL) and related aerobraking and aerocapture problems. In these environments, initial small Gaussian distributions can evolve into non-Gaussian shapes due to perturbations, nonlinear dynamics, and resonances [1, 2]. Accurate geometric description of these distributions may depend not only on mean and covariance, but also on higher-order moments such as skewness and kurtosis. Standard Monte Carlo (MC) methods present high-fidelity benchmarks, but are often too computationally expensive for rapid iteration or onboard deployment. Conversely, first-order linear covariance propagation is computationally efficient but can substantially misrepresent nonlinear uncertainty transport [3]. Sigma-point methods and Polynomial Chaos Expansion (PCE) provide an intermediate level of fidelity and computational cost [4]. The Unscented Transform (UT) captures nonlinear mean and covariance propagation, while Conjugate Unscented Transform [5] enables direct higher-moment extraction. However, standard sample-based methods still require repeated dynamics evaluations for each realization, which can become very computationally expensive with repetitive UQ queries, which occur in the context of trade studies or in the inner loop of stochastic optimization schemes. In this context, Differential Algebra (DA) techniques [6] offer a powerful way to compute high-order Taylor expansions of the flow map, enabling repeated UQ evaluations without re-integrating the full dynamics. Furthermore one need not expand in all problem variables, and careful selection of the expansion variables can drastically reduce the DA overhead cost. This approach could be termed “directional differential algebra", in reference to the mathematically analogous “directional state transition tensors" defined in [7]. Such an approach enables rapid computation of low-order statistics such as the mean and covariance, but its directional structure inherently leads to degraded recovery of higher-order mixed central moments. This work compares different methods for non-Gaussian uncertainty approximation and, in particular, for high-order uncertainty quantification in nonlinear astrodynamics. The study highlights trades in accuracy and computational efficiency. The information contained in the estimated higher moments is then used to reconstruct non-elliptical confidence geometry through an analytical banana approximation, which captures moderate non-Gaussian deformation effects [8]. 
+
+II. THEORY AND BACKGROUND 
+
+A. Review of UQ Methods 
+
+We briefly review several uncertainty quantification (UQ) strategies used for nonlinear state propagation. Let 𝑿 0 ∈ R𝑁 denote the random initial state, and let 𝑿 𝑟 denote the reference state about which a local approximation is constructed. We define the initial deviation as 
+
+𝛿 𝑿 0 = 𝑿 0 − 𝑿 𝑟 . (1) The propagated final state is written as 
+
+𝑿 𝑓 = 𝝋 𝑡 𝑓 ,𝑡 0 ( 𝑿 0) (2) where 𝝋 𝑡 𝑓 ,𝑡 0 denotes the nonlinear flow map from 𝑡 0
+
+to 𝑡 𝑓 . More generally, for a nonlinear output map 
+
+> arXiv:2605.24147v1 [eess.SY] 22 May 2026
+
+𝒈 : R𝑁 → R𝑚 , we write 
+
+𝒀 = 𝒈 ( 𝑿 ). (3) Most classical spaceflight UQ methods focus on the propagated mean and covariance, 
+
+𝝁 𝑓 = E[ 𝑿 𝑓 ],𝑃 𝑓 = E( 𝑿 𝑓 − 𝝁 𝑓 )( 𝑿 𝑓 − 𝝁 𝑓 )⊤ , (4) though non-Gaussian uncertainty characterization also motivates recovery of higher-order central moments. 
+
+A.1. Monte Carlo 
+
+Monte Carlo (MC) propagation approximates the final distribution by directly sampling the initial distribution and propagating each sample through the nonlinear dynamics. Given samples 𝑿 0,𝑖 , 𝑖 = 1, . . . , 𝑁 𝑠 , the propagated samples are 
+
+𝑿 𝑓 ,𝑖 = 𝝋 𝑡 𝑓 ,𝑡 0 ( 𝑿 0,𝑖 ). (5) The sample mean and covariance are then computed as 
+
+ˆ𝝁 𝑓 = 1
+
+𝑁 𝑠 𝑁 𝑠 ∑︁ 
+
+> 𝑖 =1
+
+𝑿 𝑓 ,𝑖 ,
+
+ˆ𝑃 𝑓 = 1
+
+𝑁 𝑠 − 1
+
+> 𝑁 𝑠
+
+∑︁ 
+
+> 𝑖 =1
+
+( 𝑿 𝑓 ,𝑖 − ˆ𝝁 𝑓 )( 𝑿 𝑓 ,𝑖 − ˆ𝝁 𝑓 )⊤.
+
+(6) Higher-order central moments are estimated similarly by replacing the outer product in Eq. (6) with higher-order tensor products of the centered samples. MC is broadly applicable and often serves as a high-fidelity reference, with sample statistics asymptotically converging to the true statistics, but its accuracy requires a rather high sample count – worse for off-diagonal covariance components or mixed central moment terms. It can therefore be computationally expensive when each sample requires a full nonlinear propagation [4]. 
+
+A.2. Linear Covariance 
+
+Linear covariance propagation approximates the nonlinear flow locally by its first-order state transition matrix (STM), 
+
+Φ(𝑡 𝑓 , 𝑡 0) = 𝜕 𝝋 𝑡 𝑓 ,𝑡 0
+
+𝜕 𝑿 𝑿 𝑟 
+
+. (7) For deviations from the reference trajectory, 
+
+𝛿 𝑿 (𝑡 𝑓 ) ≈ Φ(𝑡 𝑓 , 𝑡 0)𝛿 𝑿 (𝑡 0), (8) and the covariance is propagated as 
+
+𝑃 𝑓 = Φ (𝑡 𝑓 , 𝑡 0)𝑃 0Φ⊤ (𝑡 𝑓 , 𝑡 0). (9) This approach is computationally extremely fast and is often adequate when the uncertainty is small and the flow is sufficiently linear in the region and timescale of interest. However, because the distribution is represented only by its first two moments under a linearized map, LinCov is not suitable as a method when nonlinearity and/or non-Gaussianity become important [3]. 
+
+A.3. Unscented Transformation 
+
+The unscented transformation (UT) replaces random sampling with a deterministic set of sigma points designed to capture the input mean and covariance. For a generic nonlinear map 𝒈 , sigma points X𝑖 , and weights 
+
+𝑤 𝑖 , the quadrature form is 
+
+E[𝒈 ( 𝑿 )] ≈ ∑︁ 
+
+> 𝑖
+
+𝑤 𝑖 𝒈 (X𝑖 ). (10) For state propagation, one chooses 𝒈 = 𝝋 𝑡 𝑓 ,𝑡 0 , so that 
+
+𝑿 𝑓 ,𝑖 = 𝝋 𝑡 𝑓 ,𝑡 0 (X𝑖 ). (11) The propagated mean and covariance are then approximated as 
+
+𝝁 𝑓 ≈∑︁ 
+
+> 𝑖
+
+𝑤 (𝑚 ) 
+
+> 𝑖
+
+𝑿 𝑓 ,𝑖 ,𝑃 𝑓 ≈∑︁ 
+
+> 𝑖
+
+𝑤 (𝑐 ) 
+
+> 𝑖
+
+( 𝑿 𝑓 ,𝑖 − 𝝁 𝑓 )( 𝑿 𝑓 ,𝑖 − 𝝁 𝑓 )⊤. (12) The UT is much less expensive than MC, requiring only 2𝑁 + 1 propagated points in its standard form, and typically captures important nonlinear corrections to the mean and covariance. It does not, however, directly target recovery of all higher-order mixed central moments [9]. 
+
+A.4. Conjugate Unscented Transformation 
+
+The conjugate unscented transformation (CUT) extends the sigma-point idea by adding conjugate directions to improve recovery of higher-order moments. In the fourth-order variant, “CUT4", the sigma set includes the usual axis-aligned points together with off-axis conjugate points, leading to 
+
+𝑁 CUT4 = 1 + 2𝑁 + 2𝑁 (13) points before optional removal of the zero-weight center point. Once the points are propagated through the flow, the third- and fourth-order central moments may be approximated as 
+
+𝑀 (3) 
+
+> 𝑎𝑏𝑐
+
+≈∑︁ 
+
+> 𝑖
+
+𝑤 𝑖 (𝑋 𝑖,𝑎 − 𝜇 𝑎 )( 𝑋 𝑖,𝑏 − 𝜇 𝑏 )( 𝑋 𝑖,𝑐 − 𝜇 𝑐 ),𝑀 (4) 
+
+> 𝑎𝑏𝑐𝑑
+
+≈∑︁ 
+
+> 𝑖
+
+𝑤 𝑖 (𝑋 𝑖,𝑎 − 𝜇 𝑎 )( 𝑋 𝑖,𝑏 − 𝜇 𝑏 )× ( 𝑋 𝑖,𝑐 − 𝜇 𝑐 )( 𝑋 𝑖,𝑑 − 𝜇 𝑑 ),
+
+(14) where the “ 𝑓 " subscripts are dropped for compactness. CUT therefore provides a means for higher-moment recovery at substantially lower cost than large-sample MC. It also has the strong advantage of being adeterministic scheme for moment estimation. For the full details of implementation, consult Reference [5]. A.5. Polynomial Chaos Expansion 
+
+Polynomial chaos expansion (PCE) approximates arandom output as a finite expansion in polynomials of simpler random variables. Let 𝝃 = (𝜉 1, . . . , 𝜉 𝑛 𝜉 )⊤
+
+denote a vector of standardized independent random variables, and let 𝜶 = (𝛼 1, . . . , 𝛼 𝑛 𝜉 ) denote amulti-index, where each 𝛼 𝑘 is a nonnegative integer.. The associated multivariate polynomial basis function is 
+
+Ψ𝜶 (𝝃 ) =
+
+> 𝑛 𝜉
+
+Ö
+
+> 𝑘 =1
+
+𝜓 𝛼 𝑘 (𝜉 𝑘 ), (15) where 𝜓 𝛼 𝑘 is a univariate polynomial of degree 𝛼 𝑘 .The family {Ψ𝜶 } is chosen to be orthogonal under expectation. That is, 
+
+EΨ𝜶 (𝝃 )Ψ𝜷 (𝝃 ) = ℎ𝜶 𝛿 𝜶𝜷 ,ℎ𝜶 = EΨ2 
+
+> 𝜶
+
+(𝝃 ) , (16) where ℎ𝜶 is the squared norm of the basis function and 
+
+𝛿 𝜶𝜷 is the Kronecker delta. If an orthonormal basis is used, then ℎ𝜶 = 1. For Gaussian random variables, the corresponding polynomial family is the Hermite polynomial basis. For a generic nonlinear map 𝒈 and random input 
+
+𝑿 (𝝃 ), PCE approximates the output 𝒀 = 𝒈 ( 𝑿 (𝝃 )) as 
+
+𝒀 = 𝒈 ( 𝑿 (𝝃 )) ≈∑︁ 
+
+> 𝜶 ∈ A
+
+𝒄 𝜶 Ψ𝜶 (𝝃 ), (17) where A is the retained set of multi-indices and 𝒄 𝜶 are vector-valued coefficients. For state propagation, the same idea is applied to the flow map. Writing the random initial state as 𝑿 0 (𝝃 ) =
+
+𝑿 𝑟 + 𝛿 𝑿 0 (𝝃 ), the propagated state is approximated by 
+
+𝑿 𝑓 = 𝝋 𝑡 𝑓 ,𝑡 0
+
+ 𝑿 𝑟 + 𝛿 𝑿 0 (𝝃 )
+
+≈∑︁ 
+
+> 𝜶 ∈ A
+
+𝒄 𝜶 Ψ𝜶 (𝝃 ). (18) The coefficients 𝒄 𝜶 may be obtained non-intrusively e.g. via sampling and regression. Once these coefficients are known, the moments follow directly from orthogonality. In particular, because Ψ0 = 1 is the constant basis function, the propagated mean and covariance are 
+
+𝝁 𝑓 ≈ 𝒄 0. (19) 
+
+𝑃 𝑓 ≈∑︁ 
+
+> 𝜶 ∈ A\{ 0}
+
+ℎ𝜶 𝒄 𝜶 𝒄 ⊤ 
+
+> 𝜶
+
+. (20) Thus, after the PCE coefficients are computed, mean and covariance recovery is algebraic. Higher-order central moments can also be computed from products of basis functions, though the bookkeeping becomes more involved. Overall, PCE provides an accurate and intermediate-cost method between direct MC sampling and LinCov [4, 6, 10]. 
+
+A.6. Gaussian Mixture Model 
+
+A Gaussian mixture model (GMM) represents anon-Gaussian distribution as a weighted sum of Gaussian components, 
+
+𝑝 𝑿 0 (𝒙 ) ≈ 
+
+> 𝑁 𝑔
+
+∑︁ 
+
+> ℓ=1
+
+𝑤 ℓ N ( 𝒙 ; 𝝁 0,ℓ , 𝑃 0,ℓ ),
+
+> 𝑁 𝑔
+
+∑︁ 
+
+> ℓ=1
+
+𝑤 ℓ = 1.
+
+(21) Each Gaussian component can then be propagated using any of the preceding local UQ methods, with LinCov being the fastest. After propagating the ℓth Gaussian component, let 𝝁 𝑓 ,ℓ and 𝑃 𝑓 ,ℓ denote the resulting mean and covariance. Then, 
+
+𝝁 𝑓 =
+
+> 𝑁 𝑔
+
+∑︁ 
+
+> ℓ=1
+
+𝑤 ℓ 𝝁 𝑓 ,ℓ , (22a) 
+
+𝑃 𝑓 =
+
+> 𝑁 𝑔
+
+∑︁ 
+
+> ℓ=1
+
+𝑤 ℓ
+
+𝑃 𝑓 ,ℓ + ( 𝝁 𝑓 ,ℓ − 𝝁 𝑓 )×( 𝝁 𝑓 ,ℓ − 𝝁 𝑓 )⊤ .
+
+(22b) This makes GMMs attractive for nonlinear problems, as nonlinear deformation can be approximated by the collective evolution of several local Gaussian components. In this work, the mixture construction is included for completeness, but is not covered in detail. The assigning of weights, the mixture “splitting" process, and the risk allocation procedure for a chance-constrained approach are all rather algorithmically complex and discussed elsewhere. See Reference [11] and references therein. Also, to the familiar reader, the moment reconstruction procedure detailed above might seem rather indirect: In this work, we will use higher moments to predict geometric features of a distribution at a particular confidence level. However, GMM is inherently more “geometric" than the previously mentioned techniques, being well-suited for direct confidence boundary construction without needing to explicitly recover moments. 
+
+B. Differential Algebra 
+
+Differential algebra (DA) [12], or similarly jet transport 
+
+[13], provides a computational representation of the local Taylor expansion of a nonlinear map. Let 𝒈 : R𝑁 → R𝑚 
+
+be sufficiently smooth near a reference state 𝑿 𝑟 , and let 𝛿 𝑿 = 𝑿 − 𝑿 𝑟 . Using a multi-index notation 
+
+𝜶 = (𝛼 1, . . . , 𝛼 𝑁 ), define 
+
+|𝜶 | =
+
+> 𝑁
+
+∑︁ 
+
+> 𝑖 =1
+
+𝛼 𝑖 , 𝜶 ! =
+
+> 𝑁
+
+Ö
+
+> 𝑖 =1
+
+𝛼 𝑖 !, 𝛿 𝑿 𝜶 =
+
+> 𝑁
+
+Ö
+
+> 𝑖 =1
+
+𝛿𝑋 𝛼 𝑖  
+
+> 𝑖
+
+.
+
+(23) The order- 𝑗 Taylor map can then be identified from 
+
+𝒈 ( 𝑿 𝑟 +𝛿 𝑿 ) = 𝒈 ( 𝑿 𝑟 )+ ∑︁   
+
+> 1≤ | 𝜶 | ≤ 𝑗
+
+1
+
+𝜶 ! 𝐷 𝜶 𝒈 ( 𝑿 𝑟 )𝛿 𝑿 𝜶 +H.O.T. (24) Under usual smoothness assumptions, mixed partial derivatives are invariant to permutation of the differentiation order. Consequently, the number of unique derivative coefficients at a given order is exactly the number of unique monomials at that order. For an expansion through order 𝑗 in 𝑁 variables, the number of monomials is therefore 
+
+𝐾 (𝑁, 𝑗 ) =
+
+𝑁 + 𝑗 𝑁 
+
+
+
+− 1. (25) This combinatorial growth motivates directional DA: rather than constructing the full Taylor map in all variables, one may choose DA independent variables adapted to physically important directions, retaining nonlinear dependence only in selected coordinates. 
+
+C. Directional Differential Algebra 
+
+Directional differential algebra (DDA) is our term for a targeted implementation of standard DA in which the independent variables are chosen to align with the directions of interest in the problem. Since DA maps may be constructed with respect to any convenient coordinates, one may replace the full perturbation 𝛿 𝑿 ∈
+
+R𝑁 with a directional decomposition 
+
+𝛿 𝑿 = ˆ𝜸 ∗ 𝜒 + 𝐿 𝝐 , (26) where ˆ𝜸 ∗ is a prioritized unit direction, 𝜒 is the corresponding scalar deviation measuring along ˆ𝜸 ∗, and 
+
+𝐿 𝝐 represents departures along the remaining orthogonal directions 𝐿 [:, 𝑖 ] · ˆ𝜸 ∗ = 0 with associated coordinates 
+
+𝝐 ∈ R𝑁 −1. Existing DA packages (e.g., DACE [14], used in this work) easily accommodate such an approach. A directional order- 𝑗 approximation of a nonlinear map 𝒈 
+
+at 𝑿 = 𝑿 𝑟 + 𝛿 𝑿 is then written as 
+
+𝒈 ( 𝑿 ) ≈ 𝒈 ( 𝑿 𝑟 ) + 
+
+> 𝑗
+
+∑︁ 
+
+> 𝑞 =1
+
+1
+
+𝑞 ! 𝐷 𝑞 𝒈 ( 𝑿 𝑟 ) [ ˆ𝜸 ∗, . . . , ˆ𝜸 ∗] 𝜒 𝑞 
+
++ 𝜕 𝒈 
+
+𝜕 𝑿 ( 𝑿 𝑟 )𝐿 𝝐 .
+
+(27) Thus, DDA retains the pure nonlinear dependence along 
+
+ˆ𝜸 ∗ while keeping only a first-order correction in the transverse coordinates. This reduces the number of retained non-constant terms from that of Eq. (25) to 
+
+𝑁 + 𝑗 − 1 terms, preserving the dominant nonlinear structure in a cylindrical neighborhood aligned with ˆ𝜸 ∗.It is also possible to retain more than one direction, but the mixing terms should be computed in that case. 
+
+D. Uses of DA in UQ Methods 
+
+In lieu of integrating the nonlinear dynamics for every sample or sigma point, we can apply DA or DDA to provide a nonlinear Taylor series expansion of the flow across the domain of interest. This step can be done offline or in advance of the UQ step, which significantly reduces real-time computational effort whenever the UQ method is to be employed. The trade-off is that DA requires that the dynamic model satisfy certain smoothness properties, and that any relevant code admits the use of overloaded operators to accommodate the differential terms [12, 13]. In lieu of a roundabout application of DA to the sigma point-based methods for estimating statistical moments, we note that it is also possible to recover the statistical moments directly from the DA map. This was explored in Reference [6]. They note an explosion in the number of monomial terms in the computation of full higher-order tensors. For instance, the fourth-order kurtosis tensor, when computed with a third-order expansion, involves the expectations of monomials up to order 12. This can quickly become computationally quite burdensome with higher-order maps. References [15] and [16] provide more thorough discussions of such matters, along with techniques for exploiting sparsity and redundancy of the expansion computations to reduce the burden. We save exploration of these techniques for upcoming work, but note that many UQ applications require computation of only some components or low-dimensional projections of the entire higher-order moment tensor. Thus one can avoid computing many components for numerical efficiency. 
+
+E. Non-Gaussian Confidence Boundary Methods E.1. Analytic Banana Contour 
+
+To demonstrate the use of higher-moment computation, we employ the CUT4-computed third- and fourth-order central moments to construct an analytic approximation of a non-Gaussian confidence boundary. The method follows Ref. [8], where a non-Gaussian confidence contour is treated as a perturbation of the Gaussian confidence ellipse. Here we repeat only the resulting construction. We recommend a careful read of Ref. [8] to the interested reader. Consider a 2𝐷 slice 𝒓 𝑞 ∈ R2 of the propagated random state 𝑿 𝑓 , where 𝑞 denotes the slice state indices, with mean 𝝁 𝑞 , covariance Σ𝑞 , and higher-order central moment tensors M (3) 
+
+> 𝑞
+
+and M (4) 
+
+> 𝑞
+
+. Let 
+
+Σ𝑞 = 𝑅 𝑞 Λ𝑞 𝑅 ⊤ 
+
+> 𝑞
+
+, Λ𝑞 = diag (𝜆 1,𝑞 , 𝜆 2,𝑞 ), (28) where 𝜆 1,𝑞 ≥ 𝜆 2,𝑞 > 0. For a confidence scaling 𝑘 , the Gaussian confidence contour is 
+
+𝒓 𝑞,𝐺 (𝑡 ) = 𝝁 𝑞 + 𝑅 𝑞 
+
+𝑘 √︁ 𝜆 1,𝑞 cos 𝑡 𝑘 √︁ 𝜆 2,𝑞 sin 𝑡 
+
+
+
+, 𝑡 ∈ [ 0, 2𝜋 ).
+
+(29) This is fully determined by the mean and covariance. To include moderate non-Gaussian deformation, we first introduce the whitened principal-axis coordinates 
+
+ ˆ𝑢 
+
+ˆ𝑣 
+
+
+
+= 𝑊 𝑞 (𝒓 𝑞 − 𝝁 𝑞 ), 𝑊 𝑞 = Λ −1/2 
+
+> 𝑞
+
+𝑅 ⊤ 
+
+> 𝑞
+
+. (30) Let 𝒂 ⊤ 
+
+> 𝑞
+
+and 𝒃 ⊤ 
+
+> 𝑞
+
+denote the first and second rows of 𝑊 𝑞 .The quantities used in the boundary correction are 
+
+𝑚 𝑢𝑢𝑢,𝑞 =∑︁ 
+
+> 𝑖, 𝑗,𝑘
+
+𝑎 𝑞,𝑖 𝑎 𝑞, 𝑗 𝑎 𝑞,𝑘 M (3) 
+
+> 𝑞,𝑖 𝑗 𝑘
+
+,𝑚 𝑢𝑢𝑣,𝑞 =∑︁ 
+
+> 𝑖, 𝑗,𝑘
+
+𝑎 𝑞,𝑖 𝑎 𝑞, 𝑗 𝑏 𝑞,𝑘 M (3) 
+
+> 𝑞,𝑖 𝑗 𝑘
+
+,𝑚 𝑢𝑢𝑢𝑢,𝑞 =∑︁ 
+
+> 𝑖, 𝑗,𝑘,𝑙
+
+𝑎 𝑞,𝑖 𝑎 𝑞, 𝑗 𝑎 𝑞,𝑘 𝑎 𝑞,𝑙 M (4) 
+
+> 𝑞,𝑖 𝑗 𝑘𝑙
+
+.
+
+(31) The first correction captures the transverse bend of a banana-shaped distribution. It is written as a quadratic correction in the short-axis coordinate, with coefficient 
+
+𝛼 𝑞 = 𝑚 𝑢𝑢𝑣,𝑞 
+
+𝑚 𝑢𝑢𝑢𝑢,𝑞 − 1 . (32) The second correction captures long-axis asymmetry using the first-order Cornish-Fisher correction, 
+
+𝑐 𝑞 (𝑘 ) = 𝑘 2 − 16 𝑚 𝑢𝑢𝑢,𝑞 . (33) Combining these two corrections gives the perturbed principal-axis values of the confidence contour 
+
+𝑢 𝑞 (𝑡 ) = 𝑘 √︁ 𝜆 1,𝑞 cos 𝑡 + 𝑐 𝑞 (𝑘 )√︁ 𝜆 1,𝑞 cos 2 𝑡, 𝑣 𝑞 (𝑡 ) = 𝑘 √︁ 𝜆 2,𝑞 sin 𝑡 + 𝛼 𝑞 √︁ 𝜆 2,𝑞 
+
+
+
+𝑘 2 cos 2 𝑡 − 1
+
+
+
+. (34) The corresponding non-Gaussian confidence contour in the original slice coordinates is then 
+
+𝒓 𝑞, NG (𝑡 ) = 𝝁 𝑞 + 𝑅 𝑞 
+
+𝑢 𝑞 (𝑡 )
+
+𝑣 𝑞 (𝑡 )
+
+
+
+, 𝑡 ∈ [ 0, 2𝜋 ). (35) Equation (31) need not be evaluated by first forming the full tensors M (3) 
+
+> 𝑞
+
+and M (4) 
+
+> 𝑞
+
+. If a polynomial map 𝑻 𝑞 (𝜻 ) is available for the slice, where 𝜻 denotes the uncertain input variables used by the chosen UQ representation, define 
+
+𝑈 𝑞 = 𝒂 ⊤ 
+
+> 𝑞
+
+(𝑻 𝑞 − 𝝁 𝑞 ), 𝑉 𝑞 = 𝒃 ⊤ 
+
+> 𝑞
+
+(𝑻 𝑞 − 𝝁 𝑞 ). (36) Then the required projected moments are e.g. 
+
+𝑚 𝑢𝑢𝑢,𝑞 = E[𝑈 3 
+
+> 𝑞
+
+], 𝑚 𝑢𝑢𝑣,𝑞 = E[𝑈 2
+
+> 𝑞
+
+𝑉 𝑞 ]. (37) Thus the map is projected before explicit moment computations, avoiding construction of moment-tensor entries not explicitly used by the boundary model. The first four moments do not uniquely determine an arbitrary non-Gaussian confidence boundary; rather, Eq. (35) provides a minimum-complexity approximation. Nonetheless this approach has performed well in diverse numerical studies, providing a fully analytic confidence boundary with runtime well within the same order of magnitude as LinCov in our experiments. 
+
+III. NUMERICAL STUDIES 
+
+A. UQ Method Trade Study 
+
+For our first numerical test, we compare a collection of standard sample- and sigma-point-based uncertainty propagation methods applied both directly with the nonlinear dynamics and with the pre-computed DA/DDA representations of the flow map. The nominal trajectory is taken from a JPL SSD southern 𝐿 2 halo orbit in the Earth–Moon circular restricted three-body problem (see e.g. [17]), with Jacobi constant 𝐶 𝐽 = 3.0612627924 
+
+and period 𝑇 = 3.136654204 nondimensional time units (TUs), or approximately 13 .62 days. The UQ study is initialized 0.25 TU from apolune, which is then numerically integrated for 0.9 TU, which provides a moderately nonlinear, three-dimensional trajectory for assessing the accuracy and runtime tradeoffs of the competing UQ representations. The initial uncertainty is imposed on the deviated initial state 
+
+𝛿 𝑿 0 = 𝑿 0 − 𝑿 𝑟 . The deviation mean and covariance are (in non-dimensional units) 
+
+¯𝛿 𝑿 0 = 0 10 −4 0 0 10 −4 0⊤ , (38) 
+
+𝑃 0 = 10 −6 𝐼 6 + 10 −5 ˆ𝜸 ∗ ( ˆ𝜸 ∗)⊤ , (39) where ˆ𝜸 ∗ is the preferential direction used by the DDA construction. This is selected from the finite-time linearized dynamics over the UQ interval, with local time 
+
+𝑡 0 = 0 and 𝑡 𝑓 = Δ 𝑡 UQ = 0.9 TU. After propagating the STM Φ(𝑡 𝑓 , 𝑡 0) along the nominal trajectory, we form 
+
+𝐺 (𝑡 𝑓 , 𝑡 0) = Φ (𝑡 𝑓 , 𝑡 0)⊤Φ(𝑡 𝑓 , 𝑡 0), (40) and choose ˆ𝜸 ∗ as the normalized eigenvector associated with the largest eigenvalue of 𝐺 . Thus, ˆ𝜸 ∗ is the initial perturbation direction that undergoes the largest linearized stretching over the UQ arc. A plot of the Monte Carlo samples from the initial time and final time is given in Figure 1, in CR3BP normalized length units. Table 1 summarizes runtime performance for all methods. This is done in a Python test script on a 2024 MacBook Pro with Apple M4 Max chip, using daceypy ,a Python wrapper of DACE [14]. Table 1 shows that direct MC is by far the most expensive option, requiring 
+
+12 .786 s for 10 4 samples in this simple and relatively short-duration scenario. Deterministic sigma-point methods are much cheaper, with UT and CUT4 running notably faster than the GMM and PCE. The DA and DDA maps introduce a one-time construction cost, 0.292 s and 
+
+0.139 s , but greatly reduce repeated evaluation costs. For all pre-computed map evaluations, DDA is consistently faster than full DA. However, there is an intuitive tradeoff to be aware of for the DDA approach: while it retains the dominant higher-order variation along a preferential direction, it neglects all higher-order “off-direction" terms, which carries some reduction in accuracy, especially by some metrics. For instance, Fig. 1. Earth–Moon 𝐿 2 halo orbit, UQ arc, and dispersed samples 
+
+Table 2 illustrates this effect with UT. The covariance error in the table is reported as a relative Frobenius error, 
+
+err 𝑃 𝑓 =
+
+𝑃 method  
+
+> 𝑓
+
+− 𝑃 UT  
+
+> 𝑓 𝐹
+
+𝑃 UT  
+
+> 𝑓 𝐹
+
+. (41) This metric penalizes discrepancies in both marginal variances and mixed covariance terms. By this metric, comparing the DA and DDA results, we see higher relative covariance error compared with the mean error, consistent with the fact that off-direction and off-diagonal covariance accuracy is more strongly affected by the directional truncation. It still improves on the LinCov result, however. Thus, DDA trades some higher-order moment fidelity for a substantial reduction in map construction and evaluation cost. Regarding relative accuracy of the various standard methods, we note that only MC, PCE, CUT4, and GMM can provide information about higher-order moments. MC methods have extremely sluggish convergence in moment estimation with respect to the number of random samples. The CUT4 implementation and PCE give similar predictions for higher-order moments in this study, but CUT4 has the advantage of being deterministic, in contrast to the non-intrusive PCE implementation used here. Beyond the preceding comments, we omit a lengthy numerical comparison of UQ method relative accuracies due to length constraints. For the GMM, an initial Gaussian is split deterministically into a small mixture by recursively dividing each component along its dominant covariance eigenvector. Each split produces two equal-weight child components with shifted means and reduced covariance, preserving the parent mean and covariance. In this particular test, we have 16 components, each of which is propagated using the UT. No optimized mixture-weight or anchor-selection procedure is included – the GMM is tuned manually, hence the “N/A" entry for the GMM weight computation in Table 1. We include this result only for completeness. Table 1. Runtime comparison for selected UQ methods. Method Operation 𝑑𝑡 [s] 
+
+Direct propagation 
+
+MC 10 4 samples 12.786 LinCov STM/covariance 0.005 UT sigma points 0.017 CUT4 sigma points 0.097 PCE total runtime 2.928 GMM mixture 0.269 †
+
+Representation construction 
+
+DA full third-order map 0.292 DDA directional third-order map 0.139 PCE basis generation 0.058 GMM initial weights N/A †
+
+Precomputed representation evaluation 
+
+DA+MC 10 4 map calls 0.937 DDA+MC 10 4 map calls 0.061 DA+UT UT map calls 1.28 ×10 −3
+
+DDA+UT UT map calls 1.35 ×10 −4
+
+DA+CUT4 CUT4 map calls 7.91 ×10 −3
+
+DDA+CUT4 CUT4 map calls 1.28 ×10 −3
+
+DA+PCE PCE fit from map calls 0.234 DDA+PCE PCE fit from map calls 0.098 DA+GMM mixture anchors 0.020 Table 2. Errors vs. nonlinear Unscented Transform. Method ∥err 𝜇 ∥ err 𝑃 𝑓 
+
+Full DA+UT 3.36 ×10 −8 2.24 ×10 −7
+
+DDA+UT 3.32 ×10 −5 1.498 ×10 −3
+
+LinCov 1.820 ×10 −3 1.035 ×10 −2
+
+B. Non-Gaussian Confidence Analysis 
+
+As another test case of the methods discussed in this work, consider an Earth-return aerocapture problem, whereby a hyperbolic trajectory is captured by a single carefully managed atmospheric braking event. In the case of Earth aerocapture, such a scenario has been proposed in the past for sample return, or as part of the Earthbound leg of a sustainable cislunar architecture. Figure 2 shows the nominal aerocapture trajectory. The vehicle arrives on a hyperbolic Earth approach with 
+
+𝑣 ∞ = 2.5 km /s and 𝑒 in = 1.1009 , enters the atmospheric interface at ℎ𝐸 = 100 km , and exits after 239 .7 s of atmospheric flight onto a bound orbit with 𝑒 𝑓 = 0.3698 
+
+and apoapsis altitude 𝑟 𝑎 − 𝑅 𝐸 = 7.60 × 10 3 km . The atmosphere is modeled as 𝜌 (ℎ) = 𝜌 𝐸 exp [−( ℎ−ℎ𝐸 )/ 𝐻 ],with 𝜌 𝐸 = 5.0 × 10 −7 kg /m3, scale height 𝐻 = 7.2 km ,and ballistic coefficient 𝛽 = 500 kg /m2.
+
+Fig. 2. Aerocapture nominal trajectory 
+
+Consider the dispersion Case 5 in Table 3. Figure 3 shows the resulting predicted 3 𝜎 confidence boundary in position, in a principal coordinate frame aligned with the LinCov solution, along with a small-batch Monte Carlo sampling of 2000 points. The Monte Carlo samples illustrate a non-Gaussian final distribution, greatly distorted from the initially tight Gaussian distribution. The axes are rescaled to show the non-Gaussian bending effect, as aerocapture problems strongly shear the distribution along a maximum stretching direction. In Figure 3, whereas the LinCov 3𝜎 boundary encompasses 88.6% of the sample points, the banana contour encompasses 99.55%. This is slightly conservative relative to the expected two-dimensional 
+
+3𝜎 coverage of approximately 98.9%, while providing a much more accurate spatial characterization of the non-Gaussian distribution. We note also that the entire banana contour UQ characterization required 0.227s in our Python test script. The LinCov solution took 0.048s, so the banana contour characterization took only 4.7 times as long as LinCov, without any use of DA. The 2000 Monte Carlo samples took 18.6s to propagate. Tables 3 and 4 summarize the results of other aerocapture UQ test cases, with comparisons to 4000 sample Monte Carlo, illustrating robustness of the banana contour approach. All cases have an entry flight path angle (EFPA) of -4.85 ◦, except case 7, which applies a slightly steeper EFPA of -4.87 ◦. The parameters 𝑡 pre 
+
+and Δ𝑡 UQ report the initialization time in seconds before atmospheric entry and the time duration of the UQ study, 
+
+Fig. 3. Post-aerocapture 3 𝜎 confidence predictions 
+
+respectively. Initial uncertainties are defined in initial radial and transverse components. The banana method outperforms LinCov in all cases and CUT4 covariance ellipse in 5 of 7, with greatly reduced over-conservatism. Table 3. Aerocapture UQ cases Case No. 𝑡 pre Δ𝑡 UQ 𝜎 𝑅 , 𝜎 𝑇 𝜎 𝑉 𝑅 , 𝜎 𝑉 𝑇 
+
+[s] [s] [m] [m/s] 1 208 649 30, 800 0.030, 0.6 2 418 1868 30, 800 0.030, 0.6 3 208 730 15, 400 0.015, 0.3 4 208 649 15, 400 0.015, 0.3 5 418 1868 15, 400 0.015, 0.3 6 208 649 19.5, 520 0.0195, 0.39 7 208 657 15, 400 0.015, 0.3 Table 4. Runtime and Monte Carlo coverage by method Case No. 𝑡 MC 𝑡 LC 𝑡 banana Monte Carlo coverage [s] [s] [s] [% LC, CUT4, ban.] 1 13.12 0.020 0.082 76.4, 97.6, 95.8 2 36.46 0.049 0.229 75.7, 97.7, 97.1 3 14.36 0.022 0.090 87.4, 98.0, 99.3 4 12.48 0.019 0.077 88.4, 98.0, 99.4 5 36.39 0.048 0.229 88.8, 98.0, 99.6 6 12.96 0.020 0.081 84.2, 97.8, 98.7 7 13.24 0.020 0.082 84.6, 97.8, 99.2 
+
+IV. DISCUSSION 
+
+This work compares nonlinear UQ strategies for spaceflight problems, emphasizing the runtime benefits of precomputed DA/DDA flow maps. The CR3BP study shows that such maps make repeated MC, sigma-point, PCE, and GMM evaluations much cheaper than repeated nonlinear propagation. DDA further reduces this cost by retaining nonlinear dependence mainly along apreferential stretching direction, at the expected expense of off-direction fidelity. The aerocapture study illustrates the potential importance of higher-order moments in highly nonlinear regimes: a LinCov approach can misrepresent the propagated distribution, while the CUT4-based banana approximation uses selected third- and fourth-order moments to recover a much more representative confidence boundary at modest additional cost. These results also suggest a path toward stochastic extensions of recently proposed fast localized guidance methods based on DA flow maps [18, 19]. Specifically, map-based UQ could supply the confidence boundary information needed for chance-constrained variants. 
+
+V. ACKNOWLEDGEMENTS 
+
+The authors gratefully acknowledge helpful discussions with Mr. Niccolò Michelotti at Politecnico di Milano. 
+
+VI. REFERENCES 
+
+[1] D. J. Scheeres, Orbital motion in strongly perturbed environments: applications to asteroid, comet and planetary satellite orbiters , Springer, 2016. [2] T. Wolf, E. M. Zucchelli, and B. A. Jones, “Multi-Fidelity Uncertainty Propagation for Objects in Cislunar Space”, in AIAA SCITECH 2022 Forum , San Diego, CA & Virtual, American Institute of Aeronautics and Astronautics, January 2022. [3] N. Michelotti, A. Rizza, C. Giordano, and F. Topputo, “Uncertainty Propagation Performance in Proximity Operations Around Small Bodies”, 
+
+The Journal of the Astronautical Sciences , vol. 71, no. 6, p. 55, December 2024. [4] Y.-z. Luo and Z. Yang, “A review of uncertainty propagation in orbital mechanics”, Progress in Aerospace Sciences , vol. 89, pp. 23–39, 2017. [5] N. Adurthi, P. Singla, and T. Singh, “The Conjugate Unscented Transform - An approach to evaluate multi-dimensional expectation integrals”, 
+
+2012 American Control Conference (ACC) ,pp. 5556–5561, 2012. [6] M. Valli, R. Armellin, P. Di Lizia, and M. R. Lavagna, “Nonlinear Mapping of Uncertainties in Celestial Mechanics”, Journal of Guidance, Control, and Dynamics , vol. 36, no. 1, pp. 48–63, January 2013. [7] S. Boone and J. McMahon, “Directional State Transition Tensors for Capturing Dominant Nonlinear Effects in Orbital Dynamics”, Journal of Guidance, Control, and Dynamics , vol. 46, no. 3, pp. 431–442, March 2023. [8] E. Burnett and S. Boone. “Analytic Non-Gaussian Confidence Boundary Method for Chance-Constrained Trajectory Control”. arXiv, 2026. [9] E. Wan and R. Van Der Merwe, “The unscented Kalman filter for nonlinear estimation”, in 
+
+Proceedings of the IEEE 2000 Adaptive Systems for Signal Processing, Communications, and Control Symposium (Cat. No.00EX373) , pp. 153–158, 2000. [10] B. A. Jones, A. Doostan, and G. H. Born, “Nonlinear Propagation of Orbit Uncertainty Using Non-Intrusive Polynomial Chaos”, Journal of Guidance, Control, and Dynamics , vol. 36, no. 2, pp. 430–444, 2013. [11] S. Boone and J. W. McMahon, “Non-Gaussian Chance-Constrained Trajectory Control Using Gaussian Mixtures and Risk Allocation”, in 2022 IEEE 61st Conference on Decision and Control (CDC) , 2022. [12] M. Berz, “Chapter 2 - Differential Algebraic Techniques”, in Modern Map Methods in Particle Beam Physics , vol. 108, San Diego, CA: Academic Press, pp. 81–117, 1999. [13] J. Yuan, J. Chen, C. Gao, C. Ma, J. J. Masdemont, and G. Gómez, Jet Transport Technique: Theory and Application , 1st ed., Springer Singapore, 2024. [14] M. Rasotto, A. Morselli, A. Wittig, M. Massari, P. Di Lizia, R. Armellin, C. Valles, and G. Ortega, “Differential algebra space toolbox for nonlinear uncertainty propagation in space dynamics”, in 6th International Conference on Astrodynamics Tools and Techniques (ICATT) , Darmstadt, Germany, 2016. [15] G. Acciarini, N. Baresi, D. J. B. Lloyd, and D. Izzo, “Nonlinear Propagation of Non-Gaussian Uncertainties”, Journal of Guidance, Control, and Dynamics , vol. 48, no. 4, pp. 903–913, April 2025. [16] T. Lefebvre, “On Moment Estimation From Polynomial Chaos Expansion Models”, IEEE Control Systems Letters , vol. 5, no. 5, pp. 1519–1524, 2021. [17] W. S. Koon, M. W. Lo, J. E. Marsden, and S. D. Ross, Dynamical Systems, The Three-Body Problem, and Space Mission Design , New York: Springer, 2017. [18] E. R. Burnett and F. Topputo, “Rapid Nonlinear Convex Guidance Using a Monomial Method”, 
+
+Journal of Guidance, Control, and Dynamics ,vol. 48, no. 4, pp. 736–756, 2025. [19] O. Regantini, E. R. Burnett, A. Rizza, A. Morselli, and F. Topputo, “Convex Trajectory Optimization via Monomial Coordinates Transcription for Cislunar Rendezvous”, Journal of Guidance, Control, and Dynamics , pp. 1–15, 2026.
