@@ -1,0 +1,24 @@
+{
+  "label": "2026-06-02",
+  "date": "2026-06-02",
+  "generated_at": "2026-06-02T23:02:19",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202606/02/2606.00360v1-ambiguity-analysis-and-design-of-sparse-arrays-via-generalized-vandermonde-rank-conditions",
+      "section": "quick",
+      "title_en": "Ambiguity Analysis and Design of Sparse Arrays via Generalized Vandermonde Rank Conditions",
+      "authors": "Marius Pesavento",
+      "date": "2026-05-29",
+      "pdf": "https://arxiv.org/pdf/2606.00360v1",
+      "score": "7.0",
+      "evidence": "开发了用于稀疏阵列模糊分析的代数方法，可用于合成孔径雷达等雷达系统",
+      "tldr": "稀疏阵列通过减少阵元增大有效孔径，但会引入方向模糊，传统设计准则难以捕捉多源辨识性问题。本文提出基于广义范德蒙德秩条件的可扩展代数框架，将稀疏阵列的模糊集分析关联到增广均匀线阵的秩条件，系统表征大规模阵列的模糊特性，并给出无模糊几何设计指南。数值与代数示例表明，该框架能处理远超以往方法规模的问题，为雷达、通信等领域提供关键的辨识性保证。",
+      "tags": "query:tf-sar",
+      "abstract_en": "Sparse linear arrays obtained by thinning a uniform linear array (ULA) achieve large effective apertures with a reduced number of physical sensors and have become a key enabling technology across radar, sonar, communications, and integrated sensing and communications. The price of thinning, however, is the emergence of ambiguities in the array manifold: distinct sets of directions of arrival that produce identical sensor measurements, precluding unique identification of multiple sources. Conventional sparse-array design criteria, based on beampattern shaping or estimation-performance optimization, do not fully capture how multiple steering vectors interact jointly to produce such ambiguities. This paper develops a scalable algebraic framework for the multi-source identifiability analysis of thinned ULAs. By relating the rank deficiency of the generalized Vandermonde matrix associated with the sparse steering matrix to that of a thinned Toeplitz matrix, and further to a rank condition on an augmented full-ULA steering matrix with prescribed generators, we obtain a systematic characterization of the ambiguity sets in large sparse arrays together with constructive design guidelines for ambiguity-free geometries. Algebraic and numerical examples demonstrate that the proposed framework characterizes ambiguity sets at scales well beyond the practical reach of previous sparse-array design and synthesis methods",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

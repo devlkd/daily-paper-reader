@@ -1,0 +1,3152 @@
+Title: Ambiguity Analysis and Design of Sparse Arrays via Generalized Vandermonde Rank Conditions
+
+URL Source: https://arxiv.org/pdf/2606.00360v1
+
+Published Time: Tue, 02 Jun 2026 00:20:36 GMT
+
+Number of Pages: 19
+
+Markdown Content:
+> .
+
+# Ambiguity Analysis and Design of Sparse Arrays via Generalized Vandermonde Rank Conditions 
+
+Marius Pesavento, IEEE Senior Member  
+
+> 1Technische Universit ¨ at Darmstadt, 64283 Darmstadt, Germany Corresponding author: Marius Pesavento (email: pesavento@ieee.org). This work was supported by the German Federal Ministry of Research, Technology and Space through Project “Open6GHub+” under Grant 16KIS2.
+
+ABSTRACT Sparse linear arrays obtained by thinning a uniform linear array (ULA) achieve large effective apertures with a reduced number of physical sensors and have become a key enabling technology across radar, sonar, communications, and integrated sensing and communications. The price of thinning, however, is the emergence of ambiguities in the array manifold: distinct sets of directions of arrival that produce identical sensor measurements, precluding unique identification of multiple sources. Conventional sparse-array design criteria, based on beampattern shaping or estimation-performance optimization, do not fully capture how multiple steering vectors interact jointly to produce such ambiguities. This paper develops a scalable algebraic framework for the multi-source identifiability analysis of thinned ULAs. By relating the rank deficiency of the generalized Vandermonde matrix associated with the sparse steering matrix to that of a thinned Toeplitz matrix, and further to a rank condition on an augmented full-ULA steering matrix with prescribed generators, we obtain a systematic characterization of the ambiguity sets in large sparse arrays together with constructive design guidelines for ambiguity-free geometries. Algebraic and numerical examples demonstrate that the proposed framework characterizes ambiguity sets at scales well beyond the practical reach of previous sparse-array design and synthesis methods. 
+
+INDEX TERMS Generalized Vandermonde matrix, sparse array, thinned array, array design, array synthesis, structured low rank factorization, Kruskal-Rank, spark of generalized Vandermonde, polynomial rooting, rank minimization, structured matrices, ambiguities, ambiguity sets, identifiability conditions 
+
+I. Introduction 
+
+Sparse arrays have become a key enabling technology in modern sensing and communication systems, including au-tomotive and airborne radar [1], UAV-based sensing systems [2], mmWave/THz massive MIMO communications [3], inte-grated sensing and communication (ISAC) systems [4], [5], sonar [6], medical ultrasound, radio-astronomical aperture synthesis [7], and seismic exploration [8], where large ef-fective apertures are required under tight hardware, cost, and power constraints [9]–[11]. Sparse linear arrays obtained by thinning uniform linear arrays (ULAs) are particularly attractive, as they realize large effective apertures with a substantially reduced number of physical sensors [12]–[14]. For a fixed sensor count, they provide significantly larger apertures than ULAs; for a fixed aperture, they reduce hardware cost and complexity. Furthermore, by exploiting the virtual difference coarray, sparse arrays offer increased degrees of freedom, permitting the identification of more sources than physical sensors, while alleviating mutual cou-pling effects associated with densely packed arrays [15]– [18]. In its simplest form, a sparse linear array is constructed from an underlying ULA by omitting a subset of sensors while retaining the uniform sampling grid, resulting in a non-uniform sensor placement on an originally uniform grid. The resulting large effective aperture sharpens the main lobe and enhances the angular resolution in direction-of-arrival (DoA) estimation and beamforming. At the same time, the increased lags between adjacent sensors raise the sidelobe levels [19] and, in the narrowband case, violate the half-wavelength inter-element spacing postulated by the spatial sampling theorem, giving rise to ambiguities in the array manifold [20]. 
+
+> 1
+> arXiv:2606.00360v1 [eess.SP] 29 May 2026 A. Related work
+
+Conventional design and analysis tools for sparse arrays predominantly assess performance through single-source or few-source models. Beampattern-based criteria are inher-ently single-source and capture only the magnitude of the response, neglecting the phase relationships among multiple steering vectors [13], [17], [21], [22]. Cram´ er-Rao bound (CRB) driven sensor selection [23]– [25], in turn, optimizes estimation variance but typically presumes single- or few-source scenarios to avoid strong sce-nario dependence. Analytic thinning techniques use coarray-based criteria such as the effective aperture, the degrees of freedom (DoFs), hole-freeness or long consecutive lags, and mutual coupling, provide only surrogate measures that yield lower bounds on the number of unquely identifiable sources [18]. As a result, none of these criteria fully characterize how multiple steering vectors interact jointly and under which conditions the array manifold matrix drops rank, which is a limitation that becomes critical for sparse and thinned arrays, where non-uniform sampling can introduce structured depen-dencies that are invisible to single-source or magnitude-only metrics. This motivates the need for ambiguity-aware, multi-source analysis tools. This paper is devoted to the multi-source analysis of sparse linear arrays. In multi-source scenarios, the sensor measurements contain a superposition of contributions from signals impinging on the array from multiple directions, and higher-order ambiguities, i.e., sets of DoA parameters that yield identical measurements and therefore preclude unique DoA estimation. In the seminal work of Wax and Ziskind [26] it was shown that, for uncorrelated sources, the maximum number of sources that can be uniquely identified from sensor-array measurements is governed by the Kruskal rank of the array steering matrix, i.e., the largest number k such that any k
+
+steering vectors in the field of view are linearly independent. Building on tools from differential geometry, Manikas and Proukakis [27] derived sufficient conditions for the existence of higher-order ambiguities, implying that every thinned ULA suffers from ambiguities [20], [28], and characterized so-called uniform ambiguity sets, whose DoAs correspond to a uniform partitioning of the field-of-view in the electrical angle (direction cosine). A second class of non-uniform ambiguities arises only in symmetric thinned arrays [29], [30]. More recently, in [31] we proposed a computational framework that systematically characterizes arbitrary ambi-guity sets by directly searching for sets of directions at which the array steering matrix becomes rank-deficient, formulating the problem as a structured algebraic problem solvable via mixed-integer optimization. The framework enables the systematic enumeration of ambiguity sets, including contin-uous families of ambiguities, for a given array geometry, rather than relying on ad hoc, case-by-case identification. However, the computational complexity of the mixed-integer formulation does not scale well with the array size, and in practice the analysis is limited to comparatively small arrays [19]. 
+
+> B. Contributions
+
+In this paper, we introduce a novel scalable framework for identifying ambiguities in thinned ULAs based on a conventient thinned Toeplitz parameterization of the sparse array manifold. The framework is computationally efficient and enables, for the first time, the systematic characterization of all ambiguities of large sparse arrays, making it practically applicable to the multi-source design of sparse uniform linear arrays. Beyond array processing, the underlying mathematical problem is of independent interest. It amounts to determining the spark and the corresponding generator sets of generalized Vandermonde matrices obtained by deleting prescribed rows from a full Vandermonde matrix [32], [33], [34]. Such problems arise not only in super-resolution spetral estimation [35], [36], [37], but also in sparse recovery [38], finite-rate-of-innovation sampling [39], algebraic coding theory [40], sparse polynomial interpolation [41], moment prob-lems [42], the observability and controllability in linear systems [43], and multiuser communication [44], [45]. In all of these settings, rank drops of structured Vandermonde-type matrices determine uniqueness, identifiability, or the existence of ambiguous parameter configurations. Thus, the results developed in this paper provide both a practical tool for sparse-array design and a contribution to the broader theory of structured low-rank and generalized Vandermonde matrices. The major contributions of this paper are as follows: 
+
+• By introducing a convenient null-space characterization for the thinned array, we relate the rank drop of the generalized Vandermonde matrix associated with the sparse array steering matrix to the rank drop of a thinned Toeplitz matrix; see Theorem 1. This allows the characterization of ambiguity sets for sparse arrays of arbitrary aperture size, number of sparse array elements, and assumed number of sources. 
+
+• The proposed criterion provides a scalable approach to the analysis of ambiguities in thinned arrays and yields new insights into their formation. In particular, it relates the rank condition of the array steering matrix of the thinned array to the rank condition of an augmented steering matrix of a full ULA; see Corollary 8. 
+
+• Building on these criteria, we develop guidelines for the design of ambiguity-free thinned arrays in the form of simple necessary conditions on the sensors to be re-tained or removed in the sparse layout. These conditions can significantly reduce the combinatorial search space in sparse array designs. 
+
+• We provide extensive examples for the analysis and design of thinned arrays and for the characterization of 
+
+> 2
+
+their ambiguity sets, using both symbolic computations and numerical optimization methods. 
+
+> C. Paper structure
+
+The remainder of the paper is organized as follows. Section II introduces the ambiguity problem in sparse linear arrays. Section III presents the main results, providing an algebraic characterization of the ambiguities and deriving insights into the structure of ambiguity sets in thinned arrays. As a funda-mental by-product, the rank condition on the steering matrix of the thinned array is shown to be equivalent to a rank condition on an augmented steering matrix of a full ULA, revealing a structural link between sparse and fully populated arrays. Building on these insights, Section IV develops practical guidelines for sensor selection that substantially reduce the search space of the underlying combinatorial subset selection problem. Section V illustrates the theory on representative array configurations, fully characterizing the ambiguity sets for a given number of sources and applying the proposed design principles to construct sparse arrays with favorable ambiguity behavior. Section VI concludes the paper and outlines open problems that can be approached using the analysis tools developed here. 
+
+> D. Notation
+
+Scalars, vectors, and matrices are denoted by x, x, and X,respectively. The quantities xi anc (X)ij denote the i-th element of x and the (i, j )-th element of X, respectively, and xj and [X]:,j denotes the j-th column of X. The operators R(·) and N (·) denote the range and null space of a matrix, respectively, and dim( ·) denotes the dimension of a subspace. The matrix functions rank( ·) and det( ·) denote the rank and determinant of a matrix, respectively, and Re( ·)
+
+and Im( ·) denote the real and imaginary parts of a scalar, vector, or matrix, respectively. The Vandermonde matrix of dimension M × L with generators z1, . . . , z L is denoted by 
+
+AM (z1, . . . , z L). Furthermore, Bp×q , Zp×q , Rp×q , and Cp×q
+
+denote the set of binaray, integer, real-valued and complex-valued (p × q)-matrices, respectively. 
+
+> II. Ambiguities in sparse arrays
+
+The array response matrix of a thinned uniform linear array (ULA) is a generalized Vandermonde matrix obtained from a full Vandermonde matrix with distinct generators on the unit circle by removing the rows corresponding to the missing sensor positions. 1
+
+Let AM (z1, . . . , z L) ∈ CM ×L denote the steering matrix of a full ULA with M elements and L sources. It is a Vandermonde matrix with distinct generators zi = ejθi ,
+
+i = 1 , . . . , L , where θi ∈ [−π, π ), so that (AM )m,i = zm−1 
+
+> i
+
+.In the array processing context, θ denotes the spatial fre-quency (or electrical angle), given by θ = 2πd λ cos ϑ, where 
+
+> 1The theory of generalized Vandermonde matrices developed in this paper extends naturally to arbitrary generators, not necessarily located on the unit circle.
+
+ϑ is the azimuth angle, λ the wavelength, and d the inter-element spacing of the underlying ULA. A common choice is d ≤ λ/ 2, which ensures a bijective mapping from the azimuth angle ϑ to the spatial frequency θ ∈ [−π, π ).Furthermore, let AI (z1, . . . , z L) ∈ CMI ×L denote the steering matrix of the thinned ULA with the same total aperture M but only MI < M sensors retained. The index set 
+
+I = {m1, m 2, . . . , m MI }, 1 = m1 < m 2 < · · · < m MI = M
+
+(1) contains the indices of the retained sensors in the full ULA. The corresponding selection matrix T I is defined as 
+
+T I ∈ BMI ×M ,  T I
+
+ 
+
+> k,m
+
+=
+
+(1, m = mk,
+
+0, otherwise , (2) so that 
+
+AI (z1, . . . , z L) = T I AM (z1, . . . , z L). (3) The Vandermonde matrix AM (z1, . . . , z L) admits a con-venient characterization of its range as the null space of a structured Toeplitz matrix [46]. Specifically, there exists a Toeplitz matrix T (g) ∈ C(M −L)×M with parameter vector g = [ g0, g 1, . . . , g L]T ∈ CL+1 such that R(AM ) = 
+
+N (T (g)) , i.e., 
+
+T (g) AM (z1, . . . , z L) = 0. (4) For even source number L = 2 K, the Toeplitz matrix is given in (5) at the top of the next page, with complex coefficients g0, g 1, . . . , g K−1 and real coefficient gK . For odd source number L = 2 K + 1 , it is given in (6), with complex coefficients g0, g 1, . . . , g K . The coefficients g0, g 1, . . . , g L
+
+provide an alternative parameterization of the generator set 
+
+{z1, . . . , z L}. Defining the centro-Hermitian polynomial 
+
+Pg (z) = 
+
+> L
+
+X
+
+> ℓ=0
+
+gℓ zℓ (7) with conjugate-symmetric coefficients gℓ = g∗
+
+> L−ℓ
+
+, the gen-erators z1, . . . , z L are precisely the roots of Pg (z):
+
+Pg (z) = 0 ⇐⇒ z ∈ { z1, . . . , z L}. (8) The conjugate symmetry of the coefficients is a necessary consequence of the assumption that all roots lie on the unit circle. The converse, however, does not hold: conjugate-symmetric coefficients do not in general guarantee that the roots are located on the unit circle. Since AM (z1, . . . , z L) is a Vandermonde matrix with distinct generators, it has full column rank L whenever 
+
+M ≥ L. For the thinned array, however, this guarantee no longer holds: the row-subsampled matrix AI (z1, . . . , z L) = 
+
+T I AM (z1, . . . , z L) may become rank-deficient even when 
+
+AM (z1, . . . , z L) itself has full rank. Characterizing the con-ditions under which such rank deficiencies occur is the central objective of this paper. In essence, this amounts to determining the spark of the generalized Vandermonde matrix family AI (z1, . . . , z L), i.e., the smallest number 
+
+> 3
+
+even: 
+
+L = 2 K
+
+T(g) = 
+
+                   
+
+> 1234··· K–2K–1KK+1K+2K+3K+4··· L–2L–1LL+1L+2··· M
+
+g0 g1 g2 g3 · · · gK−3 gK−2 gK−1 gK g∗ 
+
+> K−1
+
+g∗ 
+
+> K−2
+
+g∗ 
+
+> K−3
+
+· · · g∗ 
+
+> 3
+
+g∗ 
+
+> 2
+
+g∗ 
+
+> 1
+
+g∗ 
+
+> 0
+
+0 · · · 00 g0 g1 g2 g3 · · · gK−3 gK−2 gK−1 gK g∗ 
+
+> K−1
+
+g∗ 
+
+> K−2
+
+g∗ 
+
+> K−3
+
+· · · g∗ 
+
+> 3
+
+g∗ 
+
+> 2
+
+g∗ 
+
+> 1
+
+g∗
+
+> 0
+
+. . . ...... . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 00 · · · 0 g0 g1 g2 g3 · · · gK−3 gK−2 gK−1 gK g∗ 
+
+> K−1
+
+g∗ 
+
+> K−2
+
+g∗ 
+
+> K−3
+
+· · · g∗ 
+
+> 3
+
+g∗ 
+
+> 2
+
+g∗ 
+
+> 1
+
+g∗                   
+
+> 0
+> 1··· M–L–1M–LM–L+1M–L+2M–L+3··· M–K–2M–K–1M–KM–K–1M–K+2M–K+3M–K+4··· M–3M–2M–1M
+
+
+
+(5) odd: 
+
+L = 2 K +1 
+
+T(g) =
+
+                   
+
+> 1234··· K–2K–1KK+1K+2K+3K+4··· L–2L–1LL+1L+2··· M
+
+g0 g1 g2 g3 · · · gK−3 gK−2 gK−1 gK g∗ 
+
+> K
+
+g∗ 
+
+> K−1
+
+g∗ 
+
+> K−2
+
+· · · g∗ 
+
+> 3
+
+g∗ 
+
+> 2
+
+g∗ 
+
+> 1
+
+g∗ 
+
+> 0
+
+0 · · · 00 g0 g1 g2 g3 · · · gK−3 gK−2 gK−1 gK g∗ 
+
+> K
+
+g∗ 
+
+> K−1
+
+g∗ 
+
+> K−2
+
+· · · g∗ 
+
+> 3
+
+g∗ 
+
+> 2
+
+g∗ 
+
+> 1
+
+g∗
+
+> 0
+
+. . . ...... . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 00 · · · 0 g0 g1 g2 g3 · · · gK−3 gK−2 gK−1 gK g∗ 
+
+> K
+
+g∗ 
+
+> K−1
+
+g∗ 
+
+> K−2
+
+· · · g∗ 
+
+> 3
+
+g∗ 
+
+> 2
+
+g∗ 
+
+> 1
+
+g∗                   
+
+> 0
+> 1··· M–L–1M–LM–L+1M–L+2M–L+3··· M–K–3M–K–2M–K–1M–KM–K+1M–K+2M–K+3··· M–3M–2M–1M
+
+
+
+(6) of columns that can be made linearly dependent by an admissible choice of distinct generators z1, . . . , z L on the unit circle. The central problem considered in this paper is stated as follows. 
+
+Problem Formulation (Ambiguities in sparse arrays) .
+
+Given a thinned ULA with index set I and MI ≥ L retained sensors of a M -element full ULA, and a number of sources 
+
+L, determine all generator sets {z1, . . . , z L} on the unit circle for which the steering matrix 
+
+AI (z1, . . . , z L) = T I AM (z1, . . . , z L)
+
+loses rank. Equivalently, using the parameterization in terms of the centro-Hermitian polynomial coefficients, determine all coefficient vectors g = [ g0, g 1, . . . , g L]T for which 
+
+rank  AI (z1, . . . , z L) < L, (9) 
+
+where z1, . . . , z L are the roots of Pg (z).
+
+III. Algebraic charcterization of ambiguity sets 
+
+In this section we present the main results of the paper, namely the algebraic characterization of ambiguity sets in sparse arrays for an arbitrary number of sources. To address the ambiguity problem in sparse arrays, we equivalently seek conditions under which the null space of AT 
+
+> I
+
+(z1, . . . , z L) is nontrivial, that is, 
+
+dim  N  AT 
+
+> I
+
+(z1, . . . , z L) = MI − L + D, (10) where D ≥ 1 is an integer that quantifies the degree of rank deficiency. In this case, there exists a full column rank matrix KI ∈
+
+CMI ×(MI −L+D) such that 
+
+KT 
+
+> I
+
+AI (z1, . . . , z L) = 0, (11) which, using (3), translates to 
+
+KT 
+
+> I
+
+T I AM (z1, . . . , z L) = KT AM (z1, . . . , z L) = 0,
+
+(12) where 
+
+K = T T 
+
+> I
+
+KI ∈ CM ×(MI −L+D) (13) is, by construction, a row-sparse matrix whose row-sparsity pattern matches the thinning pattern of the sparse array. That is, the rows of K indexed by the missing sensor positions of the ULA vanish. Let T ¯I ∈ B(M −MI )×M
+
+denote the selection matrix defined according to (2) for the complementary index set 
+
+¯I = {1, 2, . . . , M } \ I , (14) which contains the indices ¯m1, . . . , ¯mM −MI of the omitted sensors. Left-multiplication by T ¯I retains exactly those rows corresponding to the omitted sensors, so that the row-sparsity property of K reads 
+
+K ¯I = T ¯I K = 0. (15) Comparing (12) with (4), both K and T T(g) lie in the left null space of AM (z1, . . . , z L). Since the columns of T T(g)
+
+form a basis of this null space, it follows that 
+
+R(K) ⊆ R (T T(g)) = N (AT 
+
+> M
+
+(z1, . . . , z L)) . (16) In other words, the columns of the full column-rank, row-sparse matrix K can be expressed as linear combinations of the columns of T T(g). Hence, there exists a full column-rank matrix C ∈ C(M −L)×(MI −L+D) such that 
+
+K = T T(g) C. (17) It is worth emphasizing that although the columns of K
+
+are contained in the subspace spanned by the columns of 
+
+T T(g), the two matrices have very different structure: T T(g)
+
+is Toeplitz, whereas K is row-sparse. To formalize this relationship and characterize the ambi-guities of the thinned ULA, we state the following theorem. 
+
+Theorem 1 (Rank Condition for Generalized Vandermonde Matrices) . Let AI (z1, . . . , z L) ∈ CMI ×L be a generalized Vandermonde matrix as defined in (3) , with index set I as 
+
+> 4
+
+in (1) and L ≤ MI , and let g = [ g0, . . . , g L]T be the coefficient vector of the centro-Hermitian polynomial Pg (z)
+
+in (7) whose roots are z1, . . . , z L. Then AI (z1, . . . , z L) is rank deficient if and only if the complementary submatrix 
+
+T¯I (g) = T (g) T T 
+
+> ¯I
+
+∈ C(M −L)×(M −MI ) (18) 
+
+is rank deficient, i.e., 
+
+rank  T¯I (g) = M − MI − D (19) 
+
+for some integer D with 1 ≤ D < L .Proof: 
+
+Suppose the thinned Vandermonde matrix AI (z1, . . . , z L) ∈
+
+CMI ×L is rank deficient with rank deficit D ≥ 1.Then dim  R(AI (z1, . . . , z L))  = L − D and, by the rank-nullity theorem, dim  N (AT 
+
+> I
+
+(z1, . . . , z L))  = MI −
+
+L + D. Hence there exist full column-rank matrices 
+
+KI ∈ CMI ×(MI −L+D), K ∈ CM ×(MI −L+D), and C ∈
+
+C(M −L)×(MI −L+D) satisfying (13), (16), and (17). Substituting (17) into (15) yields 
+
+K ¯I = T ¯I T T(g) C = T T 
+
+> ¯I
+
+(g) C = 0, (20) so that R(C) ⊆ N (T T 
+
+> ¯I
+
+(g)) . Since C has full column rank 
+
+MI − L + D, it follows that 
+
+dim  N (T T 
+
+> ¯I
+
+(g))  ≥ MI − L + D. (21) By (18), T¯I (g) ∈ C(M −L)×(M −MI ), and the rank-nullity theorem applied to T T 
+
+> ¯I
+
+(g) yields 
+
+dim  R(T¯I (g))  + dim  N (T T 
+
+> ¯I
+
+(g))  = M − L, (22) so that 
+
+rank  T¯I (g) ≤ (M − L) − (MI − L + D) = M − MI − D. 
+
+(23) Since T¯I (g) has at most M − MI linearly independent columns, this means that for D ≥ 1, T¯I (g) is rank deficient with rank deficit at least D. The reverse implication follows by reversing the argument. Condition (19) in Theorem 1 is necessary and sufficient for the existence of ambiguities in the thinned array steering matrix AI (z1, . . . , z L), where T (g) and AI (z1, . . . , z L) are related through (4). The condition states that ambiguities in the thinned ULA with steering matrix AI exist if and only if there exists a coefficient vector g for which the complementary submatrix T¯I (g) is rank deficient. Moreover, condition (19) can be exploited constructively to efficiently compute coefficient vectors g at which T¯I (g) loses rank. 
+
+Remark 1 (Generators off the unit circle) . Theorem 1does not require the generators to lie on the unit circle. It holds for generalized Vandermonde matrices AI (z1, . . . , z L)
+
+with distinct generators of arbitrary nonzero magnitude. In this more general setting, the Toeplitz matrix T (g) and its complementary submatrix T¯I (g) are built from a coefficient vector that does not necessarily satisfy the centro-Hermitian property gℓ = g∗
+
+> L−ℓ
+
+. The proof carries over verbatim. 
+
+A. Rotation invariance 
+
+The rank of a generalized Vandermonde matrix 
+
+AI (z1, . . . , z L) is invariant under a common rotation of its generators. That is, if {`z1, . . . , `zL} is a generator set at which the matrix drops rank, then so is {´z1, . . . , ´zL} with 
+
+´zℓ = ` zℓ ejα, ℓ = 1 , . . . , L, (24) for any α ∈ (−π, π ], and 
+
+rank  AI (´ z1, . . . , ´zL) = rank  AI (` z1, . . . , `zL). (25) This follows from the observation that a common rotation of the generators of a full Vandermonde matrix amounts to left multiplication by the nonsingular diagonal matrix 
+
+D2,α = diag  1, e jα, . . . , e j(M −1) α, (26) that is, 
+
+AM (´ z1, . . . , ´zL) = D2,α AM (` z1, . . . , `zL). (27) For the thinned array, inserting the identity 2 T T 
+
+> I
+
+T I yields 
+
+AI (´ z1, . . . , ´zL) = T I AM (´ z1, . . . , ´zL)= T I D2,α T T 
+
+> I
+
+T I AM (` z1, . . . , `zL)= DI,2,α AI (` z1, . . . , `zL), (28) where 
+
+DI,2,α = T I D2,α T T 
+
+> I
+
+= diag  ej(m1−1) α, . . . , e j(mMI −1) α
+
+(29) is nonsingular. The rotation invariance carries over to the complementary submatrix T¯I (g), as stated in the following corollary. 
+
+Corollary 1 (Rotation invariance) . Let `g and ´g be two coefficient vectors whose entries are related through 
+
+´gℓ = ejβ e−jℓα `gℓ, ℓ = 0 , 1, . . . , L, (30) 
+
+for α ∈ (−π, π ] and 
+
+β =
+
+(Kα, for even L = 2 K,
+
+ K + 12
+
+α, for odd L = 2 K + 1 . (31) 
+
+Then T¯I (´ g) is rank deficient if and only if T¯I (` g) is rank deficient. 
+
+Under the coefficient rotation (30), the roots of P´g (z)
+
+and P`g (z) are related by the common rotation (24) of the generator sets. 
+
+Proof: 
+
+The Toeplitz matrices defined in (5) and (6) for even and odd source numbers L, respectively, satisfy 
+
+T (´ g) = ejβ D1,α T (` g) D∗
+
+> 2,α
+
+, (32)                      
+
+> 2Strictly, TT
+> ITI∈BM×Mis not the identity but the diagonal projector onto the retained sensor indices I, satisfying TITT
+> ITI=TI. The insertion is valid because D2,α is diagonal in the standard basis and therefore commutes with this projector.
+> 5
+
+where 
+
+D1,α = diag  1, e jα, . . . , e j(M −L−1) α, (33) 
+
+D2,α = diag  1, e jα, . . . , e j(M −1) α, (34) and β is given by (31). Using the complementary selection matrix T ¯I defined according to (2) for the index set ¯I
+
+in (14), we have the identity 
+
+D∗ 
+
+> 2,α
+
+T T 
+
+> ¯I
+
+= T T 
+
+> ¯I
+
+D∗
+
+> ¯I,2,α
+
+, (35) where 
+
+D ¯I,2,α = T ¯I D2,α T T 
+
+> ¯I
+
+(36) is nonsingular and diagonal. Combining (32), (35), and definition (18) yields 
+
+T¯I (´ g) = T (´ g) T T
+
+> ¯I
+
+= ejβ D1,α T (` g) D∗ 
+
+> 2,α
+
+T T
+
+> ¯I
+
+= ejβ D1,α T (` g) T T 
+
+> ¯I
+
+D∗
+
+> ¯I,2,α
+
+= ejβ D1,α T¯I (` g) D∗
+
+> ¯I,2,α
+
+. (37) Since D1,α and D∗ 
+
+> ¯I,2,α
+
+are nonsingular diagonal matrices and ejβ is a unit-modulus scalar, the rank is preserved: 
+
+rank  T¯I (´ g) = rank  T¯I (` g). (38) Since the generalized Vandermonde matrix 
+
+AI (z1, . . . , z L) is invariant under a common rotation of its generators, a normalization constraint is typically imposed to ensure uniqueness of the solutions obtained from Theorem 1 when characterizing the ambiguity sets of a given array geometry [31]. A simple choice is to fix one root to an arbitrary location on the unit circle, for instance, z1 = 1 , which is equivalent to requiring the polynomial coefficients to sum to zero, Pg (1) = gT1 = 0 .This constraint resolves the rotation ambiguity up to apermutation of the roots, i.e., up to the choice of which root is fixed to one. An alternative is to fix the phase of the leading coefficient g0 to zero, i.e., Im( g0) = 0 and 
+
+Re( g0) > 0.
+
+B. Conjugate Invariance 
+
+In addition to the rotation invariance, the generalized Van-dermonde matrix AI (z1, . . . , z L) and its complementary submatrix T¯I (g) exhibit a conjugate invariance, as stated next. 
+
+Corollary 2 (Conjugate invariance) . The complementary submatrix T¯I (g) is rank deficient if and only if T¯I (g∗) is rank deficient. Proof: 
+
+Inspection of (5) and (6) shows that replacing each coeffi-cient gℓ by g∗ 
+
+> ℓ
+
+replaces every entry of T (g) by its complex conjugate. Hence T (g∗) = T (g)∗, and since T ¯I is real, 
+
+T¯I (g∗) = T (g∗) T T 
+
+> ¯I
+
+=  T (g) T T
+
+> ¯I
+
+∗ = T¯I (g)∗. (39) Since the rank of a matrix is invariant under complex conju-gation, rank  T¯I (g∗) = rank  T¯I (g), which completes the proof. Although Corollary 2 is elementary, it captures auseful symmetry: the generalized Vandermonde matrix 
+
+AI (z1, . . . , z L) loses rank for the generator set {z1, . . . , z L}
+
+if and only if it loses rank for the conjugate generator set {z∗ 
+
+> 1
+
+, . . . , z ∗
+
+> L
+
+}. Indeed, if {z1, . . . , z L} are the roots of 
+
+Pg (z), then {z∗ 
+
+> 1
+
+, . . . , z ∗
+
+> L
+
+} are the roots of Pg∗ (z), since 
+
+Pg∗ (z) =  Pg (z∗)∗.
+
+C. Direct Implications of Theorem 1 
+
+In this subsection we discuss several implications that follow directly from Theorem 1. The results show that the theorem is in agreement with established array processing theory. The first implication confirms the common intuition that thinning a λ/ 2-spaced ULA always introduces ambiguities in the resulting steering matrix. 
+
+Corollary 3 (Violation of the spatial sampling theorem) .
+
+For a thinned ULA with MI < M sensors and a number of sources L ≥ MI , the thinned array steering matrix 
+
+AI (z1, . . . , z L) is always ambiguous: there exists a set of distinct generators {z1, . . . , z L} on the unit circle for which 
+
+AI (z1, . . . , z L) becomes rank deficient. Proof: 
+
+It suffices to prove the corollary for L = MI , since rank deficiency at L = MI implies rank deficiency for any L > MI by selecting an arbitrary MI -subset of the columns. For L = MI , the complementary submatrix 
+
+T¯I (g) ∈ C(M −L)×(M −MI ) is square of size M¯I × M¯I with 
+
+M¯I = M − MI .Consider the centro-Hermitian polynomial 
+
+Pb(z) = 1 + zM −1 = 
+
+> M−1
+
+Y
+
+> m=1
+
+ z − ejπ(2 m−1) /(M −1) , (40) whose M − 1 roots lie on the unit circle as the (M − 1) -th roots of −1. Factorizing Pb(z) into two centro-Hermitian factors, yields 
+
+Pb(z) = Ph(z) Pg (z), (41) where 
+
+Ph(z) =  
+
+> M¯I−1
+
+X
+
+> ℓ=0
+
+hℓ zℓ, Pg (z) = 
+
+> L
+
+X
+
+> ℓ=0
+
+gℓ zℓ, (42) with coefficient vectors b = e1 + eM ∈ BM (where ei is the i-th unit vector in RM ), h ∈ CM¯I satisfying the centro-Hermitian property hℓ = h∗  
+
+> M¯I−1−ℓ
+
+with |h0| = 1 , and g ∈
+
+CL+1 satisfying gℓ = g∗ 
+
+> L−ℓ
+
+with |g0| = 1 .The polynomial identity (41) can be expressed in matrix form as 
+
+bT = hT T (g), (43) where T (g) ∈ C(M −L)×M is the Toeplitz matrix defined in (5)–(6). Right-multiplying both sides of (43) by the 
+
+> 6
+
+complementary selection matrix T T 
+
+> ¯I
+
+yields 
+
+bT T T 
+
+> ¯I
+
+= hT T (g) T T 
+
+> ¯I
+
+= hT T¯I (g). (44) Since b has nonzero entries only at positions 1 and M ,both of which lie in I (the first and last sensors are always retained to preserve the aperture), the selection of columns indexed by ¯I from bT yields bT T T 
+
+> ¯I
+
+= 0T, the zero row vector of length M¯I . Combined with h̸ = 0 (since |h0| = 1 ), identity (44) exhibits h as a nontrivial left null vector of 
+
+T¯I (g). As T¯I (g) is square, this forces it to be rank deficient. By Theorem 1, the corresponding generalized Vander-monde matrix AI (` z1, . . . , `zL) is rank deficient, where 
+
+{`z1, . . . , `zL} is the subset of roots of Pb(z) associated with the factor Pg (z). All these generators lie on the unit circle at the (M − 1) -th roots of −1.Corollary 3 states that, in thinned ULAs, the number of columns L of the array steering matrix AI (z1, . . . , z L), i.e., the number of identifiable sources, must be strictly less than the number of physical sensors MI , that is, L < M I [26]. This contrasts with the fully populated ULA, where the Vandermonde determinant theorem guarantees full column rank of AM (z1, . . . , z L) for any L ≤ M and any set of distinct generators [32]–[34], [47]. Corollary 3 can therefore be viewed as an algebraic counterpart of the spatial sampling theorem, which states that a full-spark steering matrix can be obtained for any set of distinct generators only when the inter-element spacing satisfies d ≤ λ/ 2, where λ is the wavelength of the impinging narrowband signal. The result of Corollary 3 is consistent with earlier reports in [20], [27], where ambiguity generator sets formed by roots of unity were derived for this case through different arguments. 
+
+Corollary 4 (Maximum-consecutive-lag arrays) . If the num-ber of sensors in the thinned array exceeds the number of sources, i.e., MI > L , then there always exists a sparse sensor configuration, obtained by removing up to M − MI
+
+sensors from the underlying M -element ULA, whose array manifold is unambiguous, i.e., AI (z1, . . . , z L) ∈ CMI ×L
+
+has full column rank for every set of distinct generators 
+
+{z1, . . . , z L}.Proof: 
+
+Consider the boundary case MI = L + 1 and choose ¯I =
+
+{2, 3, . . . , M −L}, which corresponds to removing M −L−1
+
+consecutive sensors from positions 2, 3, . . . , M − L of the underlying ULA. The retained index set is 
+
+I = {1, M − L + 1 , M − L + 2 , . . . , M }. (45) The corresponding complementary submatrix T¯I (g) ∈
+
+C(M −L)×(M −L−1) is upper triangular with g0 on the main diagonal, and therefore has full column rank for any nonzero 
+
+g0. By Theorem 1, AI (z1, . . . , z L) ∈ C(L+1) ×L has full column rank for every set of distinct generators {z1, . . . , z L}.The array defined by the index set I in (45) is commonly referred to as a maximum-consecutive-lag array, since it contains a contiguous subarray of L consecutive sensors [18]. This subarray itself forms an L-element ULA and, by the Vandermonde determinant theorem [48], admits an unam-biguous manifold for L sources. While the result of Corol-lary 4 is therefore well known, it confirms that Theorem 1 reproduces this elementary fact through its algebraic char-acterization. The Examples 2, 10, and 11 in Section V will further show that thinned ULAs with maximum consecutive lag strictly less than L, i.e., genuinely sparse arrays that contain no L-element contiguous subarray, can also be designed to be unambiguous, provided the total number of sensors MI exceeds L. Such truely sparse configurations may be preferable when mutual coupling is a concern. 
+
+> IV. Design of unambiguous thinned arrays
+
+In this section we provide practical guidelines on how the results of Theorem 1 can be used to design unambiguous sparse arrays. 
+
+Corollary 5 (Forbidden center elements in the removal set) .
+
+Assume 2L ≥ M + 1 and define the center index set 
+
+Q = {M − L + 1 , . . . , L }. Then, if any element of Q is included in the removal set, i.e., if Q ∩ ¯I̸ = ∅, the generalized Vandermonde matrix AI (z1, . . . , z L) is ambiguous: there exists a generator set on the unit circle for which it becomes rank deficient. Proof: 
+
+Choose the coefficient vector `g = [1 , 0, . . . , 0, 1] T, i.e., `g0 =`gL = 1 and `gℓ = 0 for ℓ = 1 , . . . , L − 1. From the definition of T (g) in (5) and (6), the columns of T (` g) indexed by Q
+
+are identically zero. Hence, if Q ∩ ¯I̸ = ∅, the complementary submatrix T¯I (` g) contains a zero column and is therefore rank deficient. By 
+
+P`g (z) = 1 + zL =
+
+> L
+
+Y
+
+> ℓ=1
+
+ z − ejπ(2 ℓ−1) /L , (46) c.f. (40), the roots `z1, . . . , `zL of P`g (z) lie on the unit circle, and by Theorem 1, AI (` z1, . . . , `zL) is rank deficient. 
+
+Corollary 6 (Mutually exclusive indices, Type A) . Assume 
+
+2L ≥ M − 1 and define Q = {M − L, L + 1 }. If both indices in Q are contained in the removal set, i.e., Q ⊆ ¯I,then there exists an ambiguous generator set {´z1, . . . , ´zL}
+
+on the unit circle for which the generalized Vandermonde matrix AI (´ z1, . . . , ´zL) is rank deficient. Proof: 
+
+Choose ´g = 1. From (5) and (6), columns M − L and L + 1 
+
+of T (´ g) are identical. Hence, if both indices are contained in ¯I, the complementary submatrix T¯I (´ g) has two identical columns and is rank deficient. With the factorization 
+
+P´g (z) = 
+
+> L
+
+X
+
+> ℓ=0
+
+zℓ = zL+1 − 1
+
+z − 1 =
+
+> L
+
+Y
+
+> k=1
+
+
+
+z − ej2πk/ (L+1) 
+
+
+
+,
+
+(47) 
+
+> 7
+
+the roots of P´g (z) given by ´zℓ = ej2πk/ (L+1) (ℓ =1, . . . , L ) lie on the unit circle, and Theorem 1 implies that 
+
+AI (´ z1, . . . , ´zL) is rank deficient. 
+
+Corollary 7 (Mutually exclusive indices, Type B) . Set N =
+
+M − L, and let p, q be integers satisfying 
+
+0 ≤ p ≤ K, p+1 ≤ q ≤ L−p, N ≤ L+q−2p−1. (48) 
+
+Define the index pair Sp,q = {q, L − p + q}. If Sp,q ⊆ ¯I,then there exists an ambiguous generator set {ˇz1, . . . , ˇzL}
+
+on the unit circle for which the generalized Vandermonde matrix AI (ˇ z1, . . . , ˇzL) is rank deficient. Proof: 
+
+Choose the coefficient vector ˇg with ˇg0 = ˇ gp = ˇ gL−p =ˇgL = 1 and all other entries zero. For p = 0 the polynomial 
+
+Pˇg (z) as in (46). For 1 ≤ p̸ = L−p the polynomial factorizes as 
+
+Pˇg (z) = 1 + zp + zL−p + zL = (1 + zp) (1 + zL−p), (49) and for 1 ≤ p = L − p (i.e., L = 2 p) as 
+
+Pˇg (z) = 1 + 2 zp + z2p = (1 + zp)2. (50) In all cases all roots lie on the unit circle: at the L-th roots of −1 in (46), at the 2p-th roots of −1 in (49), and likewise (with multiplicity two) in (50). We now show that, with this choice of ˇg, columns q and 
+
+L − p + q of T (ˇ g) are identical. The nonzero entries in the first row of T (ˇ g) occur at column positions 1, p + 1 , L − p +1, L + 1 , all with value 1. Since T (ˇ g) is Toeplitz, an entry appearing in the first row at column position s+1 appears in row r at column position r + s. Hence column j contains a nonzero entry in row r if and only if r = j −s for some shift 
+
+s ∈ { 0, p, L − p, L } (for p = 0 this reduces to s ∈ { 0, L }). Restricting to valid row indices {1, . . . , N }, where N =
+
+M − L, the set of nonzero row indices in column q is 
+
+Sq = {q, q − p, q − L + p, q − L} ∩ { 1, . . . , N }. (51) The condition p + 1 ≤ q ≤ L − p implies 1 ≤ q − p ≤ q and 
+
+q − L + p ≤ 0, q − L ≤ 0, so the last two candidates are outside the valid range. Hence Sq = {q, q − p} (for p = 0 
+
+this reduces to Sq = {q}). For column L − p + q, the analogous calculation yields 
+
+SL−p+q = {L − p + q, L − 2p + q, q, q − p} ∩ { 1, . . . , N }.
+
+(52) The condition N ≤ L+q−2p−1 is equivalent to L−2p+q ≥
+
+N + 1 , so L − 2p + q > N . Since p ≥ 0, L − p + q = ( L −
+
+2p + q) + p > N as well. Therefore the first two candidates are outside the valid range, and SL−p+q = {q, q − p} = Sq
+
+(for p = 0 this reduces to SL+q = {q} = Sq ). Columns q and L − p + q thus have nonzero entries in exactly the same rows. In both columns, the entries in rows 
+
+q and q−p equal ˇg0 = 1 and ˇgp = 1 (for p = 0 this reduces to 
+
+ˇg0 = 1 ), respectively. Hence columns q and L−p+q of T (ˇ g)
+
+are identical. Consequently, if Sp,q ⊆ ¯I, the complementary submatrix T¯I (ˇ g) contains two identical columns and is rank deficient. By Theorem 1, the corresponding generalized Vandermonde matrix AI (ˇ z1, . . . , ˇzL) is rank deficient. Corollaries 5, 6, and 7 establish that certain index pairs are mutually exclusive for inclusion in the removal set ¯I:if both indices of Q or of Sp,q are removed, the resulting array manifold becomes ambiguous, and the corresponding steering matrix is rank deficient. The ambiguity generator sets produced by these removal patterns, i.e., the roots of the polynomials (46), (47), (49), and (50), are all roots of unity (or of −1). Such roots-of-unity ambiguity patterns have also been reported in [27] and [31]. Furthermore, corollaries 5, 6 and 7 can provide upper bounds for the maximum number of sources L for a full rank thinned ULA steering matrix for a given aperture M
+
+and a given number of removed sensors M¯I = M − MI .
+
+> A. Fixing Predefined Generators
+
+If a subset of generators {z1, . . . , z L′ } of the polynomial 
+
+Pg (z) in (7) is prescribed, the polynomial can be factorized as 
+
+Pg (z) = Pf (z) Ph(z), (53) where 
+
+Ph(z) = 
+
+> L′
+
+X
+
+> ℓ=0
+
+hℓ zℓ =
+
+> L′
+
+Y
+
+> ℓ=1
+
+(z − zℓ), (54) 
+
+Pf (z) = 
+
+> L−L′
+
+X
+
+> n=0
+
+fn zn, (55) and the remaining L − L′ roots of Pg (z) are the roots of 
+
+Pf (z). Under this factorization, the Toeplitz matrix in (5)– (6) admits the factorization 
+
+T (g) = T (h) T (f ), (56) where T (f ) ∈ C(M −L+L′)×M and T (h) ∈
+
+C(M −L)×(M −L+L′). Substituting (56) into the definition of the complementary submatrix (18) yields 
+
+T¯I (g) = T (h) T¯I (f ). (57) Setting ¯L′ = L − L′, the matrix T (h) admits a convenient null-space characterization via the property (4) applied to the polynomial Ph(z): the columns of the Vandermonde matrix AM − ¯L′ (z1, . . . , z L′ ) ∈ C(M − ¯L′)×L′
+
+form a basis of 
+
+N (T (h)) , i.e., 
+
+T (h) AM − ¯L′ (z1, . . . , z L′ ) = 0. (58) This observation leads to the following corollary. 
+
+Corollary 8 (Vandermonde reduction) . Let {´z1, . . . , ´zL′ } ⊂ {z1, . . . , z L} be an arbitrary subset of L′ < L generators of 
+
+Pg (z), and let f be the coefficient vector of the cofactor polynomial Pf (z), so that Pg (z) = Pf (z) Ph(z) with 
+
+Ph(z) = QL′
+
+> ℓ=1
+
+(z − ´zℓ). Then the generalized Vandermonde matrix AI (z1, . . . , z L) is rank deficient if and only if the 
+
+(M − ¯L′) × (M¯I + L′) augmented matrix 
+
+A(f , ´z1, . . . , ´zL′ ) = T¯I (f ) AM − ¯L′ (´ z1, . . . , ´zL′ ) (59)                                          
+
+> 81i9
+> FIGURE 1. Thinned ULA considered in Corollary 5 and Examples 1–3, with MI= 8 sensors and a single hole at position i∈ { 2,3, . . . , 8}.Filled circles denote the retained sensors I={1,2, . . . , 9} \ { i}; the open circle marks the removed position ¯I={i}.
+> 123456789
+> FIGURE 2. Thinned ULA considered in Example 2 for L= 7 sources with
+> MI= 8 sensors and a single hole at position i1= 2 , i.e.,
+> I={1,3,4,5,6,7,8,9}.
+
+is rank deficient. Proof: 
+
+By Theorem 1, rank deficiency of AI (z1, . . . , z L) is equiv-alent to the existence of a nonzero α with T¯I (g) α = 0.Substituting (57), this means T¯I (f ) α ∈ N (T (h)) , which by (58) is equivalent to the existence of β with T¯I (f ) α =
+
+AM − ¯L′ (´ z1, . . . , ´zL′ ) β. The latter is precisely the statement that [αT, −βT]T is a null vector of A(f , ´z1, . . . , ´zL′ ). Since the prescribed generators are distinct, AM − ¯L′ has full col-umn rank, so any such null vector has α̸ = 0.Corollary 8 provides a direct relation between the rank of the generalized Vandermonde matrix AI (z1, . . . , z L) of the thinned array and that of the full Vandermonde matrix 
+
+AM − ¯L′ (´ z1, . . . , ´zL′ ) of a ULA with M − ¯L′ elements, for any arbitrary subset of L′ generators. This reveals a structural link between sparse and fully populated arrays: characterizing ambiguities in the thinned array reduces to characterizing rank deficiencies of an augmented full-ULA steering matrix. 
+
+V. Analysis and design examples 
+
+In this section, we illustrate the algebraic framework intro-duced in Section III on representative sparse linear array configurations. The examples cover both the analysis task of fully characterizing the ambiguity sets of a given thinned ULA and the design task of constructing sparse arrays with favorable ambiguity behavior. 
+
+Example 1. Consider a thinned ULA with MI = 8 sensors and a single hole at position i, i ∈ {2, 3, . . . , 8}, so that I = {1, 2, . . . , 9} \ { i} and M = 9. The array is illustrated in Fig. 1 for an arbitrary choice of i. For L = 8 
+
+sources, the Toeplitz matrix is the single row T (g) =[g0, g 1, g 2, g 3, g 4, g ∗ 
+
+> 3
+
+, g ∗ 
+
+> 2
+
+, g ∗ 
+
+> 1
+
+, g ∗ 
+
+> 0
+
+], where g0, . . . , g 3 ∈ C
+
+with g0̸ = 0 and g4 ∈ R. The complementary submatrix in (18) reduces to the scalar T¯I (g) = gi−1, which vanishes for gi−1 = 0 . Since the centro-Hermitian property gi−1 =
+
+g∗ 
+
+> 9−i
+
+couples the coefficients pairwise, and the polynomial 
+
+Pg (z) in (7) can always be chosen to have all roots on the unit circle (for instance, via the constructions in (46)), the condition gi−1 = 0 is satisfiable. By Theorem 1, ambiguities always exist. This is a special case of Corollary 3.                         
+
+> 123456789
+> FIGURE 3. Thinned ULA considered in Example 3 for L= 7 sources with
+> MI= 8 sensors and a single hole at position i1= 3 , i.e.,
+> I={1,2,4,5,6,7,8,9}.
+
+Example 2. Consider again a thinned ULA with MI = 8 
+
+sensors but with the single hole at position i1 = 2 , i.e., 
+
+I = {1, 3, 4, 5, 6, 7, 8, 9} and L = 7 sources. The array is illustrated in Fig. 2. The Toeplitz matrix becomes 
+
+T (g) = 
+
+g0 g1 g2 g3 g∗ 
+
+> 3
+
+g∗ 
+
+> 2
+
+g∗ 
+
+> 1
+
+g∗ 
+
+> 0
+
+00 g0 g1 g2 g3 g∗ 
+
+> 3
+
+g∗ 
+
+> 2
+
+g∗ 
+
+> 1
+
+g∗
+
+> 0
+
+
+
+, (60) and the complementary submatrix reduces to T¯I (g) =[g1, g 0]T. Since g0̸ = 0 by definition, this column vector has full column rank, i.e., it cannot drop rank below one. Hence, by Theorem 1, the array manifold AI (z1, . . . , z L) is unambiguous for L = 7 , and the same conclusion extends to L < 7.The array defined by I is a maximum-consecutive-lag array, so Example 2 is a special case of Corollary 4. 
+
+Example 3. Consider a thinned ULA with MI = 8
+
+sensors and a single hole at position i1 = 3 , i.e., I =
+
+{1, 2, 4, 5, 6, 7, 8, 9} and L = 7 sources, as shown in Fig. 3. The Toeplitz matrix T (g) has the same form as in (60), and the complementary submatrix becomes T¯I (g) = [ g2, g 1]T.This vector vanishes if and only if g1 = g2 = 0 , while g0
+
+and g3 remain free. Hence the ambiguity sets of the array are characterized by the unit-circle roots of the polynomial 
+
+Pg (z) = g0 + g3 z3 + g∗ 
+
+> 3
+
+z4 + g∗ 
+
+> 0
+
+z7, (61) in the sense that any choice of g0, g 3 ∈ C (with g0̸ = 0 )for which all roots of Pg (z) lie on the unit circle yields an ambiguity set at which the generalized Vandermonde matrix AI (z1, . . . , z L) becomes rank deficient. In practice, however, it is not obvious which choices of g0, g 3 admit such a root configuration, so we turn to the augmented matrix formulation of Corollary 8. Fix two prescribed generators ´z1 = 1 and ´z2 = ejθ2 , with 
+
+´z2̸ = 1 . By Corollary 8, the array manifold is ambiguous if and only if the 4 × 3 augmented matrix 
+
+A(f , ´z1, ´z2) = 
+
+
+
+f2 1 1
+
+f1 1 ´z2
+
+f0 1 ´z22
+
+0 1 ´z32
+
+ (62) is rank deficient. Since ´z2̸ = 1, the second and third columns of A(f , ´z1, ´z2) are linearly independent. Hence rank deficiency holds if and only if the first column lies in the span of the other two, i.e., if there exist α1, α 2 ∈ C
+
+such that 
+
+f2
+
+f1
+
+f0
+
+0
+
+ = α1
+
+
+
+1111
+
+ + α2
+
+
+
+1´z2
+
+´z22
+
+´z32
+
+ . (63) 
+
+> 9
+
+-π -π/2 0 π/2 π
+
+-π
+
+-π/2 
+
+0
+
+π/2 
+
+π
+
+θ2 [rad] 
+
+> θ1, . . .  ,θ7 [rad]
+
+All UC Partial UC Off UC Transition FIGURE 4. Ambiguity sets for the thinned ULA in Fig. 3 with L = 7                        
+
+> sources. The root angles θi= arg ziof the polynomial Pf,´z2(z)in (69)
+> are plotted against the angle θ2= arg ´ z2, which is varied across the field of view. Black dots mark values of ´z2for which all roots of Pf,´z2(z)lie on the unit circle (i.e., |zi|= 1 for all i); red dots mark roots that lie off the unit circle; gray dots mark unit-circle roots in cases where not all roots are on the unit circle.
+
+From the last row, α1 = −α2 ´z32 . Substituting into the remaining rows yields 
+
+f2 = α2(1 −´z32 ), f1 = α2 ´z2(1 −´z22 ), f0 = α2 ´z22 (1 −´z2).
+
+(64) Since f0̸ = 0 and ´z2̸ = 1 , we obtain 
+
+α2 = f0
+
+´z22 (1 − ´z2) , (65) and the rank-deficient (i.e., ambiguous) case is characterized by 
+
+f1 = f0
+
+1 + ´ z2
+
+´z2
+
+, f2 = f0
+
+1 + ´ z2 + ´ z22
+
+´z22
+
+. (66) The associated centro-Hermitian polynomial reads 
+
+Q(z) = f0 + f1z + f2z2 + f ∗ 
+
+> 2
+
+z3 + f ∗ 
+
+> 1
+
+z4 + f ∗ 
+
+> 0
+
+z5. (67) Substituting (66) and writing f0 = ejϕ0 gives, after dividing by f0,
+
+Q(z)
+
+f0
+
+= 1 + 1 + ´ z2
+
+´z2
+
+z + 1 + ´ z2 + ´ z22
+
+´z22
+
+z2
+
++ e−j2ϕ0 (1 + ´ z2 + ´ z22 ) z3 + e−j2ϕ0 (1 + ´ z2) z4 + z5.
+
+(68) For all roots of Q(z) to lie on the unit circle, Q(z) must be self-inversive, which forces e−j2ϕ0 = 1 , i.e., f0 = ±1.Up to the nonzero factor f0, the ambiguity condition is therefore governed by the polynomial 
+
+Pf ,´z2 (z) = z5 + (1 + ´ z2) z4 + (1 + ´ z2 + ´ z22 ) z3
+
++ 1 + ´ z2 + ´ z22
+
+´z22
+
+z2 + 1 + ´ z2
+
+´z2
+
+z + 1 , (69) subject to the exclusions z̸ = 1 and z̸ = ´ z2 (which exclude the prescribed generators). The array manifold is ambiguous precisely at those ´z2 = ejθ2 , ´z2̸ = 1 , for which all roots of Pf ,´z2 (z) lie on the unit circle. Figure 4 displays the corresponding values of θ2 over the field of view. 
+
+1 2 3 4 5 6 7 8 9                    
+
+> FIGURE 5. Thinned ULA considered in Examples 4 and 5, for L= 7
+> sources (Example 4) and L= 6 sources (Example 5), with MI= 7
+> sensors and two adjacent holes at positions i1= 2 and i2= 3 , i.e.,
+> I={1,4,5,6,7,8,9}.
+
+Example 4. Consider a thinned ULA with MI = 7 sensors and two adjacent holes at positions i1 = 2 and i2 = 3 ,i.e., I = {1, 4, 5, 6, 7, 8, 9} and L = 7 sources, as depicted in Fig. 5. The Toeplitz matrix T (g) has the same form as in (60), and the complementary submatrix (18) becomes 
+
+T¯I (g) = 
+
+g1 g2
+
+g0 g1
+
+
+
+. (70) This matrix is rank deficient if and only if det  T¯I (g) =
+
+g21 −g0g2 = 0 . Setting g0 = 1 without loss of generality (after an appropriate rotation of the roots), the condition reduces to g2 = g21 , i.e., for g1 = |g1| ejϕ1 , g2 = |g1|2 ej2ϕ1 . The corresponding polynomial becomes 
+
+Pg (z) = 1 + |g1| ejϕ1 z + |g1|2 ej2ϕ1 z2 + g3 z3 + g∗ 
+
+> 3
+
+z4
+
++ |g1|2 e−j2ϕ1 z5 + |g1| e−jϕ1 z6 + z7,
+
+(71) where g1 and g3 = |g3| ejϕ3 are free parameters. Ambi-guities exist whenever all roots of (71) lie on the unit circle. However, fully characterizing the parameter range 
+
+(|g1|, ϕ 1, |g3|, ϕ 3) for which this holds, and devising a con-structive procedure to enumerate the ambiguity sets, appears difficult through direct analysis of (71). We therefore turn to Corollary 8. Fix three prescribed generators on the unit circle: ´z1 = 1, ´z2 = ejθ2 , and 
+
+´z3 = ejθ3 , with ´zi̸ = ´ zj for i̸ = j. The cofactor coefficient vector is f = [f0, f 1, f 2, f ∗ 
+
+> 1
+
+, f ∗ 
+
+> 0
+
+]T with f0, f 1 ∈ C and 
+
+f2 ∈ R (from the centro-Hermitian condition fℓ = f ∗
+
+> L−L′−ℓ
+
+with L − L′ = 4 ). The augmented matrix in (59) is the 5 × 5
+
+matrix 
+
+A(f , ´z2, ´z3) = 
+
+
+
+f1 f2 1 1 1
+
+f0 f1 1 ´z2 ´z3
+
+0 f0 1 ´z22 ´z23
+
+0 0 1 ´z32 ´z33
+
+0 0 1 ´z42 ´z43
+
+ . (72) By Corollary 8, the array manifold is ambiguous if and only if A(f , ´z2, ´z3) is rank deficient. Gaussian elimination on (72) yields a rank-deficiency condition that can be expressed in terms of the complete homogeneous symmetric polynomials in the prescribed gen-erators ´z1 = 1 , ´z2, ´z3:
+
+S1 = 1 + ´ z2 + ´ z3, (73) 
+
+S2 = 1 + ´ z2 + ´ z3 + ´ z22 + ´ z2 ´z3 + ´ z23 . (74) Specifically, A(f , ´z2, ´z3) is rank deficient if and only if 
+
+f2 = f 21
+
+f0
+
+− f1 S∗ 
+
+> 1
+
++ f0 S∗ 
+
+> 2
+
+. (75) A practical construction of rank-deficient matrices 
+
+A(f , ´z2, ´z3) proceeds as follows. First, fix two distinct 
+
+> 10
+
+unit-modulus generators ´z2, ´z3̸ = 1 . Setting γ = f1/f 0,condition (75) can be rewritten as 
+
+f2
+
+f0
+
+= γ2 − γ S ∗ 
+
+> 1
+
++ S∗ 
+
+> 2
+
+, (76) which is a quadratic function in γ. Choosing f0 on the unit circle and f2 ∈ [−6, 6] real (to satisfy the centro-Hermitian constraint), the quadratic function yields up to two candidate values for γ, and hence up to two candidate values f1 = γ f 0,each producing a rank-4 matrix A(f , ´z2, ´z3).To select solutions that yield additional generators on the unit circle, one subsequently tests the centro-Hermitian polynomial 
+
+F (z) = f0 + f1z + f2z2 + f ∗ 
+
+> 1
+
+z3 + f ∗ 
+
+> 0
+
+z4. (77) If all four roots of F (z) lie on the unit circle, the corre-sponding parameters (f , ´z2, ´z3) are accepted; otherwise, f0
+
+and/or f2 are adjusted and the procedure is repeated. Numerical experiments show that, for any choice of three distinct prescribed generators ´z1 = 1, ´z2, ´z3 on the unit circle, parameters (f0, f 1, f 2) satisfying the above construc-tion can be found such that F (z) has four distinct unit-circle roots ´z4, ´z5, ´z6, ´z7, which together with ´z1, ´z2, ´z3 form an ambiguity set of seven distinct generators on the unit circle. By Corollary 8, the generalized Vandermonde matrix 
+
+AI (´ z1, . . . , ´z7) is rank deficient. This is consistent with Corollary 3, which states that ambiguities always exist whenever the number of sources satisfies L ≥ MI , here, 
+
+L = MI = 7 , the boundary case. 
+
+Example 5. Consider again the thinned ULA of Fig. 5 with 
+
+MI = 7 sensors and removal set ¯I = {2, 3}, but now for 
+
+L = 6 sources. The Toeplitz matrix becomes 
+
+T (g) = 
+
+g0 g1 g2 g3 g∗ 
+
+> 2
+
+g∗ 
+
+> 1
+
+g∗ 
+
+> 0
+
+0 00 g0 g1 g2 g3 g∗ 
+
+> 2
+
+g∗ 
+
+> 1
+
+g∗ 
+
+> 0
+
+00 0 g0 g1 g2 g3 g∗ 
+
+> 2
+
+g∗ 
+
+> 1
+
+g∗
+
+> 0
+
+ , (78) and the complementary submatrix is 
+
+T¯I (g) = 
+
+g1 g2
+
+g0 g1
+
+0 g0
+
+ . (79) The 2 × 2 submatrix formed by the last two rows is upper triangular with determinant g20̸ = 0 , so T¯I (g) has full column rank unconditionally. By Theorem 1, the array manifold 
+
+AI (z1, . . . , z L) is unambiguous for L = 6 , and the same conclusion extends to L < 6. This example is an instance of Corollary 4: removing the two consecutive sensors at posi-tions {2, 3} leaves the retained set I = {1} ∪ { 4, 5, . . . , 9},which contains the 6-element contiguous ULA subarray 
+
+{4, 5, . . . , 9}, sufficient to guarantee unambiguous identifi-cation of L ≤ 6 sources. 
+
+Example 6. Consider the thinned ULA depicted in Fig. 6, with MI = 7 sensors and two holes at positions i1 = 2 and 
+
+i2 = 4 , i.e., I = {1, 3, 5, 6, 7, 8, 9} and L = 6 sources. The                                                  
+
+> 123456789
+> FIGURE 6. Thinned ULA considered in Example 6 for L= 6 sources with
+> MI= 7 sensors and two holes at positions i1= 2 and i2= 4 , i.e.,
+> I={1,3,5,6,7,8,9}.TABLE 1. Roots of Pg(z) = 1 + g2z2+g∗
+> 2z4+z6in Example 6, with g2
+> given by (84) .
+> z1z2z3z4z5z6
+> ejθ1ejθ2je−j(θ1+θ2)−ejθ1−ejθ2−je−j(θ1+θ2)
+
+Toeplitz matrix T (g) has the same form as in (78), and the complementary submatrix is 
+
+T¯I (g) = 
+
+g1 g3
+
+g0 g2
+
+0 g1
+
+ . (80) Setting g0 = 1 without loss of generality (by an appropriate rotation of the roots), we analyze the rank of (80). Suppose that T¯I (g) is column-rank deficient. Then there exists a nonzero vector α = [ α1, α 2]T such that 
+
+g1 g3
+
+1 g2
+
+0 g1
+
+α1
+
+α2
+
+
+
+= 0. (81) If α2 = 0 , then the second row gives α1 = 0 , contradicting 
+
+α̸ = 0. Hence α2̸ = 0 . The third row therefore implies 
+
+g1 = 0 , and the first row then gives g3α2 = 0 , so that 
+
+g3 = 0 . Thus rank deficiency implies g1 = g3 = 0 .Substituting g1 = g3 = 0 back in (80), then T¯I (g) has only one nonzero row, namely [1 , , g 2], and hence has rank one for any g2 ∈ C. Therefore, the rank-drop condition is 
+
+g1 = g3 = 0 , g2 ∈ C free . (82) Under (82) the coefficient vector takes the form g =[1 , 0, g 2, 0, g ∗ 
+
+> 2
+
+, 0, 1] T, and the polynomial Pg (z) becomes a polynomial in w = z2, namely 
+
+Pg (z) = 1+ g2z2 +g∗ 
+
+> 2
+
+z4 +z6 = 1+ g2w +g∗ 
+
+> 2
+
+w2 +w3. (83) For any choice of two angles θ1, θ 2 ∈ [−π, π ) with θ1̸ = θ2
+
+(mod π), setting 
+
+g2 = − e−j2θ1 + e−j2θ2 − ej2( θ1+θ2) (84) yields the factorization 
+
+Pg (z) = ( z2 − ej2θ1 ) ( z2 − ej2θ2 ) ( z2 + e−j2( θ1+θ2)), (85) so that all six roots lie on the unit circle and, generically, are distinct. The roots are listed in Table 1. By Theo-rem 1, the corresponding generalized Vandermonde matrix 
+
+AI (z1, . . . , z 6) is rank deficient, and the array manifold therefore admits a continuous two-parameter family of am-biguity sets indexed by (θ1, θ 2).
+
+Example 7. Consider the thinned ULA depicted in Fig. 7, with MI = 6 sensors and three holes at positions i1 = 2 ,
+
+> 11
+
+1 2 3 4 5 6 7 8 9                           
+
+> FIGURE 7. Thinned ULA considered in Example 7 for L= 5 sources with
+> MI= 6 sensors and three holes at positions i1= 2 ,i2= 4 , and i3= 8 ,i.e., I={1,3,5,6,7,9}.TABLE 2. Roots of Pg(z) = 1 + z+z4+z5in Case 1 of Example 7.
+
+z1 z2 z3 z4 z5
+
+−1 ejπ/ 4 ej3π/ 4 ej5π/ 4 ej7π/ 4
+
+i2 = 4 , i3 = 8 , i.e., I = {1, 3, 5, 6, 7, 9} and L = 5 sources. The Toeplitz matrix becomes 
+
+T (g) = 
+
+
+
+g0 g1 g2 g∗ 
+
+> 2
+
+g∗ 
+
+> 1
+
+g∗ 
+
+> 0
+
+0 0 00 g0 g1 g2 g∗ 
+
+> 2
+
+g∗ 
+
+> 1
+
+g∗ 
+
+> 0
+
+0 00 0 g0 g1 g2 g∗ 
+
+> 2
+
+g∗ 
+
+> 1
+
+g∗ 
+
+> 0
+
+00 0 0 g0 g1 g2 g∗ 
+
+> 2
+
+g∗ 
+
+> 1
+
+g∗
+
+> 0
+
+ , (86) and the complementary submatrix is 
+
+T¯I (g) = 
+
+
+
+g1 g∗ 
+
+> 2
+
+0
+
+g0 g2 00 g1 g∗
+
+> 0
+
+0 g0 g∗
+
+> 1
+
+ . (87) Setting g0 = 1 without loss of generality and applying Gaussian elimination with partial pivoting reduces the matrix to 
+
+T¯I (g) row 
+
+≡
+
+
+
+1 g2 00 1 g∗
+
+> 1
+
+0 0 g∗ 
+
+> 1
+
+|g2| (ejϕ2 g1 − e−jϕ2 )0 0 1 − | g1|2
+
+ , (88) where g2 = |g2| ejϕ2 and row 
+
+≡ denotes equivalence under elementary row operations. The reduced matrix has full column rank if and only if at least one of the bottom two entries in column 3 is nonzero. Rank deficiency therefore requires 
+
+1 − | g1|2 = 0 and g∗ 
+
+> 1
+
+|g2| (ejϕ2 g1 − e−jϕ2 ) = 0 . (89) The first condition gives |g1| = 1 . For the second, we distinguish two cases. 
+
+Case 1: g2 = 0 . The second condition is satisfied au-tomatically, and rank deficiency holds for any g1 on the unit circle. Fixing g1 = 1 without loss of generality (by an appropriate further rotation), the coefficient vector becomes 
+
+g = [1 , 1, 0, 0, 1, 1] T, and the polynomial factorizes as 
+
+Pg (z) = 1 + z + z4 + z5 = (1 + z)(1 + z4)= ( z + 1) 
+
+> 4
+
+Y
+
+> p=1
+
+ z − ej(2 p−1) π/ 4. (90) The five roots are listed in Table 2. 
+
+Case 2: g2̸ = 0 . The second condition in (89) then forces 
+
+g1 = e−j2ϕ2 . The coefficient vector becomes 
+
+g = 1, e −j2ϕ2 , |g2| ejϕ2 , |g2| e−jϕ2 , e j2ϕ2 , 1T, (91)                  
+
+> TABLE 3. Roots of Pg(z) = 1 + e−j2ϕ2z+|g2|ejϕ2z2+|g2|e−jϕ2z3+
+> ej2ϕ2z4+z5in Case 2 of Example 7.
+
+z1 z2 z3 z4 z5
+
+−ej2ϕ2 j ej(ψ−ϕ2)/2 −j ej(ψ−ϕ2)/2 j e−j(ψ+ϕ2)/2 −j e−j(ψ+ϕ2)/2
+
+1 2 3 4 5 6 7 8 9                   
+
+> FIGURE 8. Thinned ULA with MI= 7 sensors considered in Example 8 for L= 5 sources, with two holes at positions i1= 3 and i2= 6 , i.e.,
+> I={1,2,4,5,7,8,9}.
+
+parameterized by ϕ2 ∈ [−π, π ) and |g2| ≥ 0. The polynomial admits the factorization 
+
+Pg (z) =  e−j2ϕ2 z + 1   ejϕ2 z2 + α  ejϕ2 z2 + α∗, (92) where α is a root of t2 − | g2| t + 1 = 0 , i.e., 
+
+α = |g2| + jp4 − | g2|2
+
+2 . (93) For |g2| ≤ 2, the discriminant is nonpositive, α lies on the unit circle, and we can write α = ejψ with cos ψ = |g2|/2. In this case, all five roots of Pg (z) lie on the unit circle, as listed in Table 3. The ambiguity set is therefore parameterized by a two-parameter family (ϕ2, |g2|) ∈ [−π, π ) × [0 , 2] .
+
+Example 8. Consider the thinned ULA depicted in Fig. 8, with MI = 7 sensors and two holes at positions i1 = 3 and 
+
+i2 = 6 , i.e., I = {1, 2, 4, 5, 7, 8, 9} and L = 5 sources. The Toeplitz matrix T (g) has the same form as in (86), and the complementary submatrix is 
+
+T¯I (g) = 
+
+
+
+g2 g∗
+
+> 0
+
+g1 g∗
+
+> 1
+
+g0 g∗
+
+> 2
+
+0 g2
+
+ . (94) Setting g0 = 1 without loss of generality and performing a row swap to bring the g0 = 1 entry to the pivot position yields the equivalent matrix 
+
+
+
+1 g∗
+
+> 2
+
+g2 1
+
+g1 g∗
+
+> 1
+
+0 g2
+
+ , (95) which, after eliminating the entries below the first pivot, reduces to 
+
+T¯I (g) row 
+
+≡
+
+
+
+1 g∗
+
+> 2
+
+0 1 − | g2|2
+
+0 g∗ 
+
+> 1
+
+− g1 g∗
+
+> 2
+
+0 g2
+
+ . (96) The first column has the nonzero pivot 1, and the second column below the first row vanishes entirely if and only if 
+
+1 − | g2|2 = 0 , g2 = 0 , g∗ 
+
+> 1
+
+− g1 g∗ 
+
+> 2
+
+= 0 (97)                           
+
+> 12 123456789
+> FIGURE 9. Thinned ULA considered in Example 9 for L= 3 sources with
+> MI= 4 sensors at I={1,7,8,9}, obtained by removing positions
+> ¯I={2,3,4,5,6}from a nine-element ULA.
+
+all hold simultaneously. The first two conditions require both 
+
+|g2| = 1 and g2 = 0 , which is impossible. Hence the second column of (96) cannot vanish below the pivot, and 
+
+rank  T¯I (g) = 2 (98) for all g1, g 2 ∈ C. By Theorem 1, the array manifold 
+
+AI (z1, . . . , z 5) has full column rank for every set of distinct generators, and the array is therefore unambiguous for L = 5 
+
+sources. 
+
+Example 9. Consider the design of a thinned ULA with 
+
+MI = 4 sensors, obtained by thinning a nine-element ULA, that is unambiguous for L = 3 sources. For L = 3,the centro-Hermitian polynomial coefficient vector is g =[g0, g 1, g ∗ 
+
+> 1
+
+, g ∗ 
+
+> 0
+
+]T, and the Toeplitz matrix takes the form 
+
+T (g) = 
+
+
+
+g0 g1 g∗ 
+
+> 1
+
+g∗ 
+
+> 0
+
+0 0 0 0 00 g0 g1 g∗ 
+
+> 1
+
+g∗ 
+
+> 0
+
+0 0 0 00 0 g0 g1 g∗ 
+
+> 1
+
+g∗ 
+
+> 0
+
+0 0 00 0 0 g0 g1 g∗ 
+
+> 1
+
+g∗ 
+
+> 0
+
+0 00 0 0 0 g0 g1 g∗ 
+
+> 1
+
+g∗ 
+
+> 0
+
+00 0 0 0 0 g0 g1 g∗ 
+
+> 1
+
+g∗
+
+> 0
+
+
+
+.
+
+(99) By Corollary 4, a safe choice is to thin the array so that a maximum-consecutive-lag array is obtained, i.e., I =
+
+{1, 7, 8, 9}, as depicted in Fig. 9. The corresponding com-plementary submatrix is 
+
+T¯I (g) = 
+
+
+
+g1 g∗ 
+
+> 1
+
+g∗ 
+
+> 0
+
+0 0
+
+g0 g1 g∗ 
+
+> 1
+
+g∗ 
+
+> 0
+
+00 g0 g1 g∗ 
+
+> 1
+
+g∗
+
+> 0
+
+0 0 g0 g1 g∗
+
+> 1
+
+0 0 0 g0 g1
+
+0 0 0 0 g0
+
+
+
+. (100) The 5 × 5 submatrix formed by the last five rows of (100) is upper triangular with diagonal entries g0, so its determinant is g50̸ = 0 . Hence T¯I (g) has full column rank for all g,and by Theorem 1 the array manifold is unambiguous for 
+
+L = 3. The same conclusion extends to L < 3, since the retained set contains the three-element contiguous ULA subarray {7, 8, 9}, which by the Vandermonde determinant theorem is unambiguous for any L ≤ 3 sources. The result is also a direct instance of Corollary 4. However, the array contains a dense three-element sub-array at positions {7, 8, 9}, which makes it susceptible to mutual coupling effects [15]. This motivates the alternative design in Example 10 below, which removes the dense subarray at the cost of a more involved ambiguity analysis. 
+
+Example 10. As an alternative to Example 9, we seek a sparse design with MI = 4 sensors and L = 3 sources that avoids the dense three-element subarray of Fig. 9. The                              
+
+> 123456789
+> FIGURE 10. Thinned ULA with I={1,2,7,9}considered in Example 10 for L= 3 sources, obtained by removing ¯I={3,4,5,6,8}from a nine-element ULA. The array contains only a single minimum-baseline pair, namely between sensors 1and 2.
+
+motivation is to reduce mutual coupling effects, which are dominated by sensors at the minimum baseline dmin =
+
+λ/ 2 [15]. A guideline for selecting the removal set is provided by the special coefficient choice g0 = 1, g1 = 0 in (99), under which the columns of 2, 5 and 8 of T (g) are linearly dependent. Hence, these positions cannot be jointly selected to be cointained in the removal set ¯I. Combined with the requirement that the first and last sensors at positions 1 and 9
+
+be retained (to preserve the array aperture), this leads to the candidate configuration I = {1, 2, 7, 9} shown in Fig. 10, in which only one pair of sensors sits at the minimum baseline. For this configuration, the complementary submatrix is 
+
+T¯I (g) = 
+
+
+
+g∗ 
+
+> 1
+
+g∗ 
+
+> 0
+
+0 0 0
+
+g1 g∗ 
+
+> 1
+
+g∗ 
+
+> 0
+
+0 0
+
+g0 g1 g∗ 
+
+> 1
+
+g∗ 
+
+> 0
+
+00 g0 g1 g∗ 
+
+> 1
+
+00 0 g0 g1 g∗
+
+> 0
+
+0 0 0 g0 g∗
+
+> 1
+
+
+
+. (101) Rather than directly analyzing the rank of T¯I (g) in (101), we apply Corollary 8 with one prescribed generator ´z1 = 1 ,i.e L′. The cofactor polynomial has degree L − L′ = 2 with centro-Hermitian coefficient vector f = [ f0, f 1, f ∗ 
+
+> 0
+
+]T, where 
+
+f0 ∈ C and f1 ∈ R. The associated 7 × 6 augmented matrix in (59) reads 
+
+A(f , ´z1) = 
+
+
+
+f ∗ 
+
+> 0
+
+0 0 0 0 1
+
+f1 f ∗ 
+
+> 0
+
+0 0 0 1
+
+f0 f1 f ∗ 
+
+> 0
+
+0 0 10 f0 f1 f ∗ 
+
+> 0
+
+0 10 0 f0 f1 0 10 0 0 f0 f ∗ 
+
+> 0
+
+10 0 0 0 f1 1
+
+
+
+. (102) The following proposition establishes that A(f , ´z1) has full column rank for all admissible coefficient choices, so that by Corollary 8 the array manifold AI (z1, . . . , z 3) is unambiguous for any prescribed first generator ´z1 = 1 and any centro-Hermitian cofactor polynomial. 
+
+Proposition 1. Fix one generator at ´z1 = 1 without loss of generality. Let f0 = ejϕ0 with |f0| = 1 , and f1 ∈ R
+
+with F (´ z1) = f0 + f1 + f ∗
+
+> 0
+
+̸ = 0 , where F (z) = f0 + f1z +
+
+f ∗ 
+
+> 0
+
+z2 is the cofactor polynomial. Then the augmented matrix 
+
+A(f , ´z1) in (102) has full column rank, i.e., 
+
+rank  A(f , ´z1) = 6 (103) 
+
+for all |f0| = 1 and f1 ∈ R.Proof: 
+
+> 13
+
+Since f0 = ejϕ0̸ = 0 , the first five columns of A(f , ´z1)
+
+are linearly independent (the first column has f ∗ 
+
+> 0
+
+in row 1 as a pivot; the others can be reduced to staircase form by elementary operations using f0 on the subdiagonals). Hence rank deficiency can occur only if the sixth column (the all-ones Vandermonde column for ´z1 = 1 ) lies in the span of the first five. Suppose, for some α1, . . . , α 5 ∈ C,
+
+> 5
+
+X
+
+> j=1
+
+αj [A(f , ´z1)] :,j = [ A(f , ´z1)] :,6 = 1. (104) Writing out the seven row equations gives the system 
+
+f ∗ 
+
+> 0
+
+α1 = 1 , (105a) 
+
+f1 α1 + f ∗ 
+
+> 0
+
+α2 = 1 , (105b) 
+
+f0 α1 + f1 α2 + f ∗ 
+
+> 0
+
+α3 = 1 , (105c) 
+
+f0 α2 + f1 α3 + f ∗ 
+
+> 0
+
+α4 = 1 , (105d) 
+
+f0 α3 + f1 α4 = 1 , (105e) 
+
+f0 α4 + f ∗ 
+
+> 0
+
+α5 = 1 , (105f) 
+
+f1 α5 = 1 . (105g) Equations (105a)–(105d) and (105f) can be solved recur-sively for α1, . . . , α 5 in terms of f0 and f1. Substituting the resulting expressions into the remaining equations (105e) and (105g) yields two consistency conditions 
+
+F5(f0, f 1) = 0 , F7(f0, f 1) = 0 , (106) where 
+
+F5(f0, f 1) = −f 40 f 41 + f 30 f 31 + (3 f 40 − f 20 ) f 21
+
++ ( −2f 30 + f0) f1 + ( f 20 − f 40 − 1) , (107) 
+
+F7(f0, f 1) = f 60 f 41 − f 50 f 31 + ( −2f 60 + f 40 ) f 21
+
++ ( f 50 − f 30 + f0) f1 − 1. (108) We show by contradiction that (106) has no solution with 
+
+|f0| = 1 and f1 ∈ R.Define F (f0, f 1) = F7(f0, f 1) + f 20 F5(f0, f 1). The f 41
+
+and f 31 terms cancel, and a direct simplification gives 
+
+F (f0, f 1) = f 60 f 21 − f 60 − f 50 f1 + f 40 − f 20 + f0f1 − 1. (109) Writing f0 = ejϕ0 and dividing by f 30 = ej3ϕ0 , the equation 
+
+F (f0, f 1) = 0 becomes 
+
+(f 21 − 1) ej3ϕ0 − f1 ej2ϕ0 + ejϕ0 − e−jϕ0
+
++ f1 e−j2ϕ0 − e−j3ϕ0 = 0 . (110) Separating real and imaginary parts yields 
+
+(f 21 − 2) cos(3 ϕ0) = 0 , (111) 
+
+f 21 sin(3 ϕ0) − 2f1 sin(2 ϕ0) + 2 sin( ϕ0) = 0 . (112) 
+
+Case 1: cos(3 ϕ0)̸ = 0 . Equation (111) forces f 21 = 2 .Substituting into (112) gives 
+
+sin(3 ϕ0) − f1 sin(2 ϕ0) + sin( ϕ0) = 0 . (113) Using the identity sin(3 ϕ0) + sin( ϕ0) = 2 sin(2 ϕ0) cos( ϕ0),this reduces to 
+
+sin(2 ϕ0)  2 cos( ϕ0) − f1
+
+ = 0 . (114)                                                                                                
+
+> 1510 15 20 23
+> FIGURE 11. Thinned ULA considered in Example 11 for L= 10 sources and in Example 12 for L= 11 sources, with MI= 15 sensors obtained from a 23 -element ULA. Filled circles denote the retained sensors at positions I={1,3,4,5,6,7,8,9,10 ,12 ,13 ,14 ,15 ,20 ,23 }; open circles mark the removed positions ¯I={2,11 ,16 ,17 ,18 ,19 ,21 ,22 }.TABLE 4. Mutually exclused index pairs Sp,q for M= 23 ,L= 10 ,K= 11
+> according to Corollary 7.
+> S0,4={4,14 }S0,5={5,15 }S0,6={6,16 }S0,7={7,17 }S0,8={8,18 }S0,9={9,19 }S0,10 ={10 ,20 }S1,6={6,15 }S1,7={7,16 }S1,8={8,17 }S1,9={9,18 }S2,8={8,16 }
+
+If sin(2 ϕ0) = 0 , then ϕ0 ∈ { 0, π } (the values ϕ0 = ±π/ 2
+
+are excluded by the case assumption cos(3 ϕ0)̸ = 0 ), giving 
+
+f0 = ±1 and f1 = ±√2. Direct substitution into (107) shows F5(±1, ±√2) ̸ = 0 , contradicting (106). If instead f1 = 2 cos( ϕ0), then combined with f 21 = 2 
+
+we obtain cos( ϕ0) = ±1/√2, hence ϕ0 ∈ {± π/ 4, ±3π/ 4}.Substitution into (107) again yields F5(f0, f 1)̸ = 0, acontradiction. 
+
+Case 2: cos(3 ϕ0) = 0. Then ϕ0 ∈{π/ 6, π/ 2, 5π/ 6, 7π/ 6, 3π/ 2, 11 π/ 6}. Substituting each of these values into (112) yields either the quadratic 
+
+f 21 ± √3 f1 + 1 = 0 (with no real solution, since the discriminant is 3 − 4 = −1 < 0), or f0 = ±j together with f 21 = 2 . In the latter case, direct substitution shows 
+
+F5(±j, ±√2) ̸ = 0 , again contradicting (106). Thus F5(f0, f 1) and F7(f0, f 1) cannot vanish simultane-ously for any |f0| = 1 and f1 ∈ R. The sixth column of 
+
+A(f , ´z1) therefore never lies in the span of the first five columns, and rank( A(f , ´z1)) = 6 for all admissible f0 and 
+
+f1.By Corollary 8, the array I = {1, 2, 7, 9} is therefore unambiguous for L = 3 sources whenever the cofactor polynomial F (z) does not vanish at the prescribed generator 
+
+´z1 = 1. This design achieves unambiguity with only a single minimum-baseline pair, in contrast to the maximum-consecutive-lag array of Example 9. 
+
+Example 11. Consider the thinned ULA depicted in Fig. 11, with MI = 15 sensors obtained from a 23 -element ULA by removing the sensors at positions ¯I =
+
+{2, 11 , 16 , 17 , 18 , 19 , 21 , 22 }, and L = 10 sources. The sen-sor posistion where selected in agreement with the mutually exclusive indices sets display in Table 4 that are obtained from Corollary 7. The cofactor coefficient vector is now 
+
+g = [ g0, g 1, g 2, g 3, g 4, g 5, g ∗ 
+
+> 4
+
+, g ∗ 
+
+> 3
+
+, g ∗ 
+
+> 2
+
+, g ∗ 
+
+> 1
+
+, g ∗ 
+
+> 0
+
+]T,
+
+where g1, g 2, g 3, g 4 ∈ C and g5 ∈ R, and the Toeplitz matrix 
+
+T (g) ∈ C13 ×23 has the same form         
+
+> 14 TABLE 5. Mutually exclusive index pairs Sp,q for M= 23 ,L= 10 ,K= 11
+> according to Corollary 7.
+
+S0,2 = {2, 13 } S0,3 = {3, 14 } S0,4 = {4, 15 } S0,5 = {5, 16 }S0,6 = {6, 17 } S0,7 = {7, 18 } S0,8 = {8, 19 } S0,9 = {9, 20 }S0,10 = {10 , 21 } S0,11 = {11 , 22 } S1,4 = {4, 14 } S1,5 = {5, 15 }S1,6 = {6, 16 } S1,7 = {7, 17 } S1,8 = {8, 18 } S1,9 = {9, 19 }S1,10 = {10 , 20 } S2,6 = {6, 15 } S2,7 = {7, 16 } S2,8 = {8, 17 }S2,9 = {9, 18 } S3,8 = {8, 16 }
+
+T (g) = (115) 
+
+
+
+g0 g1 g2 g3 g4 g5 g∗ 
+
+> 4
+
+g∗ 
+
+> 3
+
+g∗ 
+
+> 2
+
+g∗ 
+
+> 1
+
+g∗ 
+
+> 0
+
+0 0 0 0 0 0 0 0 0 0 0 00 g0 g1 g2 g3 g4 g5 g∗ 
+
+> 4
+
+g∗ 
+
+> 3
+
+g∗ 
+
+> 2
+
+g∗ 
+
+> 1
+
+g∗ 
+
+> 0
+
+0 0 0 0 0 0 0 0 0 0 00 0 g0 g1 g2 g3 g4 g5 g∗ 
+
+> 4
+
+g∗ 
+
+> 3
+
+g∗ 
+
+> 2
+
+g∗ 
+
+> 1
+
+g∗ 
+
+> 0
+
+0 0 0 0 0 0 0 0 0 00 0 0 g0 g1 g2 g3 g4 g5 g∗ 
+
+> 4
+
+g∗ 
+
+> 3
+
+g∗ 
+
+> 2
+
+g∗ 
+
+> 1
+
+g∗ 
+
+> 0
+
+0 0 0 0 0 0 0 0 00 0 0 0 g0 g1 g2 g3 g4 g5 g∗ 
+
+> 4
+
+g∗ 
+
+> 3
+
+g∗ 
+
+> 2
+
+g∗ 
+
+> 1
+
+g∗ 
+
+> 0
+
+0 0 0 0 0 0 0 00 0 0 0 0 g0 g1 g2 g3 g4 g5 g∗ 
+
+> 4
+
+g∗ 
+
+> 3
+
+g∗ 
+
+> 2
+
+g∗ 
+
+> 1
+
+g∗ 
+
+> 0
+
+0 0 0 0 0 0 00 0 0 0 0 0 g0 g1 g2 g3 g4 g5 g∗ 
+
+> 4
+
+g∗ 
+
+> 3
+
+g∗ 
+
+> 2
+
+g∗ 
+
+> 1
+
+g∗ 
+
+> 0
+
+0 0 0 0 0 00 0 0 0 0 0 0 g0 g1 g2 g3 g4 g5 g∗ 
+
+> 4
+
+g∗ 
+
+> 3
+
+g∗ 
+
+> 2
+
+g∗ 
+
+> 1
+
+g∗ 
+
+> 0
+
+0 0 0 0 00 0 0 0 0 0 0 0 g0 g1 g2 g3 g4 g5 g∗ 
+
+> 4
+
+g∗ 
+
+> 3
+
+g∗ 
+
+> 2
+
+g∗ 
+
+> 1
+
+g∗ 
+
+> 0
+
+0 0 0 00 0 0 0 0 0 0 0 0 g0 g1 g2 g3 g4 g5 g∗ 
+
+> 4
+
+g∗ 
+
+> 3
+
+g∗ 
+
+> 2
+
+g∗ 
+
+> 1
+
+g∗ 
+
+> 0
+
+0 0 00 0 0 0 0 0 0 0 0 0 g0 g1 g2 g3 g4 g5 g∗ 
+
+> 4
+
+g∗ 
+
+> 3
+
+g∗ 
+
+> 2
+
+g∗ 
+
+> 1
+
+g∗ 
+
+> 0
+
+0 00 0 0 0 0 0 0 0 0 0 0 g0 g1 g2 g3 g4 g5 g∗ 
+
+> 4
+
+g∗ 
+
+> 3
+
+g∗ 
+
+> 2
+
+g∗ 
+
+> 1
+
+g∗ 
+
+> 0
+
+00 0 0 0 0 0 0 0 0 0 0 0 g0 g1 g2 g3 g4 g5 g∗ 
+
+> 4
+
+g∗ 
+
+> 3
+
+g∗ 
+
+> 2
+
+g∗ 
+
+> 1
+
+g∗
+
+> 0
+
+
+
+.
+
+Setting g0 = 1 without loss of generality (by an appropri-ate rotation of the roots), and selecting the columns of T (g)
+
+indexed by ¯I = {2, 11 , 16 , 17 , 18 , 19 , 21 , 22 }, we obtain the complementary submatrix 
+
+T¯I (g) = 
+
+
+
+g1 1 0 0 0 0 0 01 g∗ 
+
+> 1
+
+0 0 0 0 0 00 g∗ 
+
+> 2
+
+0 0 0 0 0 00 g∗ 
+
+> 3
+
+0 0 0 0 0 00 g∗ 
+
+> 4
+
+0 0 0 0 0 00 g5 1 0 0 0 0 00 g4 g∗ 
+
+> 1
+
+1 0 0 0 00 g3 g∗ 
+
+> 2
+
+g∗ 
+
+> 1
+
+1 0 0 00 g2 g∗ 
+
+> 3
+
+g∗ 
+
+> 2
+
+g∗ 
+
+> 1
+
+1 0 00 g1 g∗ 
+
+> 4
+
+g∗ 
+
+> 3
+
+g∗ 
+
+> 2
+
+g∗ 
+
+> 1
+
+0 00 1 g5 g∗ 
+
+> 4
+
+g∗ 
+
+> 3
+
+g∗ 
+
+> 2
+
+1 00 0 g4 g5 g∗ 
+
+> 4
+
+g∗ 
+
+> 3
+
+g∗ 
+
+> 1
+
+10 0 g3 g4 g5 g∗ 
+
+> 4
+
+g∗ 
+
+> 2
+
+g∗
+
+> 1
+
+
+
+. (116) 
+
+Proposition 2. The complementary submatrix T¯I (g) in (116) 
+
+has full column rank for every choice of coefficients, i.e., 
+
+rank  T¯I (g) = 8 . (117) By Theorem 1, it follows that the generalized Vander-monde matrix AI (z1, . . . , z 10 ) has full column rank for every set of distinct generators, and the array manifold is therefore unambiguous for L = 10 sources. 
+
+Proof: 
+
+We show that the only null vector α = [ α1, . . . , α 8]T ∈ C8
+
+of T¯I (g) is the zero vector. The system T¯I (g) α = 0 reads 
+
+g1α1 + α2 = 0 , (118a) 
+
+α1 + g∗ 
+
+> 1
+
+α2 = 0 , (118b) 
+
+g∗ 
+
+> 2
+
+α2 = 0 , (118c) 
+
+g∗ 
+
+> 3
+
+α2 = 0 , (118d) 
+
+g∗ 
+
+> 4
+
+α2 = 0 , (118e) 
+
+g5α2 + α3 = 0 , (118f) 
+
+g4α2 + g∗ 
+
+> 1
+
+α3 + α4 = 0 , (118g) 
+
+g3α2 + g∗ 
+
+> 2
+
+α3 + g∗ 
+
+> 1
+
+α4 + α5 = 0 , (118h) 
+
+g2α2 + g∗ 
+
+> 3
+
+α3 + g∗ 
+
+> 2
+
+α4 + g∗ 
+
+> 1
+
+α5 + α6 = 0 , (118i) 
+
+g1α2 + g∗ 
+
+> 4
+
+α3 + g∗ 
+
+> 3
+
+α4 + g∗ 
+
+> 2
+
+α5 + g∗ 
+
+> 1
+
+α6 = 0 , (118j) 
+
+α2 + g5α3 + g∗ 
+
+> 4
+
+α4 + g∗ 
+
+> 3
+
+α5 + g∗ 
+
+> 2
+
+α6 + α7 = 0 , (118k) 
+
+g4α3 + g5α4 + g∗ 
+
+> 4
+
+α5 + g∗ 
+
+> 3
+
+α6 + g∗ 
+
+> 1
+
+α7 + α8 = 0 , (118l) 
+
+g3α3 + g4α4 + g5α5 + g∗ 
+
+> 4
+
+α6 + g∗ 
+
+> 2
+
+α7 + g∗ 
+
+> 1
+
+α8 = 0 . (118m) Equations (118f)–(118i), (118k), and (118l) form a lower-triangular system in the unknowns α3, . . . , α 8 with unit diag-onal: each successive equation introduces the next unknown with coefficient 1. Hence, once α2 = 0 is established, these six equations recursively force α3 = · · · = α8 = 0 ,and (118b) then yields α1 = 0 . It therefore suffices to show 
+
+α2 = 0 .
+
+Case A: gk̸ = 0 for some k ∈ { 2, 3, 4}. Equations (118c)– (118e) give g∗ 
+
+> k
+
+α2 = 0 , and since g∗
+
+> k
+
+̸ = 0 , we obtain α2 = 0 .
+
+Case B: g2 = g3 = g4 = 0 and |g1|̸ = 1 . Equations (118a) and (118b) reduce to g1 α1 + α2 = 0 and α1 + g∗ 
+
+> 1
+
+α2 = 0 .Eliminating α1 yields (1 − | g1|2) α2 = 0 , which forces α2 =0 whenever |g1|̸ = 1 .
+
+Case C: g2 = g3 = g4 = 0 and |g1| = 1 . We argue by contradiction. Suppose α2̸ = 0 . With g2 = g3 = g4 = 0 ,equations (118f)–(118i) yield recursively 
+
+α3 = −g5 α2, α4 = g∗ 
+
+> 1
+
+g5 α2, (119) 
+
+α5 = −(g∗ 
+
+> 1
+
+)2 g5 α2, α6 = ( g∗ 
+
+> 1
+
+)3 g5 α2. (120) Substituting into (118j) gives  g1 + ( g∗ 
+
+> 1
+
+)4 g5
+
+ α2 = 0 , hence 
+
+g1 = −(g∗ 
+
+> 1
+
+)4 g5. (121) Taking moduli, |g1| = |g1|4 |g5|, and using |g1| = 1 gives 
+
+|g5| = 1 . Since g5 ∈ R, we obtain g5 = ±1, so g25 = 1 .From (118k) we then compute 
+
+α7 = −α2 −g5 α3 = −α2 +g25 α2 = ( g25 −1) α2 = 0 , (122) and from (118l), 
+
+α8 = −g5 α4 − g∗ 
+
+> 1
+
+α7 = −g∗ 
+
+> 1
+
+g25 α2 = −g∗ 
+
+> 1
+
+α2. (123) Finally, equation (118m) reduces to g5 α5 + g∗ 
+
+> 1
+
+α8 = 0.Substituting, 
+
+−g5 (g∗ 
+
+> 1
+
+)2 g5 α2
+
+ − g∗ 
+
+> 1
+
+g∗ 
+
+> 1
+
+α2 = −(g∗ 
+
+> 1
+
+)2 (g25 + 1) α2
+
+= −2 ( g∗ 
+
+> 1
+
+)2 α2 = 0 . (124) Since |g1| = 1, this forces α2 = 0, contradicting the assumption α2̸ = 0 .
+
+> 15
+
+In every case α2 = 0 , and by the opening remark α = 0.Hence rank  T¯I (g) = 8 .By Theorem 1 and Proposition 2, the thinned array I =
+
+{1, 3, 4, . . . , 10 , 12 , . . . , 15 , 20 , 23 } is unambiguous for L =10 sources. 
+
+Example 12. Consider again the thinned ULA of Fig. 11, but now with L = 11 sources. For this scenario, Corol-lary 7 yields the mutually exclusive index pairs displayed in Table 5, which differ from those of the previous example with L = 10 sources. In particular, both indices of the pair 
+
+S0,11 = {11 , 22 } are contained in ¯I, which suggests that the corresponding thinned steering matrix AI (z1, . . . , z 11 )
+
+is not full column rank for every generator set. To compute ambiguity sets for which a rank drop is observe, we use Corollary 8 and fix one prescribed gen-erator at ´z1 = 1. The cofactor polynomial has degree 
+
+L − L′ = 10 with centro-Hermitian coefficient vector 
+
+f = [ f0, f 1, f 2, f 3, f 4, f 5, f ∗ 
+
+> 4
+
+, f ∗ 
+
+> 3
+
+, f ∗ 
+
+> 2
+
+, f ∗ 
+
+> 1
+
+, f ∗ 
+
+> 0
+
+]T, where fℓ ∈ C
+
+for ℓ = 0 , 1, . . . , 4 and f5 ∈ R. Then the Toeplitz matrix 
+
+T (f ) ∈ C13 ×23 has the same form as in (115) (with g
+
+replaced by f ). Assume without loss of generality |f0| = 1 .Selecting the columns of T (f ) indexed by ¯I and append-ing the Vandermonde column for ´z1 = 1 , the augmented matrix in (59) reads 
+
+A(f , ´z1) = 
+
+
+
+f1 f ∗ 
+
+> 0
+
+0 0 0 0 0 0 1
+
+f0 f ∗ 
+
+> 1
+
+0 0 0 0 0 0 10 f ∗ 
+
+> 2
+
+0 0 0 0 0 0 10 f ∗ 
+
+> 3
+
+0 0 0 0 0 0 10 f ∗ 
+
+> 4
+
+0 0 0 0 0 0 10 f5 f ∗ 
+
+> 0
+
+0 0 0 0 0 10 f4 f ∗ 
+
+> 1
+
+f ∗ 
+
+> 0
+
+0 0 0 0 10 f3 f ∗ 
+
+> 2
+
+f ∗ 
+
+> 1
+
+f ∗ 
+
+> 0
+
+0 0 0 10 f2 f ∗ 
+
+> 3
+
+f ∗ 
+
+> 2
+
+f ∗ 
+
+> 1
+
+f ∗ 
+
+> 0
+
+0 0 10 f1 f ∗ 
+
+> 4
+
+f ∗ 
+
+> 3
+
+f ∗ 
+
+> 2
+
+f ∗ 
+
+> 1
+
+0 0 10 f0 f5 f ∗ 
+
+> 4
+
+f ∗ 
+
+> 3
+
+f ∗ 
+
+> 2
+
+f ∗ 
+
+> 0
+
+0 10 0 f4 f5 f ∗ 
+
+> 4
+
+f ∗ 
+
+> 3
+
+f ∗ 
+
+> 1
+
+f ∗ 
+
+> 0
+
+10 0 f3 f4 f5 f ∗ 
+
+> 4
+
+f ∗ 
+
+> 2
+
+f ∗ 
+
+> 1
+
+1
+
+
+
+.
+
+(125) By Corollary 8, the array manifold is ambiguous if and only if A(f , ´z1) is rank deficient, i.e., if there exists a nonzero null vector α = [ α1, α 2, . . . , α 9]T ∈ C9 satisfying 
+
+A(f , ´z1) α = 0. (126) The thirteen row equations of (126) read 
+
+f1α1 + f ∗ 
+
+> 0
+
+α2 + α9 = 0 , (127a) 
+
+f0α1 + f ∗ 
+
+> 1
+
+α2 + α9 = 0 , (127b) 
+
+f ∗ 
+
+> 2
+
+α2 + α9 = 0 , (127c) 
+
+f ∗ 
+
+> 3
+
+α2 + α9 = 0 , (127d) 
+
+f ∗ 
+
+> 4
+
+α2 + α9 = 0 , (127e) 
+
+f5α2 + f ∗ 
+
+> 0
+
+α3 + α9 = 0 , (127f) 
+
+f4α2 + f ∗ 
+
+> 1
+
+α3 + f ∗ 
+
+> 0
+
+α4 + α9 = 0 , (127g) 
+
+f3α2 + f ∗ 
+
+> 2
+
+α3 + f ∗ 
+
+> 1
+
+α4 + f ∗ 
+
+> 0
+
+α5 + α9 = 0 , (127h) 
+
+f2α2 + f ∗ 
+
+> 3
+
+α3 + f ∗ 
+
+> 2
+
+α4 + f ∗ 
+
+> 1
+
+α5
+
++ f ∗ 
+
+> 0
+
+α6 + α9 = 0 , (127i) 
+
+f1α2 + f ∗ 
+
+> 4
+
+α3 + f ∗ 
+
+> 3
+
+α4 + f ∗ 
+
+> 2
+
+α5
+
++ f ∗ 
+
+> 1
+
+α6 + α9 = 0 , (127j) 
+
+f0α2 + f5α3 + f ∗ 
+
+> 4
+
+α4 + f ∗ 
+
+> 3
+
+α5
+
++ f ∗ 
+
+> 2
+
+α6 + f ∗ 
+
+> 0
+
+α7 + α9 = 0 , (127k) 
+
+f4α3 + f5α4 + f ∗ 
+
+> 4
+
+α5 + f ∗ 
+
+> 3
+
+α6
+
++ f ∗ 
+
+> 1
+
+α7 + f ∗ 
+
+> 0
+
+α8 + α9 = 0 , (127l) 
+
+f3α3 + f4α4 + f5α5 + f ∗ 
+
+> 4
+
+α6
+
++ f ∗ 
+
+> 2
+
+α7 + f ∗ 
+
+> 1
+
+α8 + α9 = 0 . (127m) Rows (127c)-(127e) immediately yield 
+
+f ∗ 
+
+> 2
+
+α2 = f ∗ 
+
+> 3
+
+α2 = f ∗ 
+
+> 4
+
+α2 = −α9. (128) If α2 = 0 , then α9 = 0 , and back-substitution through (127f)-(127l) forces α3 = · · · = α8 = 0 and then α1 = 0 , yielding only the trivial solution α = 0. The case α2̸ = 0 is therefore the only one capable of producing a rank drop; we normalize 
+
+α2 = 1 , so that (128) gives 
+
+f2 = f3 = f4 = −α∗
+
+> 9
+
+. (129) The boundary subcase α9 = 0 was treated in the previous Example 11, where it was shown to admit only the trivial null vector. We therefore assume α9̸ = 0 in what follows, and distinguish two subcases based on the relation between 
+
+f0 and f1.
+
+Case 1: f0̸ = f1. With α2 = 1 , rows (127a) and (127b) become 
+
+f1 α1 + f ∗ 
+
+> 0
+
++ α9 = 0 , (130) 
+
+f0 α1 + f ∗ 
+
+> 1
+
++ α9 = 0 . (131) Eliminating α1 between these two equations and using 
+
+f0f ∗ 
+
+> 0
+
+= 1 yields 
+
+α9 = − |f1|2 − 1
+
+f1 − f0
+
+. (132) Thus α9 is determined by (f0, f 1) and is not an independent parameter. Once f0, f1, and f5 are fixed, rows (127f)–(127i), (127k), and (127l) determine α3, α 4, . . . , α 8 recursively. The two remaining rows (127j) and (127m) then produce two complex residual conditions 
+
+F10 (f0, f 1, f 5) = 0 , F13 (f0, f 1, f 5) = 0 , (133) where the functional dependence on f ∗ 
+
+> 1
+
+is implicit through conjugate relations. With the parameterization f0 = ejϕ0
+
+and f1 = Re( f1) + j Im( f1), condition (133) be-comes four real equations in the four real unknowns 
+
+(ϕ0, Re( f1), Im( f1), f 5), which can be solved numerically. Numerical solutions, modulo the rotation and conjugation symmetries of Corollary 1 and 2, are listed in Table 6. For each solution, the corresponding coefficients f2 = f3 =
+
+f4 = −α∗ 
+
+> 9
+
+are obtained from (132) via (129). A rank drop of 
+
+A(f , ´z1) and of the corresponding generalized Vandermonde matrix AI (´ z1, ´z2, . . . , ´zL), where ´z2, . . . , ´zL are the roots of the cofactor polynomial F (z) = PL−1 
+
+> ℓ=0
+
+fℓzℓ, was verified numerically. We note that if (ϕ0, f 1, f 5) is a rank-deficient                         
+
+> 16 TABLE 6. Numerical solutions for Example 12 in the case f0̸=f1, modulo rotation and conjugation symmetries.
+> ϕ0Re( f1)Im( f1)f5
+> 0.000000000000 −1.039973406495 0.000000000000 0.662198920517
+> 0.023196867809 −0.695163964062 −1.112068476921 −0.967366476067
+> 0.132990232726 2.999347102105 −0.226170897152 3.774964804957
+> 1.284336051706 −0.731021118103 −0.811102392446 0.650559840753
+> 1.296630596069 2.268382842982 1.376088506000 3.263768860057
+> 1.426090554865 2.114982871683 0.462754841214 1.221641753427
+
+parameter set, then (π −ϕ0, −f ∗ 
+
+> 1
+
+, −f5) is also rank deficient, reflecting the combined rotation and conjugation symmetries of the underlying Vandermonde structure. 
+
+Case 2: f0 = f1 = u with |u| = 1. In this case, rows (127a) and (127b) coincide, both reducing to u α 1 +
+
+u∗ + α9 = 0 , which gives α1 = −(u∗ + α9)/u . Unlike Case 1, the coefficient α9 is now a free parameter: the relation f2 = f3 = f4 = −α∗ 
+
+> 9
+
+in (129) relates α9 to f2
+
+but neither is determined by f0 and f5 alone. The free parameters in this branch are therefore (ϕ0, f 2, f 5), with the additional unknowns α3, . . . , α 8 obtained recursively from (127f)–(127i), (127k), and (127l). The remaining rows (127j) and (127m) produce two complex residual conditions 
+
+F10 (f0, f 2, f 5) = 0 , F13 (f0, f 2, f 5) = 0 , (134) which, under the parameterization f0 = ejϕ0 and f2 =Re( f2) + j Im( f2), become four real equations in the four real unknowns (ϕ0, Re( f2), Im( f2), f 5). Numerical solutions are listed in Table 7 for ϕ0 ∈ [0 , π/ 2] . The solution f = 1
+
+in line 3 of the table is associated with the polynomial 
+
+Pf (z) = P11  
+
+> ℓ=0
+
+zℓ and yields, together with the prescribed generator ´z1 = 1 , the full polynomial 
+
+Pg (z) = ( z − 1) Pf (z) = z12 − 1, (135) with coefficient vector g = [ −1, 0, . . . , 0, 1] T. This solution corresponds exactly to the linearly dependent column pair 
+
+S0,11 = {11 , 22 } identified by Corollary 7 for the rotated coefficient vector `g = [1 , 0, . . . , 0, 1] T.Together with Example 11, we observer from this example that the array is unambiguous for L = 10 but admits ambiguities (a discrete family enumerated in Tables 6 and 7) for L = 11 .
+
+VI. Conclusion and Future Work 
+
+This paper has developed a scalable algebraic framework for the multi-source identifiability analysis of thinned uniform linear arrays. The central result, Theorem 1, relates the rank deficiency of the generalized Vandermonde matrix associated with the sparse array steering matrix to the rank deficiency of a thinned Toeplitz matrix derived from the centro-Hermitian polynomial parameterization of the array manifold. This algebraic characterization enables, for the first time, the systematic enumeration of all ambiguity sets in large sparse                                  
+
+> TABLE 7. Numerical solutions for Example 12 in the case f0=f1=u,modulo rotation and conjugation symmetries.
+> ϕ0Re( f2)Im( f2)f5
+> 0.000000000000 1.474626617563 0.000000000000 3.581545957939
+> 0.000000000000 −0.395336994467 0.000000000000 −1.112009743749
+> 0.000000000000 1.000000000000 0.000000000000 1.000000000000
+> 0.078696513363 2.314363910853 0.538253664385 2.787547619723
+> 0.158922681697 −0.104274031963 −0.710777517533 −0.012539904542
+> 0.422404114891 2.073102149108 −0.364030872381 1.455768079484
+> 0.673341074455 −0.487448016716 0.043842172066 −1.202778495245
+> 1.138254739236 −0.959826532409 0.695048367057 −0.785105048282
+
+arrays without resorting to combinatorial search procedures, and applies to arbitrary aperture sizes, sensor counts, and source numbers. A second contribution is Corollary 8 (Vandermonde re-duction), which relates the rank condition of the thinned-array steering matrix to that of an augmented full-ULA steering matrix with prescribed generators. This reveals a structural link between sparse and fully populated arrays, and provides a constructive computational pathway for ambiguity enumeration that was demonstrated on representative exam-ples ranging from small holes patterns in 9-element ULAs to a 15 -sensor thinning of a 23 -element ULA. Together with the guidelines for mutually exclusive sensor indices in Corollaries 5–7, the framework provides both analytical insight into when ambiguities arise and practical tools for designing sparse layouts that avoid them. The results suggest several directions for future research. 
+
+Sparse-array design guidelines. The design corollaries pre-sented in Section IV, namely, Corollary 5 on forbidden center elements and Corollaries 6 and 7 on mutually ex-clusive index pairs, were derived from specific canonical choices of the polynomial coefficient vector g (in particular 
+
+g = [1 , 0, . . . , 0, 1] T and g = [1 , 1, . . . , 1] T). Each such special case identifies a structural condition under which the complementary submatrix T¯I (g) drops rank, thereby yielding a necessary condition on the removal set ¯I for the array to remain unambiguous. Systematic exploration of other special parameter and subset choices is likely to yield additional design criteria of the same form, each excluding further combinations of sensor positions from the removal set. Such guidelines would substantially reduce the combinatorial search space for the optimal sparse-array configuration and represent a natural direction for further research. 
+
+Optimal sparse-array design under aperture and sensor constraints. For a fixed aperture M and sensor count MI , the framework developed here makes it possible to formulate the optimal sparse-array design as a discrete optimization prob-lem: among all admissible thinning patterns, identify the one whose steering matrix attains the largest spark, equivalently, the highest source number for which the manifold remains unambiguous, subject to additional constraints on the longest 
+
+> 17
+
+consecutive lag and on the mutual-coupling profile of the retained sensor set. The trade-off between identifiability and coupling robustness is particularly relevant for dense arrays in which the effective inter-element spacing approaches the half-wavelength limit, including holographic and extremely large-scale MIMO arrays at mmWave and sub-THz frequen-cies [49], medical ultrasound and CMUT/pMUT transducer arrays [50], and compact direction-finding antenna arrays on size-constrained platforms [15]. 
+
+Coarray-based design of symmetric sparse arrays. A com-plementary line of research concerns the design of symmetric thinned arrays that maximize the unambiguous source count attainable from the difference coarray [18]. Conventional coarray design criteria select geometries that maximize the number of consecutive lags, since a contiguous lag set of length K guarantees identifiability of up to K − 1 sources from second-order statistics. However, coarrays typically also produce a substantial number of non-consecutive lags beyond the contiguous segment, and these additional lags contribute to identifiability in ways that the consecutive-lag count alone does not capture. The analysis tools developed in this paper could in principle provide tighter upper bounds on the spark of the coarray steering matrix that account for both the consecutive and the non-consecutive lags, po-tentially yielding identifiability guarantees that exceed the conventional consecutive-lag bound. 
+
+Extension to more general array structures. The polyno-mial parameterization underlying our framework is specific to ULAs with λ/ 2-grid sensor positions. Extending the framework to shift-invariant sparse arrays (covering, for example, ESPRIT-compatible geometries [51]) and to partly calibrated sparse arrays [52], [11], in which only a subset of inter-sensor displacements is known, would broaden the applicability of the rank-drop characterization to a wider class of practical array geometries. The shift-invariance prop-erty gives access to an algebraic structure analogous to the Toeplitz parameterization used here, while partly calibrated arrays naturally fit into the prescribed-generator formulation of Corollary 8. Beyond array signal processing, the underlying mathe-matical problem of determining the spark of generalized Vandermonde matrices remains open in its full generality. Its connections to super-resolution, finite-rate-of-innovation sampling, sparse polynomial interpolation, moment prob-lems, algebraic coding theory, and control theory, outlined in the introduction, suggest that progress on the structured rank characterization developed here may contribute to these areas as well. 
+
+REFERENCES 
+
+[1] S. Sun and Y. D. Zhang, “4D automotive radar sensing for au-tonomous vehicles: A sparsity-oriented approach,” IEEE J. Sel. Top. Signal Process. , vol. 15, no. 4, pp. 879–891, 2021, doi: 10.1109/JSTSP.2021.3079626. [2] J. Xu, H. Min, and Y. Zeng, “Integrated super-resolution sensing and symbiotic communication with 3D sparse MIMO for low-altitude UAV swarm,” IEEE Trans. Commun. , vol. 74, pp. 2812–2826, 2026, doi: 10.1109/TCOMM.2025.3649678. [3] P.-C. Chen and P. P. Vaidyanathan, “Channel estimation for mmwave using the convolutional beamspace approach,” IEEE Trans-actions on Signal Processing , vol. 72, pp. 2921–2938, 2024, doi: 10.1109/TSP.2024.3379859. [4] R. Rajam¨ aki and P. Pal, “Sparse array sensor selection in isac with identifiability guarantees,” in 2024 58th Asilomar Confer-ence on Signals, Systems, and Computers , 2024, pp. 90–94, doi: 10.1109/IEEECONF60004.2024.10942827. [5] X. Li, H. Min, Y. Zeng, S. Jin, L. Dai, Y. Yuan, and R. Zhang, “Sparse mimo for isac: New opportunities and challenges,” IEEE Wireless Communications , vol. 32, no. 4, pp. 170–178, 2025, doi: 10.1109/MWC.001.2400201. [6] K. Adhikari and K. E. Wage, Sparse Arrays for Sonar , 2024, pp. 395– 422, doi: 10.1002/9781394191048.ch13. [7] R. Z. Syeda, J. G. b. de Vaate, and D. Prinsloo, “Regular and irregular-on-grid sparse array comparison of connected aperture arrays,” IEEE Antennas and Wireless Propagation Letters , vol. 19, no. 4, pp. 586– 590, 2020, doi: 10.1109/LAWP.2020.2972700. [8] J. Capon, “High-resolution frequency-wavenumber spectrum analysis,” 
+
+Proceedings of the IEEE , vol. 57, no. 8, pp. 1408–1418, 1969, doi: 10.1109/PROC.1969.7278. [9] M. G. Amin, Sparse Arrays for Radar, Sonar, and Communica-tions , 1st ed. Hoboken, NJ, USA: Wiley-IEEE Press, 2024, doi:10.1002/9781394191048. [10] M. Pesavento, M. Trinh-Hoang, and M. Viberg, “Three More Decades in Array Signal Processing Research: An optimization and structure exploitation perspective,” IEEE SPM , vol. 40, no. 4, pp. 92–106, Jun. 2023, doi: 10.1109/MSP.2023.3255558. [11] T. Liu and M. Pesavento, “Blind phase-offset estimation in sparse partly calibrated arrays,” in IEEE SAM’24 , 2024, pp. 1–5, doi: 10.1109/SAM60225.2024.10636507. [12] P. Pal and P. P. Vaidyanathan, “Nested arrays: A novel approach to array processing with enhanced degrees of freedom,” IEEE Transac-tions on Signal Processing , vol. 58, no. 8, pp. 4167–4181, 2010, doi: 10.1109/TSP.2010.2049264. [13] G. Oliveri, M. Donelli, and A. Massa, “Linear array thinning exploiting almost difference sets,” IEEE Transactions on Anten-nas and Propagation , vol. 57, no. 12, pp. 3800–3812, 2009, doi: 10.1109/TAP.2009.2027243. [14] P. Rocca, R. L. Haupt, and A. Massa, “Interference suppression in uniform linear arrays through a dynamic thinning strategy,” IEEE Transactions on Antennas and Propagation , vol. 59, no. 12, pp. 4525– 4533, 2011, doi: 10.1109/TAP.2011.2165506. [15] C.-L. Liu and P. P. Vaidyanathan, “Super nested arrays: Linear sparse arrays with reduced mutual coupling—part i: Fundamentals,” IEEE Transactions on Signal Processing , vol. 64, no. 15, pp. 3997–4012, 2016, doi: 10.1109/TSP.2016.2558159. [16] ——, “Super nested arrays: Linear sparse arrays with reduced mu-tual coupling—part ii: High-order extensions,” IEEE Transactions on Signal Processing , vol. 64, no. 16, pp. 4203–4217, 2016, doi: 10.1109/TSP.2016.2558167. [17] X. Wang, M. Amin, and X. Cao, “Analysis and design of optimum sparse array configurations for adaptive beamforming,” IEEE Trans-actions on Signal Processing , vol. 66, no. 2, pp. 340–351, 2018, doi: 10.1109/TSP.2017.2760279. [18] X. Li, M. Jin, X.-T. Meng, B.-X. Cao, F.-G. Yan, M. S. Greco, and F. Gini, “Sparse linear arrays for direction-of-arrival estimation: A tutorial overview,” IEEE Aerospace and Electronic Systems Magazine ,pp. 1–25, 2025, doi: 10.1109/MAES.2025.3527917. [19] B. Friedlander, “Multi-signal ambiguity in direction-of-arrival estimation,” in 2023 57th Asilomar Conference on Signals, Systems, and Computers , 2023, pp. 1259–1263, doi: 10.1109/IEEECONF59524.2023.10477080. [20] Y. Abramovich, N. Spencer, and A. Gorokhov, “Identifiability and manifold ambiguity in DOA estimation for nonuniform linear antenna arrays,” in Proc. IEEE ICASSP’99 , vol. 5, Mar. 1999, pp. 2845–2848 vol.5, doi: 10.1109/ICASSP.1999.761355. [21] H. Zhao, Y.-L. Ban, and J.-W. Lian, “Compact genetic algorithm based on roulette selection operator for synthesizing thinned arrays,” in 2023 International Applied Computational Electromagnetics Soci-ety Symposium (ACES-China) , 2023, pp. 1–3, doi: 10.23919/ACES-China60289.2023.10249750. 
+
+> 18
+
+[22] P. Wu, Y.-H. Liu, Z.-Q. Zhao, and Q.-H. Liu, “Sparse antenna array design methodologies: A review,” Journal of Electronic Sci-ence and Technology , vol. 22, no. 3, p. 100276, 2024, doi: 10.1016/j.jnlest.2024.100276. [23] I. van der Werf, G. Leus, and R. Rajam¨ aki, “Jointly optimal array geometries and waveforms in active sensing: New insights into array design via the cram´ er-rao bound,” in Proc. IEEE ICASSP’25 , 2025, pp. 1–5, doi: 10.1109/ICASSP49660.2025.10890202. [24] C. A. Kokke, M. Coutino, L. Anitori, R. Heusdens, and G. Leus, “Sensor selection for angle of arrival estimation based on the two-target Cram´ er-Rao bound,” in Proc. IEEE ICASSP’23 , 2023, pp. 1–5, doi: 10.1109/ICASSP49357.2023.10094942. [25] J. Tabrikian, O. Isaacs, and I. Bilik, “Cognitive antenna selec-tion for automotive radar using Bobrovsky-Zakai bound,” IEEE J. Sel. Top. Signal Process. , vol. 15, no. 4, pp. 892–903, 2021, doi: 10.1109/JSTSP.2021.3071586. [26] M. Wax and I. Ziskind, “On unique localization of multiple sources by passive sensor arrays,” Proc. IEEE TASSP , vol. 37, no. 7, pp. 996– 1000, Jul. 1989, doi: 10.1109/29.32277. [27] A. Manikas and C. Proukakis, “Modeling and estimation of ambigui-ties in linear arrays,” IEEE Transactions on Signal Processing , vol. 46, no. 8, pp. 2166–2179, Aug. 1998, doi: 10.1109/78.705428. [28] Y. Abramovich, V. Gaitsgory, and N. Spencer, “Stability of manifold ambiguity resolution in DOA estimation with nonuniform linear an-tenna arrays,” in Proc. IEEE ICASSP’00 , vol. 5, Jun. 2000, pp. 3117– 3120, doi: 10.1109/ICASSP.2000.861197. [29] A. Manikas, Differential Geometry in Array Process-ing . London: Imperial College Press, 2004, doi: https://dl.acm.org/doi/10.5555/1096871.1096873. [30] N. Dowlut, “An extended ambiguity criterion for array design,” in Sen-sor Array and Multichannel Signal Processing Workshop Proceedings, 2002 , 2002, pp. 189–193, doi: 10.1109/SAM.2002.1191026. [31] F. Matter, T. Fischer, M. Pesavento, and M. E. Pfetsch, “Ambiguities in doa estimation with linear arrays,” IEEE TSP , vol. 70, pp. 4395–4407, 2022, doi: 10.1109/TSP.2022.3200548. [32] E. R. Heineman, “Generalized vandermonde determinants,” Transac-tions of the American Mathematical Society , vol. 31, no. 3, pp. 464– 476, 1929, doi: 10.1090/S0002-9947-1929-1501494-2. [33] M. W. Buck, R. A. Coley, and D. P. Robbins, “A Generalized Van-dermonde Determinant,” Journal of Algebraic Combinatorics , vol. 1, no. 2, pp. 105–109, Sep. 1992, doi: 10.1023/A:1022468019197. [34] H. P. Schlickewei and C. Viola, “Generalized vandermonde deter-minants,” Acta Arithmetica , vol. 95, no. 2, pp. 123–137, 2000, doi: 10.4064/aa-95-2-123-137. [35] G. Tang, B. N. Bhaskar, P. Shah, and B. Recht, “Compressed sensing off the grid,” IEEE Transactions on Information Theory , vol. 59, no. 11, pp. 7465–7490, 2013, doi: 10.1109/TIT.2013.2277451. [36] W. U. Bajwa, K. Gedalyahu, and Y. C. Eldar, “Identification of parametric underspread linear systems and super-resolution radar,” 
+
+IEEE Transactions on Signal Processing , vol. 59, no. 6, pp. 2548– 2561, 2011, doi: 10.1109/TSP.2011.2114657. [37] S. Mulleti, H. Zhang, and Y. C. Eldar, “Learning to sam-ple: Data-driven sampling and reconstruction of fri signals,” 
+
+IEEE Access , vol. 11, pp. 71 048–71 062, 2023, doi: 10.1109/AC-CESS.2023.3293637. [38] S. Foucart and H. Rauhut, A Mathematical Introduction to Com-pressive Sensing. , ser. Applied and Numerical Harmonic Analysis. Birkh¨ auser, 2013, doi: 10.1007/978-0-8176-4948-7. [39] J. C. Ye, J. M. Kim, K. H. Jin, and K. Lee, “Compressive sampling using annihilating filter-based low-rank interpolation,” IEEE Transac-tions on Information Theory , vol. 63, no. 2, pp. 777–801, 2017, doi: 10.1109/TIT.2016.2629078. [40] J. Lacan and J. Fimes, “Systematic mds erasure codes based on vandermonde matrices,” IEEE Communications Letters , vol. 8, no. 9, pp. 570–572, 2004, doi: 10.1109/LCOMM.2004.833807. [41] C. Josz, J. B. Lasserre, and B. Mourrain, “Sparse polynomial inter-polation: sparse recovery, super-resolution, or Prony?” Adv. Comput. Math. , vol. 45, no. 3, pp. 1401–1437, Jun. 2019, doi: 10.1007/s10444-019-09672-2. [42] B. Mourrain, “Polynomial-exponential decomposition from moments,” 
+
+Found. Comput. Math. , vol. 18, no. 6, pp. 1435–1492, Dec. 2018, doi: 10.1007/s10208-017-9372-x. [43] A. F´ uster-Sabater, “A joint criterion for reachability and observability of nonuniformly sampled discrete systems,” IEEE Trans. Autom. Con-trol , vol. 36, no. 11, pp. 1281–1284, Nov. 1991, doi: 10.1109/9.100938. [44] L. S. Cardoso, M. Kobayashi, F. R. P. Cavalcanti, and M. Debbah, “Vandermonde-subspace frequency division multiplexing for two-tiered cognitive radio networks,” IEEE Transactions on Communications , vol. 61, no. 6, pp. 2212–2220, 2013, doi: 10.1109/TCOMM.2013.042313.120109. [45] A. Scaglione, G. Giannakis, and S. Barbarossa, “Redundant filterbank precoders and equalizers. i. unification and optimal designs,” IEEE Transactions on Signal Processing , vol. 47, no. 7, pp. 1988–2006, 1999, doi: 10.1109/78.771047. [46] P. Stoica and K. Sharman, “Maximum likelihood methods for direction-of-arrival estimation,” IEEE Transactions on Acoustics, Speech, and Signal Processing , vol. 38, no. 7, pp. 1132–1143, 1990, doi: 10.1109/29.57542. [47] N. Sidiropoulos and X. Liu, “Identifiability results for blind beam-forming in incoherent multipath with small delay spread,” IEEE Transactions on Signal Processing , vol. 49, no. 1, pp. 228–236, 2001, doi: 10.1109/78.890366. [48] R. A. Horn and C. R. Johnson, Matrix Analysis , 2nd ed. Cambridge; New York: Cambridge University Press, 2013, doi: 10.1017/CBO9781139020411. [49] S. S. A. Yuan, X. Chen, C. Huang, and W. E. I. Sha, “Effects of mutual coupling on degree of freedom and antenna efficiency in holographic mimo communications,” IEEE Open Journal of Antennas and Propa-gation , vol. 4, pp. 237–244, 2023, doi: 10.1109/OJAP.2023.3245667. [50] A. Boujenoui, N. El Atlas, A. Bybi, H. Reskal, and L. Elmaimouni, “Advances in crosstalk reduction techniques for ultrasonic transducer arrays,” Sensors , vol. 25, no. 24, 2025, doi: 10.3390/s25247666. [51] M. Haardt, M. Zoltowski, C. Mathews, and J. Nossek, “2d unitary esprit for efficient 2D parameter estimation,” in 1995 International Conference on Acoustics, Speech, and Signal Processing , vol. 3, 1995, pp. 2096–2099 vol.3, doi: 10.1109/ICASSP.1995.478488. [52] M. Pesavento, A. Gershman, and K. Wong, “Direction finding in partly calibrated sensor arrays composed of multiple subarrays,” IEEE Transactions on Signal Processing , vol. 50, no. 9, pp. 2103–2115, 2002, doi: 10.1109/TSP.2002.801929.
