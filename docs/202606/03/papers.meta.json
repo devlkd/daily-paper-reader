@@ -1,0 +1,24 @@
+{
+  "label": "2026-06-03",
+  "date": "2026-06-03",
+  "generated_at": "2026-06-03T22:17:50",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202606/03/2606.03533v1-recursive-learning-of-feedforward-and-compliance-compensation-parameters-for-precision-motion-systems",
+      "section": "quick",
+      "title_en": "Recursive Learning of Feedforward and Compliance Compensation Parameters for Precision Motion Systems",
+      "authors": "M. Wind, J. Pierssens, R. Beerens, V. Dolk, T. van Keulen",
+      "date": "2026-06-02",
+      "pdf": "https://arxiv.org/pdf/2606.03533v1",
+      "score": "6.0",
+      "evidence": "精密运动系统前馈与柔量补偿递归学习，可用于卫星装配精度控制",
+      "tldr": "未来精密运动系统受时变和位置依赖特性影响，传统控制难以满足高性能需求。本文提出一种递归学习算法，同步估计前馈与柔顺补偿参数，利用多元回归联合学习摩擦、质量、加加速度及柔顺项，并抑制参数耦合。在半导体计量检测系统上的实验表明，伺服性能提升一个数量级。该工作为在线自适应控制提供了新思路，对高性能运动装备具有重要意义。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "To meet the stringent requirements of future motion systems exhibiting time-varying and/or position-dependent behavior, online data must be leveraged to improve control performance. This paper presents a recursive algorithm for simultaneous learning of feedforward and compliance compensation parameters. A multivariate regression formulation is proposed that jointly estimates friction, mass, jerk, and compliance compensation parameters while mitigating parameter coupling. Experimental results on a high-tech semiconductor metrology and inspection system demonstrate an order-of-magnitude improvement in servo performance.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-06-03 <!--dpr-date:20260603-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/03/2606.03533v1-recursive-learning-of-feedforward-and-compliance-compensation-parameters-for-precision-motion-systems" data-sidebar-item="{&quot;title&quot;: &quot;Recursive Learning of Feedforward and Compliance Compensation Parameters for Precision Motion Systems&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.03533v1-recursive-learning-of-feedforward-and-compliance-compensation-parameters-for-precision-motion-systems&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;sat-asm-prec&quot;}], &quot;evidence&quot;: &quot;精密运动系统前馈与柔量补偿递归学习，可用于卫星装配精度控制&quot;}">Recursive Learning of Feedforward and Compliance Compensation Parameters for Precision Motion Systems</a>
   * 2026-06-02 <!--dpr-date:20260602-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/02/2606.00360v1-ambiguity-analysis-and-design-of-sparse-arrays-via-generalized-vandermonde-rank-conditions" data-sidebar-item="{&quot;title&quot;: &quot;Ambiguity Analysis and Design of Sparse Arrays via Generalized Vandermonde Rank Conditions&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.00360v1-ambiguity-analysis-and-design-of-sparse-arrays-via-generalized-vandermonde-rank-conditions&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;tf-sar&quot;}], &quot;evidence&quot;: &quot;开发了用于稀疏阵列模糊分析的代数方法，可用于合成孔径雷达等雷达系统&quot;}">Ambiguity Analysis and Design of Sparse Arrays via Generalized Vandermonde Rank Conditions</a>

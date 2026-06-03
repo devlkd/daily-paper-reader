@@ -1,0 +1,382 @@
+Title: Recursive Learning of Feedforward and Compliance Compensation Parameters for Precision Motion Systems
+
+URL Source: https://arxiv.org/pdf/2606.03533v1
+
+Published Time: Wed, 03 Jun 2026 01:05:08 GMT
+
+Number of Pages: 6
+
+Markdown Content:
+Michiel Wind et al. , Recursive Learning of Feedforward and Compliance Compensation parameters for precision motion systems, To appear in 23rd IFAC World Congress , Busan, Republic of Korea, 2026, uploaded to ArXiv 2 June 2026 
+
+# Recursive Learning of Feedforward and Compliance Compensation Parameters for Precision Motion Systems 
+
+M. Wind ∗, J. Pierssens ∗, R. Beerens ∗∗ , V. Dolk ∗,∗∗ ,
+
+T. van Keulen ∗,∗∗ ∗ Eindhoven University of Technology, Department of Mechanical Engineering, Control Systems Technology section  
+
+> ∗∗
+
+ASML Veldhoven, The Netherlands 
+
+Abstract: To meet the stringent requirements of future motion systems exhibiting time-varying and/or position-dependent behavior, online data must be leveraged to improve control performance. This paper presents a recursive algorithm for simultaneous learning of feedforward and compliance compensation parameters. A multivariate regression formulation is proposed that jointly estimates friction, mass, jerk, and compliance compensation parameters while mitigating parameter coupling. Experimental results on a high-tech semiconductor metrology and inspection system demonstrate an order-of-magnitude improvement in servo performance. 
+
+Keywords: High-performance motion control systems, Extremum seeking and model free adaptive control, Iterative and repetitive learning control 1. INTRODUCTION High-tech motion systems in semiconductor manufactur-ing equipment such as lithography, chip dicing, and wire bonding machines, combine extraordinary positioning ac-curacy with fast movements and extreme accelerations. To achieve the exceptional control performance, model-based feedforward plays a key role (Heertjes (2016)). Although exact system inversion in feedforward control would re-sult in perfect tracking, in practice this inversion is typ-ically approximated (Van Zundert and Oomen (2018)). Acquiring an inverse is challenging since the underlying system is unknown and may exhibit time-varying and/or position-dependent behavior (Voorhoeve et al. (2021)), which limits the effectiveness of approximate inversion. To address practical limitations such as modeling errors, the inversion problem is approximated by a low-frequency representation, typically expressed as a linear combination of the reference position and its derivatives up to the fourth order (snap feedforward), see Boerlage et al. (2004). Compliance compensation counteracts quasi-static defor-mation during acceleration phases and was introduced in Colombi and Raimondi (1994), with further developments in Vervoordeldonk and Baggen (2012); Kontaras et al. (2016). Unlike snap feedforward, compliance compensation acts as a measurement correction in the feedback path. It is often preferred over snap feedforward, as snap feedforward may induce high-frequency amplification of the reference, which leads to higher settling times if the system contains lightly-damped resonances often associated with flexible modes (Heertjes et al. (2020)). As performance demands drive higher accelerations, these deformations during ac-celeration phases become more significant and require ef-fective compensation strategies. Existing approaches rely on time-invariant models and therefore cannot fully cap-ture time-varying and/or position-dependent behavior, motivating the use of control strategies that utilize data in an online setting. The class of controllers that adapt in an online setting, so called adaptive controllers, have been extensively stud-ied in the past, see Aström (1981) and Annaswamy and Fradkov (2021) for surveys. Most emphasis in the liter-ature is on feedback control, whereas for high-tech mo-tion systems, feedforward control is of key importance. Methods that focus on performance optimization through learning of feedforward control parameters include trial-based approaches (Van der Meulen et al. (2007); Bolder and Oomen (2015)). These methods assume a repetitive setpoint trajectory, which is a severe limitation in high-tech motion systems. Other methods that adapt the feed-forward controller online are, for instance, Zhao and Tan (2005), and Butler (2013), where measurements of the input and output are utilized for updating the feedforward controller parameters. These methods suffer from bias in the estimates due to correlation between the regressor and measurement noise. This is a well-known problem in system identification, which can be mitigated by using the instrumental variable approach, see Söderström and Stoica (2002). The instrumental variable approach for feedfor-ward parameter estimation, as used in a trial-based tuning method Boeren et al. (2015) or a recursive method as proposed in Mooren et al. (2023), are both limited in their effectiveness in capturing time-varying and/or position-dependent behavior. In this paper, we build upon the work of Van Keulen et al. (2023), which uses instrumental variables in a fi-nite moving-horizon framework to capture time-varying and position-dependent behavior for feedforward control, and extend it to incorporate compliance compensation. 
+
+> arXiv:2606.03533v1 [eess.SY] 2 Jun 2026
+
+Extending the framework is non-trivial due to the ac-celeration feedforward that is intrinsically linked to the deformation that compliance compensation is intended to correct leading to coupling effects in the parameters. To address the current limitations of the learning framework, we present the following contributions: (1) Extension of the framework in Van Keulen et al. (2023) to recursive learning of compliance compen-sation in addition to feedforward parameters; (2) Utilizing multivariate regression to negate coupling effects in the parameters; and (3) Experimental validation on a state-of-the-art indus-trial metrology inspection machine. 2. SYSTEM DESCRIPTION To represent a broad system class of mechanical motion systems, we adopt the description used in Van Keulen et al. (2024), and for convenience, separate the quasi-static compliance γ0 ∈ R from the resonant dynamics γ(s) to obtain 
+
+G(s) = 1
+
+ms 2 + ζs + γ0 + γ(s), (1) with m the mass, ζ the viscous friction. The static compli-ance captured by γ0 represents the inverse of the overall stiffness of the mechanical system, mapping an applied force to the resulting static deformation. The transfer func-tion γ(s) captures the remainder of the flexible dynamics. 
+
+2.1 Reference and stabilizing feedback 
+
+The considered control structure is depicted in Fig. 1, where the reference r is the desired position and y is the measured position of the motion system. The reference consists of a sequence of point-to-point moves as described in Van Keulen et al. (2023). 
+
+Assumption 1. The reference trajectory r is a non-zero sequence of point-to-point moves bounded up to the fourth derivative subject to ddt r(0) = ddt r(Tr) = 0 , d3 
+
+> dt3
+
+r(0) =  
+
+> d3
+> dt3
+
+r(Tr) = 0 and d4 
+
+> dt4
+
+r(0) = d4 
+
+> dt4
+
+r(Tr) = 0 , with Tr the duration of the trajectory. 
+
+The feedback control structure is a cascade of a second-order low-pass-filtered PID controller, to mitigate high-frequency noise, in combination with a series of notch filters: 
+
+Cfb (s) = CPID fb (s)CNfb (s), (2) with 
+
+CPID fb (s) = kp
+
+(
+
+1 + ωi
+
+s + sωd
+
+)
+
+· ω2lp 
+
+s2 + 2 βlp ωlp s + ω2lp 
+
+, (3) where kp is the proportional gain, ωi and ωd are the in-tegrator, and derivative frequencies respectively. Further-more, ωlp is the cut-off frequency and βlp is the damping of the low-pass filter. The notch filters are described as: 
+
+CNfb (s) = 
+
+> q
+
+∏
+
+> i=1
+
+( s2 + 2 βz,i ωz,i s + ω2z,i 
+
+s2 + 2 βp,i ωp,i s + ω2p,i 
+
+)
+
+, (4) where ωz,i and ωp,i are the zero and pole frequencies and 
+
+βz,i and βp,i are the zero and pole damping coefficients. 
+
+Fig. 1. Control diagram including feedback, feedforward, and compliance compensation, with the latter two adapted by the learning framework (LF). 
+
+2.2 Feedforward control 
+
+The feedforward controller is parameterized as: 
+
+Cff (s) := [s s 2 s3] θtot ff , (5) where θtot ff := θnom ff + θff ∈ R3×1 with 
+
+θnom ff = [θnom v θnom a θnom j
+
+]⊤ , θff = [ θv θa θj]⊤ , (6) where (θv, θ a, θ j) denote the velocity, acceleration, and jerk parameters, respectively. The vector θnom ff represents nominal offline-calibrated values which are useful for the implementation and enable a linear, rather than an affine parameterization of the regressors, as shown in Sec. 3. 
+
+2.3 Compliance compensation 
+
+As illustrated in Fig. 1, the compliance compensation 
+
+Ccc (s) acts on the output yg by means of a measurement adjustment, and not on the input signal ub as in feedfor-ward control. In particular, it aims to remove quasi-static deformations during acceleration phases from the servo error e, which depends on the compliance of the system 
+
+γ0 in (1), so that the feedback controller dynamics do not respond to quasi-static deformation. From Hooke’s law and Newton’s second law, the quasi-static deformation induced by acceleration due to the reference is yqs = γ0m¨r, which motivates defining the ideal compliance compensation term as yc = −yqs . If we parameterize Ccc (s) as 
+
+Ccc (s) := ( θnom cc + θcc )s2, (7) with θnom cc denoting the nominal offline calibrated term, we separate Ccc (s) from Cff (s) and lump the mass m and compliance γ0, yielding the parallel branch as depicted in Fig. 1. This separation avoids nonlinear coupling between the acceleration θa and the compliance θcc parameters. The parameters subject to learning and the nominal pa-rameters are stacked as follows: 
+
+θ := 
+
+[θff 
+
+θcc 
+
+]
+
+∈ R4×1, θnom := 
+
+[θnom ff 
+
+θnom cc 
+
+]
+
+∈ R4×1. (8) The control goal is to minimize the servo tracking error e,which is the mapping H(s) : r 7 → e given by 
+
+H(s) = S(s)(1 − G(s)Cff (s) − Ccc (s)) , (9) with S(s) := (1 + G(s)Cfb (s)) −1 the sensitivity function. 
+
+2.4 Problem statement 
+
+The current state of practice is θ = 0 4×1 and θnom =[0 ˆ m 0 − ˆmˆγ0]⊤ where ˆm and ˆγ0 may deviate from the true mass m(t, x ) and compliance γ0(t, x ) that can be time-varying and/or position-dependent. This motivates the development of an adaptive framework that adjusts θ
+
+over a moving-horizon of length T . The objective is to find the optimal time-dependent parameter set θ in the sense that it minimizes the squared servo error e, i.e. ,
+
+θ∗(t) = arg min 
+
+> θ
+
+∫ tt−T
+
+e2(τ, θ)d τ. (10) As such, the aim is to continuously update θ(t) to improve the performance online, while taking into account the spe-cific feedforward structure defined in (5) and compliance compensation defined in (7). 3. LEARNING FRAMEWORK This section extends the learning framework proposed in Van Keulen et al. (2023) by incorporating adaptive compliance compensation in addition to learning velocity, acceleration and jerk parameters. To circumvent bias in the parameter estimates in (10) we introduce an auxiliary signal φ that is correlated with the servo error e but uncorrelated with the measurement noise 
+
+η that can be taken for comparison in the parameter opti-mization. Such a setting is also known as an instrumental variable setting, see e.g. , Söderström and Stoica (2002). For a mechanical system as given in (1), we select this auxiliary signal φ as the output of an approximate control system that reflects an approximate servo-error. To be specific, the approximated control system is described by the transfer function ˆH : r 7 → φ given by 
+
+ˆH(s) := ˆS(s)(1 − ˆG(s) ˆCff (s) − ˆCcc ), (11) where 
+
+ˆS(s) := (1 + ˆG(s)CPID fb (s)) −1, (12) 
+
+ˆCff (s) := [s s 2 s3] ˆθtot ff , (13) 
+
+ˆCcc (s) := ( θnom cc + θIV cc )s2, (14) and ˆθtot ff := θnom ff + [θIV v θIV a θIV j
+
+]⊤ with θIV v ,θIV a , θIV j and 
+
+θIV cc fixed non-zero parameters. Moreover, ˆG represents an approximation of the system G. Now if we take 
+
+ˆG(s) = 1ˆms 2 , θnom = [0 ˆ m 0 0] ⊤ (15) with ˆm being the mass parameter in the nominal, offline tuned, feedforward, then ˆH as given in (11) simplifies to 
+
+ˆH(s) = − 1ˆm ˆS(s)
+
+([1/s 1 s s 2] θIV )
+
+, (16) where 
+
+θIV := 
+
+[θIV ff 
+
+θIV cc 
+
+]
+
+∈ R4×1 (17) denotes the vector with fixed non-zero parameters. Ob-serve that for ˆG as given in (15), the transfer function ˆH
+
+depends linearly on θIV .To match the approximated control system ˆH with the true control system H, the parameters in θIV are scaled. To streamline the exposition, we first introduce the transfer functions ˆHi : r 7 → φi, i ∈ { 1, 2, 3, 4}, given by 
+
+ˆHi(s) = − 1ˆm ˆS(s) (si−2θIV 
+
+> i
+
+) . (18) 
+
+Fig. 2. System representation of the feedback interconnec-tion of the parameter adaptation G with the parame-ter estimation. Consequently, the output of the scaled approximate control system, also referred to as the predictor model, is given by 
+
+˜e(t, λ) = λ⊤Φ(t), (19) where Φ(t) := [φ1(t) φ2(t) φ3(t) φ4(t)] ⊤ and λ := [λ1 λ2 λ3 λ4]⊤ with the scaling factors λ1, λ2, λ3, and λ4
+
+selected such that the square integrated prediction error 
+
+e(t, θ) − ˜e(t, λ) is minimal. To be specific, the optimal scaling λ minimizes 
+
+V (t, λ) = 
+
+∫ tt−T
+
+(e(τ, θ) − ˜e(τ, λ)) 2 dτ, (20) 
+
+=
+
+∫ tt−T
+
+(e(τ, θ) − λ⊤Φ(τ )) 2dτ. (21) Given the optimal scaling λ∗(t) at time t ∈ R⩾0, i.e. 
+
+λ∗(t) = arg min  
+
+> λ∈R4
+
+V (t, λ), (22) the estimated parameter mismatch that caused the re-maining servo error is given by 
+
+ˆθ(t) = λ∗(t) θIV ∈ R4×1, (23) where denotes element-wise multiplication. Closed-form expressions for λ∗(t) are given in Sec. 4. Since the estimated parameter mismatch ˆθ(t) describes the remaining servo error, it justifies to slowly adjust the parameters θ(t) in the opposite direction of ˆθ(t) through an adaptation system given by 
+
+G := 
+
+{
+
+˙xθi (t) = −Bi ˆθi(t),θi(t) = xθi , (24) for i ∈ { 1, 2, 3, 4}, where Bi is chosen sufficiently small such that θ(t) is constant within the moving-horizon of length T to enforce time-scale separation, and where ˆθi
+
+and θi denote the i-th element of ˆθ and θ, respectively. 4. COUPLING IN THE PARAMETERS AND MULTIVARIATE REGRESSION We consider two cases, namely, i) the case in which the re-gressors φi are orthogonal, which allows to use a univariate regression, and ii) the case in which the regressors φi are not orthogonal, which requires the formulation of a mul-tivariate regression for the extended learning framework. For orthogonality, we adopt the following definition. 
+
+Definition 2. Two signals (fi(t), f j (t)) defined over amoving-horizon of length T , are orthogonal , if 
+
+〈fi(τ ), f j (τ )〉 := ∫ tt−T fi(τ )fj (τ )dτ = 0 ∀t.4.1 Univariate regression 
+
+In case the regressors φi, i ∈ { 1, 2, 3, 4}, are orthogonal, the scaling λ∗(t) = [ λ∗
+
+> 1
+
+(t) λ∗
+
+> 2
+
+(t) λ∗
+
+> 3
+
+(t) λ∗
+
+> 4
+
+(t)] ⊤ that mini-mizes (20) is given by 
+
+λ∗ 
+
+> i
+
+(t) = 
+
+( ∫ tt−T
+
+φ2 
+
+> i
+
+(τ )d τ
+
+)−1 ∫ tt−T
+
+φi(τ )e(τ, θ)d τ, (25) where ∫ tt−T φ2 
+
+> i
+
+(τ )d τ must be non-zero. As such, each i-th element can be computed individually based on the regressor φi.In our case, we show that the regressors are not orthogonal, which implies that the univariate regression cannot be decoupled into independent scalar estimation problems. Note that φj(t) = α ˙φa(t), with α = − θIV  
+
+> a
+> ˆm
+
+. We evaluate the moving-horizon integral via substitution: 
+
+u = φa(t), du = ˙ φa(t)d t, (26) 
+
+I(t) = α
+
+∫ tt−T
+
+u du, (27) 
+
+= α
+
+2
+
+(
+
+φ2a(t) − φ2a(t − T )
+
+)
+
+.
+
+Hence, I(t) = 0 if and only if φ2a(t) = φ2a(t − T ),
+
+i.e. , φa(t) = ±φa(t − T ) which only holds true when 
+
+φa(t) is periodic with period length T . By Assumption 1, the regressor φa does not reach steady-state which implies it is not T -periodic, and therefore (φa(t), φ j (t)) , is not orthogonal over the moving-horizon. This observation motivates to extend the algorithm in Van Keulen et al. (2023) to a multivariate regression formulation. 
+
+Remark 3. As demonstrated in Section 5, even if the regressors φi, i ∈ { 1, 2, 3, 4} are not orthogonal, using the univariate regression as presented in (25) can still lead to converging parameter estimates. 
+
+4.2 Multivariate regression 
+
+In case the regressors φi, i ∈ { 1, 2, 3, 4}, are not orthogo-nal, the analytical solution to (22) is given by 
+
+λ∗(t) = 
+
+( ∫ tt−T
+
+Φ(τ )Φ(τ )⊤dτ
+
+)−1 ∫ tt−T
+
+Φ(τ )e(τ, θ)d τ, 
+
+(28) when ∫ tt−T Φ(τ )Φ(τ )⊤dτ ∈ R4×4 is non-singular. By considering the linear combination of all regressors Φ
+
+simultaneously, parameter coupling is implicitly taken into account. This results in superior parameter estimation properties, at the cost of having to compute a matrix inverse online. 
+
+Remark 4. In case the regressors φi, i ∈ { 1, 2, 3, 4}, are orthogonal, the matrix ∫ tt−T Φ(τ )Φ(τ )⊤dτ is diagonal and thus the result in (25) is recovered. 5. EXPERIMENTAL CASE STUDY In this section, the extended learning framework is val-idated in simulation and with experiments on a high-tech metrology inspection system. Two separate experi-ments have been conducted, one experiment ( D1) show-cases the effectiveness of learning individual parameters, the other experiment ( D2) focuses on the effectiveness of utilizing multivariate regression to reduce parameter coupling. Both experiments are compared with simulation results ( Ds). The considered system in simulation is a non-collocated mass-spring-damper system consisting of two rigid masses. 
+
+5.1 System description and setting 
+
+The objective of the industrial machine is to measure overlay, a metric that quantifies the alignment accuracy between different layers of a microchip. Overlay is obtained by illuminating predefined targets on the wafer and ana-lyzing the resulting diffraction patterns. The wafer stage positions each target such that it lies within the field of view of the optical sensor. A schematic representation of the wafer stage is shown in Fig. 3. The stage consists of two orthogonal beams, each driven by actuators on both sides, which position a wafer carrier. Assume that a stabilizing feedback is achieved by means of geometric decoupling that maps control forces in logical degrees of freedom (x, y ) to physical actuator forces. For the current case study, only the x-direction is considered. Note that viscous friction is present, and the compliance in the x-direction depends on the y-position. We consider a total of 500 point-to-point moves in (x, y ) and a reference trajectory satisfying Assumption 1, shown in Fig. 4. 
+
+5.2 Experimental results 
+
+The approximate sensitivity ˆS(s) is tuned such that is close to the sensitivity of the true system in low fre-quency regimes. Furthermore, a similar discretization and delay compensation is adopted as in Butler (2013). We use θnom = [0 ˆ m 0 − ˆmˆγ0(y)] ⊤, where ˆγ0(y) is a look-up table for y-position-dependent compliancy. Fig. 6 shows the effectiveness of the extended learning framework for experiment D1, in terms of the cumulative power spectral density of the servo error for different parameter sets after parameter convergence. Observe that the servo error is improved by a factor of 7 when all parameters are included 
+
+Fig. 3. 2D-representation of the wafer-stage inside the metrology and inspection system with interferometers that measure the x and y position with two beams to which the carrier with the wafer is attached. -0.1 -0.05 0 0.05 0.1 0.15 0.2    
+
+> -0.15 -0.1 -0.05 00.05 0.1
+> -0.05 -0.045 -0.04 -0.035
+> 0.022 0.024 0.026
+
+Fig. 4. Reference trajectory in x and y of 500 point-to-point moves with bounded 4-th order time-derivative. in the learning framework. The individual contributions for the velocity, acceleration and compliance compensa-tion contribute to 92 .5% , 6.5% , 1% , respectively, where the contribution of jerk feedforward is negligible for the setting considered. Fig. 5 shows the servo error over time resulting from simulation Ds for three specific acceleration profiles. The corresponding experimental results D1 for three specific moves are shown in Fig. 7. Observe that for the simulation Ds, the inclusion of recursive compliance compensation learning yields a significant performance improvement. In the experimental results D1, the over-all performance gain is primarily attributed to velocity feedforward. This can be explained by the fact that the a priori tuned y-position-dependent nominal compliance compensation ˆγ0(y) is already close to the true compliance, thereby limiting the additional improvement achievable through online adaptation. 3.4 3.41 3.42 3.43 3.44 3.45 3.46 3.47 3.48                    
+
+> -5 0510 -6
+> 8.84 8.85 8.86 8.87 8.88 8.89 8.9 8.91 8.92
+> -5 0510 -6
+> 12.24 12.25 12.26 12.27 12.28 12.29 12.3 12.31 12.32
+> -5 0510 -6
+
+Fig. 5. Simulation results Ds providing the servo error for different parameter sets. 10 1 10 2 10 3  
+
+> 00.5 11.5 22.5 33.5 10 -4
+> 10 3
+> 3.5 44.5 510 -5
+
+Fig. 6. Experimental results D1 showing the cumulative power spectral density of the servo error for different parameter sets. By adopting the univariate regression formulation as pre-sented in (25) while learning all four parameters at once, the coupling between velocity and jerk, as predicted in Sec. 4, and as shown in simulation Ds in Fig. 8, is now also observed in the experiment D2 as depicted in Fig. 9. The coupling between acceleration and compliance compensa-tion is also clearly visible in Fig. 8, yet less prominent in Fig. 9, most likely due to relatively high adaptation gains. By adopting multivariate regression as proposed in (20) the coupling between parameters, especially seen in velocity and jerk coupling, has been significantly reduced. 6. CONCLUSION An algorithm for recursive learning of feedforward param-eters in motion control is extended with adaptive com-7.01 7.02 7.03 7.04 7.05 7.06              
+
+> -1 -0.5 00.5 110 -6
+> 15.57 15.58 15.59 15.6 15.61 15.62
+> -1 -0.5 00.5 110 -6
+> 24.73 24.74 24.75 24.76 24.77 24.78
+> -2 -1 01210 -6
+
+Fig. 7. Experimental results D1 providing the servo error for different parameter sets. 0 5 10 15            
+
+> 0100 200 300
+> 0510 15
+> 0510
+> 0510 15
+> -15 -10 -5 0510 -3
+> 0510 15
+> -4 -2 0210 -7
+
+Fig. 8. Simulation results Ds providing the parameter convergence for θv, θa, θj, and θcc with respect to univariate and multivariate regression. pliance compensation. Its effectiveness is demonstrated through simulation and experimental validation on a state-of-the-art industrial metrology inspection machine. Re-sults show that a multivariate regression reduces param-eter coupling, predominantly between velocity and jerk feedforward, and between acceleration feedforward and compliance compensation. Future work will focus on learn-ing compliance compensation without nominal tuning to verify convergence properties, potentially reducing manual tuning effort. REFERENCES Annaswamy, A.M. and Fradkov, A.L. (2021). A historical perspective of adaptive control and learning. Annual Reviews in Control , 52, 18–41. Aström, K.J. (1981). Theory and Applications of Adaptive Control. IFAC Proceedings Volumes , 14(2), 737–748. Boeren, F., Oomen, T., and Steinbuch, M. (2015). Iterative motion feedforward tuning: A data-driven approach based on instrumental variable identification. Control Engineering Practice , 37, 11–19. Boerlage, M., Tousain, R., and Steinbuch, M. (2004). Jerk derivative feedforward control for motion systems. In 
+
+Proceedings of the 2004 American Control Conference ,4843–4848. Bolder, J. and Oomen, T. (2015). Rational Basis Functions in Iterative Learning Control—With Experimental Ver-ification on a Motion System. IEEE Transactions on Control Systems Technology , 23(2), 722–729. Butler, H. (2013). Adaptive Feedforward for a Wafer Stage in a Lithographic Tool. IEEE Transactions on Control Systems Technology , 21(3), 875–881. Colombi, S. and Raimondi, T. (1994). Compliance com-pensation in mechatronic systems. In Proceedings of IECON’94 - 20th Annual Conference of IEEE Industrial Electronics , volume 2, 946–951. Heertjes, M.F. (2016). Data-Based Motion Control of Wafer Scanners. IFAC-PapersOnLine , 49(13), 1–12. Heertjes, M., Butler, H., Dirkx, N., van der Meulen, S., Ahlawat, R., O’Brien, K., Simonelli, J., Teng, K.T., and Zhao, Y. (2020). Control of Wafer Scanners: Methods 0 5 10 15 20               
+
+> 020 40 60 80 100
+> 0510 15 20
+> 00.05 0.1 0.15
+> 0510 15 20
+> -6 -4 -2 0210 -4
+> 0510 15 20
+> -15 -10 -5 0510 -9
+
+Fig. 9. Experimental results D2 providing the parameter convergence for θv, θa, θj, and θcc with respect to univariate and multivariate regression. and Developments. In American Control Conference (ACC) , 3686–3703. Kontaras, N., Heertjes, M., and Zwart, H. (2016). Con-tinuous compliance compensation of position-dependent flexible structures. IFAC-PapersOnLine , 49(13), 76–81. Mooren, N., Witvoet, G., and Oomen, T. (2023). On-line instrumental variable-based feedforward tuning for non-resetting motion tasks. International Journal of Robust and Nonlinear Control , 33(18), 11000–11018. Söderström, T. and Stoica, P. (2002). Instrumental vari-able methods for system identification. Circuits, Sys-tems and Signal Processing , 21(1), 1–9. Van der Meulen, S., Tousain, R., and Bosgra, O. (2007). Fixed Structure Feedforward Controller Tuning Exploit-ing Iterative Trials, Applied to a High-Precision Elec-tromechanical Servo System. American Control Confer-ence (ACC) , 4033–4039. Van Keulen, T., Kleefstra, B., and Beerens, R. (2024). Recursive Learning of Feedforward Parameters in High-Tech Motion Systems. (ECC) , 1810–1815. Van Keulen, T., Oomen, T., and Heemels, M. (2023). Online feedforward parameter learning with robustness to set-point variations. 22nd IFAC World Congress ,56(2), 1919–1925. Van Zundert, J. and Oomen, T. (2018). On inversion-based approaches for feedforward and ILC. Mechatronics , 50, 282–291. Vervoordeldonk, M.J. and Baggen, M.C.J. (2012). Position control system, a lithographic apparatus and a method for controlling a position of a movable object. US Patent US8279401B2, ASML Netherlands BV. Voorhoeve, R., de Rozario, R., Aangenent, W., and Oomen, T. (2021). Identifying Position-Dependent Me-chanical Systems: A Modal Approach Applied to a Flex-ible Wafer Stage. (TAC) , 29(1), 194–206. Zhao, S. and Tan, K.K. (2005). Adaptive feedforward compensation of force ripples in linear motors. Control Engineering Practice , 13(9), 1081–1092.

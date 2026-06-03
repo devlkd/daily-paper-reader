@@ -1,0 +1,59 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-03T22:16:51.397239+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 0,
+    "deep_cap": 8,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 13,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2606.03533v1",
+      "source": "arxiv",
+      "title": "Recursive Learning of Feedforward and Compliance Compensation Parameters for Precision Motion Systems",
+      "abstract": "To meet the stringent requirements of future motion systems exhibiting time-varying and/or position-dependent behavior, online data must be leveraged to improve control performance. This paper presents a recursive algorithm for simultaneous learning of feedforward and compliance compensation parameters. A multivariate regression formulation is proposed that jointly estimates friction, mass, jerk, and compliance compensation parameters while mitigating parameter coupling. Experimental results on a high-tech semiconductor metrology and inspection system demonstrate an order-of-magnitude improvement in servo performance.",
+      "authors": [
+        "M. Wind",
+        "J. Pierssens",
+        "R. Beerens",
+        "V. Dolk",
+        "T. van Keulen"
+      ],
+      "primary_category": "eess.SY",
+      "categories": [
+        "eess.SY"
+      ],
+      "published": "2026-06-02T11:54:59+00:00",
+      "link": "https://arxiv.org/pdf/2606.03533v1",
+      "tags": [
+        "keyword:TF-SAR",
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "recursive learning of feedforward and compliance compensation for precision motion systems, applicable to satellite assembly precision control",
+      "llm_evidence_cn": "精密运动系统前馈与柔量补偿递归学习，可用于卫星装配精度控制",
+      "llm_evidence": "精密运动系统前馈与柔量补偿递归学习，可用于卫星装配精度控制",
+      "canonical_evidence": "精密运动系统前馈与柔量补偿递归学习，可用于卫星装配精度控制",
+      "llm_tldr_en": "Presents a recursive algorithm that jointly learns feedforward and compliance compensation parameters for precision motion systems, achieving order-of-magnitude servo performance improvement on a semiconductor metrology system, offering a transferable control method for high-precision assembly tasks.",
+      "llm_tldr_cn": "针对精密运动系统中时变和位置相关行为的高精度控制需求，提出一种递归算法同时学习前馈与柔量补偿参数。该算法通过多变量回归联合估计摩擦、质量、加加速度和柔量补偿参数，并抑制参数耦合。在半导体计量检测系统上的实验表明，伺服性能提升了一个数量级，为高精度装配任务提供了一种可迁移的控制方法。",
+      "llm_tldr": "针对精密运动系统中时变和位置相关行为的高精度控制需求，提出一种递归算法同时学习前馈与柔量补偿参数。该算法通过多变量回归联合估计摩擦、质量、加加速度和柔量补偿参数，并抑制参数耦合。在半导体计量检测系统上的实验表明，伺服性能提升了一个数量级，为高精度装配任务提供了一种可迁移的控制方法。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "precision control in satellite assembly process",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
