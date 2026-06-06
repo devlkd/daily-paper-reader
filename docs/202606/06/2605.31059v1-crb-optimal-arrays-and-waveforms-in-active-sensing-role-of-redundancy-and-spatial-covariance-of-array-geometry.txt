@@ -1,0 +1,1877 @@
+Title: CRB-Optimal Arrays and Waveforms in Active Sensing: Role of Redundancy and Spatial Covariance of Array Geometry
+
+URL Source: https://arxiv.org/pdf/2605.31059v1
+
+Published Time: Mon, 01 Jun 2026 00:56:34 GMT
+
+Number of Pages: 15
+
+Markdown Content:
+> 1
+
+# CRB-Optimal Arrays and Waveforms in Active Sensing: Role of Redundancy and Spatial Covariance of Array Geometry 
+
+Ids van der Werf, Graduate Student Member, IEEE, Robin Rajam¨ aki, Member, IEEE, and Geert Leus, Fellow, IEEE 
+
+Abstract —This paper characterizes the performance limits of optimal array designs using orthogonal and coherent waveforms for both linear and planar arrays. For orthogonal waveforms, we show that the single-target Cram´ er–Rao Bound (CRB) depends on the sum of the so-called spatial variances of the transmit (Tx) and receive (Rx) arrays, or equivalently, the spatial variance of the sum co-array weighted by the multiplicities of the virtual sensors. This reveals that CRB-optimal geometries are inherently redundant, highlighting a fundamental trade-off between mean squared error (MSE) and identifiability in parameter estimation. Moreover, we derive optimal Tx-Rx sensor allocations given a total sensor budget and show that unequal allocation (favoring the Rx) is optimal even for nonredundant arrays, questioning conventional designs. We extend our results to planar arrays, providing a new general condition that the spatial covariances of the Tx and Rx arrays should satisfy for the optimal waveforms to direct power in the target direction. Additionally, we establish a connection between Diophantine equations and array geometries with equal CRB, along with a constructive method for designing such arrays. Our work provides new guidelines for and insights into optimal array and waveform design with relevance in emerging active sensing multiple-input multiple-output systems. 
+
+Index Terms —Active sensing, array geometry, Cram´ er-Rao bound, sparse arrays, planar arrays. 
+
+I. I NTRODUCTION 
+
+# ACTIVE sensing systems, including automotive radar [1], unmanned aerial systems [2], and sonar systems [3], [4], make increasing use of multiple-input multiple-output (MIMO) arrays. Unlike phased arrays, these can transmit several independent waveforms to improve angular resolution, parameter identifiability, and detection performance [5], [6]. Given the importance of the array geometry and transmit waveforms to the performance of MIMO systems, the optimal 
+
+design of these key spatio-temporal resources becomes critical. The Cram´ er-Rao bound (CRB) remains perhaps the most widely used tool for multisensor system performance analysis [7]–[18], due to being both estimator-independent and ana-lytically tractable. Early works on CRB-optimal array design                 
+
+> © 2026 IEEE. Personal use of this material is permitted. Permission from IEEE must be obtained for all other uses, in any current or future media, including reprinting/republishing this material for advertising or promotional purposes, creating new collective works, for resale or redistribution to servers or lists, or reuse of any copyrighted component of this work in other works. This work was partly funded by the Netherlands Organisation for Applied Scientific Research (TNO) and the Netherlands Defence Academy (NLDA), reference no. TNO-10026587 and by Business Finland 6G-ISAC, Research Council of Finland FUN-ISAC 359094, and EU INSTINCT 101139161. Ids van der Werf and Geert Leus are affiliated with the Microelectron-ics department, Delft University of Technology, Delft, The Netherlands (email: {i.vanderwerf, g.j.t.leus }@tudelft.nl). Robin Rajam¨ aki is with the Signal Processing Research Centre, Tampere University, Finland (email: robin.rajamaki@tuni.fi). He was previously with the Department of Informa-tion and Communications Engineering, Aalto University, Finland.
+
+mainly considered passive sensing [7]–[13]. In particular, [9] demonstrated that the optimal receive array geometry tends to form clusters of sensors, an insight later corroborated by [11] which showed the dependence of the single-source CRB on the so-called moment of inertia of the array geometry (sum of squared sensor positions). More recent approaches relax array design to a convex sensor selection problem, promoting sparsity with a desired sidelobe suppression [19], average / worst-case estimation error [20], [21], or integrated sensing and communication (ISAC) constraints [22]. In active sensing, extensive work exists on both array [14]–[17] and waveform design using CRB [23], [24], often under additional constraints imposed by clutter [25] or ISAC requirements [26]–[29]. Of particular relevance is [23], which showed that CRB-optimal waveform matrices are confined to a low-dimensional subspace determined by the unknown parameters of interest. In the single-target case, these correspond to beamforming in the target direction under certain conditions on the moments of inertia of the transmit (Tx) and receive (Rx) arrays [23], [30], [31]. Recently, [31] also derived optimal linear array geometries that both minimize the single-target CRB when transmitting optimal (coherent) waveforms and guarantee iden-tifiability of the largest possible number of targets when transmitting orthogonal waveforms. Orthogonal waveforms are crucial for initial target search, and allow fully utilizing the spatial degrees-of-freedom (DoFs) provided by the so-called 
+
+sum co-array [32], a virtual array model arising from the sums of Tx-Rx sensor position pairs. While the role of the sum co-array geometry in parameter identifiability is well established [33], [34], its impact on mean squared error (MSE) is less clear. This motivates the questions: 
+
+How does the sum co-array geometry influence the CRB when deploying orthogonal waveforms? Specifically, which geometries minimize CRB ? Additional open questions regard-ing CRB-optimal array geometries remain for both coherent and orthogonal waveforms. Firstly, in emerging applications, only a limited number of radio-frequency (RF) chains may be available to divide between the Tx and Rx arrays due to their high cost and power consumption. The question thus arises: 
+
+“How should a given number of RF chains or sensors be optimally allocated between the Tx and Rx arrays?” Recently, [35] investigated this question in a monostatic ISAC setting, aiming to minimize direction-of-arrival (DoA) estimation error under a communications signal-to-interference-plus-noise ratio (SINR) constraint. Despite extensive numerical results [35], theoretical understanding of optimal allocations for sensing, communications, and ISAC still remains limited. Secondly, in the case of planar arrays, which are of great practical relevance due to their ability to discriminate azimuth and 
+
+> arXiv:2605.31059v1 [eess.SP] 29 May 2026 2
+
+elevation, the notion of CRB-optimality itself depends on the choice of (scalar) objective function. Indeed, the Fisher information is matrix-valued even in case of a single target (parametrized by two unknown angles). While [30] tackled the case of matrix trace, rigorous optimality conditions for this and other common objectives, such as the log-determinant, are still lacking. Finally, [31] suggested that different array geometries satisfying certain Diophantine equations can achieve the same CRB. However, methods for constructing such “equi-CRB” arrays were not given. Developing such methods is of practical importance to array design, since geometries with identical CRBs may vastly differ in robustness to noise, interference, or mutual coupling. The open challenges outlined above call for a critical re-examination of the performance limits of MIMO active sensing systems, including optimal array and waveform design. This paper focuses on the single-target CRB to provide sharp answers to these questions in the high signal-to-noise ratio (SNR) (asymptotic) regime, where the CRB closely bounds MSE. We note that alternative bounds—such as the Weiss-Weinstein bound (WWB) [36], Ziv–Zakai bound (ZZB) [37]– [39], Bobrovski-Zakai bound (BZB) [40], [41] or Barankin bound [42], [43]—more accurately capture low-SNR (non-asymptotic) performance, but involve intricate expressions that typically hinder their closed-form analysis and require resorting to numerical evaluation instead. Analyzing the CRB in the multi-target case becomes highly non-trivial for similar reasons [44]–[46]. Previous studies have nevertheless numer-ically investigated these bounds in various settings, such as performance analysis and array design in passive sensing via ZZB [38], [39] and Barankin bound [43], structured waveform optimization via WWB [36], and adaptive receive-only array design via BZB [41]. In contrast, the single-target CRB considered herein provides a simple and tractable baseline guiding optimal array and waveform design, as well as a preliminary step toward a full analytical understanding of the multi-target and low-SNR regimes. 
+
+A. Contributions and outline 
+
+This paper provides new insights into, and guidelines for, the design of optimal array geometries and waveforms. We focus on the single-target case due to its continued relevance in radar and ISAC [47], [48], as well as the fundamental theoretical insight it is able to yield into array and waveform design. Our main contributions are summarized as follows:  
+
+> •
+
+Optimal arrays for orthogonal waveforms: We show that the single-target CRB in case of orthogonal wave-forms can be expressed as the weighted spatial variance 
+
+(moment of intertia) of the sum co-array, where the weights correspond to the multiplicities of the sum co-array elements. This reveals that the CRB-optimal array geometry has a redundant sum co-array, unlike nonre-dundant array geometries that are typically employed for maximizing the number of identifiable targets. Our result thus illustrates a fundamental trade-off between MSE and identifiability in array design.  
+
+> •
+
+Allocation of sensors between Tx and Rx: We derive the optimal allocation of a total sensor budget between the Tx and Rx arrays for both the CRB-optimal array geometry and a canonical (nested nonredundant) MIMO configu-ration. We show that distributing the sensors unequally 
+
+between Tx and Rx when employing orthogonal wave-forms is optimal, with a preference given towards more Rx than Tx sensors. Surprisingly, even for nonredundant arrays, the CRB-maximizing sensor allocation does not yield the array geometry with the largest sum co-array, unlike conventional designs optimized for identifiability.  
+
+> •
+
+Generalizations to planar arrays: We extend our results to two dimensional arrays, where the role of the spa-tial variance is replaced by the spatial covariance . We derive a novel necessary and sufficient condition that the Tx and Rx spatial covariances should satisfy for the optimal waveforms to remain physically relevant by steering power in the target direction. Our result provides a rigorous generalization of previous works [30], holding for any convex objective function, such as the trace, log-determinant or maximum eigenvalue of the CRB matrix.  
+
+> •
+
+Array geometries with equal CRB: We show that different 
+
+array geometries with identical CRB can be generated via sequences with equal sums of squares (SoS) . This establishes an intriguing connection between sparse array design and the classical topic of Diophantine equations. We also provide a simple method for generating such equi-CRB (linear or planar) arrays for an arbitrary num-ber of sensors. This method can be used to find alternative array geometries that maintain a desired CRB while offering, for example, improved estimation performance at low SNR or reduced susceptibility to mutual coupling. The remainder of this paper is organized as follows. Sec-tion II briefly reviews the background and prior results on CRB-optimal array and waveform designs. Sections III and IV present new results regarding orthogonal waveforms and opti-mal sensor allocation, respectively, while Section V considers extensions to planar arrays. Section VI examines distinct arrays with identical CRBs. Finally, Section VII validates our findings numerically and Section VIII concludes the paper. II. B ACKGROUND 
+
+This section introduces the signal model and briefly reviews prior results on CRB-optimal waveforms and arrays, forming the basis for our new contributions starting in Section III. 
+
+A. Signal model and Cram´ er-Rao bound 
+
+We consider a narrowband monostatic MIMO system with 
+
+Nt Tx and Nr Rx sensors in a linear array configuration illumi-nating a far-field target in 2D space at the angle ω = π sin( θ)
+
+with reflection coefficient γ ∈ C. The spatio-temporal received (backscatter) signal vector can be written as [5], [49] 
+
+y = ( S ⊗ INr )( at(ω) ⊗ ar(ω)) γ + n, (1) where ⊗ denotes the Kronecker product, and S ∈ CT ×Nt is a spatio-temporal Tx waveform matrix of (sample) length T ≥ 1
+
+and unit power, i.e., ∥S∥2F = trace (SHS) = 1 .The entries of the Tx and Rx array response vectors are given by [at(ω)] n = ejd t[n]ω and [ar(ω)] m = ejd r[m]ω ,3
+
+where dt[n] and dr[m] denote the individual sensor positions in half-wavelength units. The complete sets containing these respective positions are 
+
+Dt = {dt[n]}Nt
+
+> n=1
+
+, Dr = {dr[m]}Nr
+
+> m=1
+
+. (2) Additionally, n ∈ CNrT denotes zero-mean circularly symmet-ric complex Gaussian noise with covariance E(nn H) = σ2I.Assuming ω, γ, and σ are deterministic unknowns ( γ and 
+
+σ are nuisance parameters), the CRB of ω, given waveform 
+
+S, can be written, adapting [50, Theorem 4.1], as 1
+
+CRB ω (S) = σ2
+
+2|γ|2 ∥P⊥ 
+
+> (S⊗I)atr
+
+(S ⊗ I) ˙atr ∥−22 . (3) Here, the effective Tx-Rx steering vector is denoted by atr =
+
+atr (ω) ≜ at(ω) ⊗ ar(ω) and its derivative with respect to ω
+
+by ˙atr = ˙atr (ω) ≜ ∂∂ω atr (ω). Moreover, P⊥ 
+
+> X
+
+is the projection matrix onto the orthogonal complement of the range of X.
+
+B. Prior results on CRB-optimal waveforms and arrays 1) Optimal waveform designs: CRB-minimizing unit-power waveforms S⋆ are solutions to the optimization problem 
+
+min  
+
+> S
+
+CRB ω (S) s.t. trace (SHS) ≤ 1. (4) While CRB ω (S) is nonconvex in S, it is a convex function of the waveform covariance matrix Rs = SHS. Expressing the CRB (3) in terms of the waveform covariance matrix Rs, the problem (4) becomes a convex semidefinite program (SDP), and the optimal Rs in (4) has the following form (for some 
+
+λ1, λ 2 ≥ 0) [23], [30]: 
+
+Rs = λ1
+
+ataHt
+
+∥at∥22
+
++ λ2
+
+P⊥ 
+
+> at
+
+˙at ˙aHt P⊥
+
+> at
+
+∥P⊥ 
+
+> at
+
+˙at∥22
+
+. (5) Intuitively, allocating Tx power beyond the two-dimensional subspace in (5) is wasteful (necessarily increases the CRB). Using (5), (4) can be shown to reduce to [23], [30], [31] 
+
+min 
+
+> λ1,λ 2
+
+σ2
+
+2|γ|2
+
+1
+
+NtNr
+
+[λ1χ(Dr) + λ2χ(Dt)] −1
+
+s.t. λ1 + λ2 = 1 , λ 1 > 0, λ 2 ≥ 0,
+
+(6) where the strict inequality λ1 > 0 ensures that the target is illuminated (providing a finite CRB), whereas λ2 is allowed to be zero. Moreover, χ(·) denotes the so-called “spatial variance”, which for a linear array D, with “spatial mean” 
+
+μ(D), is defined as 
+
+χ(D) ≜ 1
+
+|D| 
+
+X
+
+> d∈D
+
+(d − μ(D)) 2, μ(D) ≜ 1
+
+|D| 
+
+X
+
+> d∈D
+
+d. (7) Hence, optimal transmit waveforms are functions of the Tx and Rx spatial variances χ(Dt), χ (Dr) per (6). In physical terms, χ(D) represents the moment of inertia of the array geometry [11]. A higher spatial variance indicates that the array elements are distributed further from the geometric       
+
+> 1By the parameter transformation property [51, Sec. 3.6], CRB θ(S) =
+> 1(πcos( θ)) 2CRB ω(S). Because this scalar transformation is independent of the design variables, any geometry or waveform minimizing CRB ωis also optimal for CRB θ.
+
+centroid (e.g., concentrated toward the aperture edges), which is distinct from the concept of array sparsity. If 
+
+χ(Dt) < χ (Dr), (8) then optimal waveforms correspond to coherent beamforming 
+
+in the target direction ω, i.e., the “sum beam” [23], [30], [31]: 
+
+S⋆ = ua Ht (ω)
+
+√Nt
+
+, ∥u∥2 = 1 . (9) Optimal waveforms beyond (9) exist when χ(Dt) = χ(Dr)
+
+[23]. When χ(Dt) > χ (Dr), these correspond to transmitting infinitesimal energy in the target direction [23], [30], which has limited practical relevance. Focusing on (9), for brevity, we note that S⋆ depends on the Tx array geometry via at(ω).Moreover, the single-target CRB is a function of the Rx array spatial variance χ(Dr), as (3) given (9) reduces to [31] CRB ω (S⋆) = σ2
+
+2|γ|2
+
+1
+
+NtNr
+
+χ−1(Dr). (10) Results (9) and (10) enable characterizing the set of waveforms and array geometries that jointly minimize the CRB. 
+
+2) Jointly optimal array-waveform designs: The Rx array geometry with maximal spatial variance χ(Dr) minimizes the CRB in (10). We constrain the aperture to the set of non-negative integers, i.e., L ∈ N+, representing integer multiples of half wavelength spacings; this ensures a minimum physical separation between elements and prevents sensor overlap [15]– [17]. The spatial variance is maximized by the so-called “clustered array” placing sensors at the ends of the aperture [31, Lemma 1]: 
+
+KLN ≜
+
+(
+
+UN/ 2 ∪ (L − U N/ 2), if N even ,
+
+U(N −1) /2 ∪ (L − U (N +1) /2), if N odd , (11) where UN ≜ {0, 1, . . . , N − 1} is the N -sensor uniform linear array (ULA). Fig. 1 illustrates a clustered Rx array 
+
+Dr = K20 6 . Hence, given Nt, Nr, and L, the jointly optimal array-waveform tuple is given by S⋆ in (9), D⋆ 
+
+> r
+
+= KLNr in (11), and any D⋆ 
+
+> t
+
+satisfying χ(D⋆ 
+
+> r
+
+) > χ (D⋆ 
+
+> t
+
+) [31, Theorem 1], assuming this is feasible given the parameters Nt, Nr, and L.The existence of multiple optimal Tx arrays can be leveraged to imbue the joint Tx-Rx array geometry with desirable properties beyond a low CRB. For example, Fig. 1 illustrates an array configuration that both minimizes the single-target CRB when transmitting optimal (coherent) waveforms and guarantees the (maximal) identifiability of NtNr targets when transmitting orthogonal waveforms [31, Corollary 1]. Prior works have also observed similar array structures, where Rx elements are placed at the edges and Tx elements in the center, to be desirable in, e.g., ISAC [35], [44]. CRB-optimal arrays and waveforms (for sensing) provide a theoretical explanation for this, showing that for coherent transmission, the CRB depends only on Rx positions, thereby offering insight into various array geometries obtained via numerical optimization. While prior works [23], [30], [31] focused on coherent beamforming, mainly suited for tracking, MIMO systems often utilize orthogonal waveforms to illuminate the entire field of 4                                
+
+> 0246810 12 14 16 18 20 22 24 26 28 30 32 34 36
+> DΣ
+> Dr
+> Dt
+> Fig. 1. Array geometry with Nt= 6 Tx and Nr= 6 Rx sensors. The clustered Rx array Dr=KLNrmaximizes the spatial variance χ(Dr)given physical aperture constraint L= 20 . The sum co-array is contiguous and nonredundant.
+
+view without prior knowledge of ω. This raises open questions about CRB-optimal array designs in the case of orthogonal waveforms, a topic addressed next. III. CRB FOR ORTHOGONAL WAVEFORMS : R OLE OF SUM CO -ARRAY AND OPTIMAL ARRAY REDUNDANCY 
+
+Let Sorth denote an orthogonal waveform matrix, such that 
+
+Sorth ∈ { S ∈ CT ×Nt | SHS = 1 
+
+> Nt
+
+INt }. (12) In this case, the single-target CRB (3) depends on the spatial variances of both the Tx and Rx arrays, rather than solely the Rx array as for optimal (coherent) waveforms [52]: CRB ω (Sorth ) = σ2
+
+2|γ|2
+
+1
+
+Nr
+
+[χ(Dt) + χ(Dr)] −1 . (13) Expressions (13) and (10) highlight the distinct roles of the physical (Tx/Rx) array geometry when using coherent and orthogonal waveforms, respectively. 2 However, the virtual 
+
+so-called sum co-array is also known to be a key factor influencing identifiability and resolution in active sensing MIMO systems [5], [34]. Yet, the precise impact of the sum co-array and the repetition of its virtual elements (known as array redundancy) on (13), and thus on the fundamentally achievable MSE, remains unclear. In the following, we clarify this relationship. 
+
+A. Role of sum co-array and virtual element multiplicities 
+
+Formally, the sum co-array is defined as [32] 
+
+DΣ ≜ Dt + Dr = {dt + dr | dt ∈ D t; dr ∈ D r}. (14) Using (14), measurement model (1) can be expressed in terms of the NΣ ≜ |D Σ| ≤ NtNr unique virtual elements in DΣ =
+
+{dΣ[ℓ]}NΣ 
+
+> ℓ=1
+
+by rewriting the Tx–Rx steering vector as [53] 
+
+at(ω) ⊗ ar(ω) = Υa Σ(ω).
+
+Here, [aΣ(ω)] ℓ = ejd Σ[ℓ]ω is the sum co-array response vector and Υ ∈ { 0, 1}NtNr×NΣ is the redundancy pattern matrix accounting for the fact that several pairs of physical elements 
+
+(dt, d r) can give rise to the same sum co-array element dΣ ∈DΣ. This enables expressing the CRB in (13) equivalently in terms of the sum co-array and the multiplicities of its elements, 
+
+υ(dΣ) ≜ P 
+
+> m,n
+
+1(dt[m] + dr[n] = dΣ).
+
+Proposition 1. Given orthogonal transmit waveforms (12) , the single-target CRB (3) can be written as 
+
+CRB ω (Sorth ) = σ2
+
+2|γ|2
+
+1
+
+Nr
+
+˜χ−1(DΣ), (15)                       
+
+> 2The ratio between the CRBs for coherent (10) and orthogonal (13) waveforms is N−1t
+> χ(Dt)+ χ(Dr)
+> χ(Dr)∝N−1t(recall 0≤χ(Dt)< χ (Dr)), as beamforming concentrates a factor of Ntmore power in the target direction.
+
+where ˜χ(DΣ) is the multiplicity-weighted spatial variance, 
+
+˜χ(DΣ) ≜ 1
+
+NtNr
+
+X
+
+> dΣ∈D Σ
+
+(dΣ − ˜μ(DΣ)) 2υ(dΣ), (16) 
+
+with ˜μ(DΣ) ≜ 1
+
+> NtNr
+
+P 
+
+> dΣ∈D Σ
+
+dΣυ(dΣ) the weighted spatial mean, and υ(dΣ) the multiplicity of virtual element dΣ ∈ D Σ.Proof. See Appendix A. Proposition 1 reveals that array geometries with identical sum co-arrays and virtual sensor multiplicities achieve the same (single-target) CRB given orthogonal waveforms. For instance, this is the case for the arrays in Figs. 1 and 2b. Note that for optimal (coherent) waveforms, the CRB (10) does not depend on the sum co-array but only the Rx array. An array is said to be redundant if NΣ < N tNr and nonredundant if NΣ = NtNr. Nonredundant arrays are con-ventionally employed when launching orthogonal waveforms to maximize the size of the sum co-array, and thereby the number of spatial DoFs. Interestingly, however, nonredundant arrays need not minimize CRB, as we now show. 
+
+B. Optimal array geometry for orthogonal waveforms 
+
+The array geometry minimizing the single-target CRB, given orthogonal waveforms and constraints on both the phys-ical aperture and number of antennas, is the solution to min  
+
+> Dt,Dr⊂N
+
+CRB ω (Sorth ) s.t. 
+
+
+
+|D t| = Nt, |D r| = Nr,
+
+max Dt −min Dt ≤ Lt,
+
+max Dr −min Dr ≤ Lr.
+
+(17) The optimization problems throughout this work primarily involve discrete sensor locations Dt, Dr and antenna counts 
+
+Nt, Nr. These problems are inherently nonconvex due to their discrete domains. However, by reformulating the objective functions in terms of the arrays’ spatial variances, we identify optimal configurations analytically. 
+
+Corollary 1. Given Nt, N r, L t, L r ∈ N+, where Nt ≤ Lt + 1 
+
+and Nr ≤ Lr + 1 , the solution (D⋆ 
+
+> t
+
+, D⋆ 
+
+> r
+
+) to (17) is 
+
+D⋆ 
+
+> t
+
+= KLt 
+
+> Nt
+
+, D⋆ 
+
+> r
+
+= KLr 
+
+> Nr
+
+. (18) 
+
+Moreover, the sum co-array of (18) is redundant if Nt, N r ≥ 3.Proof. By (13), (17) is equivalent to separately maximizing the Tx and Rx spatial variances: 
+
+D⋆ 
+
+> t
+
+= arg max 
+
+> Dt⊂N
+
+χ(Dt) s.t. |D t| = Nt, max Dt −min Dt ≤ Lt,
+
+D⋆ 
+
+> r
+
+= arg max 
+
+> Dr⊂N
+
+χ(Dr) s.t. |D r| = Nr, max Dr −min Dr ≤ Lr.
+
+By [31, Lemma 1], the optimal solutions are given by (11), which directly yields (18) under the stated conditions. When both Nt ≥ 3 and Nr ≥ 3, we have {0, 1} ⊆ D t and {0, 1} ⊆ Dr =⇒ υ(1 = 0+1 = 1+0) ≥ 2, i.e., the array is redundant. Note that the (double clustered) array in Corollary 1 is an optimal array, not only for orthogonal waveforms, but also for coherent waveforms since the Rx array is a clustered array, as discussed in Section II-B. 5                                  
+
+> 0510 15 20 25 30 35 40 45 50 55 60
+> DΣ
+> Dr
+> Dt
+> (a) “Double clustered” Tx and Rx array.
+> 0510 15 20 25 30 35 40 45 50 55 60
+> DΣ
+> Dr
+> Dt
+> (b) “Canonical MIMO” array with nested structure. Fig. 2. Key array geometries illustrated for Nt=Nr= 6 Tx/Rx sensors, and physical aperture L= 30 . The optimal array geometry for orthogonal waveforms (a) has a redundant sum co-array (multiplicities shown in grey). The conventional MIMO array (b) has a nonredundant contiguous sum co-array.
+
+Fig. 2a illustrates the optimal array (18), and Fig. 2b a widely-considered nonredundant array [5], [54], [55]: 
+
+Dt = UNt , Dr = Nt UNr , (19) which has a nested structure consisting of a standard ULA (Tx) and dilated ULA (Rx). Interestingly, the “canonical MIMO array” in (19) does not minimize the CRB given orthogonal waveforms. This reveals a fundamental trade-off between CRB and the number of spatial DoFs. The next subsection examines this trade-off and its implications in the multi-target scenario. 
+
+C. Implications in multi-target scenario 
+
+The inherent redundancy of the optimal array geometry for orthogonal waveforms improves CRB at the expense of fewer distinct and contiguous sum co-array elements NΣ, which reduces the maximum number of identifiable targets [6], [56]. 
+
+Proposition 2 (Sum co-array of clustered array) . Let Nt
+
+and Nr be even. If Lt = Lr = L ≥ max( Nt, N r) + min( Nr, N t)/2−2 then the sum co-array of the optimal array 
+
+(18) has cardinality 
+
+NΣ = Nt + Nr + max( Nt, N r) − 3. (20) 
+
+Moreover, if L ≤ max( Nt, N r) + min( Nr, N t)/2 − 2 then 
+
+DΣ = U2L, i.e., the sum co-array is contiguous. Proof. See Appendix B. Hence, the optimal array (18) has NΣ = O(max( Nt, N r)) 
+
+sum co-array elements, compared to NtNr for a nonredundant array, such as the canonical MIMO array (19). The reduction in NΣ, and thereby identifiability, is the price paid for a lower CRB. Scenarios prioritizing low estimation error may therefore consider designs informed by the clustered array, while those requiring high identifiability would benefit from nonredundant designs. The practical estimation performance of these array geometries is compared numerically in Section VII. Thus far our discussion has assumed a given number of Tx and Rx elements. However, the number of available RF chains might only constrain the combined number of Tx +
+
+Rx sensors [35]. This raises two questions addressed in the next section: for a total sensor budget , (i) what is the optimal allocation between Tx and Rx elements, and (ii) how much can the CRB be improved via optimal allocation? IV. O PTIMAL SENSOR ALLOCATION BETWEEN TX AND RX
+
+This section investigates optimal transmit and receive sensor allocations minimizing the CRB in case of both orthogonal and coherent (optimal) transmit waveforms. Specifically, given sensor budget N and class of array geometries C, we solve: min. 
+
+> Nt,N r∈N+
+> Dt,Dr⊂N
+
+CRB ω (S) s.t. 
+
+(
+
+Nt + Nr ≤ N
+
+(Dt, Dr) ∈ C . (21) The following two classes of array geometries are considered: 1) Canonical MIMO array: 
+
+C = {(Dt, Dr) : Dt = UNt , Dr = Nt UNr }. (22) 2) Double-clustered (optimal) array in (18) of aperture L:
+
+C = {(Dt, Dr) : Dt = KLNt , Dr = KLNr }. (23) For the canonical MIMO array, Nt and Nr are conven-tionally chosen to be approximately equal ( Nt = ⌊N/ 2⌋,
+
+Nr = N −Nt) to maximize the size of the sum co-array (which is nonredundant and contiguous). This maximizes the number of spatial degrees of freedom available when transmitting independent, typically orthogonal, waveforms. Surprisingly, however, this widely employed sensor allocation strategy yields suboptimal CRB both in case of (22) and (23), as we now show. 
+
+A. Orthogonal waveforms: Equal allocation is suboptimal 
+
+Given orthogonal waveforms, SHS = 1 
+
+> Nt
+
+I, (21) becomes min 
+
+> Nt,N r∈N
+> Dt,Dr⊂N
+
+1
+
+Nr
+
+[χ(Dt)+ χ(Dr)] −1 s.t. 
+
+(
+
+Nt + Nr ≤ N
+
+(Dt,Dr) ∈ C . (24) 
+
+Theorem 1 (Canonical MIMO array) . Let SHS = 1 
+
+> Nt
+
+I and C
+
+be given by (22) , with N divisible by 5 and even. As N → ∞ ,
+
+(24) has the following solution: 
+
+N ⋆ 
+
+> t
+
+= 25 N, N ⋆ 
+
+> r
+
+= 35 N. (25) 
+
+Proof. Given (22), problem (24) can be rewritten as 
+
+min 
+
+> Nt,N r∈N+
+
+1
+
+Nr
+
+[χ (UNt )+ χ (NtUNr )] −1 s.t. Nt+Nr ≤ N. (26) First, note that by (7), for any a ≥ 0 and finite set D:
+
+χ (aD) = a2χ (D) . (27) Furthermore, the n-sensor ULA can be verified to satisfy: 
+
+χ (Un) = 112 (n2 − 1) . (28) Using (27) and (28), and setting Nt = θN and Nr = N −
+
+Nt = (1 − θ)N , for θ ∈ [0 , 1] , the objective function in (26) asymptotically approaches 
+
+lim  
+
+> N→∞
+
+1
+
+Nr
+
+1
+
+χ (UNt ) + N 2t χ (UNr ) = lim  
+
+> N→∞
+
+1
+
+Nr 112 (N 2t N 2r − 1) = lim  
+
+> N→∞
+
+12 
+
+θ2(1 − θ)3 N −5
+
+≥ lim   
+
+> N→∞
+
+10 · 625 18 N −5 (29) 6
+
+Here equality is reached when θ = 25 .The assumption in Theorem 1 that N is even and divisible by 5 is made to simplify the exposition and ensure that N ⋆ 
+
+> t
+
+= 
+
+> 25
+
+N , and N ⋆ 
+
+> r
+
+= 35 N are integers. Extensions to other values are possible but do not substantially change the result. Theorem 1 shows that equal sensor allocation, i.e., Nt =
+
+Nr = 12 N (when N is even), does not minimize the CRB when orthogonal waveforms are used. Indeed, by (25), using more Rx than Tx sensors is optimal. This can be attributed to the factor Nr in the denominator of the CRB expression (13). This result aligns with a similar observation made by [57] concerning sensor allocation in nested arrays in the context of passive sensing. 
+
+Remark 1. Given orthogonal waveforms, the canonical MIMO array can improve the CRB by 10% by allocating Tx/Rx sensors optimally, i.e., unequally instead of equally, since 
+
+lim  
+
+> N→∞
+
+CRB ω (Sorth ) Nr= 12 NNt= 12 N
+
+CRB ω (Sorth ) Nr= 35 NNt= 25 N
+
+= ( 12 )−2( 12 )−3
+
+( 25 )−2( 35 )−3 = 355 321 ≈ 1.106 .
+
+However, this optimal allocation does not maximize the num-ber of sum co-array elements NΣ(Nt, N r) = NrNt, as 
+
+NΣ( 25 N, 35 N )/N Σ( 12 N, 12 N ) = 24 /25 ≈ 0.96 . Hence, a 10% 
+
+improvement in CRB comes at the cost of roughly 4% fewer spatial DoFs (i.e., a smaller virtual aperture). 
+
+A similar result holds for the double-clustered array (23), when the aperture L is set to match that of the canonical MIMO array (22) with optimal allocation (25). 
+
+Theorem 2 (Double-clustered array) . Let SHS = 1 
+
+> Nt
+
+I, C be given by (23) , and L = 25 N ( 35 N − 1) , with N divisible by 5
+
+and even. As N → ∞ , (24) has the following solution: 
+
+N ⋆ 
+
+> t
+
+= 2 , N ⋆ 
+
+> r
+
+= N − 2. (30) 
+
+Proof. Given (23), problem (24) simplifies to 
+
+min 
+
+> Nt,N r∈N+
+
+1
+
+Nr
+
+χ  KLNt
+
++χ  KLNr
+
+ −1 s.t. Nt +Nr ≤ N. 
+
+For an even m > 2, a simple calculation shows that 
+
+χ(KLm) = 14 L2 + 112 m2 − 14 mL + 12 L− 14 m+ 16 . (31) Using (31) and L = 25 N ( 35 N −1) , we can write that χ(KLNr ) =  
+
+> 9625
+
+N 4 + O(N 3). Setting Nt = θN and Nr = N − Nt =(1 − θ)N , for θ ∈ [0 , 1] , then yields 
+
+lim  
+
+> N→∞
+
+1
+
+Nr
+
+χ(KLNt ) + χ(KLNr )−1 = lim  
+
+> N→∞
+
+1(1 − θ)625 18 N −5
+
+≥ lim  
+
+> N→∞
+
+625 18 N −5. (32) Here equality is reached when θ → 0. Hence, since Nt, N r >
+
+1 by assumption, Nt = 2 and Nr = N − 2 will minimize the CRB asymptotically for increasing N .Similar to Theorem 1, the assumption in Theorem 2 that N
+
+is even and divisible by 5 is made to simplify the exposition and ensure the aperture L = 25 N ( 35 N − 1) is an integer. 
+
+Remark 2. The CRB of the canonical MIMO array with equi-allocation can be improved ≈ 5.5× via optimal array design alone (with equal sensor allocation) and ≈ 11 × via jointly optimal array design and (unequal) sensor allocation. 3This gain in CRB comes at the cost of a factor min( Nt, N r) fewer spatial DoFs, since NΣ = O(max( Nt, N r)) instead of NΣ =
+
+NtNr.B. Coherent (optimal) waveforms: Equal allocation is optimal 
+
+Assuming coherent waveforms (9) are optimal, i.e., beam-forming in the target direction when (8) holds, (21) becomes: min. 
+
+> Nt,N r∈N+
+> Dt,Dr⊂N
+
+1
+
+NtNr
+
+χ−1(Dr) s.t. 
+
+(
+
+Nt + Nr ≤ N
+
+(Dt, Dr) ∈ C . (33) Equal sensor allocation turns out to be optimal in this case for both the canonical MIMO array (22) and double-clustered array (23); thus striking a balance between Tx beamforming gain and the number of independent measurements. This is in stark contrast to the orthogonal waveform case (Section IV-A), where Rx sensors are preferred over Tx sensors. 
+
+Proposition 3 (Coherent waveforms) . Suppose S is given by 
+
+(9) and N is even. As N → ∞ , (33) has the following solution in case of the canonical MIMO array (22) :
+
+N ⋆ 
+
+> t
+
+= N ⋆ 
+
+> r
+
+= 12 N. (34) 
+
+This is also the solution in case of the double-clustered array 
+
+(23) with aperture L = 12 N ( 12 N − 1) , i.e., the same aperture as the canonical MIMO array using sensor allocation (34) .Proof. 1) Canonical MIMO array: By (22) and (27), the problem in (33) simplifies to 
+
+min 
+
+> Nt,N r∈N+
+
+1
+
+N 3t Nr
+
+χ−1 (UNr ) s.t. Nt + Nr ≤ N. (35) Using (28) and setting Nt = θN and Nr = (1 − θ)N ,where θ ∈ [0 , 1] , we can write 
+
+lim  
+
+> N→∞
+
+1
+
+N 3t Nr
+
+χ−1 (UNr ) = lim  
+
+> N→∞
+
+12 
+
+N 3t Nr(N 2r − 1) = lim  
+
+> N→∞
+
+12 (θ(1 − θ)) 3 N −6
+
+≥ lim   
+
+> N→∞
+
+3 · 256 N −6. (36) Here equality is reached when θ = 12 .2) Double-clustered array: In this case, (33) simplifies to 
+
+min 
+
+> Nt,N r∈N+
+
+1
+
+NtNr
+
+χ−1  KLNr
+
+ s.t. Nt + Nr ≤ N. (37) By (31) and L = 12 N ( 12 N − 1) , we have χ(KLNr ) =  
+
+> 164
+
+N 4 + O(N 3). Setting Nt = θN and Nt = N − Nr =(1 − θ)N , for θ ∈ [0 , 1] , then yields 
+
+lim  
+
+> N→∞
+
+1
+
+NtNrχ(KLNr ) = lim  
+
+> N→∞
+
+64 
+
+θ(1 − θ) N −6
+
+≥ lim   
+
+> N→∞
+
+256 N −6. (38)                    
+
+> 3Here, 12 /(1 /2) 5
+> 625 /9≈5.5and 12 /(1 /2) 5
+> 625 /18 ≈11 follow from setting θ=12in (29), together with θ=12and θ= 0 in (32), respectively. 7
+
+TABLE I OPTIMAL SENSOR ALLOCATIONS FOR DIFFERENT ARRAY CONFIGURATIONS AND TRANSMIT WAVEFORMS (EQUAL ARRAY APERTURE FOR A GIVEN WAVEFORM ). T HE TOTAL NUMBER OF SENSORS IS N .
+
+Transmit waveform Coherent (optimal) Orthogonal Array  Clustered (optimal) Nt = Nr = 12 N Nt = 2 , Nr = N −2
+
+Canonical MIMO Nt = Nr = 12 N Nt = 25 N , Nr = 35 N0 5 10 15 20 25 30 35 40 
+
+> 10 -8
+> 10 -7
+> 10 -6
+> 10 -5
+> 10 -4
+> 10 -3
+> 10 -2
+
+Fig. 3. Single target CRB versus number of transmit sensors Nt for a total number of Nt + Nr = N = 40 sensors. Solid lines correspond to optimal waveforms and dashed lines to orthogonal waveforms. The (finite sensor) minimizers agree well with the derived asymptotical results (cf. Table I). 
+
+Equality is achieved in the final inequality when θ = 12 .Again, the assumption that N is even in Proposition 3 is made to simplify the exposition and ensure that N ⋆ 
+
+> t
+
+= N ⋆ 
+
+> r
+
+=
+
+N/ 2 is an integer. Table I summarizes the optimal sensor allocations derived in Theorems 1 and 2 and Proposition 3. 
+
+C. Impact of optimal sensor allocation on CRB for finite N 
+
+To conclude this section, we numerically evaluate the op-timal allocation of sensors between the Tx and Rx arrays for finite N . Fig. 3 shows the CRB as a function of the number of transmit sensors Nt for N = 40 (with Nr = N − Nt)and σ2 
+
+> 2|γ|
+
+= 1. The aperture for the clustered array is set to L = 25 N ( 35 N − 1) and L = 12 N ( 12 N − 1) for optimal and orthogonal waveforms, respectively. When orthogonal waveforms are used, the CRB is minimized at Nt = 2 for the double-clustered array, and at Nt = 25 N = 16 for the canoni-cal MIMO array (dashed lines). For the optimal (beamforming) waveform, the minimum occurs at Nt = Nr = 12 N = 20 , for both clustered and canonical arrays (solid lines). These results validate that the derived asymptotical results (Table I) also characterize the optimal sensor allocation well for finite N .Table II shows the asymptotic decay rate of the CRB for the optimal sensor allocations in Table I (cf. (29), (32), (36) and (38)). Given the asymptotically optimal sensor allocations, the CRB attained by the clustered array (11) is lower by a factor of 3 and 10 compared to the canonical MIMO array (19), for optimal and orthogonal waveforms, respectively (as 
+
+N → ∞ ). This also holds for moderate values of N , as shown in Fig. 4, which plots the ratio of the CRBs of the canonical MIMO array and clustered array as a function of N . The decay rate in Table II increases from N −5 to N −6 when using 
+
+TABLE II ASYMPTOTIC CRB AS N → ∞ (UP TO COMMON SCALING FACTORS ) 
+
+> WHEN SENSORS ARE OPTIMALLY ALLOCATED BETWEEN
+
+TX AND RX.
+
+Transmit waveform Optimal Orthogonal Array  Optimal 256 N −6 625 18 N −5
+
+Canonical MIMO 3 · 256 N −6 10 · 625 18 N −550 100 150 200 250 300 350 400 450 500 
+
+> 0246810 12
+
+Fig. 4. Ratio of CRBs (canonical MIMO over clustered array) versus total number of available sensors when these are optimally allocated between the Tx and Rx arrays. The ratio converges to the ratios of the asymptotic values listed in Table II as N → ∞ , while the clustered array already provides a significant CRB advantage for moderate N .
+
+optimal instead of orthogonal waveforms. This gain arises because beamforming concentrates a factor Nt = O(N ) more power in the target direction. V. P LANAR ARRAYS AND SPATIAL COVARIANCE 
+
+While the previous sections considered one-dimensional array geometries, in practice, two-dimensional arrays are of great interest in a wide range of radar and wireless communi-cations applications, due to their ability to discriminate both azimuth and elevation angles. This section extends the results of Section III to planar arrays, highlighting distinct challenges of the two-dimensional case arising from the fact that the CRB now depends on the spatial covariance matrix of the array geometry, rather than simply a scalar-valued variance. 
+
+A. Signal model and CRBM for planar arrays 
+
+A planar array can estimate both azimuth θ and elevation 
+
+ϕ, as parametrized by the two-dimensional spatial frequency vector ω = π[sin( θ) cos( ϕ), cos( θ) cos( ϕ)] ⊤. Analogously to (2), the Tx and Rx sensor positions (in half wavelengths) are 
+
+Dt = {dt[n]}Nt
+
+> n=1
+
+, Dr = {dr[m]}Nr
+
+> n=1
+
+,
+
+where dt[n] = [ d(1) t [n], d (2) t [n]] ⊤, dr[m] = [ d(1) r [m], d (2) r [m]] ⊤,and the respective array response vectors are [at(ω)] n =
+
+ejd⊤  
+
+> t[n]ω
+
+= ej(d(1) t [1] ω1+d(2) t [1] ω2) and [ar(ω)] n = ejd⊤  
+
+> r[n]ω
+
+=
+
+ej(d(1) r [1] ω1+d(2) r [1] ω2). The received signal model then becomes 
+
+y = ( S ⊗ I)( at(ω) ⊗ ar(ω)) γ + n, which contrary to (1) depends on both azimuth and elevation. Since the target angle ω is a two-dimensional vector, the 
+
+2 × 2 CRB matrix (CRBM), given waveform S, becomes: CRBM ω (S) = σ2
+
+2|γ|2
+
+Re  ˙AH 
+
+> tr
+
+(SH ⊗ I)P⊥ 
+
+> (S⊗I)atr
+
+(S ⊗ I) ˙Atr 
+
+−1.
+
+Here, the derivative of the array manifold is given by ˙Atr = 
+
+> ∂∂ω⊤
+
+(at ⊗ ar), which has dimensions NtNr × 2.8
+
+B. Optimality of sum beam: Necessary and sufficient condition 
+
+To optimize the CRB in the two-dimensional case, we define a scalar-valued objective function f : S2++ → R+,where we assume f (X−1) to be convex on the positive semi-definite cone. Typical choices of f include the trace, maximum eigenvalue and the determinant of the CRBM (known as A, D, and E-optimality, respectively [58]). Given f , optimal waveforms are solutions to the optimization problem 4
+
+min  
+
+> S
+
+f (CRBM ω (S)) s.t. trace (SHS) ≤ 1. (39) Similarly to (5), the waveform covariance Rs = SS H of any solution to (39) takes the form [23], [30] (for λ1 ≥ 0,
+
+Λ2 ⪰ 0): 
+
+Rs = λ1
+
+ataHt
+
+∥at∥22
+
++ P⊥
+
+> at
+
+˙AtΣ(Dt)− 12 Λ2Σ(Dt)− 12 ˙AHt P⊥
+
+> at
+
+∥at∥22
+
+. (40) Here, for a planar array D = {dn}Nn=1 , Σ(D) naturally extends the notion of spatial variance to spatial co variance as 
+
+Σ(D) ≜ 1
+
+|D| 
+
+X
+
+> d∈D
+
+(d − μ(D))( d − μ(D)) ⊤, (41) where μ(D) = 1
+
+> |D|
+
+P 
+
+> d∈D
+
+d ∈ R2 is the spatial mean. Similarly to (6), minimizing f (CRBM (ω)) with respect to S
+
+can be shown to reduce to solving the following problem 5
+
+min 
+
+> λ1,Λ2
+
+f
+
+ σ2
+
+2|γ|2NtNr
+
+λ1Σ(Dr)+ Σ 12 (Dt)Λ2Σ 12 (Dt)−1
+
+s.t. λ1 + trace (Λ2) = 1 , λ 1 > 0, Λ2 ⪰ 0.
+
+(42) The Tx and Rx spatial covariances ( Σ(Dt), Σ(Dr)) determine the optimal transmit waveform, which is a linear combination of the so-called “sum” and “difference” beams in (40). Unlike the one-dimensional case, multiple difference beams are pos-sible in two-dimensions by linearly combining the columns of 
+
+P⊥
+
+> at
+
+˙At.Analogously to (9), sum beam waveforms correspond to fully coherent transmission in the target direction ω:
+
+S⋆ = ua Ht (ω)
+
+√Nt
+
+, ∥u∥2 = 1 . (43) Given (43), the single-target CRBM simplifies to (cf. (10)) CRBM ω (S⋆) = σ2
+
+2|γ|2
+
+1
+
+NtNr
+
+Σ−1(Dr). (44) Necessary and sufficient conditions for (43) being a solution to (39) are currently unknown, which is in stark contrast to the one-dimensional (scalar) case [23]. The following theorem presents a novel necessary and sufficient condition for general 
+
+f and demonstrates the nontriviality of two-dimensional exten-sions to (8). We subsequently denote the array dimension by          
+
+> 4The CRBM for the azimuth θand elevation ϕcan be obtained via the standard Jacobian transformation [51, Sec. 3.6]. Depending on the choice of the objective function f(·), the optimal design parameters may become angle-dependent, and thus diverge from those that minimize f(CRBM ω).
+> 5After some straightforward but tedious algebra, omitted here for brevity.
+
+n to unify the treatment of linear ( n = 1 ) and planar ( n = 2 )geometries. 
+
+Theorem 3. (Sum beam optimality) Let f (X−1) : Sn 
+
+> ++
+
+→ R+
+
+be a convex function in X. Then (43) is a solution to (39) if and only if 
+
+Σ 12 (Dt)GΣ 12 (Dt) ⪯ trace (GΣ (Dr)) I, (45) 
+
+where 
+
+G = − ∇ Xf (X−1) X=Σ(Dr)
+
+= Σ−1(Dr)
+
+
+
+∇Y f (Y)|Y=Σ−1(Dr)
+
+
+
+Σ−1(Dr). (46) 
+
+Proof. See Appendix C. Note that, if f (X−1) is strictly convex in X, the condition in Theorem 3 identifies (43) as the unique global solution to (39). This property often holds for standard sensing objectives, such as the trace and log-determinant (but not for the maximum eigenvalue) of the CRBM. Physically, the condition (45) represents a balance between the transmit and receive spatial characteristics. The matrix G acts as a sensitivity metric, weighting the transmit spatial covariance Σ(Dt) by the gra-dient of the objective function evaluated at the receive spatial covariance Σ(Dr). Intuitively, this condition ensures that the receive array’s spatial resolution is sufficiently high relative to the transmit array; if this condition is violated, a difference-beam (which creates narrower peaks) may outperform the sum-beam. The general condition in (45) simplifies significantly for standard estimation objectives, as shown in the following corollary. 
+
+Corollary 2. If f (·) = log det( ·), then (45) reduces to 
+
+Σ(Dr) ⪰ 1 
+
+> n
+
+Σ(Dt). (47) 
+
+If f (·) = trace( ·), then (45) reduces to 
+
+Σ2(Dr) ⪰ 1trace( Σ−1(Dr)) Σ(Dt). (48) 
+
+Proof. The proof follows directly from substituting the spe-cific forms of f into the expression for G in (45). For 
+
+f (Y) = log det( Y), the gradient is ∇Y f (Y) = Y−1, which gives G = Σ−1(Dr). Substituting this into (45) and using 
+
+trace( In) = n yields (47). Similarly, for f (Y) = trace( Y),the gradient is ∇Y f (Y) = I, which gives G = Σ−2(Dr).Substituting this into (45) and rearranging yields (48). To illustrate (47), suppose that the Rx array equals the Tx array dilated by a scalar factor a > 0, i.e., Dr = aDt, such that 
+
+a2Σ(Dt) = Σ(Dr). Condition (47) then yields that a ≥ 1/√n
+
+guarantees sum-beam optimality. In other words, if the log det 
+
+function is used as objective, then, the Rx array may be up to a factor √n smaller than the Tx array (in n dimensions), while still preserving sum-beam optimality. Regarding (48), we first note that it differs from the follow-ing (proposed optimality) condition in [30]: trace  Σ(Dr)Σ−1(Dt) > 1. (49) This discrepancy arises because (49) is derived from an incomplete stationarity condition. More specifically, the La-grangian of the problem in (42) is (50). However, [30] 9
+
+L = trace 
+
+h
+
+λ1Σr +Σ 12 
+
+> t
+
+Λ2Σ 12
+
+> t
+
+i−1
+
++ μ(λ1 + trace (Λ2) − 1) 
+
+| {z }
+
+> ˜L
+
+−νλ 1 − trace (ZΛ 2). (50) uses ˜L, omitting the terms related to the inequality con-straints, which leads to incomplete stationarity conditions 
+
+∇λ1
+
+˜L = 0 and ∇Λ2
+
+˜L = 0. In contrast, (48) is derived from the complete Karush-Kuhn-Tucker (KKT) conditions. Indeed, there exist array geometries for which the coher-ent waveform (43) is suboptimal although (49) is satis-fied: An example is Dt = {(0 , 0) , (2 , 0) , (0 , 5) , (2 , 5) } and 
+
+Dr = {(0 , 0) , (2 , 0) , (0 , 2) , (2 , 2) }; this can be verified by numerically solving (convex) optimization problem (42) and comparing the objective value ( 5.42 ×10 −2) to the trace of (44) (6.25 × 10 −2). In contrast, (45) is a necessary and sufficient condition for the coherent waveform (43) to be the solution to (42). It can be verified that the example above does not satisfy (45), or more specifically, (48) ( [30] uses f (·) = trace (·)). To illustrate (48), we consider symmetrical Tx and Rx arrays, whose spatial covariance matrices become diagonal. We define an array D to be symmetric if 
+
+2μ(1) − d(1) 
+
+d(2) 
+
+
+
+∈ D , ∀d ∈ D or 
+
+ d(1) 
+
+2μ(2) − d(2) 
+
+
+
+∈ D , ∀d ∈ D ,
+
+(51) i.e., if D is symmetrical with respect to the vertical axis 
+
+μ(1) (D) or horizontal axis μ(2) (D) (or both). For a symmetric array D, the off-diagonal terms of Σ(D)
+
+vanish, as verified by substituting (51) into (41): 
+
+[Σ(D)] 1,2 = 1
+
+|D| 
+
+X
+
+> d∈D
+
+
+
+d(1) − μ(1) (D)
+
+  
+
+d(2) − μ(2) (D)
+
+
+
+= 12|D| 
+
+X
+
+> d∈D
+
+
+
+d(1) − μ(1) (D)
+
+  
+
+d(2) − μ(2) (D)
+
+
+
++ 12|D| 
+
+X
+
+> d∈D
+
+
+
+2μ(1) − d(1) − μ(1) (D)
+
+  
+
+d(2) − μ(2) (D)
+
+
+
+= 1
+
+|D| 
+
+X
+
+> d∈D
+
+0
+
+
+
+d(2) − μ(2) (D)
+
+
+
+= 0 . (52) Hence, if Σ(Dt) = diag (t1, t 2) and Σ(Dr) = diag (r1, r 2) de-note the spatial covariance of a symmetrical Tx and Rx array, respectively, then (48) simplifies to the pair of inequalities 
+
+r1
+
+
+
+1 + r1
+
+r2
+
+
+
+≥ t1 ∧ r2
+
+
+
+1 + r2
+
+r1
+
+
+
+≥ t2. (53) The ratio r1/r 2 thus determines how much smaller the spatial variance of the Rx array can be along each axis (compared to the Tx array), such that the optimal waveform is given by (43). In case the spatial covariance matrices are scaled identities, i.e., Σt = tIn, Σr = rIn, with r, t > 0, both conditions (47) and (48) simplify to (for n-dimensional arrays) 
+
+rn ≥ t. (54) Arrays with scaled identity spatial covariance matrices are referred to as isotropic arrays [11]. For such arrays, the CRBM with respect to the azimuth and elevation angles (not just spatial frequency ω) is independent of the actual values of 
+
+(θ, ϕ ) [11]. For example, consider isotropic Tx and Rx circular arrays with radii ρt and ρr, respectively. Regardless of the number of sensors, their spatial covariance matrices are scaled identities with t = ρ2t /2 and r = ρ2r /2. 6 Hence, for n = 2 ,condition (54) simplifies to ρr ≥ ρt/√2. This is consistent with the scaling relation 1/√n mentioned earlier. To conclude, when extending from linear to planar arrays, the condition for sum-beam optimality generally becomes less restrictive: the spatial covariance of the Rx array need not be strictly larger than that of the Tx array. Additionally, while this section focuses on planar arrays, the extension to cubic arrays is straightforward, as the spatial covariance matrix naturally generalizes from 2 × 2 to 3 × 3.
+
+C. Orthogonal waveforms and optimal array geometries 
+
+For orthogonal waveforms, (13) and (15) straightforwardly extend to planar arrays (see Appendix A for details): CRBM ω (Sorth ) = σ2
+
+2|γ|2
+
+1
+
+Nr
+
+[Σ(Dt) + Σ(Dr)] −1
+
+= σ2
+
+2|γ|2
+
+1
+
+Nr
+
+˜Σ−1(DΣ), (55) where the multiplicity-weighted spatial covariance of the sum co-array DΣ = Dt + Dr = {dt + dr | dt ∈ D t, dr ∈ D r} is defined similarly to (16) as 
+
+˜Σ(DΣ) = 1
+
+NtNr
+
+X
+
+> dΣ∈D Σ
+
+(dΣ − ˜μ(DΣ))( dΣ − ˜μ(DΣ)) ⊤υ(dΣ),
+
+with multiplicity-weighted spatial mean ˜μ(DΣ) =
+
+> 1
+> NtNr
+
+P 
+
+> dΣ∈D Σ
+
+dΣυ(dΣ).For both orthogonal and coherent waveforms, character-izing optimal planar arrays remains largely an open prob-lem. However, by simply extrapolating the intuition behind (11) to two dimensions, a low CRB can be achieved for many choices of objective function f (CRBM ω ) by placing Tx/Rx sensors along the boundary of a given area (e.g., rectangle or circle) containing them. We note that similar sensor selection problems have previously been addressed using greedy or submodular optimization methods [15], [59]. While such approaches can yield upper bounds on the worst-case suboptimality of any found array geometry, it can be shown that f (CRBM ω ) considered here unfortunately lacks the required submodularity property. Nevertheless, optimal planar array geometries of moderate size can be found via exhaustive search. Fig. 5 shows optimal                                                  
+
+> 6Let D={[x, y ]⊤|(x, y )=(cos(2 πi/N ),sin(2 πi/N )) ,i=0, . . . , N −1}denote the unit circular array, for which Σ(D) = 12I. Hence, the scaled array D(·)=ρ(·)Dsatisfies Σ(D(·)) = ρ2(·)/2I.10
+> 0123
+> 0
+> 1
+> 2
+> 3
+> (a) Nr= 6 .
+> 0123
+> 0
+> 1
+> 2
+> 3
+> (b) Nr= 8 .
+> 0123
+> 0
+> 1
+> 2
+> 3
+> (c) Nr= 10 .
+> 0123
+> 0
+> 1
+> 2
+> 3
+> (d) Nr= 12 .Fig. 5. Rx array geometries minimizing the trace of the CRBM for coherent (optimal) waveforms (44) for different number of sensors. Sensors tend to lie on the boundary of the 4×4square they are constrained to lie in.
+
+Rx array geometries for coherent waveforms with different numbers of sensors under a fixed aperture. These can be paired with any Tx array satisfying condition (48). Fig. 6 illustrates the corresponding optimal Tx/Rx array geometries for orthogonal waveforms. In both cases, multiple distinct geometries yield the same CRBM trace. Moreover, rotating the Rx array (coherent case) or both Tx and Rx arrays (orthogonal case) by ±90 ◦ leaves the trace unchanged. This observation motivates the study of array geometries with equal CRBM, which we explore in the next section. VI. CRB-E QUIVALENT ARRAY GEOMETRIES 
+
+The expressions (44) and (55) suggest that physical Rx arrays (sum co-arrays) with equal (multiplicity-weighted) spa-tial covariance yield the same CRBM, and thereby same estimation performance in the asymptotic, high SNR region when employing coherent (orthogonal) waveforms. This re-veals an overlooked degree of freedom in array design that we investigate next. Specifically, we establish a connection to sequences with equal sums of squares (SoS) [60], [61], a particular form of Diophantine equations . This connection yields a systematic method for constructing equi-CRB arrays, generalizing our earlier results in [31]. 
+
+A. Equal sums of squares (SoS) 
+
+The equal SoS problem of interest herein is that of finding two distinct integer sequences (xj )nj=1 and (ˆ xi)ni=1 of size n
+
+satisfying Pni=1 x2 
+
+> i
+
+= Pnj=1 ˆx2 
+
+> j
+
+. Solutions directly yield linear array geometries with equal spatial variance per (10) and (13), as we will explain later. Examples of equal SoS sequences are (4 , 7) and (1 , 8) for n = 2 , and (0 , 1, 4) and (2 , 2, 3) for 
+
+n = 3 . Such sequences are of interest when sensors lie on a grid of integer multiples of some unit spacing (typically half a wavelength). While generating integer sequences with equal SoS is in general computationally challenging, the problem simplifies considerably for pairs of integers ( n = 2 ). 7 We henceforth focus on this case to illustrate the basic idea of CRB-equivalent array design via equal SoS sequences. Given integers x1, x 2 and coprime integers k1, k 2, we can generate another pair of numbers with the same SoS [61, (4)]: 
+
+(ˆ x1, ˆx2)=
+
+ −(k22 −k21 )x1 +2 k1k2x2
+
+k21 + k22
+
+, 2k1k2x1 +( k22 −k21 )x2
+
+k21 + k22
+
+
+
+. (56) While it is straightforward to verify by substitution that ˆx21 +ˆx22 = x21 + x22, the challenge lies in choosing k1, k 2, given 
+
+> 7In absence of integer constraints, e.g., in case of so-called rational arrays [62], generating (rational or real) sequences with equal SoS may also be easier.
+
+x1, x 2, such that ˆx1, ˆx2 are also integers (and distinct from 
+
+x1, x 2). For simplicity, in the following we consider the case 
+
+{x1, x 2} = {ℓδ, (ℓ + 1) δ}, (57) 
+
+ℓ ∈ N, where setting δ = k21 + k22 ensures that ˆx1, ˆx2 ∈ Z.
+
+B. Linear arrays with equal spatial variance 
+
+The next example illustrates how distinct linear array ge-ometries with equal spatial variance, and thus identical CRB, can be systematically constructed using equal SoS sequences. 
+
+Example 1. Let ℓ = 1 and (k1, k 2) = (2 , 1) , such that 
+
+(x1, x 2) = (5 , 10) by (57) . Then, (ˆ x1, ˆx2) = (11 , −2) by (56) .Figs. 7a and 7b show the two example Tx array geometries of equal spatial variance constructed using these sequences: 
+
+D(a)t = {− x2, −x1, x 1, x 2} + x2 = {0, 5, 15 , 20 }D(b)t = {− ˆx1, ˆx2, −ˆx2, ˆx1} + ˆ x1 = {0, 9, 13 , 22 }.
+
+The Rx arrays in Figs. 7a and 7b are constructed similarly using equal SoS sequences (4 , 7) and (1 , 8) . Since their Tx and Rx spatial variances are equal, the array geometries in Figs. 7a and 7b achieve identical CRB when employing either orthogonal or optimal coherent transmit waveforms. 
+
+Example 1 can be extended to any number of elements straightforwardly by generating several pairs of equal SoS using (56) and (57), or by adding the same elements to both arrays, as Σ(D(a)t ∪ D ) = Σ(D(b)t ∪ D ) for any D such that 
+
+D(a)t ∩ D = D(b)t ∩ D = ∅ and Σ(D(a)t ) = Σ(D(b)t ). Note that the Rx array in Fig. 7b lacks consecutive sensors (separated by half a wavelength), unlike the one in Fig. 7a. This may be advantageous in presence of mutual coupling, which typically increases with decreasing inter-sensor spacing [63]. 
+
+C. Planar arrays with equal spatial covariance 
+
+Planar arrays require identifying pairs of two-dimensional 
+
+vector sequences (pi = [ xi, y i]⊤)ni=1 and (ˆ pj = [ˆ xi, ˆyi]⊤)nj=1 
+
+such that Pni pip⊤ 
+
+> i
+
+= Pnj ˆpj ˆp⊤ 
+
+> j
+
+. A straightforward con-struction is illustrated in Fig. 7c, where the planar array is the Cartesian product of two linear arrays, i.e., D(a) =
+
+{[x, y ]⊤ | (x, y ) ∈ {± x1, ±x2} × {± y1, ±y2}} , and D(b) =
+
+{[x, y ]⊤ | (x, y ) ∈ {± ˆx1, ±ˆx2} × {± ˆy1, ±ˆy2}} . In such “separable” cases, finding two pairs of linear arrays with equal spatial variance suffices to construct two planar arrays with equal spatial covariance. Another construction is given by the following proposition. 
+
+Proposition 4. Let (ˆ x1, ˆx2) and (ˆ y1, ˆy2) be two distinct sequences generated using (56) and the same coprime pair 
+
+k1, k 2 applied to (x1, x 2) and (y1, y 2), respectively. Then 
+
+X
+
+> i=1 ,2
+
+xi
+
+yi
+
+ xi yi
+
+ = X
+
+> i=1 ,2
+
+ˆxi
+
+ˆyi
+
+ ˆxi ˆyi
+
+ . (58) 
+
+Proof. The diagonal elements of the left and right hand side of (58) are equal, i.e., x21 + x22 = ˆ x21 + ˆ x22 and y21 + y22 =ˆy21 + ˆ y22 , since (56) generates a pair of integers with equal SoS 11                                                                                                       
+
+> 0123
+> 0
+> 1
+> 2
+> 3
+> 0123
+> 0
+> 1
+> 2
+> 3
+> (a) Nt=Nr= 6 .
+> 0123
+> 0
+> 1
+> 2
+> 3
+> 0123
+> 0
+> 1
+> 2
+> 3
+> (b) Nt=Nr= 8 .
+> 0123
+> 0
+> 1
+> 2
+> 3
+> 0123
+> 0
+> 1
+> 2
+> 3
+> (c) Nt=Nr= 8 .
+> 0123
+> 0
+> 1
+> 2
+> 3
+> 0123
+> 0
+> 1
+> 2
+> 3
+> (d) Nt=Nr= 8 .Fig. 6. Array geometries minimizing the CRBM trace for orthogonal waveforms (55). Multiple optimal configurations can exist, as (b), (c) and (d) demonstrate.
+> 0246810 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40
+> DΣ
+> Dr
+> Dt
+> (a) Array with same χ(Dt)and χ(Dr)as (b).
+> 0246810 12 14 16 18 20 22 24 26 28 30 32 34 36 38 40
+> DΣ
+> Dr
+> Dt
+> (b) Array with same χ(Dt)and χ(Dr)as (a).
+> 02468
+> 0
+> 2
+> 4
+> 6
+> 8
+> 02468
+> 0
+> 2
+> 4
+> 6
+> 8
+> (c) Separable Tx arrays with same Σ(Dt).
+> 0510
+> 0
+> 5
+> 10
+> 15
+> 20
+> 25
+> 0510
+> 0
+> 5
+> 10
+> 15
+> 20
+> 25
+> (d) Nonseparable arrays Fig. 7. Array geometries with equal spatial (co)variances. The array geome-tries in (a) and (b) have identical CRB values for both optimal and orthogonal transmit waveforms. Planar arrays with equal spatial covariance, as in (c) and (d), can be constructed similarly to the linear case using equal SoS sequences.
+
+by definition. For the off-diagonal elements, it can be verified that substitution of (56) into ˆx1 ˆy1 + ˆ x2 ˆy2 yields 
+
+ˆx1 ˆy1 + ˆ x2 ˆy2 = (( k22 − k21 )2 − 4k21 k22 )( x1y1 + x2y2)(k21 + k22 )2
+
+= (k22 + k21 )2(x1y1 + x2y2)(k21 + k22 )2 = x1y1 + x2y2,
+
+which completes the proof. Proposition 4 provides a means to construct pairs of pla-nar arrays (that are not necessarily separable into linear arrays) with equal spatial covariances and thereby CRBs, i.e., D(a) = {[x, y ]⊤ | (x, y ) ∈ {± (x1, y 1), ±(x2, y 2)}} and 
+
+D(b) = {[x, y ]⊤ | (x, y ) ∈ {± (ˆ x1, ˆy1), ±(ˆ x2, ˆy2)}} . Fig. 7d shows examples of such arrays generated using (56) and (57), coprime pair (k1, k 2) = (2 , 1) , and parameter ℓ = −1, 1.VII. N UMERICAL EXAMPLES 
+
+This section investigates the empirical performance of the maximum-likelihood estimator (MLE) using the array geome-tries examined in Sections III, IV and VI to complement the preceding CRB-based analysis. We consider the MLE of ω for a fixed waveform matrix S of length T = Nt samples. Given the received signal (1), the MLE can be shown to reduce to the following joint Tx-Rx beamformer [64]: 
+
+ˆω = arg max 
+
+> ¯ω∈[−π,π )
+
+|yH(Sa t(¯ ω) ⊗ ar(¯ ω)) |2
+
+∥Sa t(¯ ω) ⊗ ar(¯ ω)∥22
+
+. (59) The ground truth target angle and reflectivity are set to 
+
+ω = 0 and γ = 1, respectively, such that the SNR is  
+
+> |γ|2
+> σ2
+
+= 1 
+
+> σ2
+
+. The squared error of the MLE is averaged over 
+
+10 4 Monte Carlo trials with independent noise realizations. In the MLE performance plots (Figs. 8 to 10), colors distinguish arrays as follows: black–clustered, red–canonical MIMO, and blue/green–the arrays in Figs. 7a and 7b. Fig. 8 shows the estimation performance of the clustered array (black lines) with the canonical MIMO array (red lines) for optimal (coherent) and orthogonal transmit waveforms. Here the N = 20 sensors are optimally allocated to the transmitter and receiver following Table I. The clustered array has a better asymptotical performance for both waveforms, as expected. The poor performance of the canonical MIMO array in Fig. 8a is caused by ambiguities introduced by the dilated ULA at the receiver when transmitting optimal (coherent) waveforms. In contrast, the clustered array avoids such ambiguities due to its Rx array containing ULA segments. As seen in Fig. 8b (and Fig. 9a) the MLE performance curves may cross in the non-asymptotic (low SNR) regime. This behavior is due to the distinct sidelobe levels of each array geometry, which lead to different error characteristics before the performance converges to the asymptotic CRB limit. 
+
+1) Impact of optimal sensor allocation: Fig. 10 com-pares the MLE performance of clustered Tx and Rx ar-rays with equal and optimal sensor allocations. The results show that proper allocation yields a substantial performance gain. Indeed, the MLE improves drastically even in the non-asymptotic SNR region when moving from equal to optimal allocation, highlighting the critical role of sensor allocation in practice. 
+
+2) Arrays with identical CRB: Fig. 9 shows the estimation performance of the array geometries in Figs. 7a and 7b. Since the arrays have equal spatial variance, the corresponding MLEs converge to the same CRB. Although the CRBs are identical, the MLE performances deviate in the threshold region. While this can largely be attributed to differences in the beampatterns of the two arrays, precisely characterizing how the array geometry influences the (non-asymptotic) MLE performance, particularly for arrays with equal spatial variance, remains an open question and interesting direction for future work. VIII. C ONCLUSION 
+
+This work characterized fundamental performance limits of optimal array designs employing orthogonal and coherent (CRB-optimal) waveforms in active sensing. We demonstrated that for orthogonal waveforms, the single-target CRB is gov-erned by the sum of the spatial variances (or moments of inertia) of the transmit and receive arrays, or alternatively by the (multiplicity-)weighted spatial variance of the sum co-array. This reveals that CRB-optimal geometries are redundant, thereby showing a fundamental trade-off between estimation accuracy and target identifiability. We also derived the optimal allocation of a fixed number of sensors between the Tx and 12 10 -2 10 -1 10 0 10 1 10 2
+
+> 10 -8
+> 10 -6
+> 10 -4
+> 10 -2
+> 10 0
+
+(a) S = ua Ht (ω)    
+
+> √Nt10 -2 10 -1 10 010 110 2
+> 10 -8
+> 10 -6
+> 10 -4
+> 10 -2
+> 10 0
+
+(b) S = 1√Nt I.Fig. 8. MLE performance of the clustered (optimal) and canonical MIMO array, using coherent (optimal) (a) and orthogonal waveforms (b). The number of total sensors is N = 20 , optimally allocated following Table I. The clustered array has superior performance for optimal waveforms (cf. Fig. 8a), due to its Rx array geometry, and achieves a lower CRB in the asymptotic SNR regime for both optimal and orthogonal waveforms. 10 -2 10 -1 10 0 10 1 10 2
+
+> 10 -8
+> 10 -6
+> 10 -4
+> 10 -2
+> 10 0
+
+(a) S = ua Ht (ω)    
+
+> √Nt10 -2 10 -1 10 010 110 2
+> 10 -8
+> 10 -6
+> 10 -4
+> 10 -2
+> 10 0
+
+(b) S = 1√Nt I.Fig. 9. MLE performance of the arrays in Figs. 7a and 7b using an optimal waveform (a) and orthogonal waveforms (b). Despite identical CRBs, different array geometries can yield distinct MLE performance in the threshold region. 10 -2 10 -1 10 0 10 1 10 2
+
+> 10 -8
+> 10 -6
+> 10 -4
+> 10 -2
+> 10 0
+
+Fig. 10. MLE performance of double clustered array using orthogonal wave-forms. Optimal sensor allocation can significantly improve MLE accuracy. 
+
+Rx arrays, showing that unequal allocation (favoring more Rx than Tx sensors) minimizes the CRB in case of orthogonal waveforms. These findings question conventional array designs with equal sensor allocations and nonredundant sum co-arrays, providing benchmarks for the MSE improvement achievable by array design alone. For planar arrays, we derived a novel sufficient condition for guaranteeing that CRB-optimal wave-forms transmit nonzero power in the target direction. Lastly, we established a connection between sparse array design and Diophantine equations (equal sums of squares), along with a simple method for generating distinct array geometries with identical CRBs. Directions for future work include gaining analytical insight into the multi-target CRB and exploring performance limits of array design in the low-SNR (threshold) regime for various waveforms. APPENDIX A: P ROOF OF PROPOSITION 1We prove the more general two-dimensional case (55) (see Section V for details) of which (15) is a special case. For simplicity, let μ(.) denote μ(D(.)). Then 
+
+Σ(Dt) + Σ(Dr) = 1
+
+Nt
+
+X
+
+dt∈D t
+
+(dt − μt)( dt − μt)⊤
+
++ 1
+
+Nr
+
+X
+
+dr∈D r
+
+(dr − μr)( dr − μr)⊤
+
+= 1
+
+NtNr
+
+X
+
+dt∈D t
+
+X
+
+dr∈D r
+
+
+
+dtd⊤
+
+t + drd⊤
+
+r
+
+− μtd⊤
+
+t − dtμ⊤
+
+t − μrd⊤
+
+r − drμ⊤
+
+r + μtμ⊤
+
+t + μrμ⊤
+
+r
+
+
+
+= 1
+
+NtNr
+
+ X 
+
+dt∈D t
+
+X
+
+dr∈D r
+
+(dt + dr)( dt + dr)⊤
+
+−  μt + μr
+
+  μt + μr
+
+⊤
+
+= 1
+
+NtNr
+
+ X
+
+dΣ∈D Σ
+
+dΣd⊤
+
+Σ υ(dΣ)
+
+
+
+− ˜μΣ ˜μ⊤
+
+Σ(a)
+
+= 1
+
+NtNr
+
+X
+
+dΣ∈D Σ
+
+ dΣ − ˜μΣ
+
+  dΣ − ˜μΣ
+
+⊤υ(dΣ) = ˜Σ(DΣ),
+
+where in (a) we have used that P
+
+dΣ∈D Σ υ(dΣ) = NtNr.Note that χ(Dt) + χ(Dr) = ˜ χ(DΣ) simply follows from the above equality as a special (one-dimensional) case. APPENDIX B: P ROOF OF PROPOSITION 2Under Lt = Lr = L, (14) and (18) yield 
+
+DΣ = KLNt + KLNr
+
+= ( UNt/2 ∪ (L − U Nt/2)) + ( UNr/2 ∪ (L − U Nr/2)) = ( UNt/2 + UNr/2) ∪ (2 L − U Nt/2 − U Nr/2)
+
+∪ (L + UNt/2 − U Nr/2) ∪ (L − U Nt/2 + UNr/2).13 
+
+Let D1 ≜ UNt/2 + UNr/2 = U(Nt+Nr)/2−1, and note that 
+
+−U Nr/2 − U Nt/2 = −D 1 = D1 − (Nt + Nr)/2 + 2 ,
+
+UNt/2 − U Nr/2 = D1 − Nr/2 + 1 ,
+
+UNr/2 − U Nt/2 = D1 − Nt/2 + 1 .
+
+Furthermore, denote α ≜ L − Nr/2 + 1 , β ≜ L − Nt/2 + 1 ,and δ ≜ 2L − (Nt + Nr)/2 + 2 . Then we can write 
+
+DΣ = D1 ∪ (D1 + δ)
+
+| {z }
+
+> ≜D2
+
+∪ (D1 + α)
+
+| {z }
+
+> ≜D3
+
+∪ (D1 + β)
+
+| {z }
+
+> ≜D4
+
+.
+
+By the inclusion-exclusion principle, |A∪B| = |A| +|B|−|A∩B| :
+
+|D Σ| = |D 1 ∪D 2|+|D 3 ∪D 4|−| (D1 ∪ D 2)∩(D3 ∪ D 4)|.
+
+To characterize the above cardinalities, we will show that D1
+
+and D2 are disjoint, as well as D1 ∪ D 2 and D3 ∪ D 4. Firstly, 
+
+min D2 − max D1 = δ − (Nt + Nr)/2 + 2 = 2 L − Nt − Nr +4 ≥ max( Nt, N r) > 0 by assumption L ≥ max( Nt, N r) + min( Nr, N t)/2 − 2. Hence, 
+
+D1 ∩ D 2 = ∅ =⇒ |D 1 ∪ D 2| = 2 |D 1| = Nt + Nr − 2.
+
+Moreover, since D3 ∪ D 4 is contiguous, 
+
+|D 3 ∪ D 4| = ( Nt + Nr)/2 − 1 + |α − β| = max( Nt, N r) − 1.
+
+Finally, (a) D1 ∩(D3 ∪D 4) = ∅, (b) D2 ∩(D3 ∪D 4) = ∅ imply 
+
+|(D1 ∪ D 2) ∩ (D3 ∪ D 4)| = 0 .
+
+To prove (a), let ga = min( D3 ∪D 4)−max( D1) and note that 
+
+ga = min( α, β ) − (Nt + Nr)/2 + 2 = L − max( Nt, N r) − min( Nr, N t)/2 + 3 . (60) Hence, ga ≥ 1, by assumption L ≥ max( Nt, N r) + min( Nr, N t)/2−2, which implies that D1 ∩ (D3 ∪ D 4) = ∅.For (b), let gb = min( D2)−max( D3 ∪D 4). It can be verified 
+
+gb = δ − max( α, β ) − max D1 = ga. (61) Hence, gb ≥ 1 = ⇒ D 2 ∩ (D3 ∪ D 4) = ∅. This yields (20) as 
+
+NΣ = |D Σ| = Nt + Nr − 2 + max( Nt, N r) − 1 − 0.
+
+Setting L ≤ max( Nt, N r) + min( Nr, N t)/2 − 2 in (60) yields 
+
+ga = gb ≤ 1 by (61), which by virtue of D1, D2 and D3 ∪ D 4
+
+being ULAs implies that DΣ = U2L, i.e., DΣ is contiguous. □
+
+APPENDIX C: P ROOF OF THEOREM 3For notational convenience, let Σ(.) ≜ Σ(D(.)) and define 
+
+α ≜ 2|γ|2NtNr/σ 2, which is positive by definition. The optimization problem in (42) can then be relaxed to 
+
+min  
+
+> λ1,Λ2
+
+f
+
+ αλ 1Σr + αΣ 12 
+
+> t
+
+Λ2Σ 12
+
+> t
+
+−1
+
+(62) s.t. λ1 + tr( Λ2) = 1 , λ1 ≥ 0, Λ2 ⪰ 0. (63) Here the only relaxation is that the second constraint in (63) is replaced by a (non-strict) inequality. We will show that the stationary point of this relaxed problem also satisfies the orig-inal (strict) constraint and is therefore optimal for (42). The objective function (62) is convex in λ1 and Λ2 (following the assumption made in the theorem that f (X−1) is convex and given that X = αλ 1Σr + αΣ 12 
+
+> t
+
+Λ2Σ 12 
+
+> t
+
+is linear in λ1 and Λ2), the feasible set is convex and strictly feasible, and therefore strong duality holds. The KKT conditions are necessary and sufficient for optimality. Introducing dual variables μ, ν, Z for the constraints in (63), the Lagrangian is 
+
+L(λ1, Λ2, μ, ν, Z) = f (X−1) + μ(λ1 + trace (Λ2) − 1) 
+
+− νλ 1 − trace (ZΛ 2). (64) Let G = −∇ Xf (X−1) = X−1  ∇X−1 f (X−1) X−1,and denote the differential operator by d. First note that 
+
+dX−1 = −X−1(dX)X−1, and that dX = αΣr (dλ 1) + 
+
+αΣ 12 
+
+> t
+
+(dΛ2) Σ 12 
+
+> t
+
+. Let Y = X−1, such that f (Y). Then applying the chain rule, and substituting the expressions above, we can write 
+
+df = trace 
+
+
+
+(∇Y f (Y)) ⊤ (dY)
+
+
+
+= trace  −X−1∇X−1 f (X−1)X−1(dX) = trace  −G⊤(dX)
+
+= −αtrace  G⊤Σr
+
+ (dλ 1) + trace 
+
+
+
+−αΣ 12 
+
+> t
+
+G⊤Σ 12 
+
+> t
+
+(dΛ2)
+
+
+
+.
+
+Hence the partial derivatives of f (X−1) are given by 
+
+∂f (X−1)
+
+∂λ 1
+
+= −αtrace (GΣ r), ∂f (X−1)
+
+∂Λ2
+
+= −αΣ 12 
+
+> t
+
+GΣ 12 
+
+> t
+
+.
+
+The KKT conditions are 
+
+λ⋆1 + trace (Λ⋆2) = 1 , λ1⋆ ≥ 0, Λ⋆2 ⪰ 0, (65) 
+
+ν⋆ ≥ 0, Z⋆ ⪰ 0, (66) 
+
+ν⋆λ⋆1 = 0 , trace (Z⋆Λ⋆2) = 0 , (67) 
+
+− αtrace (GΣ r) + μ⋆ − ν⋆ = 0 , (68) 
+
+− αΣ 12 
+
+> t
+
+GΣ 12 
+
+> t
+
++ μ⋆I − Z⋆⊤ = 0. (69) Finally, we can show that (45) is a necessary and sufficient condition for (λ⋆
+
+> 1
+
+, Λ2) = (1 , 0) to be optimal. 
+
+(Sufficiency) Observe that if (45) holds, then the tuple 
+
+(λ⋆1, Λ⋆2, μ ⋆, ν ⋆, Z⋆) = 
+
+
+
+1, 0, α trace (GΣ r) , 0, α trace (GΣ r) I − αΣ 12 
+
+> t
+
+GΣ 12
+
+> t
+
+
+
+(70) satisfies all KKT conditions. Satisfying the KKT conditions is a sufficient condition for optimality of (λ⋆
+
+> 1
+
+, Λ⋆
+
+> 2
+
+) = (1 , 0).
+
+(Necessity) Now suppose that (λ⋆
+
+> 1
+
+, Λ⋆
+
+> 2
+
+) = (1 , 0) are optimal. Since the problem in (62) and (63) is strictly feasible (Slater’s condition holds), the KKT conditions are a necessary condition for optimality of (λ⋆
+
+> 1
+
+, Λ⋆
+
+> 2
+
+). Then, since the KKT conditions hold, Z ⪰ 0, and hence (45) must hold. We conclude that, (45) is necessary and sufficient for (λ1, Λ2) = (1 , 0) to be a solution to (62)-(63) and hence also to (42). Substituting 
+
+(λ1, Λ2) = (1 , 0) into (40) then yields (43). □
+
+REFERENCES [1] S. Sun, A. P. Petropulu, and H. V. Poor, “MIMO Radar for Advanced Driver-Assistance Systems and Autonomous Driving: Advantages and Challenges,” IEEE Signal Process. Mag. , vol. 37, no. 4, pp. 98–117, 2020. [2] P. H¨ ugler, F. Roos, M. Schartel, M. Geiger, and C. Waldschmidt, “Radar Taking Off: New Capabilities for UAVs,” IEEE Microw. Mag. , vol. 19, no. 7, pp. 43–53, 2018. 14 
+
+[3] N. Sharaga, J. Tabrikian, and H. Messer, “Optimal Cognitive Beamform-ing for Target Tracking in MIMO Radar/Sonar,” IEEE J. Sel. Topics Signal Process. , vol. 9, no. 8, pp. 1440–1450, 2015. [4] X. Liu, T. Wei, C. Sun, Y. Yang, and J. Zhuo, “High-resolution two-dimensional imaging using MIMO sonar with limited physical size,” 
+
+Applied Acoustics , vol. 182, p. 108280, 2021. [5] J. Li and P. Stoica, “MIMO Radar with Colocated Antennas,” IEEE Signal Process. Mag. , vol. 24, no. 5, pp. 106–114, Sept 2007. [6] J. Li, P. Stoica, L. Xu, and W. Roberts, “On Parameter Identifiability of MIMO Radar,” IEEE Signal Process. Lett. , vol. 14, no. 12, pp. 968–971, 2007. [7] A. Mirkin and L. Sibul, “Cram´ er-Rao bounds on angle estimation with a two-dimensional array,” IEEE Trans. Signal Process. , vol. 39, no. 2, pp. 515–517, 1991. [8] S. Yau and Y. Bresler, “Worst case Cram´ er-Rao bounds for parametric estimation of superimposed signals with applications,” IEEE Trans. Signal Process. , vol. 40, no. 12, pp. 2973–2986, 1992. [9] A. B. Gershman and J. F. B¨ ohme, “A note on most favorable array geometries for DOA estimation and array interpolation,” IEEE Signal Process. Lett. , vol. 4, no. 8, pp. 232–235, 1997. [10] R. Nielsen, “Azimuth and elevation angle estimation with a three-dimensional array,” IEEE J. Ocean. Eng. , vol. 19, no. 1, pp. 84–86, 1994. [11] U. Baysal and R. Moses, “On the geometry of isotropic arrays,” IEEE Trans. Signal Process. , vol. 51, no. 6, pp. 1469–1478, 2003. [12] U. Oktel and R. Moses, “A bayesian approach to array geometry design,” 
+
+IEEE Trans. Signal Process. , vol. 53, no. 5, pp. 1919–1923, 2005. [13] H. Gazzah and S. Marcos, “Cram´ er-Rao bounds for antenna array design,” IEEE Trans. Signal Process. , vol. 54, no. 1, pp. 336–345, 2006. [14] Q. He, R. S. Blum, H. Godrich, and A. M. Haimovich, “Target Velocity Estimation and Antenna Placement for MIMO Radar With Widely Separated Antennas,” IEEE J. Sel. Topics Signal Process. , vol. 4, no. 1, pp. 79–100, 2010. [15] E. Tohidi, M. Coutino, S. P. Chepuri, H. Behroozi, M. M. Nayebi, and G. Leus, “Sparse Antenna and Pulse Placement for Colocated MIMO Radar,” IEEE Trans. Signal Process. , vol. 67, no. 3, pp. 579–593, 2019. [16] M. G. Amin, Ed., Sparse Arrays for Radar, Sonar, and Communications .Wiley-IEEE, 2024. [17] I. van Der Werf, C. A. Kokke, R. Heusdens, R. C. Hendriks, G. Leus, and M. Coutino, “Transmit and Receive Sensor Selection Using the Multiplicity in the Virtual Array,” in Proc. of the European Signal Process. Conf. (EUSIPCO) , 2024, pp. 2272–2276. [18] S. Shahsavari and P. Pal, “Cram´ er-Rao Bounds and Resolution Benefits of Sparse Arrays in Measurement-Dependent SNR Regimes,” IEEE Signal Process. Lett. , vol. 32, pp. 601–605, 2025. [19] V. Roy, S. P. Chepuri, and G. Leus, “Sparsity-enforcing sensor selection for DOA estimation,” in Proc. of the IEEE Int. Wrksp. Computat. Advances Multi-Sensor Adaptive Process. (CAMSAP) , 2013, pp. 340– 343. [20] S. P. Chepuri and G. Leus, “Sparsity-Promoting Sensor Selection for Non-Linear Measurement Models,” IEEE Trans. Signal Process. , vol. 63, no. 3, pp. 684–698, 2015. [21] C. A. Kokke, M. Coutino, R. Heusdens, and G. Leus, “Array Design for Angle of Arrival Estimation Using the Worst-Case Two-Target Cram´ er-Rao Bound,” IEEE Open J. Signal Process. , vol. 6, pp. 453–467, 2025. [22] I. van Der Werf, G. Leus, and S. P. Chepuri, “Receiver Antenna Allocation for Joint Sensing and Communications,” in Proc. of the IEEE Sensor Array Multichannel Signal Process. Wrksp. (SAM) , 2024, pp. 1– 5. [23] J. Li, L. Xu, P. Stoica, K. W. Forsythe, and D. W. Bliss, “Range Com-pression and Waveform Optimization for MIMO Radar: A Cram´ er–Rao Bound Based Study,” IEEE Trans. Signal Process. , vol. 56, no. 1, pp. 218–232, 2008. [24] I. van der Werf, R. C. Hendriks, R. Heusdens, and G. Leus, “Transmit Waveform Design Based on the Cram´ er-Rao Lower Bound,” in Proc. of the IEEE Int. Wrksp. Computat. Advances Multi-Sensor Adaptive Process. (CAMSAP) , 2023, pp. 166–170. [25] P. Stoica, H. He, and J. Li, “Optimization of the Receive Filter and Transmit Sequence for Active Sensing,” IEEE Trans. Signal Process. ,vol. 60, no. 4, pp. 1730–1740, 2012. [26] M. Bic˘ a and V. Koivunen, “Radar Waveform Optimization for Target Parameter Estimation in Cooperative Radar-Communications Systems,” 
+
+IEEE Trans. Aerosp. Electron. Syst. , vol. 55, no. 5, pp. 2314–2326, 2019. [27] X. Liu, T. Huang, N. Shlezinger, Y. Liu, J. Zhou, and Y. C. Eldar, “Joint Transmit Beamforming for Multiuser MIMO Communications and MIMO Radar,” IEEE Trans. Signal Process. , vol. 68, pp. 3929– 3944, 2020. [28] F. Liu, Y.-F. Liu, A. Li, C. Masouros, and Y. C. Eldar, “Cram´ er-Rao Bound Optimization for Joint Radar-Communication Beamforming,” 
+
+IEEE Trans. Signal Process. , vol. 70, pp. 240–253, 2022. [29] X. Li, V. C. Andrei, U. J. M¨ onich, and H. Boche, “Optimal and Robust Waveform Design for MIMO-OFDM Channel Sensing: A Cram´ er-Rao Bound Perspective,” in Proc. of the IEEE Int. Conf. Commun. (ICC) ,2023, pp. 3516–3521. [30] K. Forsythe and D. Bliss, “Waveform Correlation and Optimization Issues for MIMO Radar,” in Proc. of the Asilomar Conf. Signals, Syst. and Comput. , 2005, pp. 1306–1310. [31] I. van der Werf, G. Leus, and R. Rajam¨ aki, “Jointly Optimal Array Geometries and Waveforms in Active Sensing: New Insights Into Array Design via the Cram´ er-Rao Bound,” in Proc. of the IEEE Int. Conf. on Acoustics, Speech and Signal Process. (ICASSP) , 2025, pp. 1–5. [32] R. T. Hoctor and S. A. Kassam, “The unifying role of the coarray in aperture synthesis for coherent and incoherent imaging,” Proc. IEEE ,vol. 78, no. 4, pp. 735–752, Apr 1990. [33] W. Roberts, L. Xu, J. Li, and P. Stoica, “Sparse Antenna Array Design for MIMO Active Sensing Applications,” IEEE Trans. Antennas Propag. ,vol. 59, no. 3, pp. 846–858, 2011. [34] R. Rajam¨ aki and P. Pal, “Importance of Array Redundancy Pattern in Active Sensing,” in Proc. of the IEEE Int. Wrksp. Computat. Advances Multi-Sensor Adaptive Process. (CAMSAP) , 2023, pp. 156–160. [35] R. Liu, M. Li, Q. Liu, and A. L. Swindlehurst, “DOA Estimation-Oriented Joint Array Partitioning and Beamforming Designs for ISAC Systems,” IEEE Trans. Wireless Commun. , vol. 24, no. 3, pp. 2052–2066, 2025. [36] H. Sun, J. Tabrikian, H. Messer, and H. Gao, “Optimal Ratio Between Coherent and Orthogonal Signals in Sparse MIMO Radar,” in Proc. of the IEEE Sensor Array Multichannel Signal Process. Wrksp. (SAM) ,2024, pp. 1–5. [37] D. Khan and K. L. Bell, “Explicit Ziv–Zakai bound for analysis of DOA estimation performance of sparse linear arrays,” Signal Processing ,vol. 93, no. 12, pp. 3449–3458, 2013, special Issue on Advances in Sensor Array Processing in Memory of Alex B. Gershman. [38] Z. Zhang, Z. Shi, and Y. Gu, “Ziv-Zakai Bound for DOAs Estimation,” 
+
+IEEE Trans. Signal Process. , vol. 71, pp. 136–149, 2023. [39] Z. Zhang, Z. Shi, C. Shao, J. Chen, M. S. Greco, and F. Gini, “Ziv–Zakai Bound for 2D-DOAs Estimation,” IEEE Trans. Signal Process. , vol. 72, pp. 2483–2497, 2024. [40] J. Tabrikian, O. Isaacs, and I. Bilik, “Cognitive antenna selection for doa estimation in automotive radar,” in IEEE Radar Conf. , 2016, pp. 1–5. [41] ——, “Cognitive Antenna Selection for Automotive Radar Using Bobrovsky-Zakai Bound,” IEEE J. Sel. Topics Signal Process. , vol. 15, no. 4, pp. 892–903, 2021. [42] J. Tabrikian, “Barankin bounds for target localization by MIMO radars,” in Proc. of the IEEE Sensor Array Multichannel Signal Process. Wrksp. (SAM) , 2006, pp. 278–281. [43] J. Wang, L. Bacharach, M. N. El Korso, and P. Larzabal, “Barankin bound vs Cram´ er-Rao bound for interferometric-like array design at low SNR,” in 31st European Signal Processing Conference (EUSIPCO) ,2023, pp. 1554–1558. [44] R. Liu, A. L. Swindlehurst, and M. Li, “CRB optimization for joint array partitioning and beamforming design in ISAC systems,” in Proc. of the Asilomar Conf. Signals, Syst. and Comput. IEEE, 2024, pp. 898–902. [45] I. van der Werf and G. Leus, “On Jointly CRB-optimal Arrays and Waveforms for Multi-Target Active Sensing,” in Proc. of the Asilomar Conf. Signals, Syst. and Comput. , 2025, pp. 1724–1728. [46] R. Liu, M. Li, and A. Lee Swindlehurst, “Joint Array Partitioning and Beamforming Designs in ISAC Systems: A Bayesian CRB Perspective,” 
+
+IEEE J. Sel. Areas Commun. , vol. 44, pp. 150–164, 2026. [47] A. R. Chiriyath, B. Paul, G. M. Jacyna, and D. W. Bliss, “Inner Bounds on Performance of Radar and Communications Co-Existence,” IEEE Trans. Signal Process. , vol. 64, no. 2, pp. 464–474, 2016. [48] F. Liu, Y. Cui, C. Masouros, J. Xu, T. X. Han, Y. C. Eldar, and S. Buzzi, “Integrated Sensing and Communications: Toward Dual-Functional Wireless Networks for 6G and Beyond,” IEEE J. Sel. Areas Commun. , vol. 40, no. 6, pp. 1728–1767, 2022. [49] I. Bekkerman and J. Tabrikian, “Target Detection and Localization Using MIMO Radars and Sonars,” IEEE Trans. Signal Process. , vol. 54, no. 10, pp. 3873–3883, 2006. [50] P. Stoica and A. Nehorai, “MUSIC, maximum likelihood, and Cramer-Rao bound,” IEEE Trans. Acoust., Speech, Signal Process. , vol. 37, no. 5, pp. 720–741, 1989. [51] S. M. Kay, Fundamentals of statistical signal processing: estimation theory . Prentice-Hall, Inc., 1993. 15 
+
+[52] R. Boyer, “Performance Bounds and Angular Resolution Limit for the Moving Colocated MIMO Radar,” IEEE Trans. Signal Process. , vol. 59, no. 4, pp. 1539–1552, 2011. [53] R. Rajam¨ aki, S. P. Chepuri, and V. Koivunen, “Hybrid Beamforming for Active Sensing Using Sparse Arrays,” IEEE Trans. Signal Process. ,vol. 68, pp. 6402–6417, 2020. [54] D. W. Bliss, K. W. Forsythe, and C. D. Richmond, “MIMO Radar: Joint Array And Waveform Optimization,” in Proc. of the Asilomar Conf. Signals, Syst. and Comput. , 2007, pp. 207–211. [55] C.-Y. Chen and P. P. Vaidyanathan, “MIMO Radar Space–Time Adaptive Processing Using Prolate Spheroidal Wave Functions,” IEEE Trans. Signal Process. , vol. 56, no. 2, pp. 623–635, 2008. [56] D. Bliss and K. Forsythe, “Multiple-input multiple-output (MIMO) radar and imaging: degrees of freedom and resolution,” in Proc. of the Asilomar Conf. Signals, Syst. and Comput. , 2003, pp. 54–59. [57] M. Wang, Z. Zhang, and A. Nehorai, “Further results on the Cram´ er–Rao bound for sparse linear arrays,” IEEE Transactions on Signal Processing ,vol. 67, no. 6, pp. 1493–1507, 2019. [58] S. Boyd and L. Vandenberghe, Convex Optimization . Cambridge University Press, March 2004. [59] M. Shamaiah, S. Banerjee, and H. Vikalo, “Greedy sensor selection: Leveraging submodularity,” in 49th IEEE Conference on Decision and Control (CDC) , 2010, pp. 2572–2577. [60] I. A. Barnett and C. W. Mendel, “On Equal Sums of Squares,” The American Mathematical Monthly , vol. 49, no. 3, pp. 157–170, 1942. [61] C. J. Bradley, “82.7 Equal Sums of Squares,” The Mathematical Gazette ,vol. 82, no. 493, pp. 80–85, 1998. [62] P. Kulkarni and P. P. Vaidyanathan, “Non-Integer Arrays for Array Signal Processing,” IEEE Trans. Signal Process. , vol. 70, pp. 5457–5472, 2022. [63] C.-L. Liu and P. P. Vaidyanathan, “Super Nested Arrays: Linear Sparse Arrays With Reduced Mutual Coupling—Part I: Fundamentals,” IEEE Trans. Signal Process. , vol. 64, no. 15, pp. 3997–4012, 2016. [64] J. E. Evans, D. F. Sun, and J. R. Johnson, “Application of advanced signal processing techniques to angle of arrival estimation in ATC navi-gation and surveillance systems,” Massachusetts Inst of Tech Lexington Lincoln Lab, Tech. Rep. 582, 1982. 
+
+Ids van der Werf (Graduate Student Member, IEEE) received the B.Sc. and MSc degrees in electrical engineering from the Delft University of Technology, The Netherlands, in 2019 and 2022, respectively. He is currently pursuing the Ph.D. degree in the Signal Processing Systems group, Delft University of Technology, The Netherlands. 
+
+Robin Rajam¨ aki (Member, IEEE) received his D.Sc. degree in electrical engineering in 2021 from Aalto University, Finland. He was a postdoctoral scholar at the University of California San Diego in 2022-2024, and Aalto University in 2021-2022 / 2024-2025. He is currently an assistant professor at Tampere University, Finland. His research interests lie in the intersection of theory and applications of statistical signal processing, with a focus on multisensor systems in sensing and communications. 
+
+Geert Leus (Fellow, IEEE) is a Full Professor at the Faculty of EEMCS at the Delft University of Technology, The Netherlands. Geert Leus received the 2021 EURASIP Individual Technical Achieve-ment Award, a 2024 and 2005 IEEE SPS Best Paper Award, and a 2002 IEEE SPS Young Author Best Paper Award. He is a Fellow of the IEEE and EURASIP. Geert Leus was a Member-at-Large of the BoG of the IEEE SPS, the Chair of the IEEE SPCOM TC, the Chair of the EURASIP SPMuS TAC, the EiC of EURASIP JASP and the EiC of EURASIP Signal Processing.
