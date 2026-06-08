@@ -1,0 +1,54 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-08T21:52:07.050047+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 0,
+    "deep_cap": 8,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 13,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2606.00923v1",
+      "source": "arxiv",
+      "title": "Graph Attention-Based Virtual Metrology for Film Deposition Processes in Semiconductor Manufacturing",
+      "abstract": "Artificial intelligence-driven semiconductor manufacturing increasingly operates at nanometer and angstrom scales, where precise process control depends on accurate and timely metrology. However, physical metrology is limited by measurement latency, cost, and sampling constraints, restricting its scalability in high-volume production. Virtual metrology (VM) has emerged as an effective alternative by predicting wafer-level characteristics from equipment sensor data. Despite recent advances, many existing VM models remain correlation-driven and lack the ability to capture structured dependencies among heterogeneous process variables, while providing limited interpretability. This study presents a graph attention-based VM framework for film deposition processes that integrates temporal feature learning with structured parameter-layer dependency modeling. The proposed approach represents each step-parameter pair as a node and extracts temporal embeddings from high-frequency equipment traces using convolutional feature encoders. A parameter-to-layer graph attention mechanism is employed to model directional dependencies, enabling each film layer to aggregate relevant process information. The framework is evaluated using industrial deposition data collected from production wafers, where the model predicts film thickness from multivariate sensor signals. Experimental results demonstrate improved predictive performance compared to baseline models. In addition, analysis of the learned attention weights reveals interpretable parameter-layer relationships consistent with physical process behavior, capturing dominant process factors and temporal dependencies across deposition stages. These results indicate that the proposed framework enhances prediction accuracy and provides meaningful insight into process dynamics, supporting effective monitoring and optimization in semiconductor manufacturing.",
+      "authors": [
+        "Tao Han",
+        "Suk Ki Lee",
+        "Hyunwoong Ko"
+      ],
+      "primary_category": "cs.CE",
+      "categories": [
+        "cs.CE"
+      ],
+      "published": "2026-05-30T23:18:32+00:00",
+      "link": "https://arxiv.org/pdf/2606.00923v1",
+      "tags": [
+        "keyword:sat-asm-prec",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Graph attention virtual metrology for film deposition, applicable as advanced metrology to improve precision in satellite assembly.",
+      "llm_evidence_cn": "图注意力虚拟量测用于薄膜沉积，作为先进量测方法可提升卫星装配精度",
+      "llm_evidence": "图注意力虚拟量测用于薄膜沉积，作为先进量测方法可提升卫星装配精度",
+      "canonical_evidence": "图注意力虚拟量测用于薄膜沉积，作为先进量测方法可提升卫星装配精度",
+      "llm_tldr_en": "Presents graph attention virtual metrology for semiconductor film deposition, predicting wafer quality from sensor data and capturing process variable dependencies. The method overcomes physical metrology limits and offers transferable advanced metrology for satellite assembly precision control.",
+      "llm_tldr_cn": "针对半导体制造中物理量测延迟高、成本高的问题，本文提出基于图注意力的虚拟量测框架，从设备传感器数据预测晶圆质量，捕捉工艺变量间的结构化依赖。该方法可迁移至卫星地面装配领域，作为一种先进量测技术，通过实时预测装配质量来提升精度控制水平。",
+      "llm_tldr": "针对半导体制造中物理量测延迟高、成本高的问题，本文提出基于图注意力的虚拟量测框架，从设备传感器数据预测晶圆质量，捕捉工艺变量间的结构化依赖。该方法可迁移至卫星地面装配领域，作为一种先进量测技术，通过实时预测装配质量来提升精度控制水平。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "improving satellite ground assembly precision through advanced metrology",
+      "matched_requirement_id": "req-7",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

@@ -1,0 +1,242 @@
+Title: Graph Attention-Based Virtual Metrology for Film Deposition Processes in Semiconductor Manufacturing
+
+URL Source: https://arxiv.org/pdf/2606.00923v1
+
+Published Time: Tue, 02 Jun 2026 01:06:14 GMT
+
+Number of Pages: 10
+
+Markdown Content:
+GRAPH ATTENTION-BASED VIRTUAL METROLOGY FOR FILM DEPOSITION PROCESSES IN SEMICONDUCTOR MANUFACTURING 
+
+Tao Han 1,2,†, Suk Ki Lee 1,†, Hyunwoong Ko 1,∗
+
+> 1
+
+School of Manufacturing Systems and Networks, Arizona State University, Mesa, AZ 
+
+> 2
+
+Intel Foundry, OTF Site, AZ 
+
+ABSTRACT 
+
+Artificial intelligence-driven semiconductor manufacturing increasingly operates at nanometer and angstrom scales, where precise process control depends on accurate and timely metrol-ogy. However, physical metrology is inherently limited by mea-surement latency, cost, and sampling constraints, which restrict its scalability in high-volume production environments. Virtual metrology (VM) has therefore emerged as an effective alternative by predicting wafer-level characteristics from equipment sensor data. Despite recent advances, many existing VM models re-main primarily correlation-driven and lack the ability to cap-ture structured dependencies among heterogeneous process vari-ables, while also providing limited interpretability. This study presents a graph attention-based VM framework for film depo-sition processes that integrates temporal feature learning with structured parameter–layer dependency modeling. The proposed approach represents each process step–parameter pair as a node and extracts temporal embeddings from high-frequency equip-ment traces using convolutional feature encoders. A parameter-to-layer graph attention mechanism is then employed to model directional dependencies, enabling each film layer to selectively aggregate relevant process information. The framework is eval-uated using industrial deposition data collected from production wafers, where the model predicts film thickness from multivariate sensor signals. Experimental results demonstrate improved pre-dictive performance compared to baseline models. In addition, analysis of the learned attention weights reveals interpretable parameter–layer relationships that are consistent with physical process behavior, capturing both dominant process factors and temporal dependencies across deposition stages. These results indicate that the proposed framework not only enhances predic-tion accuracy but also provides meaningful insight into process dynamics, supporting more effective monitoring and optimization in semiconductor manufacturing. 
+
+Keywords: Machine Learning, Graph Attention, Film Depo-
+
+> †Joint first authors
+> ∗Corresponding author: Hyunwoong.Ko@asu.edu
+
+sition, Virtual Metrology, Semiconductor Manufacturing 1. INTRODUCTION 
+
+The rapid expansion of Artificial Intelligence (AI), high-performance computing, and large-scale digital infrastructures has dramatically increased the global demand for advanced semi-conductor devices [1]. Semiconductor manufacturing, therefore, plays a foundational role in enabling modern digital technologies, supporting applications ranging from data centers and intelligent systems to consumer electronics and communication networks [2]. As device architectures continue to evolve toward increas-ingly complex nanoscale structures, fabrication processes must achieve extremely high levels of precision, stability, and repeata-bility across hundreds of sequential manufacturing steps [3, 4]. Within this complex production environment, thin film deposi-tion represents one of the most critical unit operations because the physical and chemical properties of deposited films directly influence device performance, reliability, and yield [5]. Modern integrated circuits may contain dozens to hundreds of deposited material layers, including dielectric, conductive, and semicon-ductor films, each requiring stringent control of thickness, com-position, and uniformity during fabrication [6]. To ensure that such strict specifications are satisfied during manufacturing, semiconductor fabrication facilities rely heavily on advanced metrology techniques to measure film thickness and other structural characteristics throughout the production flow [7]. However, physical metrology measurements introduce addi-tional process latency, measurement variability, and equipment capacity constraints in high-volume manufacturing environments [8]. As semiconductor production scales further in complex-ity and throughput, these limitations increasingly motivate the development of predictive approaches that can estimate wafer characteristics without performing direct physical measurements [9]. Virtual metrology (VM) has therefore emerged as an impor-tant paradigm that leverages equipment sensor data and statistical modeling to infer post-process wafer properties [10]. In recent years, machine learning (ML) approaches, includ-ing ensemble methods, deep neural networks, and temporal se-1
+
+> arXiv:2606.00923v1 [cs.CE] 30 May 2026
+
+quence models, have been widely explored to improve VM pre-diction accuracy by learning complex relationships between mul-tivariate process signals and wafer-level outcomes [9]. Particu-larly, in film deposition processes, VM models have demonstrated the potential to estimate film thickness using high-frequency equipment traces such as chamber pressure, temperature, and gas flow signals recorded during wafer processing [11]. How-ever, many existing VM approaches remain primarily correlation-driven and do not explicitly account for structured causal relation-ships among heterogeneous process variables [12]. Semicon-ductor deposition processes involve complex interactions among multiple equipment parameters across different processing stages, where the historical evolution of certain signals may influence downstream process outcomes [13]. Conventional regression models or standard neural architectures may capture statistical associations but often struggle to represent such structured mul-tivariate causal relationships in a principled manner [12]. In addition, the lack of interpretability in many deep learning-based VM models limits their practical utility for diagnosing process deviations or identifying influential parameters in industrial man-ufacturing environments [9]. To address these challenges, this study proposes a graph attention-based VM framework for film deposition processes that integrates temporal feature learning with structured causal re-lationship modeling between process parameters and deposited film layers. The proposed method represents each process step–parameter pair as a node in a graph structure and ex-tracts temporal embeddings from equipment trace signals using convolution-based feature encoders. A graph attention mecha-nism is then employed to model parameter-to-layer relationships, allowing each film layer representation to selectively aggregate relevant process information from multiple parameter nodes. Fur-thermore, the framework employs a parameter-to-layer graph at-tention mechanism to capture directional causal relationships be-tween process parameters and film layers, improving predictive capability while providing the potential for process interpretabil-ity. The effectiveness of the proposed approach is evaluated us-ing industrial deposition process data collected from production wafers, where the model predicts film thickness based on high-frequency equipment sensor measurements and demonstrates im-proved performance compared with baseline models. The remainder of this paper is organized as follows. Sec-tion 2 reviews prior research on semiconductor manufacturing metrology and ML-based VM methods. Section 3 formulates the problem and presents the proposed graph attention and causal learning framework. Section 4 describes the experimental setup and evaluates the model using real industrial deposition data. Finally, Section 5 concludes the paper and discusses potential directions for future research. 
+
+> 2. RELATED WORK 2.1. Semiconductor Manufacturing Metrology
+
+Accurate metrology plays a critical role in semiconductor manufacturing by enabling process monitoring, feedback con-trol, and yield optimization across complex fabrication work-flows [14]. As device geometries continue to shrink and process complexity increases, the ability to precisely measure structural and material properties such as film thickness, critical dimen-sions, and surface morphology becomes essential for maintaining manufacturing stability [7]. Modern semiconductor fabrication, therefore, relies on a diverse set of metrology techniques de-signed to characterize nanoscale features with high precision and throughput [7]. Among these techniques, critical dimension scanning elec-tron microscopy (CD-SEM) has been widely adopted for inline dimensional measurement due to its high spatial resolution and relatively high measurement throughput [15]. Optical metrology methods, including spectroscopic ellipsometry and optical scat-terometry, are also extensively used for thin-film characterization because they enable non-destructive measurement of film thick-ness and optical properties [16]. These optical approaches typ-ically rely on inverse modeling techniques that match measured optical responses with simulated models to estimate structural parameters [16]. In addition to inline metrology tools, high-resolution characterization techniques such as transmission elec-tron microscopy (TEM) and atom probe tomography (APT) are commonly used as reference measurements to investigate mate-rial structures at atomic or near-atomic resolution [12]. Despite their accuracy, physical metrology techniques face several challenges in high-volume semiconductor manufacturing environments [12]. Measurement throughput limitations, equip-ment cost, and sampling constraints often prevent metrology tools from measuring every wafer or every process step [17]. Further-more, as feature sizes approach the atomic scale, measurement uncertainty and process-induced variations can become compa-rable in magnitude, making it increasingly difficult to maintain accurate and stable measurements across production wafers [17]. These limitations have motivated the exploration of data-driven alternatives that can complement or partially replace conventional metrology approaches [18]. 
+
+> 2.2. Machine Learning-Based Virtual Metrology
+
+VM has emerged as an important approach for predicting wafer-level quality metrics using equipment sensor data collected during semiconductor processing [19]. Instead of relying solely on direct physical measurements, VM models infer post-process characteristics by learning relationships between process vari-ables and final wafer outcomes [19]. This capability enables predictive monitoring of manufacturing processes while reduc-ing reliance on costly and time-consuming metrology operations [12]. Early VM studies primarily relied on statistical learning techniques such as linear regression, partial least squares re-gression, and support vector machines to model relationships between equipment parameters and wafer measurements [19]. While these models provided initial demonstrations of VM feasi-bility, their ability to capture complex nonlinear relationships in modern semiconductor processes remained limited [7]. More recently, ML and deep learning (DL) techniques have been increasingly adopted to improve VM performance [12]. En-semble learning methods such as random forests and gradient boosting models have been applied to handle high-dimensional sensor data and nonlinear process relationships [20]. More re-cently, DL approaches have significantly advanced VM perfor-mance. Architectures such as convolutional neural networks 2(CNNs) and recurrent neural networks (RNNs) have been widely used to capture temporal patterns in equipment sensor traces. More recently, advanced DL architectures have been developed that offer the potential to further improve VM performance. In particular, attention-based learning mechanisms have shown promise for modeling complex dependencies in high-dimensional process data [21, 22]. Graph neural networks provide a natu-ral framework for representing structured relationships among process variables and capturing interactions between equipment parameters observed during wafer processing [23]. By combin-ing graph-based representations with attention mechanisms, such models can selectively identify influential process signals and learn structured dependencies among parameters that contribute to wafer-level outcomes [24]. These models have demonstrated promising predictive accuracy for estimating wafer-level proper-ties such as film thickness, etch depth, and critical dimensions [24]. In film deposition processes specifically, VM approaches have leveraged equipment trace signals such as chamber temper-ature, gas flow rates, and plasma emission spectra to estimate film thickness and related quality metrics [19]. Several studies have reported high prediction accuracy using sensor data col-lected during chemical vapor deposition or plasma processing steps, highlighting the potential of ML-driven VM for improving process monitoring and control [11]. 
+
+> 2.3. Limitations of Existing Virtual Metrology Models
+
+Despite recent progress in ML-based VM, several challenges remain in applying these methods to complex semiconductor manufacturing processes [19]. One key limitation is that many existing VM models primarily rely on correlation-based learning and do not explicitly represent structured relationships among process variables [23]. Semiconductor fabrication processes of-ten involve complex interactions among multiple equipment pa-rameters across different processing stages, where the evolution of one variable may influence subsequent process outcomes [25]. Existing VM ML models may capture statistical correlations be-tween variables but often fail to represent these structured depen-dencies in a principled manner [23]. Another important challenge lies in the interpretability of VM models [26]. DL approaches frequently operate as black-box predictors, making it difficult for process engineers to un-derstand which equipment parameters or process conditions are responsible for predicted variations in wafer characteristics [20]. Such limitations reduce the usefulness of VM models for root cause analysis and process optimization in industrial manufac-turing environments [20]. These challenges motivate the de-velopment of modeling approaches that can explicitly capture structured relationships among process parameters while also providing improved interpretability of model predictions [24]. In this work, we address these limitations by introducing a graph attention-based VM framework that models parameter-to-layer dependencies and incorporates causal learning to better represent interactions among process variables at different process steps. 
+
+> 3. PROPOSED METHODOLOGY
+
+This section presents the proposed graph attention-based VM framework for predicting film thickness in semiconductor deposi-tion processes using equipment sensor data. The proposed model learns the relationship between multivariate process signals col-lected during wafer processing and the resulting film thickness measurements. During wafer processing, multiple equipment parameters are recorded across different process steps, produc-ing multivariate time-series signals that describe the evolution of chamber conditions. These signals capture dynamic process behaviors such as variations in precursor flow, chamber pressure, and temperature, which directly influence deposition kinetics and film growth mechanisms. To model the relationship between these time-varying pro-cess parameters and the resulting film layers, the proposed frame-work constructs a graph-based representation of the deposition process. Each pair of process steps and equipment parameters is represented as a node, and dependencies between parameters and film layers are modeled through a graph attention mecha-nism. The overall architecture consists of three components: (1) parameter node embedding, (2) parameter-to-layer dependency modeling via graph attention, and (3) thickness prediction. We first formulate the VM prediction problem and then describe the proposed modeling framework. Figure 1 illustrates the overall framework. 
+
+> 3.1. Problem Formulation
+
+Semiconductor film deposition constitutes a highly complex and dynamic process, wherein equipment sensors continuously monitor critical operational parameters—including chamber tem-perature, pressure, gas flow rates, and radio frequency (RF) power—at high sampling frequencies (e.g., 10 Hz). These real-time temporal variations serve as direct indicators of the internal chamber conditions and the underlying kinetics of film growth. Ultimately, the resulting film characteristics, specifically thick-ness, composition, and uniformity, are governed by the intricate interplay and collective influence of these multifaceted process parameters [13]. Consider a film deposition process consisting of 𝑆 process steps. At each step 𝑠 , a set of 𝑃 equipment parameters is moni-tored, including variables such as chamber temperature, pressure, and precursor gas flow rates. For each parameter 𝑝 at step 𝑠 , a time-series signal is recorded during wafer processing. Let 𝑥 𝑠, 𝑝 
+
+denote the time-series signal corresponding to parameter 𝑝 mea-sured during process step 𝑠 . The signal representation is defined as Eq. (1): 
+
+𝑥 𝑠, 𝑝 ∈ R𝑇 𝑠 , (1) where 𝑇 𝑠 denotes the number of temporal samples in process step 
+
+𝑠 .The complete set of process inputs for a wafer is defined as Eq. (2): 
+
+𝑋 = {𝑥 𝑠, 𝑝 ∈ R𝑇 𝑠 | 𝑠 = 1, . . . , 𝑆, 𝑝 = 1, . . . , 𝑃 }, (2) which represents the collection of multivariate time-series signals observed during the deposition process. After wafer processing is completed, metrology tools measure the thickness of deposited 3FIGURE 1: OVERALL FRAMEWORK OF THE PROPOSED METHODOLOGY 
+
+film layers. Assume that 𝐿 film layers are deposited during the process. The vector of true film thickness measurements for a wafer can be represented as Eq. (3): 
+
+𝑦 = [𝑦 1, 𝑦 2, . . . , 𝑦 𝐿 ]⊤ ∈ R𝐿 , (3) where 𝑦 𝑙 denotes the measured thickness of the 𝑙 -th film layer. The goal of VM is to learn a predictive function that maps the process input 𝑋 to the corresponding film thickness vector. This mapping can be expressed as Eq. (4): 
+
+ˆ𝑦 = 𝑓 𝜃 (𝑋 ), (4) where ˆ𝑦 = [ ˆ𝑦 1, . . . , ˆ𝑦 𝐿 ]⊤ ∈ R𝐿 represents the predicted thick-ness vector and 𝜃 denotes the trainable parameters of the model. Learning this mapping is challenging for several reasons. First, the process input 𝑋 consists of heterogeneous time-series signals with varying temporal lengths across process steps. Second, the influence of process parameters on film thickness may depend on complex interactions among parameters recorded at different stages of the deposition process [27]. To address these challenges, the proposed framework rep-resents each process step–parameter pair (𝑠, 𝑝 ) as a node in a structured representation and extracts temporal features from the corresponding sensor signals. These node representations are then used to model relationships between process parameters and deposited film layers for predicting wafer-level thickness mea-surements. 
+
+> 3.2. Parameter Node Embedding
+
+As defined in Eq. (1), each process parameter is observed as a time-series signal 𝑥 𝑠, 𝑝 during process step 𝑠 . In semiconductor deposition processes, these equipment traces reflect the temporal evolution of chamber conditions and process states that influence film formation. Temporal feature extraction from each parameter signal is defined as Eq. (5): 
+
+𝑧 𝑠, 𝑝 = Conv1D (𝑥 𝑠, 𝑝 ) ∈ R𝑇 𝑠 ×𝑑 ℎ , (5) where 𝑧 𝑠, 𝑝 denotes the temporal feature representation and 𝑑 ℎ
+
+is the embedding dimension. The convolutional filters capture 4local temporal patterns in equipment traces, enabling the model to encode transient variations in process conditions that influence deposition behavior. Since the signal length 𝑇 𝑠 may vary across process steps, temporal aggregation is applied to obtain a fixed-length represen-tation defined as Eq. (6): 
+
+ℎ𝑠, 𝑝 = 1
+
+𝑇 𝑠 𝑇 𝑠 ∑︂ 
+
+> 𝑡 =1
+
+𝑧 (𝑡 ) 
+
+> 𝑠, 𝑝
+
+∈ R𝑑 ℎ , (6) where ℎ𝑠, 𝑝 denotes the embedding of the parameter node corre-sponding to process step 𝑠 and parameter 𝑝 . This representation summarizes the temporal behavior of the corresponding equip-ment parameter during wafer processing. The complete set of parameter node embeddings is defined as Eq. (7): 
+
+𝑁 = {ℎ𝑠, 𝑝 | 𝑠 = 1, . . . , 𝑆, 𝑝 = 1, . . . , 𝑃 } ∈ R(𝑆 ·𝑃 ) × 𝑑 ℎ , (7) where each node in 𝑁 represents the temporal dynamics of a specific process parameter at a particular process step. Beyond instantaneous parameter values, thin film deposition is critically governed by their temporal evolution patterns—such as rising, falling, fluctuating, or stabilizing trends—over specific durations. Conv1D are employed to effectively extract these local temporal signatures; for instance, a gradual pressure increase may indicate shifts in deposition kinetics. Given that the duration 𝑇 𝑠 
+
+varies across different process steps, a temporal aggregation (av-eraging) operation is applied to normalize variable-length time-series features into fixed-length vectors, denoted as ℎ𝑠, 𝑝 , thereby ensuring input consistency for subsequent graph-based models. This vector ℎ𝑠, 𝑝 encapsulates the comprehensive temporal be-havior of a specific parameter within a designated process step, serving as an embedding representation for the corresponding "parameter node" and providing high-level semantic information essential for advanced process modeling. 
+
+> 3.3. Parameter-to-Layer Dependency Modeling via Graph Attention
+
+Film thickness in deposition processes is influenced by in-teractions among multiple equipment parameters across different process stages. For example, variations in precursor flow may influence deposition rate, while chamber pressure and tempera-ture affect reaction kinetics and film uniformity. Consequently, the relationship between process parameters and film layers can be represented as structured dependencies between equipment conditions and film formation outcomes. To capture these relationships, the proposed framework con-structs a directed bipartite graph consisting of parameter nodes and layer nodes. Parameter nodes correspond to the embeddings 
+
+𝑁 defined in Eq. (7), while each layer node 𝑙 is represented by a learnable embedding 𝑞 𝑙 ∈ R𝑑 ℎ representing the target film layer. The attention weight between layer node 𝑙 and parameter node embedding ℎ𝑠, 𝑝 is defined as Eq. (8): 
+
+𝛼 𝑙, (𝑠, 𝑝 ) = exp (︁ 𝑞 ⊤ 
+
+> 𝑙
+
+ℎ𝑠, 𝑝 /√𝑑 ℎ)︁∑︁ 
+
+> 𝑆 𝑠 ′=1
+
+∑︁ 𝑃 𝑝 ′=1 exp (︂ 𝑞 ⊤ 
+
+> 𝑙
+
+ℎ𝑠 ′ , 𝑝 ′ /√𝑑 ℎ)︂ 
+
+, (8) where 𝛼 𝑙, (𝑠, 𝑝 ) represents the relative importance of parameter 
+
+(𝑠, 𝑝 ) in determining the thickness of film layer 𝑙 . These attention weights allow the model to identify which process parameters contribute most strongly to the formation of each film layer. The representation of layer node 𝑙 is computed by aggregating parameter node embeddings according to the attention weights, as defined in Eq. (9): 
+
+𝑒 𝑙 =
+
+> 𝑆
+
+∑︂ 
+
+> 𝑠 =1
+> 𝑃
+
+∑︂ 
+
+> 𝑝 =1
+
+𝛼 𝑙, (𝑠, 𝑝 ) ℎ𝑠, 𝑝 ∈ R𝑑 ℎ , (9) where 𝑒 𝑙 denotes the representation of film layer 𝑙 . This aggrega-tion integrates information from multiple equipment parameters and captures the combined influence of chamber conditions on film growth. From a time-series modeling perspective, the learned atten-tion weights can also be interpreted as directional dependencies between process parameters and film layers. Inspired by the concept of Granger causality, these dependencies reflect how historical variations in equipment parameters contribute to film thickness formation during subsequent deposition stages. The complete set of layer representations is defined as Eq. (10): 
+
+𝐸 = {𝑒 𝑙 | 𝑙 = 1, . . . , 𝐿 } ∈ R𝐿 ×𝑑 ℎ , (10) This stage facilitates the transformation of intricate process data into graph-structured nodes, effectively bridging raw time-series signals and abstract semantic representations. Specifically, each embedding ℎ𝑠, 𝑝 encapsulates the state of an individual process parameter within a distinct step, while 𝑞 𝑙 embodies the model’s abstract comprehension of the target film layer’s desired prop-erties or characteristics. Given the high dimensionality of pa-rameters and the complexity of multi-step deposition sequences, directly modeling the joint influence of all variables presents significant challenges. By decoupling this complexity through the embedding of each "step-parameter" pair as a discrete node, the framework establishes well-defined input units that enable the subsequent graph attention mechanism to efficiently capture interdependencies and refine process modeling. While film thick-ness is governed by the synergistic influence of multiple process parameters, their relative significance varies substantially across different contexts. The employed attention mechanism autonomously learns and quantifies the contribution of each "step-parameter" pair to the thickness of a specific film layer; for instance, chamber temper-ature may dominate dielectric layer growth, whereas gas flow rates could be more critical for metal layers. The resulting atten-tion weights, denoted as 𝛼 𝑙, (𝑠, 𝑝 ) , serve as interpretable metrics representing the importance of parameter (𝑠, 𝑝 ) for film layer 𝑙 .This interpretability provides process engineers with actionable insights to identify the critical conditions driving thickness varia-tions, thereby facilitating rigorous root cause analysis and process optimization. Crucially, this capability directly addresses the in-herent "black-box" limitation prevalent in existing DL models, which is a primary objective of this study. 53.4. Film Thickness Prediction 
+
+Given the layer representations 𝐸 , the thickness of each film layer is predicted using a multilayer perceptron (MLP) regression model defined as Eq. (11): 
+
+ˆ𝑦 𝑙 = 𝑓 𝜃 (𝑒 𝑙 ), 𝑙 = 1, . . . , 𝐿, (11) where 𝑓 𝜃 (·) denotes a multilayer perceptron and ˆ𝑦 𝑙 represents the predicted thickness of film layer 𝑙 . The predicted thickness vector 
+
+ˆ𝑦 therefore corresponds to the model output defined in Eq. (4). The model parameters are optimized by minimizing the mean squared error between predicted and measured thickness values defined as Eq. (12): 
+
+L = 1
+
+𝐿 
+
+> 𝐿
+
+∑︂ 
+
+> 𝑙 =1
+
+(︃ 
+
+ˆ𝑦 𝑙 − 𝑦 𝑙 
+
+𝜎 𝑙 )︃ 
+
+> 2
+
+, (12) where 𝑦 𝑙 denotes the true thickness of the 𝑙 -th film layer defined in Eq. (3), and 𝜎 𝑙 is the training-set standard deviation of the 𝑙 -th film used to standardize the targets across different thickness scales. All model parameters, including the layer node embeddings {𝑞 𝑙 }
+
+and neural network parameters 𝜃 , are optimized jointly through this objective. 
+
+> 4. CASE STUDY
+
+This section presents a case study to evaluate the perfor-mance and interpretability of the proposed graph attention-based VM framework in a semiconductor deposition process. The objective is to assess the model’s ability to predict film thick-ness from multivariate equipment sensor data, while examining whether the learned parameter–layer dependencies provide mean-ingful insight into the underlying process behavior. The analysis is conducted using industrial deposition data collected from a production environment, where process parameters are recorded across sequential process steps and film thickness measurements are obtained through physical metrology. The study focuses on two aspects: prediction accuracy compared to baseline models, and interpretability of the learned relationships between process parameters and film thickness. The following subsections describe the dataset, experimental setup, and evaluation results, followed by a discussion of model performance and interpretability. 
+
+> 4.1. Data Acquisition and Dataset Description
+
+This study utilizes a dataset consisting of equipment sensor traces collected from a semiconductor film deposition process. The data were obtained from a production environment, where multiple process parameters are recorded throughout wafer pro-cessing. The dataset includes time-series measurements of key process variables, such as chamber temperature, chamber pres-sure, precursor gas flow rates, and lamp power. These signals are collected at a sampling rate of 10 Hz across multiple process steps, capturing the temporal evolution of process conditions dur-ing the deposition sequence. Through a feature selection process guided by domain expertise, 30 critical parameters were identi-fied from an initial pool of over 1,000 equipment variables based on their relevance to film thickness variation. The dataset consists of approximately 1,000 wafers processed through a multi-layer chemical vapor deposition process, where half of the layers cor-respond to film type A and the other half to film type B. All wafers are real production wafers obtained from the Intel Ad-vanced Technology Foundry. Following deposition, film thickness measurements are ob-tained using spectroscopic ellipsometry at more than 10 spatial locations per wafer to capture intra-wafer non-uniformity. These measurements serve as the ground truth for training and evalu-ating the VM model. To prevent data leakage between wafers produced under similar process conditions, the dataset is split at the lot level rather than the individual wafer level. The final dataset contains 804 wafer samples, which are divided into train-ing, validation, and test sets with ratios of 70%, 15%, and 15%, corresponding to 558, 120, and 126 wafers, respectively. 
+
+> 4.2. Experimental Setup
+
+All experiments were implemented in PyTorch and con-ducted on a server equipped with an NVIDIA A100 GPU with 80 GB VRAM. The model was trained using the Adam optimizer with a learning rate of 1 × 10 −4 for 100 epochs and a batch size of 16. The hidden dimension 𝑑 ℎ was set to 64, the number of attention heads to 4, and the Conv1D kernel size to 5. Since the target film thicknesses span different physical scales, each target is standardized independently using the mean and standard de-viation computed from the training set, as defined in Eq. (12). The model checkpoint with the lowest validation loss is selected as the final model. Figure 2 shows the training and validation loss curves over 100 epochs. The loss decreases rapidly during the initial training phase and stabilizes thereafter, indicating ef-fective convergence. Model performance is evaluated using the coefficient of determination ( 𝑅 2), computed for each film on the original scale as defined in Eq. (13). 
+
+𝑅 2 
+
+> 𝑙
+
+= 1 −∑︁  
+
+> 𝑁 𝑖 =1
+
+(𝑦 𝑖,𝑙 − ˆ𝑦 𝑖,𝑙 )2∑︁  
+
+> 𝑁 𝑖 =1
+
+(𝑦 𝑖,𝑙 − ¯𝑦 𝑙 )2 (13) This metric is scale-independent and allows consistent compari-son across films with different thickness ranges. To evaluate the contribution of the proposed parameter-to-layer attention mechanism, three model configurations are com-pared. The proposed model uses parameter nodes constructed from all process steps and applies parameter-to-layer attention to model structured dependencies. An ablation variant removes this attention mechanism, eliminating explicit parameter–layer interactions. As a baseline, an MLP is trained on the same input features, consisting of two hidden layers with dimensions 128 and 64 and ReLU activations. The MLP architecture is intentionally kept simple due to the limited size of the training dataset. 
+
+> 4.3. Results and Discussion
+
+As summarized in Table 1, the proposed model achieved superior predictive accuracy, attaining an 𝑅 2 of 0.7227. In com-parison, the MLP baseline yielded an 𝑅 2 of 0.7106, while the ablation variant recorded an 𝑅 2 of 0.7061. The 𝑅 2 values re-ported represent the mean across all four Film B targets. These results demonstrate the enhanced predictive capability of the pro-posed approach. As depicted in Fig. 3, the predicted thickness 6FIGURE 2: TRAINING AND VALIDATION LOSS CURVES OVER 100 EPOCHS. BOTH LOSSES CONVERGE RAPIDLY AND REMAIN STA-BLE THEREAFTER. THE GAP BETWEEN TRAINING AND VALIDA-TION LOSS REFLECTS THE LOT-LEVEL DISTRIBUTION SHIFT IN-HERENT TO THE LOT-BASED DATA SPLIT STRATEGY, RATHER THAN OVERFITTING. TABLE 1: PERFORMANCE COMPARISON OF MODEL CONFIGU-RATIONS 
+
+Configuration 𝑅 2
+
+Proposed model (full) 0.7227 
+
+Proposed model w/o parameter-to-layer attention 0.7061 MLP (baseline) 0.7106   
+
+> ∗Mean of the individual 𝑅 2scores across the four Film B targets.
+
+values are closely aligned with the ground-truth metrology mea-surements across all film types and thickness ranges. The overall concentration of points near the diagonal indicates that the pro-posed model achieves consistent predictive performance on the test set. 
+
+4.3.1. Attention-Based Interpretability Analysis To fur-ther investigate the behavior of the proposed model, we analyze the learned attention weights, which quantify the relative impor-tance of process parameters in predicting film thickness for each layer. Figure 4 presents a heatmap of the attention weights 𝛼 𝑙, (𝑠, 𝑝 ) ,where each row corresponds to a film layer and each column rep-resents a process parameter across different process steps. The attention weights are averaged over all samples in the test dataset to obtain a stable and representative parameter–layer dependency structure. From the full heatmap, several global patterns can be observed. Specific film layers exhibit persistently high attention weights during the initial and final process steps, highlighting their acute sensitivity to boundary conditions. In contrast, all layers display a consistent, repetitive attention pattern through-out the intermediate stages. This uniformity suggests that once chamber temperature and pressure stabilize, their influence on thickness becomes homogeneous across layers, allowing dynamic variables—such as reactive gas flows—to drive variations in at-tention values. Moreover, these recurring patterns likely reflect the propagation of early-stage parameter effects into later lay-      
+
+> FIGURE 3: OVERALL PREDICTION PERFORMANCE ON THE TEST SET SHOWN AS A SCATTER PLOT OF PREDICTED VER-SUS MEASURED THICKNESS VALUES FOR ALL TARGET LAY-ERS. EACH POINT DENOTES ONE LAYER-LEVEL SAMPLE, AND THE DASHED DIAGONAL LINE REPRESENTS IDEAL PREDICTION. THICKNESS VALUES ARE OMITTED DUE TO CONFIDENTIALITY CONSTRAINTS.
+
+ers. This behavior reflects the cumulative and history-dependent nature of deposition processes, where prior process conditions influence subsequent film growth through mechanisms such as surface conditioning, residual species, and thermal accumulation effects. 
+
+> FIGURE 4: FULL HEATMAP OF ATTENTION WEIGHTS AVERAGED OVER THE TEST SET. EACH PROCESS STEP CONTAINS 30 PA-RAMETER NODES.
+
+Due to the high dimensionality of the process space, where approximately 30 process parameters are recorded across 35 sub-steps, resulting in over 1,000 effective input variables, the full attention map contains complex patterns that are difficult to in-terpret directly. Therefore, we further refine the visualization by focusing on the most influential parameters. Figure 5 shows a filtered heatmap in which only the top-𝑘 attention weights are re-tained for each layer, while the remaining values are masked. The filtered heatmap reveals that each layer is primarily influenced by a small subset of process parameters, rather than the entire param-eter space. This sparsity indicates that film thickness formation is governed by a limited number of critical process factors at each stage. The heatmap reveals that the model effectively identifies critical process dynamics, assigning peak attention weights to the first and last three steps associated with temperature and pressure 7FIGURE 5: HEATMAP OF THE TOP-K ATTENTION WEIGHTS 
+
+ramping. This confirms the model’s sensitivity to abrupt process transitions. Distinct layer-specific behaviors are evident: Film B layers correlate strongly only with the initial ramping phase, showing negligible response to the final steps. In contrast, while most Film A layers respond to initial conditions, Film A3 and the Top Film exhibit significant sensitivity to the terminal ramp-ing phase. Notably, periodic patterns observed across all layers during intermediate steps, which aligned with the findings in full heatmap. Additionally, the variation in dominant parameters across layers highlights layer-specific process sensitivity, which is consistent with the fact that different layers may involve distinct deposition regimes or material interactions. To further examine these relationships, Figure 6 presents bar charts of the top-𝑘 parameters for selected layers. As il-lustrated in the bar chart, all film layers exhibit strong causality with temperature-related parameters. Moreover, the initial pro-cessing steps exert the most significant influence across all film layers except film A2. The variations among the ten listed param-eters are negligible. Consistent with the top-k attention weight heatmap results and theoretical expectations derived from the film deposition process, the top film layer additionally demonstrates pronounced causality with the terminal processing steps. These results demonstrate that different layers are governed by distinct physical mechanisms, and the model successfully captures these variations through the learned attention weights. From a time-series modeling perspective, the learned attention weights can be interpreted as directional dependencies between process pa-rameters and film layers. Inspired by the concept of Granger causality, these dependencies capture how historical variations in equipment parameters contribute to film thickness formation in subsequent deposition stages. This analysis bridges the gap between data-driven model-ing and process understanding, providing actionable insights for process monitoring and optimization in semiconductor manu-facturing. Overall, this analysis demonstrates that the proposed graph attention-based VM framework not only achieves accu-rate predictions but also provides interpretable insights into the underlying process dynamics. 
+
+> 5. CONCLUDING REMARKS AND FUTURE WORK
+
+In this study, a graph attention-based VM framework was developed for film thickness prediction in semiconductor deposi-tion processes. The proposed model captures structured depen-dencies between process parameters and film layers, enabling im-proved predictive performance compared to baseline approaches. A key contribution of this work lies in the interpretability of the parameter-to-layer attention mechanism. The learned attention weights provide a quantitative measure of the relative importance of process parameters for each film layer, offering insight into the underlying process dynamics. The observed parameter–layer relationships are consistent with physical intuition, reflecting the roles of temperature, pressure, and gas flow in governing de-position kinetics and film growth behavior. From a time-series perspective, the attention mechanism captures directional depen-dencies between process parameters and film layers. The inter-pretability of the model enables the identification and ranking of critical parameters and process steps that influence film thickness. This facilitates more informed root cause analysis and supports targeted process optimization. Several directions remain for future work. First, the vali-dation of learned parameter–layer relationships against physical and chemical principles should be pursued through close col-laboration with domain experts. Second, extending the frame-work to capture within-wafer thickness variation and spatial non-uniformity would improve its applicability in real manufacturing environments. Finally, incorporating additional process knowl-edge or physics-informed constraints may further enhance model robustness and generalization under process drift and variability. 
+
+> ACKNOWLEDGMENTS
+
+The authors acknowledge the Intel Foundry OTF Campus for providing access to advanced semiconductor manufacturing production data used in this study. 
+
+> REFERENCES
+
+[1] Talati, Dhruvitkumar. “Silicon minds: The rise of AI-powered chips.” (2021). [2] Qiu, Zekun, Shen, Xianao and Zhao, Zirui. “Development trends and prospects of semiconductor devices and technol-ogy.” Development Vol. 81 (2024). [3] Srivastava, Sumit, Jaiswal, Abhinav and Khan, Arman. “Nanoscale technologies: design challenges and advance-ments.” Semiconductor Nanoscale Devices: Materials and Design Challenges . Bentham Science Publishers (2025): pp. 1–26. [4] Lee, Suk Ki, Stone, Ronnie FP, Gao, Max, Zhang, Wenlong, Sha, Zhenghui and Ko, Hyunwoong. “Generative Model Predictive Control in Manufacturing Processes: A Review.” 
+
+arXiv preprint arXiv:2511.17865 (2025). [5] Sakthinathan, Subramanian, Meenakshi, Ganesh Abi-naya, Vinothini, Sivaramakrishnan, Yu, Chung-Lun, Chen, Ching-Lung, Chiu, Te-Wei and Vittayakorn, Naratip. “A review of thin-film growth, properties, applications, and future prospects.” Processes Vol. 13 No. 2 (2025): p. 587. [6] Plummer, James D and Griffin, Peter B. Integrated Circuit Fabrication: Science and Technology . Cambridge Univer-sity Press (2023). [7] Orji, Ndubuisi G, Badaroglu, Mustafa, Barnes, Bryan M, Beitia, Carlos, Bunday, Benjamin D, Celano, Umberto, Kline, Regis J, Neisser, Mark, Obeng, Yaw and Vladar, AE. “Metrology for the next generation of semiconductor 8FIGURE 6: BAR CHARTS OF THE TOP-k (k =10) PARAMETERS FOR SELECTED LAYERS 
+
+devices.” Nature electronics Vol. 1 No. 10 (2018): pp. 532–547. [8] Bunday, Benjamin, Bello, AF, Solecky, Eric and Vaid, Alok. “7/5nm logic manufacturing capabilities and requirements of metrology.” Metrology, Inspection, and Process Control for Microlithography XXXII , Vol. 10585: pp. 81–124. 2018. SPIE. [9] Chen, Ying-Lin, Sacchi, Sara, Dey, Bappaditya, Blanco, Victor, Halder, Sandip, Leray, Philippe and De Gendt, Ste-fan. “Exploring machine learning for semiconductor pro-cess optimization: A systematic review.” IEEE Transac-tions on Artificial Intelligence Vol. 5 No. 12 (2024): pp. 5969–5989. [10] Khan, Aftab A, Moyne, James R and Tilbury, Dawn M. “An approach for factory-wide control utilizing virtual metrol-ogy.” IEEE Transactions on semiconductor Manufacturing 
+
+Vol. 20 No. 4 (2007): pp. 364–375. [11] Roh, Hyun-Joon, Ryu, Sangwon, Jang, Yunchang, Kim, Nam-Kyun, Jin, Younggil, Park, Seolhye and Kim, Gon-Ho. “Development of the virtual metrology for the nitride thick-ness in multi-layer plasma-enhanced chemical vapor depo-sition using plasma-information variables.” IEEE Trans-actions on Semiconductor Manufacturing Vol. 31 No. 2 (2018): pp. 232–241. [12] Xu, Weiwang, Zhang, Houdao, Ji, Lingjing and Li, Zhongyu. “AI-Powered Next-Generation Technology for Semiconductor Optical Metrology: A Review.” Microma-chines Vol. 16 No. 8 (2025). DOI 10.3390/mi16080838. [13] El-Kareh, Badih and Hutter, Lou N. Fundamentals of semi-conductor processing technology . Springer Science & Busi-ness Media (2012). [14] Chien, Chen-Fu, Hung, Wei-Tse, Pan, Chin-Wei and Van Nguyen, Tran Hong. “Decision-based virtual metrol-ogy for advanced process control to empower smart produc-tion and an empirical study for semiconductor manufactur-ing.” Computers & Industrial Engineering Vol. 169 (2022): p. 108245. [15] Postek, Michael T and Vladár, András E. “Critical-dimension metrology and the scanning electron micro-scope.” Handbook of Silicon Semiconductor Metrology .CRC Press (2001): pp. 244–275. [16] Politano, Grazia Giuseppina and Versace, Carlo. “Spectro-scopic ellipsometry: advancements, applications and future prospects in optical characterization.” Spectroscopy Jour-nal Vol. 1 No. 3 (2023): pp. 163–181. [17] Bunday, Benjamin and Orji, George. “Metrology.” 2021 IEEE International Roadmap for Devices and Systems Out-briefs : pp. 01–68. 2021. IEEE. [18] Schneider, Linda-Sophie, Krauss, Patrick, Schiering, Na-dine, Syben, Christopher, Schielein, Richard and Maier, Andreas. “Data-driven modeling in metrology–A short in-troduction, current developments and future perspectives.” 
+
+tm-Technisches Messen Vol. 91 No. 9 (2024): pp. 480–503. [19] Bertorelle, Nicola. “Virtual metrology for semiconductor manufacturing applications.” . [20] Chen, Hsuan-Yu and Chen, Chiachung. “Review of Ap-plications of Regression and Predictive Modeling in Wafer Manufacturing.” Electronics Vol. 14 No. 20 (2025): p. 4083. [21] Zhang, Pengju, Pan, Hao, Chen, Chen, Jing, Yiming and Liu, Ding. “CNN–BiLSTM–Attention-Based Hybrid-Driven Modeling for Diameter Prediction of Czochralski Silicon Single Crystals.” Crystals (2073-4352) Vol. 16 No. 1 (2026). [22] Lee, Suk Ki and Ko, Hyunwoong. “AMTransformer: AKoopman theory-based transformer for learning additive manufacturing dynamics in laser processes.” International Journal of AI for Materials and Design Vol. 1 No. 2 (2024): pp. 76–91. [23] Zhou, Longfei, Jin, Dong, Chen, Shuangwu, Yang, Jian and Xie, Jian. “Virtual Metrology Based on Graph Convolu-tional Neural Network for Semiconductor PVD Process.” 
+
+2024 5th International Conference on Artificial Intelligence 
+
+9and Electromechanical Automation (AIEA) : pp. 1053–1058. 2024. IEEE. [24] Lee, Suk Ki, Kim, Wonah, Lee, Sungbeom, Park, Jeonghyeon, Chun, Sejin, Yeung, Ho and Ko, Hyunwoong. “Graph attention-based dynamical and causal spatiotempo-ral learning for anomaly detection in additive manufactur-ing.” Virtual and Physical Prototyping Vol. 21 No. 1 (2026): p. e2611194. DOI 10.1080/17452759.2025.2611194. [25] Choi, Jongwon and Kim, Seoung Bum. “Multi-stage pro-cess diagnosis networks in semiconductor manufacturing.” 
+
+IEEE Access Vol. 12 (2024): pp. 39495–39504. [26] Lehnert, Alexander, Gawantka, Falko, During, Jonas, Just, Franz and Reichenbach, Marc. “XplAInable: Explainable AI Smoke Detection at the Edge.” Big Data and Cognitive Computing Vol. 8 No. 5 (2024): p. 50. [27] Seshan, Krishna. Handbook of thin film deposition . William Andrew (2012). 10
