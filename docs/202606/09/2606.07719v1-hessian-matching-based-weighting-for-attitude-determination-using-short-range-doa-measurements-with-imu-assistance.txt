@@ -1,0 +1,1398 @@
+Title: Hessian-matching Based Weighting for Attitude Determination Using Short-Range DoA Measurements with IMU Assistance
+
+URL Source: https://arxiv.org/pdf/2606.07719v1
+
+Published Time: Tue, 09 Jun 2026 00:12:06 GMT
+
+Number of Pages: 16
+
+Markdown Content:
+# Hessian-matching Based Weighting for Attitude Determination Using Short-Range DoA Measurements with IMU Assistance 
+
+Chenxin Tu , Graduate Student Member, IEEE Department of Electronic Engineering, Tsinghua University, Beijing, China 
+
+Hengchuan Zhang 
+
+Department of Electronic Engineering, Tsinghua University, Beijing, China 
+
+Xiaowei Cui 
+
+Department of Electronic Engineering, Tsinghua University, Beijing, China State Key Laboratory of Space Network and Communication, Tsinghua University, Beijing, China 
+
+Gang Liu 
+
+Department of Electronic Engineering, Tsinghua University, Beijing, China 
+
+Mingquan Lu 
+
+Department of Electronic Engineering, Tsinghua University, Beijing, China State Key Laboratory of Space Network and Communication, Tsinghua University, Beijing, China 
+
+Abstract— Accurate and reliable attitude determination (AD) is essential for unmanned vehicles operating in Global Navigation Satellite System (GNSS)-denied environments. Short-range wireless arrays can provide direction-of-arrival (DoA) measurements from multiple anchors, enabling AD by aligning corresponding direction vectors (DVs) expressed in the body and navigation frames. In short-
+
+Manuscript received XXXXX 00, 0000; revised XXXXX 00, 0000; accepted XXXXX 00, 0000. This work is supported by the National Natural Science Foundation of China under Grant No. 62541105 and the National Key R&D Program of China under Grant No. 2021YFA0716603. (Corresponding author: Xiaowei Cui;Mingquan Lu) 
+
+Chenxin Tu, Hengchuan Zhang and Gang Liu are with the Department of Electronic Engineering, Tsinghua University, Beijing 100084, China (e-mail: tcx22@mails.tsinghua.edu.cn; hc-zhang24@mails.tsinghua.edu.cn; liu gang@tsinghua.edu.cn). Xiaowei Cui and Mingquan Lu are with the Department of Electronic Engineering and the State Key Laboratory of Space Network and Communication, Tsinghua University, Beijing 100084, China (e-mail: cxw2005@tsinghua.edu.cn; lumq@tsinghua.edu.cn). 0018-9251 © 2022 IEEE 
+
+range scenarios, navigation-frame DVs inherit non-negligible uncer-tainty induced by anchor/vehicle position errors in addition to DoA-induced errors in body-frame DVs. Moreover, due to projection and unit-norm normalization, the DV errors are generally anisotropic, which motivates a total least squares (TLS) viewpoint. This paper identifies the key modeling distinction in short-range AD, develops a TLS-consistent formulation based on the total DV error and solves the resulting covariance-weighted orthogonal Procrustes problem via a manifold Gauss–Newton method. To retain the efficiency and numerical robustness of the closed-form weighted Wahba solu-tion, we further propose Hessian-matching based scalar weighting strategies that approximate the Hessian of Wahba formulation to the TLS formulation, including a full-attitude strategy for overall accuracy and a direction-of-interest (DOI) strategy for prioritizing a selected attitude component. Finally, we incorporate IMU-derived gravity as an additional DV pair for static initialization, leading to extended Wahba and extended TLS formulations. Simulation results demonstrate that the proposed Hessian-matching weighting improves accuracy and robustness compared with existing baselines, and that gravity-DV augmentation further reduces attitude errors and improves solution availability under limited anchor availability. 
+
+Index Terms— Attitude determination, direction of arrival, Hes-sian matrix, inertial measurement units, total least squares 
+
+I. INTRODUCTION 
+
+Unmanned vehicles have been increasingly deployed in applications such as environmental mapping, logistics, precision agriculture, and infrastructure inspection [1]– [4]. Accurate pose (position and attitude) is essential for navigation, control, and coordination of single vehicles and swarms [5], [6]. In many missions, vehicles may be pre-positioned and required to start operating immediately (e.g., rapid deployment or coordinated takeoff), where reliable initial pose is a prerequisite for subsequent state estimation and tracking [7], [8]. While an initial position can often be obtained from short-range infrastructure [9], [10], initializing attitude remains more challenging. Attitude determination (AD) is fundamentally a vector alignment problem: it estimates the rotation between a body frame and a reference/navigation frame by aligning at least two non-collinear vectors expressed in both frames [11]. Different AD sensors and systems mainly differ in how the vector pairs are constructed. For example, a star tracker provides line-of-sight unit vectors to known stars, yielding vector pairs between the camera/body frame and an inertial reference frame [12]. A magnetometer measures the local magnetic-field direction, which can be compared with the corresponding direction predicted by a geomagnetic-field model [13]. Inertial measurement units (IMUs) provide specific-force measurements that are closely tied to gravity. Since the local gravity di-rection is known a priori in the navigation frame, the accelerometer output can be normalized to form a gravity-direction vector observation that naturally defines a body– navigation vector pair [14]. For multi-antenna Global Navigation Satellite System (GNSS) receivers, attitude can be obtained either from carrier-phase baseline vector estimation [15] or from satellite direction-of-arrival (DoA) processing [16], [17]. In the baseline-based approach, the 
+
+IEEE TRANSACTIONS ON AEROSPACE AND ELECTRONIC SYSTEMS VOL. XX, No. XX XXXXX 2022 1
+
+> arXiv:2606.07719v1 [eess.SP] 5 Jun 2026
+
+relative positions (baselines) between antenna phase cen-ters are estimated in the navigation frame and then aligned with the corresponding known baselines in the body frame determined by the antenna installation geometry. In the DoA-based approach, the antenna array estimates the incident direction vectors (DVs) in the body frame, while the corresponding reference DVs are computed from satellite–receiver geometry in the navigation frame. Among these vector-based AD modalities, GNSS-based methods have been particularly influential for un-manned vehicles due to their widespread availability and the high accuracy achievable with multi-antenna config-urations. However, when GNSS signals are blocked or severely degraded [18], these GNSS-based solutions may become unavailable or unreliable, motivating complemen-tary AD methods for GNSS-denied environments. Recent advances in short-range wireless sensing have enabled compact arrays to provide DoA (or angle-of-arrival, AoA) measurements using diverse physical layers such as ultra-wideband (UWB) and Bluetooth [19]–[21]. When multi-ple fixed anchors are available, DoA measurements yield DVs in the body frame, while anchor/vehicle position information yields corresponding DVs in the navigation frame. A key distinction of short-range DoA-based AD from conventional long-range counterpart (such as GNSS) is that, in short-range scenarios, the reference DVs are no longer nearly error-free: they inherit non-negligible uncer-tainty from anchor and vehicle position errors, in addition to the DoA-induced uncertainty in the observation DVs. As a result, the ordinary least squares (OLS) viewpoint implicitly adopted in many DoA-based formulations [22] is generally violated, and a total least squares (TLS) viewpoint that accounts for errors in both vector sets becomes more appropriate [23]. The canonical formulation for vector-based AD is the Wahba problem [24], which is typically solved in a weighted form to accommodate heterogeneous mea-surement quality [25]. However, the standard weighted Wahba formulation assigns a single scalar weight to each vector pair, implicitly assuming isotropic uncertainty for each vector pair [23]. In practical scenarios, DV errors are often anisotropic due to projection and unit-norm normalization, as well as anisotropic DoA estimation accuracy, and their covariances can be singular (or near singular), which complicates both statistical modeling and estimator design. As a result, it remains nontrivial to select scalar weights that faithfully capture the joint effects of DoA-induced and position-induced DV uncertainties under general, geometry-dependent, and even possibly anisotropic, error statistics. In addition to DoA-derived DVs, gravity provides a natural reference direction for attitude estimation. Dur-ing static initialization, the accelerometer output can be normalized to yield a body-frame gravity-direction ob-servation, which can be paired with the known gravity direction in the navigation frame to form an additional DV constraint [14]. Most existing IMU-related approaches use this gravity-direction observation either for a standalone leveling step [26] or, together with another reference direction (e.g., magnetic field or velocity), to deterministi-cally recover attitude [27], [28], rather than treating grav-ity as a homogeneous DV pair that can be jointly aligned with DoA-derived DVs within the same solver. Moreover, a principled yet computationally efficient scheme for weighting the gravity DV relative to the DoA-derived DV pairs remains insufficiently explored. This paper addresses short-range DoA-based AD by developing a TLS-consistent formulation based on the 
+
+total DV error and by designing Hessian-matching based scalar weights for closed-form Wahba solutions. In addi-tion, for static initialization, we incorporate IMU-derived gravity information as an additional DV pair in the same DV-alignment framework to improve solution availability and robustness. The main contributions are summarized as follows:  
+
+> •
+
+TLS-consistent modeling with anisotropic DV er-rors: We formulate short-range DoA-based AD by explicitly modeling the total DV error induced jointly by DoA estimation and position-derived DV uncertainties, allowing general (anisotropic and geometry-dependent) covariance structures. The re-sulting covariance-weighted orthogonal Procrustes problem is solved via a manifold Gauss–Newton method on SO(3) . 
+
+> •
+
+Hessian-matching based scalar weighting for closed-form Wahba: To avoid the computational burden and potential sensitivity of iterative TLS solvers, we design practical scalar weights for the closed-form weighted Wahba solver by matching the local Hessian geometry implied by the TLS model. We develop (i) a full-attitude strategy that targets overall accuracy and (ii) a direction-of-interest (DOI) strat-egy that prioritizes a user-selected attitude compo-nent.  
+
+> •
+
+IMU-assisted gravity-DV augmentation with analytic weighting: We incorporate IMU-derived gravity as an additional DV pair within the same DV-alignment solver, leading to extended Wahba (EWahba) and extended TLS (ETLS) formulations. The gravity weight follows the same Hessian-matching principle and can be determined analytically from accelerom-eter error statistics. The remainder of this paper is organized as follows. Section II establishes the theoretical foundations by re-viewing the Wahba problem and gravity DV estimation. Section III introduces the problem setup and formulates the objectives. Section IV presents the TLS-consistent formulation and Hessian-matching based weighting strate-gies for short-range DoA-based AD. Section V develops the IMU-assisted methods via gravity-DV augmentation. Section VI reports and discusses simulation results, and Section VII concludes the paper. Notation: Vectors are denoted by bold lowercase let-ters, and matrices by bold uppercase letters. The transpose    
+
+> 2IEEE TRANSACTIONS ON AEROSPACE AND ELECTRONIC SYSTEMS VOL. XX, No. XX XXXXX 2022
+
+and inverse of a matrix are denoted by (·)T and (·)−1,respectively. The trace and determinant of a matrix are indicated by tr (·) and det( ·), respectively. The operator diag (·) constructs a diagonal matrix from its input vector. 
+
+[·]× denotes the skew-symmetric matrix corresponding to the inner vector, which is associated with the cross product operation. The Euclidean norm is represented by ∥·∥ , and I denotes the identity matrix of appropriate dimensions. The expectation operator is denoted by E(·).The special orthogonal group is denoted by SO( n) = 
+
+{R ∈ Rn×n | RTR = I, det( R) = 1 }. Unless otherwise specified, we use ˆ(·) to denote estimated (or predicted) quantities, ˜(·) to denote measured quantities and ˘(·) to denote regularized quantities. 
+
+II. PRELIMINARIES 
+
+In this section, we introduce the essential preliminaries required for the subsequent development, including the Wahba problem and gravity DV estimation derived by an IMU during static initialization. These concepts provide the theoretical foundation for the proposed IMU-assisted DoA-based AD framework. 
+
+A. The Wahba Problem 
+
+In this subsection, we briefly review the Wahba problem and its weighted formulation, which form the mathematical basis of vector-based AD. Consider two sets of K corresponding 3-D unit vectors expressed in an observation frame and a reference frame, denoted by 
+
+{ok}Kk=1 and {rk}Kk=1 , respectively, and referred to as the 
+
+observation vectors and reference vectors . Their physical meanings and constructions in the short-range scenarios will be specified in Section III. The attitude is represented by a rotation matrix R ∈ SO(3) that transforms vectors from the reference frame to the observation frame. In the ideal noise-free case, the two vector sets satisfy 
+
+ok = Rr k for k = 1 , . . . , K . In practice, however, only noisy measurements ˜ok and ˜rk are available. The Wahba problem estimates R by aligning the two vector sets in a least-squares sense, and is formulated as [24] 
+
+ˆR = arg min 
+
+> R∈SO(3)
+> K
+
+X
+
+> k=1
+
+∥˜ok − R˜rk∥2 . (1) When the measurement qualities are heterogeneous across 
+
+k, a weighted form is typically adopted [25]: 
+
+ˆR = arg min 
+
+> R∈SO(3)
+> K
+
+X
+
+> k=1
+
+wk ∥˜ok − R˜rk∥2 , (2) where wk ≥ 0 denotes the weight of the k-th vector pair. The weighted Wahba problem admits an efficient closed-form solution based on singular value decompo-sition (SVD) [25]. The solution procedure is summarized as follows: 1) Construct the 3 × 3 matrix 
+
+B =
+
+> K
+
+X
+
+> k=1
+
+wk ˜ok(˜ rk)T. (3) 2) Compute the SVD of B:
+
+B = U SV T. (4) 3) Obtain the rotation estimate as 
+
+ˆR = U M V T, (5) where M enforces ˆR ∈ SO(3) :
+
+M = diag ([1 , 1, det( U ) det( V )]) . (6) In addition to the attitude estimate itself, the attitude error covariance can also be derived [25]. This covariance information is of significant importance for performance prediction and for initializing filter-based state estimation and tracking algorithms [7], [8]. The detailed derivation and results can be found in [25] and are therefore omitted here for brevity. 
+
+B. Gravity DV Estimation 
+
+Let ˜f b = [ ˜fx, ˜fy , ˜fz ]T denote the temporal-averaged accelerometer output expressed in the body frame. During static initialization, the measured specific force is domi-nated by gravity; in the ideal noise-free case, f b = −gb,where gb denotes the gravity vector in the body frame. The gravity vector in the navigation frame is gn =[0 , 0, −g]T1. Therefore, an IMU-derived unit gravity DV pair can be constructed as 
+
+˜vb 
+
+> g
+
+≜ −˜f b
+
+˜f b , vn 
+
+> g
+
+≜ gn
+
+g = [0 , 0, −1] T, (7) which will be incorporated as an additional vector pair in the DV-alignment framework for IMU-assisted attitude estimation in Section V. 
+
+III. Problem Formulation A. Problem Setup 
+
+As illustrated in Fig. 1, we consider an unmanned vehicle equipped with a DoA-capable short-range wireless antenna array and an IMU. There are K fixed anchors transmitting wireless signals that are received by the onboard array. For each anchor, the array outputs a DoA measurement parameterized by azimuth and elevation angles, denoted as ˜γk = [˜ αk, ˜βk]T (k = 1 , . . . , K ). The AD task is to estimate the vehicle’s attitude, represented by the rotation matrix R ∈ SO(3) from the body frame B
+
+to the navigation frame N 2. Given the DoA measurement     
+
+> 1Throughout this paper, the navigation frame is defined as the East– North–Up (ENU) frame, and the body frame follows the Right–Front– Up (RFU) convention.
+> 2In this paper, we adopt the B → N mapping and treat navigation-frame DVs as observation vectors and body-frame DVs as reference vectors. This convention better aligns with the misalignment-vector analysis and the Hessian-matching weighting strategies developed in Section IV. AUTHOR ET AL.: SHORT ARTICLE TITLE 3௡
+> ௡
+> ௡
+> ௡
+> ௕
+> ௕
+> ௕
+> ௕
+> Antenna Array
+> DoA Estimation (in Body Frame)
+> IMU
+> Anchor 1 Anchor 2
+> Anchor K
+
+Fig. 1: Problem setup for short-range DoA-based AD of an unmanned vehicle. An onboard DoA-capable ar-ray receives signals from K fixed anchors. The vehicle attitude is recovered by aligning the body-frame DoA-derived DVs with the navigation-frame position-derived DVs, with optional assistance from an onboard IMU. 
+
+˜γk, the corresponding unit DV expressed in the body frame B is constructed via the standard spherical-to-Cartesian mapping 
+
+˜vbk =
+
+
+
+cos ˜βk cos ˜ αk
+
+cos ˜βk sin ˜ αk
+
+sin ˜βk
+
+ . (8) The set {˜vbk}Kk=1 constitutes the reference vectors in the sense of Section II-A. A concrete realization of three-element array and its error characterization are provided in Appendix. Let pnk and pn 
+
+> 0
+
+denote the true positions of the k-th anchor and the vehicle in the navigation frame N , with estimates ˆpnk and ˆpn 
+
+> 0
+
+, respectively. The true unit DV from the vehicle to anchor k in frame N is 
+
+vnk = pnk − pn
+
+> 0
+
+pnk − pn
+
+> 0
+
+, (9) and the corresponding measured unit DV is obtained by replacing the true positions with their estimated coun-terparts in (9), denoted as ˜vnk . The set {˜vnk }Kk=1 consti-tutes the observation vectors in the sense of Section II-A. Throughout this paper, the position errors ∆pm =ˆpnm −pnm are modeled as independent zero-mean Gaussian random vectors with covariance matrices Σpm = σ2 
+
+> pm
+
+I
+
+for m = 0 , 1, . . . , K .In addition, during static initialization, an onboard IMU can provide gravity-direction information that com-plements the DoA-derived DVs. The accuracy of this gravity-direction observation is primarily determined by the accelerometer error characteristics. We assume that high-frequency random noise has been effectively sup-pressed by temporal averaging and that deterministic biases have been properly calibrated. Under these assump-tions, the remaining accelerometer error is dominated by the turn-on bias, which is modeled as a zero-mean Gaus-sian random vector ba = [ bax , b ay , b az ]T with covariance matrix Σba = σ2 
+
+> ba
+
+I.
+
+B. Research Target 
+
+In the noise-free case, the corresponding true vectors satisfy the rotation relation 
+
+vnk = Rv bk, k = 1 , . . . , K, (10) Our goal is to estimate the attitude R ∈ SO(3) (mapping 
+
+B → N ) from the available measurements. Specifically, the inputs include: 
+
+• the DoA measurements {˜γk}Kk=1 , from which we construct the body-frame DVs {˜vbk}Kk=1 via (8), 
+
+• the anchor/vehicle position estimates {ˆpnk , ˆpn 
+
+> 0
+
+}, from which we construct the navigation-frame DVs 
+
+{˜vnk }Kk=1 via (9), and 
+
+• optionally, the accelerometer output ˜f b, from which we construct the gravity DV pair  vn 
+
+> g
+
+, ˜vb
+
+> g
+
+ via (7). The output of the AD problem is the attitude estimate ˆR.In practice, due to measurement errors, the available DV estimates deviate from their true values. In short-range DoA-based AD, both the body-frame DVs {˜vbk}Kk=1 
+
+and the navigation-frame DVs {˜vnk }Kk=1 are subject to non-negligible errors, and their covariances can be charac-terized from DoA estimation and position-error statistics. Moreover, because DV construction involves projection and unit-norm normalization, the resulting DV errors are generally anisotropic and geometry-dependent. These features motivate a TLS viewpoint for modeling and estimator design. Section IV specifies the a covariance-weighted TLS formulation based on the total DV errors and derives Hessian-matching based scalar weights for efficient closed-form Wahba solutions. Section V further incorporates the IMU-derived gravity DV as an additional vector pair to enable effective IMU-assisted AD. 
+
+IV. Short-Range DoA-based AD 
+
+This section focuses on attitude estimation using only short-range DoA measurements. We first char-acterize the navigation-frame DV uncertainty induced by anchor/vehicle position errors. We then formulate a TLS-consistent covariance-weighted least-squares objec-tive based on the total DV error covariance and solve it through manifold Gauss-Newton. Finally, we derive practical scalar weights for the closed-form Wahba solver by matching the local second-order Hessian geometry implied by the TLS model, yielding a Hessian-matching based weighting rule that explicitly reflects both DoA-induced and position-induced uncertainties. 
+
+A. Navigation-Frame DV Errors Induced by Position Uncertainties 
+
+In short-range scenarios, the navigation-frame DVs ˜vnk
+
+are computed from estimated anchor and vehicle positions    
+
+> 4IEEE TRANSACTIONS ON AEROSPACE AND ELECTRONIC SYSTEMS VOL. XX, No. XX XXXXX 2022
+
+via (9). Consequently, position errors directly translate into navigation-frame DV errors. The relative position error is 
+
+∆pk;0 ≜ (ˆ pnk − ˆpn 
+
+> 0
+
+) − (pnk − pn 
+
+> 0
+
+) = ∆ pk − ∆p0, (11) Denote the true anchor–vehicle distance by dk;0 ≜ ∥pnk −
+
+pn 
+
+> 0
+
+∥. By neglecting second-order error terms, the esti-mated navigation-frame DV admits the first-order approx-imation 
+
+˜vnk ≈ vnk + ∆pk;0 − vnk vnk
+
+> T
+
+∆pk;0 
+
+dk;0 
+
+= vnk + ∆p⊥
+
+> k;0
+
+dk;0 
+
+, (12) where ∆p⊥ 
+
+> k;0
+
+= ( I − vnk vnk
+
+> T
+
+)∆ pk;0 is the component of 
+
+∆pk;0 orthogonal to vnk . Define the projection matrix onto the plane orthogonal to vnk as P ⊥ 
+
+> vnk
+
+≜ I − vnk vnk
+
+> T
+
+. Then the navigation-frame DV error is 
+
+∆vnk ≜ ˜vnk − vnk = P ⊥ 
+
+> vnk
+
+∆pk;0 
+
+dk;0 
+
+. (13) With the isotropic position-error model in Section III, the covariance of ∆vnk is 
+
+Σvnk = E
+
+h
+
+∆vnk (∆ vnk )Ti
+
+=
+
+P ⊥ 
+
+> vnk
+
+(Σpk + Σp0 )
+
+
+
+P ⊥
+
+> vnk
+
+T
+
+d2
+
+> k;0
+
+= (σ2 
+
+> pk
+
++ σ2 
+
+> p0
+
+)
+
+d2
+
+> k;0
+
+P ⊥ 
+
+> vnk
+
+.
+
+(14) Equation (14) shows that navigation-frame DV uncer-tainty increases rapidly as dk;0 decreases, which is the key reason that the OLS assumption in the long-range case becomes invalid in short-range settings. 
+
+B. TLS-Consistent Covariance-Weighted Formulation 
+
+The true DV vectors satisfy the rotation relation (10). In practice, however, both ˜vnk and ˜vbk are noisy. To explicitly reflect the joint uncertainty in both vector sets, we introduce the total DV error for a candidate attitude 
+
+bR ∈ SO(3) as 
+
+∆vk( bR) ≜ ˜vnk − bR˜vbk. (15) Let ∆vnk = ˜vnk − vnk and ∆vbk = ˜vbk − vbk denote the observation- and reference-vector errors. Using these definitions and the noise-free relation (10), (15) can be rewritten as the linear constraint 
+
+∆vk( bR) = ∆ vnk − bR∆vbk. (16) Assuming ∆vnk and ∆vbk are independent zero-mean random vectors with covariance matrices Σvnk and Σvbk ,the covariance of the total DV error becomes 
+
+Σvk = E ∆vk∆vT
+
+> k
+
+ = Σvnk + bRΣvbk
+
+bRT
+
+(17) where Σvnk is given by (14) and Σvbk depends on the array configuration and DoA estimation accuracy (see Appendix for an example). To explicitly account for the fact that both vector sets are contaminated by noise, we adopt a TLS viewpoint and consider the following quadratic cost: 
+
+JTLS =
+
+> K
+
+X
+
+> k=1
+
+(∆ vbk)T ˘Σ−1 
+
+> vbk
+
+(∆ vbk) + (∆ vnk )T ˘Σ−1 
+
+> vnk
+
+(∆ vnk )
+
+(18) where ˘Σvbk ≜ Σvbk + ϵI and ˘Σvnk ≜ Σvnk + ϵI are regularized covariances with a small parameter ϵ > 0 in-troduced to ensure numerical invertibility in the presence of the unit-norm constraint. By applying the Lagrange multiplier method [29] to eliminate (∆ vbk, ∆vnk ) under the constraint (16), we obtain a reduced cost that depends only on bR and the total DV error ∆vk:
+
+JTLS ( bR) = 
+
+> K
+
+X
+
+> k=1
+
+(˜ vnk − bR˜vbk)T ˘Σ−1 
+
+> vk
+
+(˜ vnk − bR˜vbk) (19) where ˘Σvk = ˘Σvnk + bR ˘Σvbk
+
+bRT
+
+.Minimizing (19) over bR ∈ SO(3) yields a covariance-weighted orthogonal Procrustes problem (WOPP). If the DV noise is isotropic, as commonly assumed in the literature, then the WOPP reduces to a weighted Wahba formulation [23]. However, in practical scenarios, due to the unit-norm constraint and the nonlinear propagation of DoA estimation errors, DV noise is typically anisotropic and therefore not equivalent to the weighted Wahba formulation. While (19) can be solved iteratively by op-timizing bR on SO(3) , such direct manifold optimization is often computationally demanding and may be sensitive to initialization. To address these challenges, we adopt a manifold Gauss–Newton approach on SO(3) using a Lie-algebra perturbation, which iteratively solves for a local increment in the tangent space at the current estimate and then map it back to SO(3) via the exponential map. We perturb the attitude using a first-order Phi-angle misalignment model [30]. Let [·]× denote the skew-symmetric (cross-product) matrix such that [a]×b = a×b.Using a left-multiplicative perturbation, we write 
+
+˜vnk − ∆vnk ≈ (I + [ ϕ]×) bR(˜ vbk − ∆vbk). (20) where 
+
+bR ≈ (I − [ϕ]×) R, (21) and ϕ ≜ [ϕE , ϕN , ϕU ]T ∈ R3 is the small misalign-ment vector expressed in the navigation frame (ENU). Its components represent small rotations about the east, north, and up axes, respectively. We retain only first-order terms in (ϕ, ∆vnk , ∆vbk). Then, (20) becomes 
+
+˜vnk − ∆vnk ≈ bR ˜vbk − bR ∆vbk + [ ϕ]× bR ˜vbk. (22) Define the predicted vector ˆvnk ≜ bR ˜vbk and the difference residual 
+
+zk ≜ ˜vnk − ˆvnk . (23) Using the identity [ϕ]× ˆv = −[ˆ v]× ϕ, we obtain the linearized residual equation 
+
+zk = Jkϕ + ∆ vk. (24)  
+
+> AUTHOR ET AL.: SHORT ARTICLE TITLE 5
+
+where the Jacobian Jk is given by 
+
+Jk = −[ˆ vnk ]×. (25) and ∆vk is the total DV error defined in (16) with covariance Σvk in (17). Then, a covariance-weighted least-squares formulation can be constructed based on (24) as: 
+
+JTLS (ϕ) = 12
+
+> K
+
+X
+
+> k=1
+
+(zk − Jkϕ)T ( ˘Σvk )−1 (zk − Jkϕ).
+
+(26) At iteration i with current estimate bRi, compute 
+
+ˆvnk,i = bRi ˜vbk,
+
+zk,i = ˜ vnk − ˆvnk,i ,
+
+Jk,i = −[ˆ vnk,i ]×,
+
+˘Σvk,i = ˘Σvnk + bRi ˘Σvbk
+
+bRT 
+
+> i
+
+,
+
+W k,i = ( ˘Σvk ,i )−1.
+
+(27) Then a normal equation can be formed as 
+
+F sys ,i δϕi = gsys ,i (28) where 
+
+F sys ,i =
+
+> K
+
+X
+
+> k=1
+
+JT 
+
+> k,i
+
+W k,i Jk,i ,
+
+gsys ,i =
+
+> K
+
+X
+
+> k=1
+
+JT 
+
+> k,i
+
+W k,i zk,i .
+
+(29) and the increment δϕi can be solved as 
+
+δϕi = F −1sys ,i gsys ,i . (30) Finally, the attitude can be updated on the manifold via a left-multiplicative exponential map, 
+
+bRi+1 = exp  [δϕi]×
+
+ bRi, (31) and the iteration stops when ∥δϕi∥ ≤ ε, where ε is a predefined convergence threshold. The complete algo-rithm for short-range DoA-based AD is summarized in 
+
+Algorithm .
+
+C. Hessian-matching based weighting strategies 
+
+The proposed manifold Gauss-Newton method effec-tively accounts for the total DV errors and addresses the anisotropic DV noise issue in short-range DoA-based AD. However, it requires multiple iterations and suitable regularization for the covariance matrix of DV errors, leading to increased computational complexity and reduced robustness compared to closed-form Wahba solutions. To bridge this gap, we next seek a closed-form weighting strategy that approximates the TLS solution while retaining the Wahba structure. The Hessian matrix describes the local curvature of the objective and therefore quantifies how strongly each measurement constrains the unknown attitude in a neigh-borhood of the optimum. Although the mappings from DoA/position estimates to unit DVs involve nonlinear transformations and thus generally induce non-Gaussian 
+
+Algorithm Manifold Gauss–Newton for Short-Range DoA-based AD 
+
+Input: Observation vectors {˜vnk }Kk=1 , reference vectors 
+
+{˜vbk}Kk=1 , with corresponding covariances {Σvnk }Kk=1 
+
+and {Σvbk }Kk=1 , convergence threshold ε.
+
+Output: Attitude estimate bR. 
+
+> 1:
+
+Initialize bR0 (e.g., identity matrix or through the Wahba solution in (3)-(6)), set i = 0 . 
+
+> 2:
+
+repeat  
+
+> 3:
+
+for k = 1 to K do  
+
+> 4:
+
+Compute ˆvnk,i , zk,i , Jk,i , ˘Σvk,i , W k,i using (27).  
+
+> 5:
+
+end for  
+
+> 6:
+
+Compute F sys ,i , gsys ,i using (29).  
+
+> 7:
+
+Solve for δϕi using (30).  
+
+> 8:
+
+Update bRi+1 using (31).  
+
+> 9:
+
+i ← i + 1 . 
+
+> 10:
+
+until ∥δϕi∥ ≤ ε 
+
+> 11:
+
+return bR = bRi.errors, in the small-error regime the first-order lineariza-tion in (24) implies that the total DV error can be well approximated as Gaussian. Under this approximation, the TLS-consistent covariance-weighted objective in (26) is the negative log-likelihood of the attitude perturbation ϕ.Consequently, the associated Hessian coincides with the 
+
+Fisher information matrix , endowing the Hessian with a direct “information content” interpretation. From this perspective, Hessian matching can be interpreted as an information-matching principle: we choose scalar weights so that the Wahba objective reproduces, in the desired sense, the local information implied by the TLS model. For a generic least-squares objective J(ϕ), its Hessian matrix can be defined as 
+
+H(ϕ) ≜ ∇2
+
+> ϕ
+
+J(ϕ) (32) Therefore, the TLS-consistent objective in (26) induces a Hessian of the form 
+
+HTLS ≈
+
+> K
+
+X
+
+> k=1
+
+JT 
+
+> k
+
+˘Σ−1 
+
+> vk
+
+Jk, (33) where Jk is the Jacobian defined in (24) and ˘Σvk is the regularized total DV error covariance in (17). Similar to (26), the scalar-weighted Wahba formula-tion in (2) can also be expressed in the difference-residual form as 
+
+JWahba (ϕ) = 12
+
+> K
+
+X
+
+> k=1
+
+wk(zk − Jkϕ)T(zk − Jkϕ). (34) which induces a Hessian of the form: 
+
+HWahba ≈
+
+> K
+
+X
+
+> k=1
+
+wk JT 
+
+> k
+
+Jk. (35) For (35), using the identity [v]2 
+
+> ×
+
+= vv T − ∥ v∥2I, we obtain for the unit vector vnk that 
+
+JT 
+
+> k
+
+Jk = [ˆ vnk ]T
+
+> ×
+
+[ˆ vnk ]× = −[ˆ vnk ]2 
+
+> ×
+
+= I − ˆvnk (ˆ vnk )T, (36)    
+
+> 6IEEE TRANSACTIONS ON AEROSPACE AND ELECTRONIC SYSTEMS VOL. XX, No. XX XXXXX 2022
+
+which is a rank-2 projector onto the tangent plane or-thogonal to ˆvnk . This reveals that a single vector pair provides no information along its own axis, and therefore the rotation about that vector is unobservable. Comparing (33) and (35) further clarifies the role of scalar weighting in the Wahba formulation. In the TLS-induced Hessian HTLS , Jk captures the measure-ment geometry, while ˘Σ−1 
+
+> vk
+
+encodes the uncertainty of the k-th vector pair. In contrast, the Wahba’s Hessian 
+
+HWahba contains only the geometric term JT 
+
+> k
+
+Jk and therefore cannot directly reflect heterogeneous uncertainty across measurements. This motivates Hessian matching: by properly choosing the scalar weights {wk}, we aim to compensate for the missing uncertainty term and make 
+
+HWahba approximate HTLS in the sense of interest, so that the closed-form Wahba solver preserves, as much as possible, the local curvature/information content of the TLS model. 
+
+Strategy A (full-attitude trace matching). 
+
+A natural “global” matching criterion is to match the total curvature (trace) contributed by each vector pair, tr  wk JT 
+
+> k
+
+Jk
+
+ ≈ tr  JT 
+
+> k
+
+˘Σ−1 
+
+> vk
+
+Jk
+
+. (37) Since tr (JT 
+
+> k
+
+Jk) = tr (I − ˆvnk (ˆ vnk )T) = 2 , and by applying the cyclic property of the trace operator, we have tr  JT 
+
+> k
+
+˘Σ−1 
+
+> vk
+
+Jk
+
+ = tr   ˘Σ−1 
+
+> vk
+
+(I − ˆvnk (ˆ vnk )T) ≈ tr   ˘Σ−1
+
+> vk
+
+
+
+(38) The second approximate equality holds because ˆvnk (ˆ vnk )T
+
+is a rank-1 matrix with eigenvalues 1 and 0, and Σ−1 
+
+> vk
+
+is orthogonal to it (since the noise lies in the tangent plane). Therefore, tr  Σ−1 
+
+> vk
+
+ˆvnk (ˆ vnk )T ≈ 0. This yields the scalar weight 
+
+w(ϕ) 
+
+> k
+
+= 12 tr   ˘Σ−1
+
+> vk
+
+. (39) where the superscript (ϕ) indicates that this weight is derived from full attitude trace matching, which accouts for the overall misalignment error. However, since the matrix Σvk is typically rank-deficient, even the regular-ized version ˘Σvk may still be ill-conditioned, leading to numerical instability in computing its inverse. We can take a step back and adopt a simpler and more numerically stable approach to compute this weight as 3:
+
+w(ϕ) 
+
+> k
+
+= 1
+
+tr   ˘Σvk
+
+ ≈ 1
+
+tr  Σvbk
+
+ + tr  Σvnk
+
+ (40)                                             
+
+> 3Since Σvkis rank-deficient, we assume that it has two non-zero eigenvalues λ1and λ2, whose corresponding eigenvectors span the tangent plane orthogonal to ˆvnk. The regularized covariance ˘Σvkshares similar eigenvalues. In this way, w1=12tr ( ˘Σ−1
+> vk)≈12
+> 1
+> λ1+1
+> λ2
+> 
+> ,while w2=2
+> tr
+>  Σvk
+> =2
+> λ1+λ2. It is easy to find that w1≥w2
+> by the arithmetic-harmonic mean inequality and they are equal if and only if λ1=λ2. If the noise is not highly anisotropic, w2will be a good approximation of w1; if the noise is highly anisotropic, then
+> w1may overemphasize the less noisy direction and underemphasize the more noisy direction, while w2provides amore conservative average weighting, which may be more robust and preferred in practice. Moreover, dividing by a constant factor of 2 does not affect the solution to the Wahba problem, so we adopt the simpler expression in (40).
+
+The proposed weight (40) explicitly incorporates both body-frame DV uncertainty (DoA-induced) and navigation-frame DV uncertainty (position-induced). In the long-range case (such as GNSS scenarios), tr ( ˘Σvnk ) ≈ 0, and (40) naturally reduces to the DoA-only weighting form wk = 1 /tr (Σvbk ) in [22]. 
+
+Strategy B (Direction-of-interest Hessian-matching). 
+
+Strategy A matches the overall tangent-plane infor-mation via trace and therefore yields an “average” scalar weight in (39) and (40). If one is instead interested in preserving the curvature/information along a specific rotation direction, we may match the Hessian only along that direction. Let d ∈ R3 be a user-specified unit DOI expressed in the navigation frame. The directional curvature contributed by the k-th DV under the TLS model is defined as 
+
+KTLS ,k (d) ≜ dT JT 
+
+> k
+
+˘Σ−1 
+
+> vk
+
+Jk
+
+d. (41) On the Wahba side, the corresponding directional curva-ture is 
+
+KWahba ,k (d) ≜ dT wk JT 
+
+> k
+
+Jk
+
+d = wk ∥ˆvnk × d∥2. (42) Define the tangent vector and its unit version as 
+
+utan ,k (d) ≜ ˆvnk × d, uunit ,k (d) ≜ utan ,k (d)
+
+∥utan ,k (d)∥ , (43) when ∥utan ,k (d)∦ = 0. Matching KWahba ,k (d) =
+
+KTLS ,k (d) yields the DOI Hessian-matching weight 
+
+w(d) 
+
+> k
+
+= KTLS ,k (d)
+
+∥ˆvnk × d∥2 = uunit ,k (d)T ˘Σ−1 
+
+> vk
+
+uunit ,k (d). (44) For the same reason as the simplification from (39) to (40) in Strategy A, (44) can be further approximated as 
+
+w(d) 
+
+> k
+
+= 1
+
+uunit ,k (d)T Σvk uunit ,k (d) . (45) Specifically, if one is particularly concerned with the misalignment components ϕE , ϕN , and ϕU , we can set d = e1 = [1 , 0, 0] T, d = e2 = [0 , 1, 0] T, and 
+
+d = e3 = [0 , 0, 1] T to obtain the corresponding DOI Hessian-matching weights 
+
+w(ϕE ) 
+
+> k
+
+= 1
+
+uunit ,k (e1)T Σvk uunit ,k (e1) ,w(ϕN ) 
+
+> k
+
+= 1
+
+uunit ,k (e2)T Σvk uunit ,k (e2) ,w(ϕU ) 
+
+> k
+
+= 1
+
+uunit ,k (e3)T Σvk uunit ,k (e3)
+
+(46) where the superscripts (ϕE ), (ϕN ), and (ϕU ) indicate that the weights are derived by matching the directional curvature along the east, north, and up axes in the ENU navigation frame, respectively, aiming to reduce the cor-responding misalignment errors. This further explains our choice of treating the navigation-frame DVs as observa-tion vectors and the body-frame DVs as reference vectors: it enables the above DOI Hessian-matching strategies to be implemented entirely in the navigation frame, where the misalignment errors of interest admit a simple unit-vector representation.  
+
+> AUTHOR ET AL.: SHORT ARTICLE TITLE 7
+
+V. IMU-Assisted AD with Gravity DV Augmentation 
+
+This section develops IMU-assisted AD methods tai-lored to static initialization. The key idea is to incorpo-rate IMU-derived gravity information into the same DV-alignment solver as the DoA-derived DV pairs, rather than using gravity only for a standalone leveling step or as an external prior. Concretely, we treat the gravity direction as an additional DV pair and augment it into the DoA-based DV alignment. As reviewed in Section II-B, when the vehicle is static, a unit gravity DV observation in the body frame and its known counterpart in the navigation frame can be constructed via (7). In the noise-free case, vn 
+
+> g
+
+= Rv b 
+
+> g
+
+.As discussed in Section III, after temporal averaging the dominant residual accelerometer error is the turn-on bias, modeled as ∆f b = ba with ba ∼ N (0, σ 2 
+
+> ba
+
+I). Linearizing the unit normalization in the definition of ˜vb 
+
+> g
+
+in (7) yields 
+
+∆vb 
+
+> g
+
+≈ 1
+
+g P ⊥
+
+> ˜vb
+> g
+
+∆f b, P ⊥
+
+> ˜vb
+> g
+
+≜ I − ˜vb 
+
+> g
+
+(˜ vb 
+
+> g
+
+)T. (47) Consequently, the gravity-DV error covariance is derived by 
+
+Σvb 
+
+> g
+
+≜ E ∆vb 
+
+> g
+
+(∆ vb 
+
+> g
+
+)T ≈ σ2
+
+> ba
+
+g2 P ⊥
+
+> ˜vb
+> g
+
+. (48) Since vn 
+
+> g
+
+is known, the observation-side uncertainty of the gravity DV is negligible and the dominant uncertainty lies in the body-frame estimate ˜vb 
+
+> g
+
+. Then the IMU-derived gravity DV pair can be treated similarly to the DoA-derived DV pairs in Section IV, and be utilized in the DV-alignment framework in two ways: 
+
+• As an additional DV pair in the TLS-consistent covariance-weighted formulation in Section IV-B 
+
+• As an additional DV pair in the closed-form scalar-weighted Wahba formulation in Section IV-C To distinguish the IMU-assisted formulations from the DoA-only counterparts, we call the former one as the IMU-assisted extended TLS (ETLS) formulation and the latter one as the IMU-assisted extended Wahba (EWahba) formulation. Since the ETLS formulation has no differ-ence in structure from the TLS formulation in Section IV-B, we focus on the IMU-assisted EWahba formulation in the following. Typically, for the gravity DV pair, we can assign a weight based on the Hessian-matching principle in (40) as 
+
+wg ≜ 1
+
+tr (Σvb 
+
+> g
+
+) ≈ g2
+
+2σ2
+
+> ba
+
+, (49) where the last approximation uses tr (P ⊥
+
+> ˜vb
+> g
+
+) = 2 . With the short-range DoA-based DV pairs {(˜ vnk , ˜vbk)}Kk=1 
+
+and weights {wk}Kk=1 given by the proposed Hessian-matching based rule in (40), we augment the DV pair set with the gravity DV pair in (7). The IMU-assisted 
+
+EWahba objective is written as 
+
+JEWahba (R) = 
+
+> K
+
+X
+
+> k=1
+
+wk ˜vnk − R˜vbk 
+
+> 2
+
++ wg vn 
+
+> g
+
+− R˜vb
+
+> g
+> 2
+
+=
+
+> K+1
+
+X
+
+> k=1
+
+wk ˜vnk − R˜vbk 
+
+> 2
+
+,
+
+(50) where the augmented “ (K+1) -th” pair is defined by 
+
+wK+1 ≜ wg , ˜vbK+1 ≜ ˜vb 
+
+> g
+
+, ˜vnK+1 ≜ vn 
+
+> g
+
+. (51) Minimizing (50) over R ∈ SO(3) is again a weighted Wahba problem and can therefore be solved in closed form using the SVD procedure in Section II-A. Furthermore, the gravity DV provided by an IMU is typically much more accurate than the direction vectors obtained from short-range DoA measurements, and thus offers strong constraints on horizontal attitude (roll and pitch) but relatively weak constraints on yaw. Therefore, the short-range DoA-derived DV pairs can be primarily exploited to constrain yaw, so as to combine the com-plementary strengths of IMU and DoA. In this case, the weights of the DoA-derived DV pairs in (50) can adopt the DOI Hessian-matching form in (46) by setting 
+
+d = e3 = [0 , 0, 1] T. We shall see in Section VI-C that this strategy effectively improves yaw estimation while maintaining good roll/pitch performance. 
+
+VI. Simulation Results 
+
+This section evaluates the proposed short-range DoA-based AD and IMU-assisted AD methods via Monte Carlo simulations. We first introduce the simulation setup and performance metrics. We then evaluate (i) the advantage of accounting for anisotropic two-sided DV uncertainties through covariance-weighted TLS versus scalar-weighted Wahba, (ii) the effectiveness of the proposed Hessian-matching weighting strategies in the closed-form Wahba solver, and (iii) the gain and robustness improvement brought by gravity-DV augmentation under different IMU qualities and anchor availability. 
+
+A. Simulation Setup 
+
+Unless otherwise specified, throughout the simula-tions, the vehicle is assumed to be located at the origin, 
+
+pn 
+
+> 0
+
+= [0 , 0, 0] T, with its position estimate corrupted by zero-mean Gaussian noise characterized by a standard deviation of σp0 = 0 .25 m. The true attitude is set to zero roll, zero pitch, and zero yaw (i.e., R = I), ensuring that the navigation frame is perfectly aligned with the body frame. Under this setup, the reported misalignment errors directly correspond to the errors in roll, pitch, and yaw. Each experiment is evaluated over Nsim = 10 ,000 Monte Carlo trials 
+
+1. Error Metrics 
+
+Since Euler angles do not form a vector space in the strict mathematical sense, attitude errors cannot be    
+
+> 8IEEE TRANSACTIONS ON AEROSPACE AND ELECTRONIC SYSTEMS VOL. XX, No. XX XXXXX 2022
+
+TABLE I: UWB Array Configuration Parameters           
+
+> Channel fcλdσΦ
+> 56489.6 MHz 4.62 cm 0.95 λ
+> 25◦[32]
+
+rigorously quantified using simple arithmetic differences. To address this, we adopt the widely used Phi-angle misalignment vector, ϕ = [ ϕE , ϕ N , ϕ U ]T, expressed in the ENU navigation frame, as a measure to characterize attitude errors [30]. The Phi-angle misalignment vec-tor provides an intuitive representation of the rotational misalignment between the estimated and true navigation frames. Specifically, we report the component-wise mis-alignment errors {| ϕE |, |ϕN |, |ϕU |} , corresponding to the east, north, and up directions, respectively, along with the overall attitude error magnitude ∥ϕ∥.The primary metric for evaluating attitude errors is the Monte Carlo root-mean-square error (RMSE), defined as: 
+
+RMSE ϕ ≜ pE[∥ϕ∥2],
+
+RMSE ϕD ≜ pE[∥ϕD ∥2], D = E, N, U, (52) where RMSE ϕ quantifies the overall attitude error, and 
+
+RMSE ϕD represents the error along a specific direction D
+
+(east, north, or up). In addition, for specific experiments, we also report the covariance-predicted root-mean-trace error (RMTE), which is defined as: 
+
+RMTE ≜ ptr (Σϕ), (53) where Σϕ denotes the attitude error covariance derived from the weighted-Wahba covariance analysis [25]. 
+
+2. Array Configuration 
+
+Although the proposed formulations are not restricted to any specific radio technology or array configuration, we adopt a three-element planar UWB array in our simulations for two key reasons. First, UWB technol-ogy is widely utilized in unmanned systems and indoor navigation due to its high temporal resolution, which facilitates reliable short-range ranging and bearing es-timation [19], [31]. Second, the compact three-element planar array inherently exhibits direction-dependent DoA accuracy with anisotropic noise characteristics, making it a representative and nontrivial testbed for evaluating the proposed weighting strategy. The DoA error statistics for the selected UWB array are detailed in Appendix, and the main array parameters used for generating AoA measurements are summarized in Table I. 
+
+3. Anchor Configurations 
+
+Two anchor configurations are considered in different experiments. 
+
+Deterministic configuration : four anchors are placed in 3D space as illustrated in Fig. 2, with their azimuth, elevation, distance, and position uncertainty summarized in Table II. This configuration is used to highlight how geometry and position uncertainty can make navigation-frame DV errors non-negligible in short-range settings. TABLE II: Deterministic Anchor Configuration                         
+
+> Anchor ID αk(◦)βk(◦)dk;0 (m) σpk(m) A1 -30 25 10 0.3 A2 60 50 30.4 A3 150 25 50.2 A4 -120 45 12 0.1
+
+Random configuration : to mitigate potential bias from a specific layout and to evaluate average performance across diverse geometries, anchor azimuth angles are drawn uniformly from (−180 ◦, 180 ◦], elevations from 
+
+[15 ◦, 75 ◦], distances from [ 12 davg , 32 davg ] (with davg = 10 
+
+m by default), and anchor position uncertainties σpk from 
+
+[0 .1, 0.5] m. 
+
+4. IMU Model 
+
+The IMU frame is assumed to be aligned with the array/body frame. We consider two representative IMU qualities: a near-tactical-grade IMU (ADIS16465) [33] and a low-cost MEMS IMU (MPU6050) [34]. The stan-dard deviation of the accelerometer turn-on bias is set to σba = 1400 μg and σba = 20 mg, respectively, which directly determines the accuracy of gravity-DV. 
+
+B. Evaluation of Short-Range DoA-based AD 
+
+1. Covariance-weighted TLS versus scalar-weighted Wahba 
+
+We first evaluate the impact of modeling anisotropic DV error statistics by comparing two approaches: (i) the covariance-weighted TLS objective solved using the manifold Gauss–Newton method, and (ii) the closed-form scalar-weighted Wahba estimator employing the proposed Hessian-matching scalar weights (Strategy A, (40)). Three noise scenarios are considered: an isotropic DV noise case, an anisotropic case based on the deterministic an-chor configuration, and an anisotropic case dominated by DoA-induced anisotropy. To ensure a fair comparison, the parameters are adjusted such that the average trace of the DV covariance matrices remains approximately the same across all three cases, thereby maintaining comparable overall DV noise levels. It is important to note that the manifold Gauss–Newton method for solving the TLS problem requires regularization due to the potential singularity of the total DV error covariance matrix. The choice of the regularization parameter significantly affects the performance of attitude estimation. In this study, we employ a grid search to determine the optimal regulariza-tion parameter, ensuring the best achievable performance for the TLS-based approach. Fig. 3 presents the overall attitude errors for different noise scenarios. As expected, under isotropic DV noise, the TLS and Wahba formulations yield identical perfor-mance, consistent with the theoretical result in [23] that the weighted-Wahba formulation is a special case of TLS when noise is isotropic. However, under anisotropic DV noise, the TLS formulation, which explicitly accounts for  
+
+> AUTHOR ET AL.: SHORT ARTICLE TITLE 9
+
+(a) top view (b) side view 
+
+Fig. 2: Deterministic anchor configuration. The vehicle equipped with a three-element array is located at the origin, while four anchors are distributed in 3D space with different azimuths, elevations, distances, and position uncertainties. full covariance information, achieves better accuracy than the scalar-weighted Wahba formulation. Specifically, the overall attitude errors are reduced by 3.79% and 12.21% in the Anisotropic1 and Anisotropic2 cases, respectively. The performance gap is attributed to the inability of the scalar-weighted Wahba formulation to accurately model the statistical characteristics of anisotropic DV noise. In the Anisotropic1 case, where position-induced navigation-frame DV errors dominate, the tangent-plane noise re-mains isotropic, allowing the Wahba formulation to per-form reasonably well, resulting in a smaller performance gap. In contrast, in the Anisotropic2 case, where DoA-induced anisotropy dominates due to the inherent charac-teristics of the antenna array (e.g., significant differences in azimuth and elevation estimation accuracy, as shown in Fig. 10), the performance gap becomes much more pronounced. A comprehensive comparison of the two formulations is summarized in Table III. Generally, while the TLS for-mulation offers the highest accuracy across all scenarios, it comes with increased computational complexity (itera-tive nature of its solver) and reduced robustness (sensitive to regularization). In contrast, the scalar-weighted Wahba formulation provides a favorable trade-off between accu-racy, computational efficiency, and robustness, making it a practical choice for real-time applications. Except for some extreme anisotropic cases, the Wahba formulation with suitable weights can achieve high accuracy close to that of TLS, so in the following sections, we will focus on evaluating different weighting strategies within the closed-form Wahba framework. 
+
+2. Impact of weighting strategies in the closed-form Wahba solver 
+
+We next evaluate the effect of different weighting strategies under the deterministic anchor configuration. We compare the following weighting schemes: 
+
+• Unweighted : {wk} are uniform; 
+
+• DoA weighted : weights depend only on the body-frame (DoA-induced) DV uncertainty and ignore navigation-frame (position-induced) DV uncertainty [22]; 
+
+• Hessian-matching weighted : the proposed weight-ing scheme based on Hessian-matching (Strategy A) in (40); 4.67 equivalent 4.65 3.79% 4.12 12.21% 4.67 4.48 3.61   
+
+> Isotropic Noise Anisotropic Noise1 Anisotropic Noise2 3.5 44.5
+> Overall Atitude Error [deg]
+> Wahba TLS
+
+Fig. 3: Overall attitude error comparison between the covariance-weighted TLS solver and the scalar-weighted Wahba solver under isotropic and anisotropic DV noise settings. TABLE III: Comparison of Two Attitude Determination Formulations TLS versus Wahba                 
+
+> Item TLS Wahba
+> Accuracy (Isotropic) Highest Highest Accuracy (General) Highest High Accuracy (Anisotropic) Highest Modest Complexity High Modest Robustness Low High Method Iterative manifold Gauss–Newton Closed-form SVD 10 IEEE TRANSACTIONS ON AEROSPACE AND ELECTRONIC SYSTEMS VOL. XX, No. XX XXXXX 2022
+
+• Optimal weighted (benchmark): numerical mini-mization of the predicted tr (Σϕ) over {wk} using the covariance derived in [25]. Table IV reports the average DV error components and the resulting average weights assigned to each anchor. In short-range settings, the navigation-frame DV errors can be comparable to or even larger than the body-frame DV errors. Consequently, DoA-only weighting may overestimate the utility of an anchor whose DoA accuracy is high but whose position uncertainty produces a large navigation-frame DV error. For example, as highlighted in Table IV, although Anchor 2 (A2) exhibits the smallest body-frame DV error (0.0027), which indicates excellent DoA accuracy, its resulting total DV error remains signif-icant due to large position-induced errors (0.0534). The DoA-weighted strategy therefore assigns it a dominant weight (0.4078), whereas the proposed Hessian-matching weighting strategy, which explicitly accounts for both contributions, suppresses its weight to 0.0508. Compari-son with the numerically obtained optimal weights shows that the proposed Hessian-matching based scheme closely approximates the optimized benchmark while remaining significantly simpler to compute, which provide an effec-tive and practical alternative to the theoretically optimal weights. The cumulative distribution function (CDF) of the overall attitude error is shown in Fig. 4. The proposed Hessian-matching weighted scheme achieves performance nearly identical to the numerically optimized benchmark and outperforms both the DoA weighted and unweighted schemes. In particular, at the 90th percentile, the pro-posed scheme reduces the overall attitude error by ap-proximately 46.21% and 31.41% compared to the DoA weighted and unweighted baselines. Moreover, the pro-posed weighting also shortens the tail of the error distri-bution, indicating improved robustness under unfavorable and extreme conditions. 
+
+3. Performance versus anchor–vehicle distance 
+
+To demonstrate the distance dependence implied by the navigation-frame DV covariance in (14), we evaluate performance versus the average anchor–vehicle distance under random anchor configurations. Fig. 5 reports (left) the resulting overall attitude errors and (right) the corre-TABLE IV: DV Error Components and Average Weights under Different Strategies (Deterministic Configuration)                                             
+
+> Metric A1 A2 A3 A4 tr (Σvbk
+> )0.0248 0.0027 0.0239 0.0029 tr (Σvnk)0.0031 0.0507 0.0083 0.0010 tr (Σvbk
+> ) + tr (Σvnk)0.0279 0.0534 0.0321 0.0039
+> Unweighted wk0.2500 0.2500 0.2500 0.2500 DoA weighted wk0.1042 0.4078 0.1047 0.3832 Hessian-matching weighted wk
+> 0.1769 0.0508 0.1276 0.6447
+> Optimal weighted wk0.1985 0.0406 0.1457 0.6152 0510 15 20 25 30
+> Overall Attitude Error (deg)
+> 00.2 0.4 0.6 0.8 1
+> Cumulative Probability
+> 9.96° 12.70° 6.83° 0.9
+> Unweighted DoA Weighted Hessian-matiching Weighted Optimal Weighted
+
+Fig. 4: The CDF curve of the overall attitude error using different weighting strategies under the deterministic an-chor configuration. 5 10 20 40   
+
+> Average Anchor-Vechile Distance d[m]
+> 3456789
+> Overall Attitude Error [deg]
+> 00.005 0.01 0.015 0.02 0.025 0.03
+> Direction Vector Estimation Error
+> DoA Weighted Hessian-matiching Weighted Body-frame DV Error Navigation-frame DV Error Total DV Error
+
+Fig. 5: Attitude estimation performance versus the average anchor–vehicle distance under random anchor configura-tions (left: attitude error; right: DV error components). sponding DV error components. As the distance increases, position-induced navigation-frame DV errors decrease rapidly, while DoA-induced body-frame DV errors remain nearly constant. Consistent with this trend, the gain of the proposed Hessian-matching weighting is most prominent in the short-range regime, where neglecting navigation-frame uncertainty leads to noticeable performance loss. As the distance increases toward the long-range regime, the proposed weight naturally approaches the DoA-only weighting form, and the two methods converge. Hence, the proposed scheme can be viewed as a generalization of [22] to more general (including short-range) scenarios. 
+
+4. DOI Hessian-matching weighting 
+
+Finally, we evaluate Strategy B in Hessian-matching based weighting under random anchor configurations. By selecting d = e1, e2, and e3 in the ENU navigation frame, the resulting scalar weight emphasizes the local curvature/information along the corresponding misalign-          
+
+> AUTHOR ET AL.: SHORT ARTICLE TITLE 11 22.2 2.4 2.6 2.8
+> East Error  )E [deg]
+> 2.46 2.49 2.68 2.44
+> Hessian-matching ( )E)Hessian-matching ( )N)Hessian-matching ( )U)Hessian-matching ( ))
+> 2.2 2.4 2.6 2.8 3
+> North Error  )N [deg]
+> 2.74 2.68 2.97 2.66
+> 22.2 2.4 2.6 2.8
+> Up Error  )U [deg]  2.63 2.65 2.45 2.58
+> 44.2 4.4 4.6 4.8
+> Overall Error  ) [deg]
+> 4.53 4.52 4.69 4.44
+> )E
+> )N
+> )U
+
+Fig. 6: Component-wise attitude errors and overall at-titude error under random anchor configurations using different DoI choices in Strategy B of Hessian-matching based weighting scheme, compared with the full-attitude Strategy A. ment component, namely ϕE , ϕN , and ϕU , respectively. Fig. 6 compares the resulting component-wise misalign-ment errors as well as the overall attitude estimation error. The results indicate that, by selecting different preferred directions, the attitude estimation performance along the corresponding component can be further improved. Al-though the DOI Hessian-matching weights ϕE and ϕN
+
+do not outperform the overall-error–minimizing weighting strategy in terms of east- and north-axis misalignment errors—primarily due to the combined effects of an-chor geometry, they nevertheless exhibit noticeably better performance than other directional weighting schemes not specified to its direction. In contrast, the Hessian-matching weight ϕU does not yield the lowest overall attitude error, but achieves a significant reduction in the up-axis misalignment error. These results demonstrate that Strategy B provides a flexible mechanism to trade overall estimation accuracy for improved performance along a user-prioritized direction. This property becomes partic-ularly useful when DoA measurements are fused with IMU-assisted information, as discussed in Section VI-C. 
+
+C. Evaluation of IMU-Assisted AD 
+
+We next evaluate the gain and robustness improvement brought by IMU-derived gravity-DV under different IMU qualities and anchor availability. 
+
+1. Impact of IMU quality 
+
+First, we compare (i) the pure DoA-based estimator without IMU assistance, (ii) the IMU-assisted EWahba formulation, and (iii) the IMU-assisted ETLS formulation, which serves as a statistical performance reference. For the DoA-derived DV pairs, the full-attitude Hessian-matching based weighting strategy in (40) (Strategy A) and the yaw-focused DOI weighting strategy (Strategy B with d = e3) are adopted to compare the DoA con-tribution along the yaw-related axis. The resulting mis-alignment errors are reported in Fig. 7. As expected, for all IMU-assisted methods, augmenting the DV set with gravity-based information significantly reduces the horizontal-axis misalignment components ΦE and ΦN ,which are primarily associated with roll and pitch errors. This improvement arises because the gravity vector pro-vides a strong and highly reliable constraint along these directions. In contrast, the improvement in the up-axis misalignment component ΦU is limited compared with the other two components. In scenarios with relatively high IMU accuracy, Strat-egy A does not explicitly prioritize yaw-related infor-mation but instead allocates weights according to the intrinsic noise characteristics of the DoA measurements. As a result, a substantial portion of the DoA information is implicitly used to further optimize the east and north components. However, when accurate gravity information is already available, this additional allocation provides limited benefit for the east and north axes and, in turn, restricts the potential improvement along the up axis. In contrast, Strategy B explicitly concentrates the DoA-derived information on the up direction, which is not observable from gravity measurements. By exploiting this complementary property, Strategy B achieves a more effective utilization of the DoA information and leads to a significant reduction in the up-axis misalignment error, with ΦU further decreasing by approximately 22.5% compared to Strategy A. When the IMU accuracy is lower, however, DoA mea-surements continue to provide meaningful information for reducing the east- and north-axis errors. Under such con-ditions, Strategy A becomes more effective in improving the overall attitude estimation performance. These results indicate that, when incorporating gravity-derived DVs into a DV-alignment framework, the weighting strategy should be selected in accordance with both the IMU accuracy level and the specific attitude components of interest. Such an adaptive selection enables a more balanced and application-oriented exploitation of the complementary information provided by DoA and IMU measurements. No IMU IMU-Assisted 1 IMU-Assisted 2 0123          
+
+> East Error  )E [deg]  2.51 0.08 0.08 0.08 1.02 1.31 1.03
+> Hessian-matching ( ))IMU-Assisted EWahba ( ))IMU-Assisted EWahba ( )U)IMU-Assisted ETLS
+> No IMU IMU-Assisted 1 IMU-Assisted 2 0123
+> North Error  )N [deg]  3.10 0.08 0.08 0.08 1.08 1.68 1.08 No IMU IMU-Assisted 1 IMU-Assisted 2 00.5 11.5 22.5
+> Up Error  )U [deg]  2.32 2.22 1.72 1.79 2.21 1.73 1.79 No IMU IMU-Assisted 1 IMU-Assisted 2 012345
+> Overall Error  k)k [deg]  4.62 2.23 1.72 1.80 2.67 2.74 2.33
+
+Fig. 7: Component-wise attitude errors and overall at-titude error under deterministic anchor configurations. “IMU-Assisted 1” and “IMU-Assisted 2” correspond to a near-tactical-grade and a low-cost IMU, respectively. 
+
+12 IEEE TRANSACTIONS ON AEROSPACE AND ELECTRONIC SYSTEMS VOL. XX, No. XX XXXXX 2022 1 2 3 4 5 6 7 8
+
+> Number of Anchors
+> 0510 15
+> Overall Attitude Error [deg]
+> RMSE: No IMU RMSE: IMU-Assisted RMTE: No IMU RMTE: IMU-Assisted
+
+Fig. 8: Overall attitude error as a function of the number of available anchors under random anchor configurations, comparing the pure DoA-based estimator and the IMU-assisted estimator. 
+
+2. Impact of anchor availability 
+
+The number of available anchors also has a direct impact on AD performance, and we further investigate the robustness of the proposed methods with respect to anchor availability. Fig. 8 plots the overall attitude error versus anchor count, reporting both RMSE (Monte Carlo) and RMTE (covariance prediction). As the number of anchors increases, the performance of both the pure DoA-based estimator and the IMU-assisted estimator improves steadily, owing to the enhanced geometric diversity and measurement redundancy. For the same anchor count, the IMU-assisted method consistently achieves lower estima-tion errors, highlighting the benefit of incorporating the gravity-derived direction vector from the IMU. In partic-ular, by providing an additional non-collinear reference direction, the IMU-assisted approach significantly im-proves solution availability and robustness in limited an-chor availability scenarios. Moreover, the close agreement between the RMSE and RMTE indicates that the proposed covariance analysis accurately captures the estimation uncertainty, demonstrating the strong predictability and reliability of the proposed methods. 
+
+VII. Conclusion 
+
+This paper studied AD for unmanned vehicles using short-range, DoA-capable wireless arrays, with optional IMU assistance for static initialization. We revisited short-range DoA-based AD from a TLS viewpoint by modeling the total DV error arising jointly from DoA estimation and position-induced uncertainties. Unlike the isotropic as-sumptions often adopted in the literature, the resulting DV errors are generally anisotropic and geometry dependent, motivating a covariance-weighted TLS formulation. We solved the corresponding covariance-weighted orthogonal Procrustes problem via a manifold Gauss–Newton method on SO(3) under general covariance structures. The re-sults highlighted the importance of accurately modeling anisotropic DV uncertainties, as the proposed TLS formu-lation outperformed the classical scalar-weighted Wahba approach when such anisotropies were prominent. To retain the efficiency and numerical robustness of the closed-form SVD-based Wahba solver, we fur-ther developed Hessian-matching based scalar weighting strategies that approximate the local Hessian geometry implied by the TLS model. The full-attitude strategy targets overall estimation accuracy, while the direction-of-interest strategy enables deliberate prioritization of a selected attitude component when application needs dic-tate. Simulation results showed that the Hessian-matching weighted estimator improves robustness compared with existing weighting baselines, especially in short-range settings where position-induced reference-side errors are significant. Finally, we incorporated IMU-derived gravity DV as an additional DV pair within the same DV-alignment framework, leading to extended Wahba and extended TLS formulations with an analytically determined gravity weight from accelerometer error statistics. Simulation results demonstrated that the gravity-DV augmentation further reduces overall attitude errors, particularly hori-zontal attitude errors (roll&pitch), and improves solution availability under limited anchor availability, with the DOI Hessian matching weighting strategy providing additional yaw-error reduction when high-quality IMU data are available. Overall, we provide a computationally efficient solu-tion with covariance prediction ability for short-range AD using DoA measurements, augmented by an analytically weighted gravity-direction constraint. It further improves robustness and availability during static initialization, making it well suited for resource-constrained unmanned vehicles operating in complex environments. 
+
+Appendix DoA Estimation Characteristics of a Three-Element Planar Array 
+
+This appendix presents a concrete implementation ex-ample of short-range array DoA estimation, which serves as the DoA front-end assumed in Sections III–VI. Its role is twofold: 1) to illustrate how short-range arrays produce DVs with direction-dependent uncertainty, and 2) to provide a covariance model for the body-frame DV error Σvbk used in the proposed Hessian-matching based weighting formulation (40) and in the simulation study. 
+
+A. Array Geometry and PDoA Measurement Model 
+
+As shown in Fig. 9, we consider a compact three-element planar array arranged as an equilateral triangle in the body frame B. The array center is located at the  
+
+> AUTHOR ET AL.: SHORT ARTICLE TITLE 13
+
+# 1
+
+# 2
+
+# 3Fig. 9: Geometry of the three-element planar antenna array with an equilateral-triangle configuration in the body frame. origin, and the antenna-element positions are 
+
+pb  
+
+> Ant 1
+
+=
+
+ d
+
+2√3 , − d
+
+2 , 0
+
+T
+
+,
+
+pb  
+
+> Ant 2
+
+=
+
+
+
+− d
+
+√3 , 0, 0
+
+T
+
+,
+
+pb  
+
+> Ant 3
+
+=
+
+ d
+
+2√3 , d
+
+2 , 0
+
+T
+
+,
+
+(54) where d denotes the inter-element spacing. This three-element configuration is attractive for lightweight un-manned vehicles due to its minimal hardware complexity: it provides two independent phase-difference measure-ments, which is the minimum required to estimate a 2D AoA under a far-field plane-wave approximation. Radios enable accurate carrier PDoA extraction at the center frequency fc (with wavelength λ), which can be used for AoA estimation. Let vb denote the incident unit DV in the body frame, parameterized by azimuth α and elevation β as in (8). The relative carrier phase observed at the i-th antenna with respect to the array center can be written as 
+
+φi = 2πλ
+
+ pb 
+
+> Ant i
+
+T vb. (55) Taking antenna 3 as the reference, we form two indepen-dent PDoAs 
+
+Φ1 = φ3 − φ1,
+
+Φ2 = φ3 − φ2, (56) which, after substituting (54) and (8) into (55), yield the explicit mapping 
+
+Φ1 = 2πd λ cos β sin α, 
+
+Φ2 = 2πd λ
+
+ √32 cos β cos α + 12 cos β sin α
+
+
+
+.
+
+(57) In practice, Φ = [Φ 1, Φ2]T is corrupted by measurement noise and possible phase wrapping; the subsequent anal-ysis focuses on the small-error regime (after unwrapping or within the unambiguous range). 
+
+B. Closed-Form AoA Solution 
+
+Given ˆΦ, closed-form estimates of azimuth and ele-vation can be obtained by inverting (57): 
+
+α = atan2 
+
+√3Φ 1, 2Φ 2 − Φ1
+
+
+
+,β = arccos λπd 
+
+r Φ21 + Φ 22 − Φ1Φ2
+
+3
+
+!
+
+.
+
+(58) Linearizing (58) around the true Φ gives the small per-turbations 
+
+∆α ≈ ∂α ∂Φ1
+
+∆Φ 1 + ∂α ∂Φ2
+
+∆Φ 2 = a1∆Φ 1 + a2∆Φ 2,
+
+∆β ≈ ∂β ∂Φ1
+
+∆Φ 1 + ∂β ∂Φ2
+
+∆Φ 2 = b1∆Φ 1 + b2∆Φ 2,
+
+(59) where the coefficients are 
+
+a1 =
+
+√3Φ 2
+
+2(Φ 21 + Φ 22 − Φ1Φ2) , a2 = −√3Φ 1
+
+2(Φ 21 + Φ 22 − Φ1Φ2) ,b1 = − 1
+
+√1 − t2
+
+λ
+
+2πd 
+
+2Φ 1 − Φ2
+
+p3(Φ 21 + Φ 22 − Φ1Φ2) ,b2 = − 1
+
+√1 − t2
+
+λ
+
+2πd 
+
+2Φ 2 − Φ1
+
+p3(Φ 21 + Φ 22 − Φ1Φ2) ,t = λπd 
+
+r Φ21 + Φ 22 − Φ1Φ2
+
+3 .
+
+(60) Let γ = [ α, β ]T denote the 2D AoA vector. With the Jacobian 
+
+T =
+
+a1 a2
+
+b1 b2
+
+
+
+, (61) the AoA covariance follows from standard linear error propagation: 
+
+Σγ = T ΣΦ T T, (62) where ΣΦ is the PDoA covariance. In the simulations (Ta-ble I), we assume independent and identically distributed PDoA errors with variance σ2Φ, i.e., 
+
+ΣΦ = diag ([ σ2Φ, σ 2Φ]) . (63) 
+
+C. Covariance analysis for DV Estimates 
+
+The DoA estimates are converted to the body-frame unit DV via (8). Let ∆γ = [∆ α, ∆β]T. A first-order expansion gives 
+
+∆vb ≈ S ∆γ, (64) where the Jacobian S = ∂vb 
+
+> ∂γ
+
+is 
+
+S =
+
+− sin α cos β − cos α sin β
+
+cos α cos β − sin α sin β
+
+0 cos β
+
+ . (65) Therefore, the body-frame DV covariance used in (40) is 
+
+Σvb = S Σγ ST. (66) As illustrated in Fig. 10, both the theoretical AoA estimation errors and the induced DV estimation errors depend strongly on the incident direction, indicating non-uniform DoA accuracy across azimuth–elevation angles. This anisotropy must therefore be considered in AD,            
+
+> 14 IEEE TRANSACTIONS ON AEROSPACE AND ELECTRONIC SYSTEMS VOL. XX, No. XX XXXXX 2022 -180 -120 -60 060 120 180
+> Azimuth ,(°)
+> 15 35 55 75
+> Elevation  - (°)
+> 2345678
+
+(a) Azimuth α-180 -120 -60 0 60 120 180    
+
+> Azimuth ,(°)
+> 15 35 55 75
+> Elevation  - (°)
+> 2345678
+
+(b) Elevation β-180 -120 -60 0 60 120 180    
+
+> Azimuth ,(°)
+> 15 35 55 75
+> Elevation  - (°)
+> 345678
+
+(c) DV vb
+
+Fig. 10: Directional dependency of the theoretical AoA measurement errors and the corresponding DV estimation errors for the three-element planar antenna array. The results illustrate the anisotropic DoA accuracy induced by array geometry, which motivates the need for direction-dependent weighting in AD. as also noted in previous studies [22]. Equations (60)– (66) show that DV uncertainty generally depends on the incident direction through (α, β ) and can be strongly anisotropic (see Fig. 10). Moreover, due to the projection and unit-norm constraints, the resulting DV covariance can become ill-conditioned or even nearly singular for certain directions. These observations motivate the reg-ularization in the TLS-consistent modeling adopted in the main text and justify the proposed Hessian-matching based weighting strategy. 
+
+Acknowledgments 
+
+The authors acknowledge the use of the AI language model ChatGPT (OpenAI) to improve English language expression throughout the manuscript. No technical con-tent or scientific ideas were generated by the AI. 
+
+REFERENCES 
+
+[1] V. V. Klemas, “Coastal and environmental remote sensing from unmanned aerial vehicles: An overview,” J. Coastal Res. , vol. 31, no. 5, pp. 1260–1267, 2015. [2] Y. Li, M. Liu, and D. Jiang, “Application of unmanned aerial vehicles in logistics: a literature review,” Sustainability , vol. 14, no. 21, 2022, Art. no. 14473. [3] P. Velusamy, S. Rajendran, R. K. Mahendran, S. Naseer, M. Shafiq, and J.-G. Choi, “Unmanned aerial vehicles (UAV) in precision agriculture: Applications and challenges,” Energies , vol. 15, no. 1, 2021, Art. no. 217. [4] A. Ellenberg, L. Branco, A. Krick, I. Bartoli, and A. Kontsos, “Use of unmanned aerial vehicle for quantitative infrastructure evaluation,” J. Infrastruct. Syst. , vol. 21, no. 3, 2015, Art. no. 04014054. [5] K.-K. Oh and H.-S. Ahn, “Formation control and network local-ization via orientation alignment,” IEEE Trans. Autom. Control ,vol. 59, no. 2, pp. 540–545, 2013. [6] M. Senanayake et al. , “Search and tracking algorithms for swarms of robots: A survey,” Robot. Auton. Syst. , vol. 75, pp. 422–434, 2016. [7] J. D. Hol, F. Dijkstra, H. Luinge, and T. B. Schon, “Tightly coupled UWB/IMU pose estimation,” in Proc. IEEE Int. Conf. Ultra-Wideband , Vancouver, BC, Canada, 2009, pp. 688–692. [8] D. Feng, C. Wang, C. He, Y. Zhuang, and X.-G. Xia, “Kalman-filter-based integration of IMU and UWB for high-accuracy indoor positioning and navigation,” IEEE Internet Things J. , vol. 7, no. 4, pp. 3133–3146, 2020. [9] C. Tu, X. Cui, G. Liu, S. Zhao, and M. Lu, “Parameterized TDOA: TDOA estimation for mobile target localization in a time-division broadcast positioning system,” IEEE Internet Things J. , vol. 12, no. 13, pp. 24131–24147, 2025. [10] C. Tu, X. Cui, G. Liu, and M. Lu, “A decoupled localization and synchronization method for moving targets using sequential one-way TOA measurements,” in Proc. IEEE Int. Conf. Commun. (ICC) , Montreal, QC, Canada, 2025, pp. 2478–2484. [11] Y. Liu, R. Yu, Z. Xiong, and Y. Guo, “Research on algorithms for multi-vector attitude determination,” Math. Probl. Eng. , vol. 2022, 2022, Art. no. 6137308, doi: 10.1155/2022/6137308. [12] C. C. Liebe, “Star trackers for attitude determination,” IEEE Aerosp. Electron. Syst. Mag. , vol. 10, no. 6, pp. 10–16, Jun. 1995, doi: 10.1109/62.387971. [13] M. Lovera and A. Astolfi, “Global magnetic attitude control of spacecraft in the presence of gravity gradient,” IEEE Trans. Aerosp. Electron. Syst. , vol. 42, no. 3, pp. 796–805, Jul. 2006, doi: 10.1109/TAES.2006.248214. [14] D. Titterton and J. L. Weston, Strapdown Inertial Navigation Technology , vol. 17. London, U.K.: IET, 2004. [15] P. J. G. Teunissen and O. Montenbruck, Eds., Springer Handbook of Global Navigation Satellite Systems , vol. 10. Cham, Switzer-land: Springer, 2017. [16] M. Meurer, A. Konovaltsev, M. Cuntz, and C. H¨ attich, “Robust joint multi-antenna spoofing detection and attitude estimation using direction assisted multiple hypotheses RAIM,” in Proc. ION GNSS , Nashville, TN, USA, 2012, pp. 3007–3016. [17] S. Daneshmand, N. Sokhandan, and G. Lachapelle, “Precise GNSS attitude determination based on antenna array processing,” in Proc. ION GNSS+ , Tampa, FL, USA, 2014, pp. 2555–2562. [18] E. Dom´ ınguez et al. , “Performance evaluation of high sensitivity GNSS techniques in indoor, urban and space environments,” in 
+
+Proc. ION GNSS+ , Portland, OR, USA, 2016, pp. 373–393. [19] I. Dotlic, A. Connell, H. Ma, J. Clancy, and M. McLaughlin, “Angle of arrival estimation using decawave DW1000 integrated circuits,” in Proc. 14th Workshop Posit. Navig. Commun. (WPNC) ,Bremen, Germany, 2017, pp. 1–6. [20] Y. Li, H. Zhao, Y. Liu, T. Wang, J. Yu, and Y. Shen, “High-accuracy 2-D AoA estimation using lightweight UWB arrays,” in 
+
+Proc. IEEE/RSJ Int. Conf. Intell. Robots Syst. (IROS) , Abu Dhabi, UAE, 2024, pp. 3312–3317. [21] K. Xiao, F. Hao, W. Zhang, N. Li, and Y. Wang, “Research and implementation of indoor positioning algorithm based on bluetooth AUTHOR ET AL.: SHORT ARTICLE TITLE 15 5.1 AOA and AOD,” Sensors , vol. 24, no. 14, 2024, Art. no. 4579, doi: 10.3390/s24144579. [22] C. Wang, X. Cui, G. Liu, and M. Lu, “Attitude de-termination using GNSS DOA estimation under jamming,” 
+
+IEEE Trans. Aerosp. Electron. Syst. , early access, 2025, doi: 10.1109/TAES.2025.3630146. [23] G. Chang, “Total least-squares formulation of Wahba’s problem,” 
+
+Electron. Lett. , vol. 51, no. 17, pp. 1334–1335, 2015. [24] G. Wahba, “A least squares estimate of satellite attitude,” SIAM Rev. , vol. 7, no. 3, pp. 409–409, 1965. [25] F. L. Markley, “Attitude determination using vector observations and the singular value decomposition,” J. Astronaut. Sci. , vol. 38, pp. 245–258, 1988. [26] H. Ahmed and M. Tahir, “Accurate attitude estimation of a moving land vehicle using low-cost MEMS IMU sensors,” IEEE Trans. Intell. Transp. Syst. , vol. 18, no. 7, pp. 1723–1739, Jul. 2017, doi: 10.1109/TITS.2016.2627536. [27] R. de Celis and L. Cadarso, “Attitude determination algorithms through accelerometers, GNSS sensors, and gravity vector esti-mator,” Int. J. Aerosp. Eng. , vol. 2018, 2018, Art. no. 5394057, doi: 10.1155/2018/5394057. [28] D. Gebre-Egziabher, G. H. Elkaim, J. D. Powell, and B. W. Parkinson, “A gyro-free quaternion-based attitude determination system suitable for implementation using low cost sensors,” in 
+
+Proc. IEEE Position Location Navig. Symp. (PLANS) , San Diego, CA, USA, 2000, pp. 185–192, doi: 10.1109/PLANS.2000.838301. [29] J. Nocedal and S. J. Wright, Numerical Optimization , 2nd ed. New York, NY, USA: Springer, 2006. [30] X. Niu, Y. Wu, and J. Kuang, “Wheel-INS: A wheel-mounted MEMS IMU-based dead reckoning system,” IEEE Trans. Veh. Technol. , vol. 70, no. 10, pp. 9814–9825, 2021. [31] IEEE Standard for Low-Rate Wireless Networks–Amendment 1: Enhanced Ultra Wideband (UWB) Physical Layers (PHYs) and Associated Ranging Techniques , IEEE Standard 802.15.4z-2020, 2020. [32] DW3000: IEEE 802.15.4z UWB Transceiver Data Sheet , Rev. 1.3, Qorvo, Inc., Greensboro, NC, USA, 2020. [Online]. Available: https://www.qorvo.com/products/p/DW3000 [33] Precision MEMS IMU Module ADIS16465 Data Sheet ,Rev. C, Analog Devices, Inc., Wilmington, MA, USA, 2020. [Online]. Available: https://www.analog.com/media/en/ technical-documentation/data-sheets/adis16465.pdf [34] MPU-6000 and MPU-6050 Product Specification , Rev. 3.4, InvenSense Inc., Sunnyvale, CA, USA, Aug. 2013. [On-line]. Available: https://invensense.tdk.com/wp-content/uploads/ 2015/02/MPU-6000-Datasheet1.pdf [35] P. Zhao, H. Zhang, G. Liu, X. Cui, and M. Lu, “A UWB-AOA/IMU integrated navigation system for 6-DoF indoor UAV localization,” Drones , vol. 9, no. 8, Aug. 2025, Art. no. 546. 
+
+Chenxin Tu received the B.E. degree in elec-tronic engineering from Tsinghua University, Beijing, China, in 2022, where he is currently pursuing the Ph.D. degree with the Department of Electronic Engineering. His research inter-ests include wireless localization and coopera-tive localization. 
+
+Hengchuan Zhang received the B.E. degree in electronic engineering from Tsinghua Uni-versity, Beijing, China, in 2024, where he is currently pursuing the M.E. degree with the Department of Electronic Engineering. His re-search interests include wireless localization. 
+
+Xiaowei Cui received the B.S. and Ph.D. de-grees in electronic engineering from Tsinghua University, Beijing, China, in 2000 and 2005, respectively. Since 2005, he has been with the Department of Electronic Engineering, Ts-inghua University, where he is currently a Pro-fessor. His research interests include robust GNSS signal processing, multipath mitigation tech-niques, and high-precision positioning. He is a member of the Expert Group of China BeiDou Navigation Satellite System. 
+
+Gang Liu is an associate researcher at the De-partment of Electronic Engineering, Tsinghua University, China. His research interests in-clude GNSS/INS integrated navigation tech-niques, and high-precision localization. He ob-tained both the BS and PhD degrees in instru-ment science and technology from Tsinghua University in 2007 and 2015, respectively. 
+
+Mingquan Lu received the M.S. and Ph.D. degrees from University of Electronic Science and Technology of China, Chengdu, China. He is a Professor with the Department of Electronic Engineering, Tsinghua University, Beijing, China. He directs the PNT Research Center, which develops GNSS and alternative PNT technologies. He authored or co-authored 5 books and book chapters, published over 300 journal and conference papers, and hold nearly 100 patents. His current research focuses on GNSS signal processing, GNSS receiver development and emerging PNT technologies. Prof. Lu was a recipient of the ION Thurlow Award. He provided numerous services to the GNSS community, including an Associate Ed-itor for Satellite Navigation and Journal of Navigation and Positioning. He is a Fellow of ION. 16 IEEE TRANSACTIONS ON AEROSPACE AND ELECTRONIC SYSTEMS VOL. XX, No. XX XXXXX 2022

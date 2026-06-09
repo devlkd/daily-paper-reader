@@ -1,0 +1,598 @@
+Title: Impedance MPC for Physical Human-Robot Interaction: Predictive Disturbance Rejection with Joint-Limit Safety
+
+URL Source: https://arxiv.org/pdf/2606.08281v1
+
+Published Time: Tue, 09 Jun 2026 00:49:10 GMT
+
+Number of Pages: 7
+
+Markdown Content:
+> 1
+
+# Impedance MPC for Physical Human–Robot Interaction: Predictive Disturbance Rejection with Joint-Limit Safety 
+
+Yongyan Cao and Jinshan Tang 
+
+Abstract —Physical human–robot interaction (pHRI) demands simultaneous trajectory accuracy and compliant safety under unplanned contact. Classical impedance control incurs a nonzero steady-state position error under sustained human force — the applied force divided by the task stiffness — which integral action reduces only within a narrow stable-gain budget. We present a two-layer Impedance MPC that resolves this ten-sion. Layer 1 analytically cancels gravity, Coriolis, and task-space inertia, reducing the residual plant to a configuration-independent double integrator with a constant state-transition matrix. Layer 2 solves a 30-variable convex QP at 100 Hz, exploiting this constant structure so the free-response matrix is precomputed once; an augmented Kalman filter estimates the persistent disturbance state, giving a formal zero-steady-state-error guarantee. A null-space inverse-barrier potential and a task-space workspace projection enforce joint-limit safety across the tested workspace. On a 7-DOF Franka FR3, Impedance MPC with Kalman augmentation attains sub-0.05 mm steady-state error versus 44.8 mm for classical impedance (a >800-fold reduction) under a sustained 15 N force, sub-millimeter tracking on four 3-D circles, and graceful robustness to measurement noise and inertial mismatch up to 30%. 
+
+Index Terms —Impedance control, model predictive control, physical human–robot interaction, disturbance rejection, joint-limit avoidance, redundant manipulator. 
+
+I. I NTRODUCTION 
+
+The deployment of collaborative robots in shared human workspaces has grown rapidly across manufacturing, surgical assistance, and rehabilitation [1], [2]. Unlike industrial robots operating in caged environments, collaborative arms must re-spond safely and gracefully when a human incidentally applies forces on the end-effector. This class of interaction, termed physical human–robot interaction (pHRI), imposes competing demands: the robot must track a planned trajectory with high precision while remaining compliant and safe under unplanned contact [3]. 
+
+A. Force Control Background 
+
+Force and impedance control have been the dominant paradigm for pHRI since Hogan’s foundational work [4], which established the impedance framework Md ¨e + Dd ˙e +
+
+Kde = Fh. Khatib [5] extended this to the full operational-space formulation. A comprehensive treatment is given in [1]. 
+
+Y. Cao is with Voryx Robotic LLC, San Jose, CA 95136, USA 
+
+yongyancao@gmail.com 
+
+J. Tang is with George Mason University, Dept. of Health Administration and Policy, Fairfax, VA, USA jtang25@gmu.edu 
+
+Albu-Sch¨ affer, Ott, and Hirzinger [2] unified these approaches within a passivity-preserving framework. Admittance con-trol [6] inverts the causality, producing intentional yielding but sacrificing trajectory accuracy. 
+
+B. The Stiffness–Compliance Tradeoff 
+
+The fundamental limitation of classical impedance control is structural: under a sustained human force Fh, the steady-state deflection is e∞ = K−1 
+
+> d
+
+Fh — a 15 N push through a 300 N/m spring deflects 50 mm [1]. Increasing Kd reduces this error but raises contact forces, violating safety requirements char-acterized in [3]. Adding an integral channel reduces steady-state bias, but stability requires Kint < D dKd/M d, severely limiting convergence speed. Variable impedance control [7], [8] provides no formal steady-state error guarantee. 
+
+C. Model Predictive Control for Robots 
+
+MPC optimizes a receding-horizon cost subject to con-straints, naturally enforcing torque limits and force bounds [9]. Mayne [10] surveys the theoretical foundations; Pannocchia and Rawlings [11] establish the offset-free property via in-tegrating disturbance augmentation. The structural principle — augmenting an integrating channel eliminates steady-state error despite hard input limits — was established for saturated linear systems in [12], [13], providing the anti-windup founda-tion extended here to robot pHRI. For parameter-varying input matrices, the min–max MPC framework of [14] is the direct precursor to the Bd(ρk) structure exploited here. 
+
+D. Prior Impedance MPC Work 
+
+Several works combine MPC with impedance objectives. Cao, Cheng, and Li [15] introduced a passive MPC frame-work that optimizes {Md, D d} over a receding horizon, but impedance parameters enter nonlinearly into the prediction matrices, limiting rates to 10–30 Hz. Haninger et al. [16] use Gaussian Process force models within a stochastic MPC. Roveda et al. [17] formulate optimal impedance MPC for rehabilitation. Wu et al. [18] combine MPC with ADRC for safe pHRI. Liu et al. [7] propose model-predictive variable impedance for disturbance-rich environments. A common lim-itation persists: either the full nonlinear plant is retained, or the formal steady-state error guarantee is not established. The present paper is a direct structural extension of the authors’ prior work. Cao, Lin, and Ward [12] established that 
+
+> arXiv:2606.08281v1 [cs.RO] 6 Jun 2026 2
+
+augmenting an integrating channel achieves zero steady-state error for saturated linear systems under persistent disturbances. The domain-of-attraction analysis of [13] showed the satura-tion constraint defines a polyhedral invariant set; here the box constraint ∥Fmpc ∥∞ ≤ Fmax plays the same role. The min– max MPC algorithm of [14] introduced a parameter-varying input matrix under box constraints — the direct precursor to the scheduling-dependent Bd(ρk) structure. The present work unifies these results with the operational-space formulation [5] to produce a real-time impedance MPC for pHRI. 
+
+E. Technical Gap and Contributions 
+
+The key structural insight is that analytical feedforward cancellation reduces the residual plant to a configuration-independent linear double integrator with constant Ad: (i) the free-response matrix Φ is precomputed once, reducing each QP update to a matrix–vector multiply; (ii) the Kalman filter operates on a fixed linear system, enabling a formal zero-steady-state-error proof. This paper makes four contributions: 1) Two-layer constant-Ad architecture. A feedforward stage analytically cancels all configuration-dependent nonlinearities, leaving an LPV plant with constant Ad,enabling a 30-variable QP solvable in under 1 ms. 2) Analytical connection to classical impedance con-trol. We prove (Theorem 1) that in the unconstrained, disturbance-free limit the MPC is exactly a classi-cal task-space impedance controller [4], with positive-definite realized stiffness/damping (Keff , D eff ) set by the cost weights (the unconstrained LQR gain of (9)). This positions Impedance MPC as an extension of classical impedance — adding constraint handling and offset-free disturbance rejection — not a replacement. 3) Offset-free tracking via Kalman augmentation. An integrating disturbance state ˆd provides a formal ISS guarantee with zero steady-state error, extending [11]– [13] to the torque-controlled manipulator setting. 4) Joint-limit safety via dual barrier. A null-space inverse-barrier potential [19] and a Jacobian-projected workspace correction empirically prevent joint-limit vi-olations across the tested workspace (including a bound-ary stress test) without degrading task tracking in the safe region. II. S YSTEM DYNAMICS AND PROBLEM FORMULATION 
+
+A. Robot Dynamics 
+
+Consider an n-DOF torque-controlled serial manipulator; experiments use the Franka FR3 ( n = 7 ) [20]. The rigid-body equations of motion are: 
+
+M (q)¨ q + C(q, ˙q) ˙ q + G(q) = τ + J⊤(q)Fh (1) where M (q) is the positive-definite inertia matrix; C(q, ˙q) ˙ q +
+
+G(q) is the Coriolis-plus-gravity vector (available as 
+
+qfrc_bias in MuJoCo or via the robot model API); τ is the commanded joint torque; and Fh ∈ R6 is the human-applied wrench. J(q) = [ J⊤ 
+
+> v
+
+(q); J⊤ 
+
+> ω
+
+(q)] ⊤ ∈ R6×n is the full geometric Jacobian, with Jv ∈ R3×n the translational and 
+
+Jω ∈ R3×n the rotational sub-Jacobian [21]. Fh is defined as positive when the human pushes onto the robot, so it enters (1) with a positive sign, adding to the generalized force that accelerates the joints. 
+
+B. Task-Space Kinematics 
+
+The translational Jacobian satisfies ˙p = Jv (q) ˙ q [21]. The operational-space inertia [5] is: 
+
+Λ( q) =  Jv M −1J⊤
+
+> v
+
+−1 ∈ R3×3 (2) 
+
+Λ( q) is symmetric positive-definite. The dynamically-consistent pseudoinverse [5], [22] is ¯Jv = M −1J⊤ 
+
+> v
+
+Λ, ensuring forces applied through J⊤ 
+
+> v
+
+produce no null-space acceleration. 
+
+C. pHRI Disturbance Model 
+
+After feedforward cancellation (Section III-A), the human force and joint friction appear as an aggregated Cartesian acceleration disturbance d(t), modelled as a random walk: 
+
+˙d = w(t), w ∼ N (0 , Q d) (3) capturing constant forces (sustained pushes, physiological tremor) and slow-varying loads (unmodelled payloads, tool changes). This decomposition is written in acceleration units; the estimator and QP of Section III-B operate on the equivalent 
+
+force-form disturbance −Λ( q) d (the quantity entering through 
+
+Bd(ρk) in (11)), which is constant for a constant human force and is the form realized in code. 
+
+D. Control Objective 
+
+Design a torque law τ such that for any bounded persistent disturbance d:1) ∥e(∞)∥ = 0 , where e = pd −p (zero steady-state error); 2) ∥e(t)∥ is minimized over a finite prediction horizon; 3) qi ∈ [qmin ,i + ϵ, q max ,i − ϵ] for all i (joint-limit safety). III. T WO -L AYER IMPEDANCE MPC 
+
+A. Layer 1 — Feedforward Nonlinear Inversion 
+
+Classical Cartesian impedance control [4] commands: 
+
+τ = C ˙q + G + J⊤ 
+
+> v
+
+(Λ¨ pd + μ − Kde − Dd ˙e)
+
+where μ = Λ Jv M −1C ˙q − Λ ˙Jv ˙q collects task-space Coriolis and centripetal terms [5], embedding the full impedance law inside a single static feedback. This treats Fh as a disturbance to be passively rejected with no predictive look-ahead and no mechanism to drive steady-state error to zero. The proposed Layer 1 explicitly separates these concerns. Following the operational-space decomposition of [5], the full torque command is partitioned into four channels via the null-space projector ¯N = I − ¯Jv Jv [22]: 
+
+τ = τff + J⊤ 
+
+> v
+
+Fmpc + J⊤ 
+
+> ω
+
+Forient + ¯N ⊤τnull (4) The feedforward term cancels all known nonlinearities using the computed-torque method [21]: 
+
+τff = C(q, ˙q) ˙ q + G(q)
+
+| {z }
+
+> qfrc_bias
+
++J⊤ 
+
+> v
+
+Λ( q) ¨ pd (5) 3
+
+Proposition 1. After applying (5) , the residual error dynamics satisfy: 
+
+¨e = −Λ−1(q) Fmpc + d(t) (6) 
+
+where e = pd − p and the aggregated disturbance is: 
+
+d(t) = −Λ−1(q) ¯J⊤ 
+
+> v
+
+J⊤Fh
+
+| {z }
+
+> projected pHRI force
+
+− Jv M −1J⊤ 
+
+> ω
+
+Forient 
+
+| {z }
+
+> orientation coupling
+
+− ˙Jv (q, ˙q) ˙ q
+
+| {z }
+
+> Jacobian derivative
+
++ ϵm(t)
+
+| {z } 
+
+> model error
+
+(7) 
+
+where ¯J⊤ 
+
+> v
+
+= Λ Jv M −1 ∈ R3×n.
+
+The four terms: (i) the projected pHRI force — for a purely translational Fh = [ F ⊤ 
+
+> h
+
+, 0] ⊤ this reduces to −Fh; (ii) the ori-entation coupling — residual translational acceleration from the orientation PD, vanishes in an ideal dynamically-consistent hierarchy and is absorbed by ˆd; (iii) the Jacobian derivative 
+
+− ˙Jv ˙q, small at typical speeds; (iv) the model error ϵm(t) from imperfect gravity/Coriolis cancellation. 
+
+B. Layer 2 — Discrete LPV Model and QP 
+
+With error state xe = [e⊤, ˙e⊤]⊤ ∈ R6 and scheduling variable ρk = qk, discretization gives: 
+
+xe(k +1) = 
+
+I3 ∆tI 3
+
+0 I3
+
+| {z } 
+
+> Ad(constant)
+
+xe(k)+ 
+
+ 0
+
+−Λ−1(q)∆ t
+
+| {z } 
+
+> Bd(ρk)
+
+Fmpc (k) (8) 
+
+Key structural result. The continuous-time matrix Ac =0 I3
+
+0 0
+
+
+
+is nilpotent ( A2 
+
+> c
+
+= 0 ), so eAc∆t = I + Ac∆t exactly and Ad is configuration-independent. 
+
+Discretization note on Bd. The input matrix in (8) uses Forward-Euler approximation. The exact ZOH integral gives 
+
+BZOH  
+
+> d
+
+= [ − ∆t2 
+
+> 2
+
+Λ−1(q); −∆tΛ−1(q)] ⊤; the neglected top-block is O(∆ t2) ≈ 2.5 × 10 −4 m/N at 100 Hz, appearing as a known constant component of ˆd (which does not bias the offset-free guarantee). Substituting the exact ZOH block removes the artifact without breaking the constant-Ad structure — only Bd(ρk) rescales. Both Γ and the Kalman augmented state (11) must use the same Bd formula to avoid bias in ˆd.
+
+Remark 1 (Global LQR Feasibility) . The LPV system (8) is uniformly controllable across the singularity-free workspace. Since Λ( q) = ( Jv M −1J⊤ 
+
+> v
+
+)−1 is SPD for all q away from kinematic singularities, Bd(ρk) has full column rank 3. The controllability matrix C = [ Bd | AdBd] has rank 6, since: 
+
+AdBd =
+
+I ∆tI 
+
+0 I
+
+  0
+
+−Λ−1(q)∆ t
+
+
+
+=
+
+−Λ−1(q)∆ t2
+
+−Λ−1(q)∆ t
+
+
+
+and Λ−1(q) is full rank. Consequently, the DARE admits a unique SPD solution P∞ at every configuration, and the LQR gain K∞ = (R + B⊤ 
+
+> d
+
+P∞Bd)−1B⊤ 
+
+> d
+
+P∞Ad is well-defined everywhere. The full-rank Bd(ρk) also renders the disturbance-augmented pair detectable (Theorem 2). Implementation note (regularization). In code the operational-space inverse is formed as Λ−1(q) =
+
+Jv M −1J⊤ 
+
+> v
+
++ σI with σ = 10 −6 for numerical conditioning. This Tikhonov term is negligible in the well-conditioned workspace interior but mildly damps the estimated disturbance (and the realized stiffness) along directions that become ill-conditioned as a kinematic singularity is approached; operation is restricted to the singularity-free workspace, where its effect stays below the measurement-noise floor. The receding-horizon QP with N = 10 steps, 3N = 30 
+
+decision variables U = [ Fmpc (0); . . . ; Fmpc (N − 1)] , is: 
+
+min  
+
+> U
+> 12
+
+U ⊤HU + h⊤U s.t. ∥Fmpc (k)∥∞ ≤ Fmax (9) with H = Γ ⊤ ¯QΓ + ¯R, stage cost Q = blkdiag (Kd, D d),terminal cost Qf = γQ (γ = 5 ), ¯Q = blkdiag (Q, . . . , Q, Q f ),
+
+¯R = blkdiag (R, . . . , R ), and linear term h = Γ ⊤ ¯Qx free . The free response xfree = Φ xe +Dbar ˆd, where Dbar ∈ R6N ×3 has j-th block Pj−1 
+
+> l=0
+
+AldBd(ρk). Only Fmpc (0) is applied (receding-horizon principle). 
+
+Theorem 1 (Impedance Equivalence) . In the unconstrained, disturbance-free case the Impedance MPC is exactly equiva-lent to a classical task-space impedance: the applied force is the linear state feedback Fmpc = Keff e + Deff ˙e, and the closed loop is 
+
+Λ( q)¨ e + Deff ˙e + Keff e = −Fh, (10) 
+
+with positive-definite realized stiffness Keff and damping Deff 
+
+equal to the gains of the unconstrained LQR (9) .Proof sketch. The unconstrained QP (9) is strictly convex; its minimizer is an affine feedback, linear in xe, so the applied force is a fixed linear gain, which we write Fmpc = Keff e +
+
+Deff ˙e. After Layer-1 cancellation ¨e = −Λ−1Fmpc + d; with 
+
+Λd = −Fh, multiplying by Λ gives Λ¨ e = −Fmpc − Fh, i.e. the stated impedance. The gains (Keff , D eff ) are the unconstrained LQR feedback of (9) — the DARE-optimal gain K∞ = ( R +
+
+B⊤ 
+
+> d
+
+P∞Bd)−1B⊤ 
+
+> d
+
+P∞Ad as Qf → P∞ — and are positive definite by closed-loop stability (Remark 1). At every unconstrained instant the controller is thus agenuine classical impedance; the MPC adds value only where it differs from this static gain — at the constraint boundary and through the disturbance-augmented free response (Theorem 2). 
+
+Remark 2 (Prescribed vs. realized gains) . The cost weights 
+
+Q = blkdiag( Kd, D d), R are design penalties ; the realized impedance (Keff , D eff ) is their LQR image — a nonlinear (Riccati) map of (Q, R ) — so in general (Keff , D eff )̸ =(Kd, D d). The weights shape the realized impedance: the high-bandwidth tracking reported below corresponds to the stiff, well-damped Keff the chosen (Q, R ) induce. If a specific 
+
+(Kd, D d) must instead be matched exactly, the impedance gain can be prescribed directly ( Fmpc = Kde + Dd ˙e), rendering the equivalence exact for those gains at the cost of predictive look-ahead. We adopt the LQR form, for which Theorem 1 already establishes the analytical connection between the unconstrained MPC and a realized classical impedance. 
+
+Corollary 1 (Existence of a Gain-Scheduled Infinite-Horizon Implementation) . The infinite-horizon MPC admits a pure state-feedback realization Fmpc (k) = −K∞(ρk)xe(k). By Remark 1 the DARE solution P∞(ρ) exists and is unique for 4
+
+every ρ, and K∞(ρk) depends on ρk only through Λ−1(q) —a symmetric 3 × 3 SPD matrix, so the scheduling space is the 6-D manifold of its independent entries. Since the DARE solution is continuous in its coefficients, K∞(·) is continuous over this compact domain. 
+
+Remark 3 (Practical 1 kHz implementation) . Continuity of K∞ over a compact 6-D domain makes an offline-precomputed lookup attractive: the gain can be tabulated on a grid of Λ−1(q) values and interpolated, reducing the online cost to a single 3 × 6 matrix–vector product. We present this as a deployment option , not a validated result — grid density, interpolation error, and the resulting closed-loop quality are implementation choices we do not characterize here. The experiments instead run the finite-horizon QP (9) at 100 Hz with a 1 kHz inner loop, which also enforces the box constraint and exploits prediction look-ahead; a hardware demonstration of the 1 kHz law is future work. C. Kalman Disturbance Augmentation for Offset-Free Track-ing 
+
+For the estimator we represent the disturbance in force form :the augmented state d ∈ R3 (units N) is the force-equivalent of the task-acceleration disturbance of the residual dynamics 
+
+¨e = −Λ−1(q)Fmpc + dacc , related by d = −Λ( q) dacc . This form enters the discrete model through the same input matrix 
+
+Bd(ρk) as the control Fmpc , and—unlike the acceleration form 
+
+dacc = Λ −1(q)( ·), which varies with configuration as Λ( q)
+
+changes—it is constant for a constant human force, matching the constant-disturbance hypothesis of Theorem 2. It is the quantity the implementation stores as ˆd and cancels via Fmpc =
+
+− ˆd at steady state. Augment the state with this integrating disturbance, modelled as a random walk d(k+1) = d(k) + 
+
+w(k):
+
+xe(k + 1) 
+
+d(k + 1) 
+
+
+
+=
+
+Ad Bd(ρk)0 I3
+
+| {z }
+
+> Aaug
+
+xe(k)
+
+d(k)
+
+
+
++
+
+Bd(ρk)0
+
+
+
+Fmpc (k) + 
+
+ 0
+
+w(k)
+
+
+
+,
+
+(11) with w ∼ N (0 , Q w). The integrating block (eigenvalues at 
+
+1) delivers offset-free rejection of constant disturbances by the internal-model principle, while the process noise w lets the filter track slowly-varying disturbances. A steady-state Kalman filter observing [e; ˙ e] produces the estimate ˆd of d
+
+via the innovation; it is not frozen but converges to the true disturbance. The estimate ˆd enters the free response, pre-compensating the QP before the disturbance accumulates in the error state. 
+
+Implementation note (process-noise scaling). The random-walk covariance Qw is a fixed tuning constant in the present implementation. For a disturbance-tracking bandwidth invari-ant to the QP rate it should scale with the sample time, 
+
+Qw = Qd ∆t (the exact discretization of the continuous random walk (3)); the single constant used here behaves well across the 100–500 Hz range tested. 
+
+Theorem 2 (Offset-Free Steady-State Tracking) . Consider a constant or asymptotically constant disturbance, d(k) → d∞
+
+with ∥d∞∥ ≤ ¯d. If the augmented observer–controller loop 
+
+(8) +(11) is asymptotically stable and the input constraint is inactive at steady state, then lim k→∞ ∥e(k)∥ = 0 .Proof sketch. Aaug is detectable ( Bd(ρk) has full column rank by Remark 1), so a stabilizing Kalman gain Kf exists and 
+
+ˆd → d∞. The integrating disturbance state then supplies exact pre-compensation through xfree , and the offset-free law drives e → 0 — the standard offset-free MPC guarantee [11] specialized to the operational-space impedance plant. Scope. 
+
+The guarantee is for constant/asymptotically-constant d (a sustained human push); the random-walk model is the es-timator’s internal model, which lets the filter track slowly-varying disturbances with bounded lag but does not by itself guarantee zero error for an arbitrary non-convergent drift. Under sustained saturation the integrator can wind up; the box constraint and the anti-windup behavior of the augmented formulation [12], [13] bound this, and a complete invariant-set/anti-windup proof under persistent saturation is left to future work. IV. O RIENTATION STABILIZATION AND NULL -S PACE 
+
+CONTROL 
+
+A. Orientation Stabilization 
+
+Orientation is regulated by a PD law in operational space [5]. The axis-angle error eR ∈ R3 is extracted from 
+
+R⊤ 
+
+> d
+
+R [21]: 
+
+τorient = J⊤ 
+
+> ω
+
+(−Krot eR − Drot ω) (12) with Krot = 20 Nm/rad, Drot = 6 Nm ·s/rad, following the operational-space impedance structure of [2], [5]. This runs at 1 kHz and is decoupled from the translational QP through the null-space projector in (4). 
+
+B. Null-Space Joint-Limit Safety 
+
+For the FR3 ( n = 7 ) controlling a 3-DOF translational task, 4 null-space DOF are available. The null-space torque ¯N ⊤τnull 
+
+(where ¯N = I − ¯Jv Jv [5], [22]) does not affect end-effector motion [22]. 
+
+Null-space inverse-barrier. Joint-limit avoidance via null-space repulsive potentials is a standard secondary objective [5], [19]. Define the fractional clearance to the nearest limit: 
+
+ϕi(q) = min( qi − qmin ,i , q max ,i − qi)
+
+qmax ,i − qmin ,i 
+
+∈ [0 , 0.5] 
+
+The inverse-barrier gradient [19]: 
+
+gi(q) = 
+
+
+
++kb
+
+ 1 
+
+> ϕi
+
+− 1
+
+> δi
+
+
+
+ϕi < δ i, q i near lower limit 
+
+−kb
+
+ 1 
+
+> ϕi
+
+− 1
+
+> δi
+
+
+
+ϕi < δ i, q i near upper limit 
+
+0 otherwise (13) with threshold δi = η(qmax ,i −qmin ,i ) (η = 0 .10 ), kb = 50 Nm. Combined with a centering spring [22]: 
+
+τnull = −knull (q − q0) + g(q) − dnull ˙q (14) 5                                         
+
+> TABLE I COMPUTATIONAL BUDGET PER CONTROL LAYER
+> Layer Computation Rate Budget
+> Feedforward τff :qfrc_bias +J⊤
+> vΛ¨ pd1 kHz <0.1 ms QP OSQP, 30 variables, box constraints 100 Hz <1 ms Kalman 9-state predict + update 100 Hz <0.1 ms Null-space Barrier gradient + projection 1 kHz <0.1 ms TABLE II BENCHMARKED CONTROLLERS
+> ID Controller Disturbance estimator
+> C1 Classical Impedance —C2 Admittance ( Ka= 100 N/m) Virtual spring C3 PI Impedance ( Kint = 80 N/(m ·s)) Integral C4 Impedance MPC, 100 Hz None C5 Impedance MPC + Kalman, 100 Hz Augmented Kalman C6 Impedance MPC, 500 Hz None C7 Impedance MPC + Kalman, 500 Hz Augmented Kalman
+
+with knull = 10 Nm/rad, dnull = 2 Nm ·s/rad, toward the FR3 neutral pose q0 = [0 , −0.785 , 0, −2.356 , 0, 1.571 , 0.785] ⊤.
+
+Task-space workspace projection. When joints approach limits, the null-space alone cannot prevent violations for task-constrained DOF [19]. We additionally project via the Jacobian pseudo-inverse [5]: 
+
+δp = kws (Jv J⊤ 
+
+> v
+
++ ϵr I)−1Jv g(q), ∥δp ∥ ≤ pmax (15) with kws = 5 × 10 −4 m/(Nm/rad), pmax = 0 .06 m, Tikhonov regularization ϵr = 10 −4 [21]. The QP optimizes toward 
+
+pd, eff = pd + δp .V. R EAL -T IME IMPLEMENTATION 
+
+The two-layer architecture is robot-agnostic: Layer 1 re-quires only M , C ˙q + G, and Jv ; Layer 2 is a fixed-size QP independent of n. Reference implementation uses the Franka FR3 via FCI [20]. 
+
+QP solver. We use OSQP [23] with warm-starting, reduc-ing cold-start latency from 5 ms to under 0.5 ms. Although 
+
+H = Γ ⊤ ¯QΓ + ¯R varies with configuration through Bd(ρk),updating it requires only overwriting the pre-allocated non-zero elements of the upper-triangular CSC sparse matrix — a O(N 2) coefficient update completed in under 0.05 ms via osqp_update_P , preserving OSQP’s factorization-reuse structure. 
+
+ZOH policy. Between QP solves, Fmpc is held constant. Layer 1 ( τff ) is recomputed at 1 kHz from fresh (q, ˙q), contin-uously cancelling gravity and Coriolis. 
+
+Simulation. All experiments use the FR3 model from MuJoCo Menagerie [24] with the MuJoCo physics engine [25] at 1 kHz. VI. E XPERIMENTS 
+
+A. Baseline Controllers 
+
+All controllers use Kd = 300 N/m. The inner feedforward runs at 1 kHz for all variants.                                            
+
+> TABLE III BENCHMARK I — C IRCULAR TRAJECTORY , 15 N S TEP FORCE
+> Controller RMS RMS Peak SS total contact defl. err. [mm] [mm] [mm] [mm]
+> C1 – Impedance 35.6 41.1 51.8 44.8 C2 – Admittance 113.9 174.7 210.5 186.7 C3 – PI Impedance 36.2 27.4 43.7 21.4 C4 – MPC 100 Hz 11.5 2.2 3.0 2.8 C5 – MPC+K 100 Hz 11.5 0.6 2.5 <0.05
+> C6 – MPC 500 Hz 13.0 0.8 1.1 1.1 C7 – MPC+K 500 Hz 12.8 0.2 0.8 <0.05
+> Fig. 1. Benchmark I — Circular trajectory under 15 N step pHRI. C5/C7 (Kalman-augmented) achieve near-zero steady-state error; C4 reduces contact-window RMS 19 ×over C1 through predictive look-ahead alone.
+
+B. Benchmark I: Circular Trajectory Under Step Force 
+
+The end-effector tracks a 12 cm radius circle in the XZ plane (ω = 2 π/ 8 rad/s). A step force Fh = [0 , 0, −15] N is applied from t = 3 –6 s per 8 s cycle (3 cycles, 24 s total). Key findings: (1) Prediction is the dominant contribu-tor here: C4 reduces contact-window RMS from 41.1 mm to 2.2 mm ( 19 ×) over C1, validating the constant-Ad QP. (2) Kalman achieves zero SS error: C5 drives SS error to effectively zero ( <0.05 mm) — a 44.8 mm → ≈ 0 improvement over C1. (3) Rate and estimation are orthogonal: rate reduces ZOH transient; Kalman eliminates SS error; their combination (C7) achieves best-in-class on every metric. 
+
+C. Four-Plane Circle Tracking 
+
+C5 is evaluated on four 3-D circle planes (Table IV). 
+
+D. Benchmark II: Reach-and-Hold under Human Push 
+
+The robot navigates a triangle of three waypoints (A, B, C) in one lap. At each waypoint, a directionally varied 15 N push fires for 2 s (3 push events, one per waypoint). 
+
+Analysis. The static-waypoint hold confirms the separation seen in Benchmark I. Against the stiff-impedance baseline 6
+
+TABLE IV FREE -S PACE CIRCLE TRACKING , R = 12 CM , T = 8 S
+
+Plane IMP RMSE [mm] MPC RMSE [mm] Improvement 
+
+XZ sagittal 23.54 0.24 ×97 XY horizontal 25.06 0.33 ×77 YZ frontal 16.25 0.20 ×79 XZ →XY tilted 25.07 0.31 ×80 TABLE V BENCHMARK II — W AYPOINT -H OLD UNDER DIRECTIONALLY VARIED 
+
+PUSH 
+
+Controller WP RMS free RMS contact Peak [mm] [mm] [mm] 
+
+G1 – Stiff Imp. 3/3 63.6 41.4 47.1 G2 – Pure Adm. 3/3 72.8 190.2 226.6 G3 – Var. Compl. 3/3 69.3 133.5 170.1 G4 – MPC 100 Hz 3/3 47.4 2.2 2.6 G5 – MPC+K 100 Hz 3/3 47.7 0.6 2.5 G6 – MPC 500 Hz 3/3 52.8 0.9 1.0 G7 – MPC+K 500 Hz 3/3 52.2 0.2 0.7 
+
+Fig. 2. Benchmark II — reach-and-hold under directionally varied push. All MPC variants (G4–G7) reach every waypoint with order-of-magnitude lower contact-window deflection than the reactive baselines; the Kalman augmentation improves every metric and the 500 Hz rate sharpens the first-contact peak. 
+
+(G1) the MPC cuts contact-window RMS from 41.4 to 2.2 mm and peak from 47.1 to 2.6 mm (G4); adding the Kalman augmentation improves every metric simultaneously — G5 lowers contact RMS to 0.6 mm and slightly reduces peak (2.6 →2.5 mm), so unlike a higher gain it carries no peak penalty. Raising the QP rate to 500 Hz sharpens the first-contact transient further (G7: 0.2 mm contact RMS, 0.7 mm peak), since the 2 ms ZOH window lets ˆd converge before significant error builds. 
+
+E. Joint-Limit Safety F. Robustness to Measurement Noise and Model Mismatch 
+
+The architecture relies on a Kalman estimator (noise-sensitive) and on Layer-1 cancellation (model-sensitive), so 
+
+TABLE VI T5 — B OUNDARY TEST , R = 20 CM CIRCLE 
+
+Controller RMSE [mm] Min joint margin Result 
+
+IMP 26.97 0.048 LIMIT VIOLATION 
+
+MPC (C5) 12.35 0.084 SAFE 
+
+MPC 30HZ 11.21 0.084 SAFE 
+
+Fig. 3. T5 boundary test ( R = 20 cm). Classical impedance violates the 5% joint margin; the dual-barrier MPC maintains ϕi ≥ 0.084 throughout. Elevated RMSE (12.4 mm) reflects the workspace projection intentionally offsetting pd by up to 6 cm to maintain safety. TABLE VII ROBUSTNESS OF MPC+K ALMAN (100 H Z QP) 
+
+(a) EE position noise — 10 N step, SS error (5 seeds) 
+
+noise 1σ 0 mm 1 mm 2 mm / 5 mm SS err (mm) 0.08 0.19 ± .03 0.36 ± .04 / 0.89 ± .07 
+
+(b) Inertia mismatch — free-circle RMSE (mm) 
+
+inertia error 0% +10% / +20% +30% Kalman on 0.24 0.24 / 0.23 0.23 Kalman off 0.96 0.87 / 0.80 0.74 
+
+we stress both. The plant is always the true model; only the controller’s inputs (added EE-position noise) or its feedfor-ward inertia (a scaled Λ) are perturbed. 
+
+(a) Even at an unrealistically large 5 mm ( 1σ) position noise the offset-free law holds steady-state error below 1 mm and the transient peak rises only from 1.6 to 2.2 mm: the integrating Kalman state averages out zero-mean sensor noise. 
+
+(b) With the Kalman augmentation, free-space tracking RMSE is essentially invariant to ±30% feedforward-inertia error (0.24 → 0.23 mm), because the resulting force error is slowly varying and absorbed by ˆd — the empirical counterpart of the exactness caveat (Section III). Disabling the Kalman exposes the mismatch (0.74–0.96 mm, a 3–4 × penalty), confirming that the disturbance state, not the nominal model, confers the robustness. VII. D ISCUSSION 
+
+Separation of concerns. Prediction (high QP rate) ad-dresses transient peak deflection; estimation (Kalman) drives steady-state error to zero. These are orthogonal: neither alone 7
+
+achieves both; their combination (C7/G7) achieves best-in-class on every metric simultaneously. 
+
+Constant Ad advantage. The feedforward cancellation en-ables Φ to be precomputed, the QP to have exactly 30 decision variables at all configurations and for all robot models, and warm-started OSQP to converge in under 0.5 ms. 
+
+Platform generality. The controller requires only M (q),
+
+C ˙q + G(q), and Jv (q), available from MuJoCo, Pinocchio, KDL, or any robot dynamics library. VIII. C ONCLUSION 
+
+We presented a two-layer Impedance MPC architecture for pHRI that achieves zero steady-state error under constant or asymptotically constant bounded human forces, sub-millimeter free-space tracking across four 3-D circle planes, empirically validated joint-limit safety at the workspace boundary, and graceful robustness to measurement noise and ±30% inertial mismatch. The key enabling property is a feedforward stage that reduces the nonlinear manipulator plant to a configuration-independent linear double integrator, enabling a precomputed free-response matrix and a 30-variable OSQP QP solvable under 1 ms. Formal theorems establish (1) exact impedance equivalence in the unconstrained limit and (2) zero steady-state error convergence via augmented Kalman estimation. Corollary 1 further shows the infinite-horizon MPC reduces to a precomputed gain lookup executable at 1 kHz. Future work will validate on physical hardware and extend energy-tank passivity augmentation for certified safe co-manipulation. REFERENCES [1] L. Villani and J. De Schutter, “Force control,” in Springer Handbook of Robotics , 2nd ed., B. Siciliano and O. Khatib, Eds. Springer, 2016, pp. 195–220. [2] A. Albu-Sch¨ affer, C. Ott, and G. Hirzinger, “A unified passivity-based control framework for position, torque and impedance control of flexible joint robots,” Int. J. Robot. Res. , vol. 26, no. 1, pp. 23–39, 2007. [3] S. Haddadin, A. Albu-Sch¨ affer, and G. Hirzinger, “Requirements for safe robots: Measurements, analysis and new insights,” Int. J. Robot. Res. , vol. 28, no. 11–12, pp. 1507–1527, 2009. [4] N. Hogan, “Impedance control: An approach to manipulation—Parts I– III,” ASME J. Dyn. Syst. Meas. Control , vol. 107, no. 1, pp. 1–24, 1985. [5] O. Khatib, “A unified approach for motion and force control of robot manipulators: The operational space formulation,” IEEE J. Robot. Au-tom. , vol. 3, no. 1, pp. 43–53, 1987. [6] S. Chiaverini, B. Siciliano, and L. Villani, “A survey of robot interaction control schemes with experimental comparison,” IEEE/ASME Trans. Mechatronics , vol. 4, no. 3, pp. 273–285, 1999. [7] X. Liu et al. , “Model predictive variable impedance control towards safe robotic interaction in unknown disturbance-rich environments,” Robotics Autonomous Syst. , vol. 190, p. 104991, 2025. [8] R. Ikeura and H. Inooka, “Variable impedance control of a robot for cooperation with a human,” in Proc. IEEE ICRA , 1995, pp. 3097–3102. [9] D. Q. Mayne, J. B. Rawlings, C. V. Rao, and P. O. M. Scokaert, “Con-strained model predictive control: Stability and optimality,” Automatica ,vol. 36, no. 6, pp. 789–814, 2000. [10] D. Q. Mayne, “Model predictive control: Recent developments and future promise,” Automatica , vol. 50, no. 12, pp. 2967–2986, 2014. [11] G. Pannocchia and J. B. Rawlings, “Disturbance models for offset-free model-predictive control,” AIChE Journal , vol. 49, no. 2, pp. 426–437, 2003. [12] Y.-Y. Cao, Z. Lin, and D. G. Ward, “Anti-windup design of output track-ing systems subject to actuator saturation and constant disturbances,” 
+
+Automatica , vol. 40, no. 7, pp. 1221–1228, Jul. 2004. [13] ——, “An antiwindup approach to enlarging domain of attraction for linear systems subject to actuator saturation,” IEEE Trans. Autom. Control , vol. 47, no. 1, pp. 140–145, Jan. 2002. [14] Y.-Y. Cao and Z. Lin, “Min–max MPC algorithm for LPV systems subject to input saturation,” IEE Proc. Control Theory Appl. , vol. 152, no. 3, pp. 266–272, May 2005. [15] Y. Cao, K. Cheng, and G. Li, “Passive model-predictive impedance control for safe physical human–robot interaction,” IEEE Trans. Cogn. Dev. Syst. , 2023. [16] K. Haninger, M. Hegeler, and L. Peternel, “Model predictive impedance control with Gaussian processes for human and environment interaction,” 
+
+Robotics Autonomous Syst. , vol. 165, p. 104431, 2023. [17] L. Roveda, N. Iannacci, F. Vicentini, N. Pedrocchi, F. Braghin, and L. M. Tosatti, “Optimal impedance via model predictive control for robot-aided rehabilitation,” Control Eng. Practice , vol. 83, pp. 11–23, 2019. [18] C. Wu et al. , “Ensuring safe physical HRI: Integrated MPC and ADRC for interaction control,” Actuators , vol. 14, no. 12, p. 608, 2025. [19] H. Sadeghian, L. Villani, M. Keshmiri, and B. Siciliano, “Task-space control of robot manipulators with null-space compliance,” IEEE Trans. Robot. , vol. 30, no. 2, pp. 493–506, 2014. [20] Franka Robotics GmbH, “Franka research 3 (FR3) technical documen-tation,” 2023, https://frankaemika.github.io/docs. [21] B. Siciliano, L. Sciavicco, L. Villani, and G. Oriolo, Robotics: Mod-elling, Planning and Control . Springer, 2009. [22] L. Sentis and O. Khatib, “Synthesis of whole-body behaviors through hierarchical control of behavioral primitives,” Int. J. Humanoid Robotics ,vol. 2, no. 4, pp. 505–518, 2005. [23] B. Stellato, G. Banjac, P. Goulart, A. Bemporad, and S. Boyd, “OSQP: An operator splitting solver for quadratic programs,” Math. Program. Comput. , vol. 12, no. 4, pp. 637–672, 2020. [24] Google DeepMind, “MuJoCo menagerie: A collection of physics-based simulation models,” GitHub, 2022, https://github.com/google-deepmind/ mujoco menagerie. [25] E. Todorov, T. Erez, and Y. Tassa, “MuJoCo: A physics engine for model-based control,” in Proc. IEEE/RSJ IROS , 2012, pp. 5026–5033.

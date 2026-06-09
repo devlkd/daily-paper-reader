@@ -1,0 +1,510 @@
+Title: Enhanced Wide-Angle Steering with Multi-Mode Multi-Port Aperture Antenna Arrays
+
+URL Source: https://arxiv.org/pdf/2606.08320v1
+
+Published Time: Tue, 09 Jun 2026 01:04:09 GMT
+
+Number of Pages: 12
+
+Markdown Content:
+Author’s Pre-Print 
+
+This work has been submitted to the IEEE for possible publication. Copyright may be transferred without notice, after which this version may no longer be accessible. 
+
+> arXiv:2606.08320v1 [eess.SP] 6 Jun 2026 1
+
+# Enhanced Wide-Angle Steering with Multi-Mode Multi-Port Aperture Antenna Arrays 
+
+Tim Hahn , Graduate Student Member, IEEE , and Dirk Manteuffel , Member, IEEE 
+
+Abstract —A novel concept for wide-angle scanning is proposed based on multi-mode multi-port antennas. The theory of multi-mode multi-port antennas based on aperture radiators is de-veloped and applied towards the design of an antenna array consisting of multi-mode aperture radiators. An advanced beam-forming algorithm is developed and implemented, making use of the higher degrees of freedom available to multi-mode multi-port antennas. The manufactured antenna array is measured and compared to the expected performance. Wide-angle steering up to ±77 ◦ from broadside with respect to a scan loss of 3 dB is achieved in both the horizontal and vertical plane with no visible grating lobe. 
+
+Index Terms —Antenna array, multi-mode multi-port antenna, millimeter-wave antenna, aperture antenna, characteristic modes, beamforming, wide-angle steering, grating lobe suppression 
+
+I. I NTRODUCTION 
+
+# WIDE-ANGLE beam steering has become a crucial capability in modern antenna systems, particularly with the rapid evolution of wireless technology for communication, sensing, radar and even next-generation technologies that aim to combine these features [1]–[4]. A key technology enabler in this context are phased array antennas due to their flexi-bility, fast response, and ability to dynamically control high gain radiation patterns over a given field of view. However, conventional phased array systems based on patch antennas suffer from limited angular scanning performance within a typical scan range of ±60 ◦. Despite that, many emerging applications, such as millimeter-wave communications and satellite communication systems demand the ability to steer beams over larger angular ranges to achieve seamless spatial coverage and maintain reliable link performance [5], [6]. In recent years, wide-angle beam scanning has attracted significantly increased research interest, driven largely by the demands of beyond fifth-generation (B5G) and sixth-generation (6G) wireless systems [1]. These systems require high data rates, low latency, and efficient spectrum utilization, all of which benefit from wide spatial coverage and dynamic beam steering capabilities [1]. Additionally, satellite commu-nications, automotive radar, and integrated sensing and com-munication (ISAC) systems can be enhanced by wide-angle scanning to improve coverage, target detection, and enable multi-user connectivity in highly dynamic environments [2]. The growing interest in wide-angle beam scanning is also accelerated by advances in enabling technologies, including                   
+
+> This work was partly funded by the Federal Ministry of Research, Tech-nology and Space of Germany within the project KOMSENS-6G under grant 16KISK127. (Corresponding author: Tim Hahn.)
+> The authors are with the Institute of Microwave and Wireless Sys-tems, Leibniz University Hannover, 30167 Hannover, Germany (e-mail: hahn@imw.uni-hannover.de, manteuffel@imw.uni-hannover.de).
+
+metasurface-enhanced arrays [7], gradient index lens antennas [8] and reconfigurable array elements [9]. These concepts allow antenna arrays to mitigate traditional limitations such as scan loss and scan blindness, which degrade performance at larger scan angles. Recent studies have demonstrated that ar-ray designs using pattern-reconfigurable antennas can achieve wide-angle scanning performance while maintaining stable beam characteristics [10]–[13]. Higher order TM modes are typically used to create these reconfigurable elements, whereas characteristic modes (CMs) are a rather rarely used concept and occasionally used in post-processing for interpretation. Our approach addresses these issues of conventional antenna concepts by using multi-mode multi-port antennas (M³PAs) to realize a pattern-reconfigurable antenna array with wide-angle scanning performance. The M³PA elements are de-signed using characteristic mode analysis (CMA) to excite orthogonal currents, thereby ensuring decoupled ports. This concept systematically exploits the symmetry of the base radiator to generate different sets of orthogonal currents, while introducing a novel method to selectively excite these modes within an aperture radiator. Consequently, a key advantage of this CM-based approach is that the antenna element ports are inherently decoupled without requiring additional decoupling effort. By enabling the excitation of multiple orthogonal currents and far-fields within the array elements, the individual array patterns can be reconfigured using weighting between the modes. For larger steering angles, modes with an off-broadside radiation characteristics are used, whereas the conventional broadside modes are used for broadside angles. This way, the reconfigured single element pattern can be used to enhance the total array pattern towards the desired direction and at the same time suppress any unwanted grating lobes. An overview of the basic procedure is illustrated in Fig. 1. The article is structured as follows. In Section II, an overview of the theory of characteristic modes is given and the fundamental concepts required for the extension towards aperture problems are described and applied. In Section III, a general overview on the concept of multi-mode multi-port antennas is shown and key characteristics of M³PAs are discussed. Furthermore, a beamforming algorithm is derived to make use of the higher degrees of freedom available to M³PAs. In this context, both analytical optimization methods as well as iterative optimizations are discussed. The theory and concepts are then applied within Section IV to analyze and design the base element as well as the total M³PA array operating in the millimeter wave (mmWave) frequency range. Finally, measurements of the manufactured prototype are shown within Section V and compared to the expected performance. 2 
+
+> Fig. 1. Schematic illustration of the proposed antenna array steering concept. The individual array pattern of the M³PA elements are reconfigured in a first step to maximize the gain into the target steering direction, while simultaneously placing a null towards the direction of grating lobes. Then, all individual element patterns are summed up to obtain the array pattern of the M³PA arrangement. The total array pattern reaches large steering angles angles without introducing grating lobes.
+
+II. T HEORY OF CHARACTERISTIC MODES 
+
+A. Theory of Characteristic Modes for Conducting Bodies 
+
+The theory of characteristic modes (TCM) offers valuable insights into the physical radiation properties and radiation mechanisms of antennas. It is conventionally used to analyze the radiation properties of conducting bodies [14]. Herein, the CMs are defined based on the generalized eigenvalue problem (GEP) 
+
+X { Jn} = λnR { Jn} (1) formulated from the impedance operator Z [14], with R
+
+and X being the Hermitian and anti-Hermitian parts of the impedance operator respectively [14]. This concept of modes can be applied to decompose the total surface current density of an antenna into individual modes, revealing the radiation contributions of each mode to the total surface current density. Thus, the total surface current density is the weighted sum of all modes of the structure [14] 
+
+J = X
+
+> n
+
+anJn = V i
+
+> n
+
+1 + j λn
+
+Jn. (2) In this context, V i 
+
+> n
+
+is the modal excitation coefficient. It describes how well the impressed electric field excites the n-th mode [14]. More importantly, each CM is associated with an eigenvalue 
+
+λn, which characterizes the resonant behavior of the mode and indicates its proximity to resonance. Thus, the modal significance is a very important quantity and used to determine the resonance behavior of the individual modes over frequency. It is calculated from the eigenvalue λn as [15] MS n = 1
+
+|1 + j λn| . (3) Therefore, a low absolute eigenvalue corresponds to a high modal significance which indicates that the CM contributes strongly to the total surface current density. 
+
+B. Theory of Characteristic Modes for Apertures 
+
+The concept of duality suggests, that the TCM can be equally applied to aperture antennas. The theory has been studied in the past by researchers such as Harrington and Mautz [16]–[22]. More recently, design guidelines for slot antennas based on CMs have been formulated [23]–[25] and the CMA of aperture problems based on the duality principle has been proposed [26], [27]. However, the consequences and implications of the duality relations on the eigenvalue behavior of characteristic modes have not been mentioned explicitly. Therefore, a brief overview of the theory will be given here, as it is a prerequisite for the analysis and design within this work. For the analysis of aperture radiators, the surface equiv-alence principle in combination with the method of images is commonly used to obtain the magnetic surface current distributions of dual aperture geometries [28], [29]. From PMCHWT [30], the T operator is known as 
+
+T { F} = j
+
+k ∇
+
+¨
+
+> S′
+
+G(r, r′)∇′ · F(r′) d S′
+
++ j k
+
+¨
+
+> S′
+
+G(r, r′)F(r′) d S′
+
+(4) where F describes either electric or magnetic source currents 
+
+Js and Ms respectively and the scalar free-space Green’s function G(r, r′). Comparing the T operator [30] with the impedance and admittance operators from [14] and [16], [17], the following relations can be identified given the duality of electric and magnetic currents 
+
+Z = [ η T { Js} ]tan , Y = [ 1 /η T { Ms} ]tan (5) 
+
+Y { Ms} ≜ 1/η 2 Z { Js} (6) with η being the free-space impedance. As the GEP from (1) is built upon the impedance operator, the similarity of impedance 3
+
+operator and admittance operator directly implies that the GEP for apertures 
+
+B { Mn} = λnG { Mn} (7) is a scaled variant of the dual GEP for conducting bodies. Consequently, the eigenvalues and electric and magnetic eigen-currents are equal for a conducting body and its dual aperture counterpart which can be formulated as 
+
+λn, PEC ≜ λn, Aperture , with Jn, PEC ≜ Mn, Aperture . (8) Leveraging this duality relationship thus provides an elegant and systematic foundation for the design of complex aperture radiators using TCM. III. A DVANCED BEAMFORMING USING MULTI -M ODE 
+
+MULTI -P ORT ANTENNA ARRAYS 
+
+A. Multi-Mode Multi-Port Antennas 
+
+Multi-mode multi-port antennas (M³PAs) are a special kind of antenna type which aim to selectively excite different sets of characteristic modes on a shared antenna structure using multiple ports. We have been working on these advanced antenna types for many years and built a comprehensive theory for the analysis and design of such antennas [31]– [33]. Key characteristics of these M³PAs include low port coupling as well as spatially diverse radiation patterns with low envelope correlation coefficients (ECCs) which makes them especially suitable for multiple-input multiple-output (MIMO) applications. The conceptual structure of an M³PA includes the following components. The antenna element on which the CMs are excited, multiple feeds or exciters distributed over the antenna element, as well as a feed network or integrated circuit to excite the feeds with their required amplitude and phase. Regarding the analysis of M³PAs, it has been discovered that the CMs of a structure are closely linked to its symmetry properties. In this context, group theory has been identified to be a valuable tool to describe the orthogonality properties and eigenvalue behavior of CMs on symmetric structures [32]– [38]. One of the main outcomes of group theory applied towards the TCM is that the maximum number of realizable orthogonal ports on a M³PA is limited by the symmetry order of the antenna structure. Consequently, higher numbers of orthogonal ports can be realized on an antenna by increasing its symmetry order [32]. As single element M³PAs can be flexibly reconfigured, there is significant potential for the application of M³PAs in antenna arrays [39], [40]. Using reconfigurable antenna elements in complete arrays enables higher degrees of freedom for the configuration of these arrays compared to conventional single port antennas. 
+
+B. Beamforming Optimization Algorithm 
+
+To enable a wide-angle scanning range, our approach is to use multi-mode multi-port antenna (M³PA) radiators with reconfigurable element patterns that can be dynamically opti-mized with respect to the desired scan angle of the array. While conventional arrays can be easily described using pattern multiplication to synthesize total array patterns [29], [41], the situation changes for pattern-reconfigurable antennas as these have multiple radiation patterns available to individually choose from per element of the array. In order to utilize these higher degrees of freedom avail-able to them, a suitable array beamforming algorithm needs to be implemented. Several algorithmic strategies exist in literature for beamforming with pattern-reconfigurable ele-ments. A common approach combines discrete mode/state selection with classical amplitude/phase weighting, where joint mode-selection and excitation optimization is performed using heuristic optimizations [11]. Other authors implement closed-form solutions to synthesize the weights of the reconfigured array elements [42], [43]. We choose a manifold optimization based approach similar to [44] due to its computational effi-ciency, flexibility and deterministic robustness compared to the aforementioned. Therefore, an array beamforming algorithm is implemented based on a conjugate gradient optimizer. The algorithm is implemented using the Manopt toolbox [45]. To start the optimization process, a desired far-field pattern is initialized. For this purpose, a pencil beam with adjustable beam width is created within the target angular sector 
+
+Ed(θ, φ ) = 
+
+(
+
+E0 epol , θ ∈ [θd,min , θ d,max ] , φ ∈ [φd,min , φ d,max ]0, else. (9) The amplitude E0 of the desired pattern is chosen such that the radiated power within the target sector is normalized to 
+
+Prad,d =
+
+‹
+
+> S
+
+12η |E0|2epol dS = 1 W . (10) Further, the polarization vector epol is chosen to be 
+
+epol =
+
+cos( ψ)sin( ψ)
+
+
+
+, ψ ∈ [0 , 2π] (11) with ψ = 0 resulting in θ-polarization and ψ = π resulting in φ-polarization. The target polarization needs to be defined before the optimization procedure begins. The optimization algorithm shall maximize the envelope correlation coefficient (ECC) between the desired pattern and the weighted embedded element pattern superposition 
+
+max 
+
+> a∈RN
+
+ECC {a · Ep, Ed} (12) with the a = ( a1, . . . , a N ) being the coefficients of the N
+
+array ports and the ECC operator being defined as [46] 
+
+ECC {Eα, Eβ } = 12η
+
+‹
+
+> S
+
+Eα · E∗
+
+> β
+
+pPrad ,α 
+
+pPrad ,β 
+
+dS. (13) For the optimization with non-uniform coefficient amplitudes, a complex sphere manifold is used with the cost function being defined as 
+
+fcost (a) = −ECC {a · Ep, Ed} (14) and its derivative with respect to the port coefficients a
+
+∂f cost (a)
+
+∂a = −ECC {Ep, Ed} . (15) 4
+
+Thus, a maximum correlation between the target pattern and the optimized array pattern yields minimum costs for the optimizer. Consequently, the optimizer minimizes the costs for all variations of the port coefficients 
+
+min 
+
+> a∈RN
+
+fcost (a). (16) The procedure requires all far-field patterns of the array ports to be present (either from simulation or measurement) for this method to work. Further, if embedded element patterns are used, coupling between neighboring elements is incorporated in the calculations of the total array pattern. In case uniform amplitude distributions are of interest, instead a complex circle manifold can be used and the cost function and its derivative are scaled by a factor 1/√N to account for port power normalization. In practice, the port weights only need to be computed once for each target beam direction and can be stored in a lookup table for low-latency reuse. The optimization algorithm will be used and applied towards the array design described in the following chapter. IV. M ULTI -M ODE MULTI -P ORT ANTENNA ARRAY DESIGN 
+
+A. Antenna Element Analysis and Design 
+
+To design a M³PA antenna array, the element radiator needs to be analyzed and designed systematically to identify the modes of the structure and to determine potential feed structures for these modes. The element radiator shall enable the excitation 1 of different orthogonal sets of CMs by different antenna ports. For the specific aperture-based M³PA radiator designed within this work, the millimeter wave band n257 ranging from 26 .5 GHz ≤ f ≤ 29 .5 GHz with a center frequency of fc = 28 GHz is chosen. As a base structure of the M³PA element, a square aperture is chosen, as it is known to possess six orthogonal current groups [32] from which the desired modes can be chosen. A square aperture is advantageous for M³PA array design, as its geometry aligns naturally with square lattices and minimizes unused space between elements. Moreover, it provides four CMs that can be excited using a single feed network [47], requiring only four feeds and thus keeping the implementation effort reasonable. As known from array theory, the footprint of array elements should stay low to have the antenna elements positioned closely together to avoid the occurrence of grating lobes in the visible region when steering. At the same time, the M³PA elements need to be large enough to have higher order modes significant. In general, these two properties are in conflict with each other. To increase the modal significance of higher order modes while maintaining a low footprint of the antenna element, the aperture is filled with a dielectric substrate with εr,Sub. > 1 to 
+
+> 1To be precise, eigencurrents cannot be excited directly in general. Instead, currents exhibiting characteristics similar to those of the corresponding eigen-currents are excited. This interpretation of excitation is adopted throughout the remainder of this article.
+
+Superstrate 
+
+Aperture Antenna 
+
+Feed Network 
+
+41 2 31
+
+> ∆
+
+4
+
+> ∆
+
+2
+
+> Σ
+
+3 
+
+> ∆
+> 0◦180 ◦0◦180 ◦
+> Σ
+> 0◦
+> Σ
+> 180 ◦
+
+Aperture 
+
+Feeds 
+
+Branch-Line Coupler 
+
+x
+
+yz 
+
+> Fig. 2. Exploded view of the antenna integrated into a multi-layer printed circuit board (PCB). The radiating aperture is covered by a superstrate to improve the impedance transition to free-space. The feeds are embedded into the PCB and fed by a feed network. The antenna aperture and all feed components are surrounded by shielding vias.
+
+shift the mode resonances towards lower frequencies. How-ever, this insertion of the dielectric creates an impedance mis-match between the aperture and free-space due to the higher effective permittivity of the filled aperture. To mitigate this problem, a tapered superstrate with εr,Sup. ≈ εr,Sub. is placed on top of the filled aperture. The superstrate acts as an impedance taper, gradually transitioning the mode impedance from the substrate-filled aperture to free-space, thereby minimizing the impedance mismatch. The influence of the superstrate on the steering performance is investigated in the Appendix. The conceptual drawing of the antenna element is shown in Fig. 2. The antenna is realized in printed circuit board (PCB) technology with the radiating antenna aperture positioned on the top layer and excitation feeds embedded into the PCB. The feeds are excited by a feed network with their corresponding amplitude and phase to selectively excite modes of differ-ent orthogonal current groups. The feed network consists of branch-line couplers and is distributed across multiple layers to limit its dimensions to approximately the aperture size. The superstrate with a dielectric constant of εr, Sup. = 4 .5 is located on top of the substrate-filled aperture. The superstrate has a pyramid shape to introduce an air gap between adjacent elements to prevent the propagation of substrate waves inside the superstrate. It has a bottom base area of ASup.,bot =6 mm × 6 mm and top area of ASup.,top = 4 .5 mm × 4.5 mm 
+
+with a height of hSup. = 4 mm and a linear taper from bottom to top. To reveal the modes inherent to the square aperture, a CMA of the square aperture is carried out. For the analysis of the magnetic CMs within the aperture and their eigenvalue behavior over frequency, the aperture dimensions are calcu-lated within an effective medium, as the aperture is embedded into the dielectric material. Therefore, the average dielectric 5Frequency (GHz) 
+
+0 5 10 15 20 25 30 35 Modal Significance 
+
+00.2 0.4 0.6 0.8 1
+
+Mode 1 Mode 2 Mode 3 Mode 4 Mode 5 Mode 6 Mode 7 Mode 8 Mode 9 Mode 10 n257 Band                         
+
+> Fig. 3. Modal significances of the square aperture with dimensions
+> A≈0.467 λ0×0.467 λ0≈0.74 λeff ×0.74 λeff = 5 mm ×5 mm .(a) (b) (c) (d)
+> Ms, norm  in dB
+> 0
+> −4
+> −8
+> −12
+> −16
+> −20
+> (e)
+> Fig. 4. Characteristic magnetic surface current densities Ms,n of the first four eigenmodes of the square aperture. (a) Dipole mode 1. (b) Dipole mode 2. (c) Loop mode. (d) Quadrupole mode. (e) Legend.
+
+permittivity of substrate and superstrate is determined and used to calculate the effective permittivity as a first order approximation as [48] 
+
+εr,eff = (εr,Substrate + εr,Superstrate )/2 + 1 2 . (17) The relative permittivity of the substrate used for the deter-mination of the effective permittivity is εr, Sub. = 3 .62 . The modal significances calculated in this way for the equivalent magnetic aperture currents embedded in the effective medium are shown in Fig. 3. As can be seen from Fig. 3, modes 
+
+1 − 4 have the highest modal significance inside the target frequency range and are thus considered for excitation. Modes 
+
+1 and 2 form a degenerate mode pair and thus share the same eigenvalue trace. Due to the symmetry of the square aperture, 
+
+a
+
+a
+
+l
+
+b c
+
+w
+
+d
+
+Transition Matching Stub 
+
+wLine 
+
+x
+
+y
+
+z                      
+
+> Fig. 5. Feed structure of the element radiator. The feeds are embedded into the PCB with the feed networks located on lower layers. The feed network is connected to the input of the feeds using via transitions. The total aperture is surrounded by via walls to establish the boundary conditions for the aperture mode. The feeds are separated from the networks by a ground plane. They are located at a height of h= 1 .29 mm ≈λeff /4above the ground plane. The dimensions of the feeds are as follows: a=5 mm ,b=0.8 mm ,
+> c= 0 .7 mm ,d= 0 .2 mm ,w= 1 mm ,l= 2 mm ,wLine = 0 .12 mm .
+
+modes 1 − 6 are all orthogonal to each other. In this context, orthogonality is defined as the current correlation coefficient between the currents yielding zero 
+
+ρuv =
+
+‚ 
+
+> S
+
+Mu · M∗ 
+
+> v
+
+dS
+
+q‚ 
+
+> S
+
+|Mu|2 dS
+
+q‚ 
+
+> S
+
+|Mv |2 dS
+
+= δuv (18) with δuv being the Kronecker delta. The first four characteristic magnetic current modes of the aperture in the effective medium are shown in Fig. 4. The modes 1 and 2 correspond to the dipole modes, which excite horizontally- and vertically-polarized far-field patterns, respectively. Here, horizontal polarization is defined along the 
+
+x-direction and vertical polarization along the y-direction, with respect to the coordinate system shown in Fig. 2. Modes 3 and 
+
+4 are higher order modes, with mode 3 being referred to as loop mode and mode 4 being referred to as quadrupole mode. Both of the higher order modes excite far-fields with mixed polarization, a broadside null, and off-broadside radiation characteristics. Thus, the higher order modes are advantageous when steering towards large angles, whereas the conventional dipole modes are better suited to steer towards broadside. The feed structure used to excite the modes in Fig. 4 is shown in Fig. 5. The excitation elements are essentially monopoles that are arranged in a square. The feed elements are located below to uppermost radiating square aperture layer. The feeders have a distance of a quarter wavelength to the ground plane beneath them in order to maximize the constructive interference with the reflected wave from the ground plane. The inputs of the feed elements are connected to the outputs of the feed network which is located on the lower layers of the PCB, as shown in Fig. 1. The feed network provides the antenna feeds with the required amplitude and 6
+
+phase excitations. It is realized using cascaded branch-line couplers in stripline technology with 90 ◦ delay lines attached at the outputs to realize the total required phase shift of 
+
+∆φ = 180 ◦. The delay line is necessary, as the branch-line coupler on its own would only be able to realize a 
+
+90 ◦ phase shift. Although a rat-race coupler satisfies the feed network requirements, its stripline implementation would require trace widths below 100 μm, posing manufacturing challenges. Therefore, a branch-line coupler was selected due to its wider trace widths and improved manufacturability in PCB technology. To enable the transition from the feed network layers to the feeds, the feeds are surrounded by vias to support the propagation of a quasi-coaxial mode. At these high frequen-cies, matching stubs are incorporated to optimize the transition impedance and bandwidth. In order to realize the boundary conditions required for the aperture, the aperture is surrounded by through-hole vias. These surrounding via walls enable the excitation of waveguide modes within the cavity and furthermore act as shielding vias within neighboring antenna elements in the array. This way, the coupling between the array elements can be reduced by integrating the shielding technique directly into the antenna element. 
+
+B. Array Synthesis, Design and Implementation 
+
+To achieve symmetrical wide-angle steering for both the horizontal and vertical plane, the array lattice should also be chosen symmetrically w.r.t. both planes. As the array element radiator has been designed systematically to excite CMs of different orthogonal current groups, the obvious choice for the array lattice is also a square geometry, where the elements are equally spaced in x- and y-direction w.r.t. the coordinate system shown in Fig. 5. An advantage of this array topology is that the antenna aperture per element radiator can be maximized while minimizing unused space between the elements, as the square shape naturally fits the array lattice. This consequently leads to higher gains available to the element. Due to the project specifications requiring a minimum realized gain of 16 dBi in broadside direction, a 4 × 4 element array with an inter-element spacing of d = 6 .5 mm ≈ 0.6 λ0
+
+has been chosen. The maximum realized gain of the total array structure can be estimated from the broadside single element pattern using 
+
+GArray ,max ≈ 10 log 10 (N · M ) dB + GElem .. (19) This yields a maximum array gain of GArray ,max ≈ 19 .7 dBi 
+
+for the 4×4 array. Thus, the array provides a sufficient margin with respect to the specifications. The total number of antenna array ports for the 4 × 4 array with 4 ports per radiator is NPorts = 4 ×4×4 = 64 , providing a high degree of freedom and flexibility for reconfiguring the overall antenna array. For an industrialized antenna array, minimizing the total number of ports is generally desirable. However, the objective of this work is to investigate the additional degrees of freedom enabled by M³PA arrays. There-fore, assigning a dedicated port to each element maximizes  
+
+> Connectors
+> Bottom GND
+> Breakout Layer
+> GND
+> Network Layer 2
+> GND
+> Network Layer 1
+> Backshort GND
+> Aperture GND
+> Feed Layer
+> Aperture Layer
+> Superstrate
+> Fig. 6. Exploded view of the M³PA array integrated into the multi-layer PCB. The PCB has a total number of ten layers. Connectors for distributing the input signals into the PCB are soldered to the bottom side of the PCB. Vias are hidden in this illustration to increase the visibility of layer structures.
+
+reconfigurability and facilitates exploration of the performance limits of the proposed array architecture. Using the synthesized parameters, the total antenna array is designed based on the single element radiator described in Section IV-A. An exploded view of the M³PA array stack-up in multi-layer PCB technology is shown in Fig. 6. The PCB consists of a total number of ten layers with the transmission lines integrated in stripline technology. The radiating antenna aperture is located on the highest layer of the PCB with the excitation feeds of the antenna element located on the layers beneath it. A breakout layer is positioned beneath the feed networks to route and distribute the input signals to the individual antenna elements. The input signals are fed to the PCB using 8 × 1 connectors from the Rosenberger Mini-Coax Multi-Port series, which are located on the bottom side of the PCB. In total, the PCB has a footprint of APCB = 60 mm ×60 mm 
+
+with a thickness of tPCB = 2 .616 mm . As a core material for the PCB cores, Panasonic Megtron 6 R-5775(K) is used with a dielectric constant of εr = 3 .62 and dissipation factor of tan( δ) = 0 .0052 at 24 GHz . The superstrate is printed in a fused deposition modeling (FDM) 3D-printer using the Zetamix-ε-4.5 filament with a dielectric constant of εr = 4 .5
+
+and a dissipation factor of tan( δ) = 0 .0015 .7       
+
+> (a) (b)
+> (c) (d) Fig. 7. Front and back view of the manufactured single antenna prototype and 4×4antenna array prototype. Both prototypes are manufactured in PCB technology and incorporate signal distribution lines as well as a feed network. Connectors for the individual antenna ports are placed on the bottom side of the PCBs.
+
+V. P ROTOTYPE , M EASUREMENT AND VALIDATION 
+
+A. Measurement and Validation of the Single Element Antenna 
+
+To verify the functionality of the proposed aperture ra-diator M³PA concept, the single element has been built up and measured separately to the total array. A picture of the manufactured single element antenna as well as 4 × 4 array prototype is shown in Fig. 7. The S-parameters of the antenna element have been mea-sured using a four-port vector network analyzer (VNA). A comparison between the simulated and measured S-parameters of the single element M³PA is shown in Fig. 8. As can be seen from Fig. 8, the ports of the antenna are sufficiently matched and stay below the limit of |Suu | ≤ − 10 dB within the target band n257 ( 26 .5 ≤ f / GHz < 29 .5). Further, highest measured coupling between the antenna ports is |Suv, max | = −16 dB 
+
+at the center frequency. However, most of the other coupling S-parameters stay well beyond |Suv | = −20 dB . The reason for the increased coupling of ports 2 and 3 lies in the feed network. As can be seen from Fig. 2, ports 2 and 3 share the same branch-line coupler. As all of the modes belong to different orthogonal current groups, they theoretically do not couple. However, as the branch-line coupler is connected before the antenna, the finite coupling of the feed network directly translates to the S-parameters of the total antenna ports. For the verification of the far-field radiation performance, the single element antenna is installed and measured in a compact antenna test range (CATR). The ports of the antenna are measured sequentially with all other ports terminated to 
+
+50 Ω . The 3D radiation patterns with amplitude and phase information are measured using a VNA, utilizing the gain comparison method. The antenna under test (AUT) is installed Frequency (GHz)                 
+
+> 24 25 26 27 28 29 30 31 32
+> |Su1| (dB)
+> -40 -35 -30 -25 -20 -15 -10 -5 0
+> (a) Frequency (GHz)
+> 24 25 26 27 28 29 30 31 32
+> |Su2| (dB)
+> -40 -35 -30 -25 -20 -15 -10 -5 0(b) Frequency (GHz)
+> 24 25 26 27 28 29 30 31 32
+> |Su3| (dB)
+> -40 -35 -30 -25 -20 -15 -10 -5 0
+> (c) Frequency (GHz)
+> 24 25 26 27 28 29 30 31 32
+> |Su4| (dB)
+> -40 -35 -30 -25 -20 -15 -10 -5 0(d)
+> u= 1 u= 2
+> u= 3 u= 4
+> Measurement Simulation (e) Fig. 8. Measured and simulated S-parameters |Suv |of the fabricated single element M³PA. (a) Port 1 ( v= 1 ). (b) Port 2 ( v= 2 ). (c) Port 3 ( v= 3 ). (d) Port 4 ( v= 4 ). (e) Legend.
+
+on the positioner and rotated to obtain all measurement angles. It should be mentioned that there exists a blind spot due to the absorber-covered positioner on which the AUT is mounted, in the range of θ ∈ 180 ◦ ± 30 ◦.The measured far-field pattern cuts of the single element antenna are shown in Fig. 9. Especially the dipole ports 1 and 4 show very good agreement with the simulated antenna radiation patterns, while there are some minor deviations from the simulated patterns visible in the radiation patterns corre-sponding to ports 2 and 3. These deviations can potentially be attributed to the manufacturing process of the 3D-printed superstrate that is placed on top of the radiating aperture. First of all, the infill of the structure printed in the FDM process directly affects the total dielectric constant of the superstrate. Any defects or gaps in the structure of the dielectric can de-crease the total dielectric constant of the structure and lead to a mismatch between simulation and measurement. Furthermore, stair-casing of the FDM manufacturing process can lead to micro-reflections (or internal reflections) of the transmitted waves and cause a distortion of the far-field radiation pattern. And finally, positioning inaccuracies of the dielectric on top of the aperture can lead to beam squint, causing the antenna patterns to shift towards one direction. The envelope correlation coefficients (ECCs) of the mea-sured single element M³PA are illustrated in Fig. 10 and compared to the simulated results. As can be seen from Fig. 10, the ECCs of the measured antenna patterns agree 80 30 60 90 120 150 180 210 240 270 300 330 -20 -15 -10 -5 0510 Realized Gain (dBi)                                                            
+
+> θ(◦)
+> (a) 030 60 90 120 150 180 210 240 270 300 330 -20 -15 -10 -5 0510 Realized Gain (dBi)
+> ϕ(◦)(b) 030 60 90 120 150 180 210 240 270 300 330 -20 -15 -10 -5 0510 Realized Gain (dBi)
+> θ(◦)(c) 030 60 90 120 150 180 210 240 270 300 330 -20 -15 -10 -5 0510 Realized Gain (dBi)
+> ϕ(◦)(d) 030 60 90 120 150 180 210 240 270 300 330 -20 -15 -10 -5 0510 Realized Gain (dBi)
+> θ(◦)
+> (e) 030 60 90 120 150 180 210 240 270 300 330 -20 -15 -10 -5 0510 Realized Gain (dBi)
+> ϕ(◦)(f) 030 60 90 120 150 180 210 240 270 300 330 -20 -15 -10 -5 0510 Realized Gain (dBi)
+> θ(◦)(g) 030 60 90 120 150 180 210 240 270 300 330 -20 -15 -10 -5 0510 Realized Gain (dBi)
+> ϕ(◦)(h)
+> θ-component φ= 0 ◦φ= 90 ◦φ-component φ= 0 ◦φ= 90 ◦Measurement Simulation (i) Fig. 9. Comparison of measured and simulated realized gain patterns of the fabricated four-port M³PA at fc= 28 GHz in the xz -plane ( φ= 0 ◦), yz -plane (φ= 90 ◦), and xy -plane ( θ= 90 ◦) with respect to the coordinate system shown in Fig. 5. (a) - (b) Port 1. (c) - (d) Port 2. (e) - (f) Port 3. (g) - (h) Port 4. (i) Legend. 0
+> 0.25 0.5
+> 142
+> |ECC( u, v )|
+> Port vPort u
+> 3
+> 0.75
+> 321
+> 41
+> (a) 0
+> 0.25
+> 0.5
+> 142
+> |ECC( u, v )|
+> Port vPort u
+> 3
+> 0.75
+> 32
+> 1
+> 41(b) Fig. 10. Envelope correlation coefficients (ECCs) of the M³PA single antenna. (a) ECC calculated from measured radiation patterns. (b) ECC calculated from simulated radiation patterns.
+
+generally well with the simulated ECCs. However, an increase of the ECC of port 2 is visible which could be attributed to misalignment of the superstrate. Nevertheless, this verifies that the designed aperture-based M³PA successfully excites far-fields corresponding to different orthogonal aperture modes. Furthermore, it validates that the individual antenna ports are sufficiently decoupled. 
+
+B. Measurement and Validation of the Multi-Mode Multi-Port Antenna Array 
+
+To evaluate the performance of the 4 × 4 M³PA array, the array is measured within the CATR. The 4 × 4 array installed on the positioner inside the CATR is shown in Fig. 11. The antenna ports of the array are measured sequentially to obtain the embedded element patterns (EEPs) of all antenna ports. All unused ports are terminated with 50 Ω terminations as shown in Fig. 11 (b). As the EEPs are measured, all coupling effects are included within the measured patterns. To determine the total array pattern, the measured EEPs are superimposed using 
+
+EArray =
+
+> N
+
+X
+
+> n=1
+
+anEEEP ,n . (20) Here, an are the complex weighting coefficients of the individ-ual antenna ports which are determined based on the algorithm shown in Section III-B. This method is in line with well-established concepts for the synthesis of total array patterns, compare [49] and is frequently used to determine the radiation characteristics of complete arrays [50], [51]. Fig. 12 shows the steered total array far-field patterns for both horizontal and vertical polarization based on the measured EEPs of the 4 × 4 antenna array compared to the simulated results. For the synthesis of the array beams, the 9     
+
+> x
+> z
+> y
+> φ
+> θ
+> (a)
+> (b) Fig. 11. Overview of the 4×4M³PA array installed inside the anechoic chamber. (a) Front view. (b) Side view with cables and terminations connected.
+
+lower right corner of the array has been measured (ports 
+
+1 − 16 ) and the far-fields were mirrored to obtain the EEPs of the full array. As visible from Fig. 12, the measured steered beams match the simulated results well for the main lobe steered towards different target directions. The measured results confirm that the designed mmWave M³PA array is capable of achieving wide-angle steering performance up to a maximum angle of ±77 ◦ for both the horizontal and vertical polarizations w.r.t. a maximum scan loss of Lscan = 3 dB . The array has a measured efficiency of 54 .6% for the vertically-polarized beam steered towards θ0 = 40 ◦, φ 0 = 90 ◦ compared to the simulated efficiency of 63 .5% . The measured realized gain is Greal,meas. = 16 .58 dBi in broadside direction compared to the simulated real. gain of Greal,sim. = 17 .7 dBi . Hence, the experimental results of the prototype 4 × 4 array fulfill the predefined project specifications. The decreased efficiency is attributed to the length of the breakout traces, routing the input signals from the connectors to the antenna elements. These traces cause a loss of approximately LTraces = 1 dB , reducing the overall efficiency from 80% at the feed network input to 
+
+63 .5% at the connector inputs. As mentioned earlier, access to all 64 ports is only required for this academic prototype. In θ (◦), ϕ = 0 ◦                                              
+
+> -90 -75 -60 -45 -30 -15 015 30 45 60 75 90 Norm. Amplitude (dB)
+> -21 -18 -15 -12 -9 -6 -3 0
+> (a) θ(◦), ϕ = 90 ◦
+> -90 -75 -60 -45 -30 -15 015 30 45 60 75 90 Norm. Amplitude (dB)
+> -21 -18 -15 -12 -9 -6 -3 0
+> (b)
+> θ= 0 ◦
+> θ= 10 ◦
+> θ= 20 ◦
+> θ= 30 ◦
+> θ= 40 ◦
+> θ= 50 ◦
+> θ= 60 ◦
+> θ= 70 ◦
+> θ= 80 ◦
+> Measurement Simulation Envelope (c) Fig. 12. Steered beams of the M³PA array for different steering angles and polarizations at the target frequency of fc= 28 GHz . (a) Norm. amplitude of the steered horizontally-polarized beams in θ-direction for φ= 0 ◦(xz -plane). (b) Norm. amplitude of the steered vertically-polarized beams in θ-direction for φ= 90 ◦(yz -plane). (c) Legend.
+
+an industrialized array implementation, these additional input losses would vanish, as each element port would be driven directly by a beamforming integrated circuit (BFIC). It is visible from Fig. 12, that the wide-angle scanning performance is achieved with no visible grating lobes. VI. C ONCLUSION 
+
+This work has presented a methodology for extending the theory of characteristic modes (TCM) to aperture radiators and applying it to the design of aperture-based multi-mode multi-port antennas (M³PAs). The developed theory enables the realization of aperture antenna elements with multiple decoupled ports and radiation patterns, providing additional 10 
+
+degrees of freedom for array beamforming and pattern syn-thesis. By exploiting broadside and off-broadside radiation modes, M³PAs offer significant potential to improve array performance at large steering angles. To utilize these additional degrees of freedom, an iterative beamforming optimization algorithm has been developed to determine the excitation weights of the M³PA array elements. This capability allows the adaptive placement of far-field nulls towards grating lobe directions and enables array designs with inter-element spacings exceeding the conventional half-wavelength limit. The proposed concepts have been validated through the design of an aperture-based M³PA element and its integration into a fully PCB-implemented 4 × 4 antenna array. Mea-surements of the fabricated prototype confirm the proposed functionality, demonstrating wide-angle beam steering up to 
+
+±77 ◦ with a scan loss of Lscan = 3 dB . These results highlight the potential of aperture-based M³PAs for wide-angle steering antenna arrays. APPENDIX 
+
+INFLUENCE OF THE SUPERSTRATE ON BEAM STEERING 
+
+To evaluate the influence of the superstrate on the steering performance, the array element is simulated with the super-strate placed on the aperture and without it and arranged in a 
+
+4 × 4 array configuration. The inter-element distance is set to 
+
+d = 6 .5 mm ≈ 0.6λ0. Fig. 13 shows a comparison between the simulated steered beams of the 4×4 array in this configuration. Due to the addition of the superstrate, the beam width of the steered beams is decreased while increasing the gain by about 
+
+1 dB . Further, a slight increase in the sidelobe level is visible. However, in both cases the maximum achievable scanning range w.r.t. a scan loss of Lscan = 3 dB remains equal with approximately 77 ◦.θ (◦), ϕ = 90 ◦
+
+-90 -75 -60 -45 -30 -15 0 15 30 45 60 75 90 Norm. Amplitude (dB) 
+
+-21 -18 -15 -12 -9 -6 -3 0
+
+θ = 0 ◦
+
+θ = 10 ◦
+
+θ = 20 ◦
+
+θ = 30 ◦
+
+θ = 40 ◦
+
+θ = 50 ◦
+
+θ = 60 ◦
+
+θ = 70 ◦
+
+θ = 80 ◦
+
+Superstrate 
+
+No superstrate 
+
+Fig. 13. Comparison of the vertically-polarized steered beams of the simulated antenna array with and without superstrate for φ = 90 ◦ (yz -plane). 
+
+REFERENCES [1] M. Li, S.-L. Chen, Y. Liu, and Y. J. Guo, “Wide-Angle Beam Scanning Phased Array Antennas: A Review,” IEEE Open Journal of Antennas and Propagation , vol. 4, pp. 695–712, 2023. [2] A. Ghosh, T. Wild, J. Du, J. Tan, A. Grudnitsky, D. Chizhik, S. Mandelli, Y. Xing, F. Schaich, and H. Viswanathan, “A Unified Future: Integrated Sensing and Communication (ISAC) in 6G,” Antennas and Propagation IEEE Journal of Selected Topics in Electromagnetics , vol. 1, no. 1, pp. 365–374, Sep. 2025. [3] T. Wild, A. Grudnitsky, S. Mandelli, M. Henninger, J. Guan, and F. Schaich, “6G Integrated Sensing and Communication: From Vision to Realization,” in 2023 20th European Radar Conference (EuRAD) , Sep. 2023, pp. 355–358. [4] T. Wild, V. Braun, and H. Viswanathan, “Joint Design of Communication and Sensing for Beyond 5G and 6G Systems,” IEEE Access , vol. 9, pp. 30 845–30 857, 2021. [5] T. Chaloun, P. Gr¨ uner, and W. Menzel, “Design and Analysis of a Novel Wide-Angle Scanning Stub-Loaded Cavity Array Element,” IEEE Open Journal of Antennas and Propagation , vol. 3, pp. 783–797, 2022. [6] P. Li, M. Hu, Y. Zhang, P. Liang, K. Wei, and Y. Li, “Wide-Beam Metallic Bezel Antenna for Direct Satellite-to-Handset Communica-tions,” IEEE Transactions on Antennas and Propagation , vol. 73, no. 10, pp. 7370–7378, Oct. 2025. [7] B. Xi, Y. Xiao, M. Li, Y. Li, H. Sun, and Z. Chen, “Wide-Angle Scanning Phased Array Antennas Using Metasurface Slabs,” IEEE Transactions on Antennas and Propagation , vol. 69, no. 12, pp. 9003–9008, Dec. 2021. [8] B. Nie, Y. Liu, H. Lu, Z. Liu, Y. Gao, P. Zhen, and X. Lv, “Fully Metallic Gradient Index Lens Array Antenna for Wide-Angle Scanning Phased Array,” IEEE Transactions on Antennas and Propagation , vol. 71, no. 9, pp. 7363–7375, Sep. 2023. [9] B. Ahn, I.-J. Hwang, K.-S. Kim, S.-C. Chae, J.-W. Yu, and H. L. Lee, “Wide-angle scanning phased array antenna using high gain pattern reconfigurable antenna elements,” Scientific Reports , vol. 9, no. 1, Dec. 2019. [10] F. Peng, C. Liao, Y. Cheng, and L. Guan, “A multi-mode pattern reconfigurable antenna with wide beam coverage and its application to dual-polarized wide-angle scanning phased array,” International Journal of RF and Microwave Computer-Aided Engineering , vol. 31, no. 9, May 2021. [11] X. Ding, Y.-F. Cheng, W. Shao, and B.-Z. Wang, “A Wide-Angle Scanning Phased Array With Microstrip Patch Mode Reconfiguration Technique,” IEEE Transactions on Antennas and Propagation , vol. 65, no. 9, pp. 4548–4555, Sep. 2017. [12] X. Tang, J. Chai, H. Zhou, X. Li, H. Liu, J. Shi, M. Meng, Z. Zhang, H. Zhao, J. Geng, C. He, R. Jin, and G. Tong, “An All-Metal High-Efficiency Wide-Angle Scanning Phased Array Based on Dual-Port PMA,” IEEE Transactions on Antennas and Propagation , vol. 74, no. 3, pp. 2441–2456, Mar. 2026. [13] G.-F. Gao, X. Ding, Y.-F. Cheng, and W. Shao, “Dual-Polarized Wide-Angle Scanning Phased Array Based on Mutimode Patch Elements,” 
+
+IEEE Antennas and Wireless Propagation Letters , vol. 18, no. 3, pp. 546–550, Mar. 2019. [14] R. Harrington and J. Mautz, “Theory of characteristic modes for conducting bodies,” IEEE Transactions on Antennas and Propagation ,vol. 19, no. 5, pp. 622–628, 1971. [15] M. Cabedo-Fabres, E. Antonino-Daviu, A. Valero-Nogueira, and M. F. Bataller, “The Theory of Characteristic Modes Revisited: A Contribution to the Design of Antennas for Modern Applications,” IEEE Antennas and Propagation Magazine , vol. 49, no. 5, pp. 52–68, Oct. 2007. [16] R. F. Harrington and J. R. Mautz, “Characteristic Modes for Aperture Problems,” IEEE Transactions on Microwave Theory and Techniques ,vol. 33, no. 6, pp. 500–505, 1985. [17] R. Harrington and J. Mautz, “A generalized network formulation for aperture problems,” IEEE Transactions on Antennas and Propagation ,vol. 24, no. 6, pp. 870–873, Nov. 1976. [18] R. F. Harrington and J. R. Mautz, “Electromagnetic coupling through apertures by the generalized admittance approach,” Computer Physics Communications , vol. 68, no. 1, pp. 19–42, 1991. [19] K. Kabalan, A. El-Hajj, and R. Harrington, “Characteristic mode anal-ysis of a slot in a conducting plane separating different media,” IEEE Transactions on Antennas and Propagation , vol. 38, no. 4, pp. 476–481, 1990. [20] K. Kabalan, A. El-Hajj, and A. Rayes, “A generalized network formu-lation for a circular aperture in conducting plane,” in Proceedings of the Nineteenth National Radio Science Conference , 2002, pp. 81–89. 11 
+
+[21] A. El-Hajj and K. Kabalan, “Characteristic modes of a rectangular aper-ture in a perfectly conducting plane,” IEEE Transactions on Antennas and Propagation , vol. 42, no. 10, pp. 1447–1450, 1994. [22] A. El-Hajj, K. Kabalan, and A. Rayes, “Characteristic mode formulation of multiple rectangular apertures in a conducting plane with a dielectric-filled cavity,” IEEE Transactions on Electromagnetic Compatibility ,vol. 40, no. 2, pp. 89–93, 1998. [23] E. Antonino-Daviu, M. Cabedo-Fabr´ es, M. Sonkki, N. Mohamed Mohamed-Hicho, and M. Ferrando-Bataller, “Design Guidelines for the Excitation of Characteristic Modes in Slotted Planar Structures,” IEEE Transactions on Antennas and Propagation , vol. 64, no. 12, pp. 5020– 5029, 2016. [24] N. M. Mohamed-Hicho, E. Antonino-Daviu, M. Cabedo-Fabr´ es, J. P. Ciafardini, J. A. Bava, and M. Ferrando-Bataller, “Characteristic modes of slotted planar antennas,” in 2017 11th European Conference on Antennas and Propagation (EUCAP) , 2017, pp. 2668–2672. [25] N. Mohamed Mohamed-Hicho, E. Antonino-Daviu, M. Cabedo-Fabr´ es, and M. Ferrando-Bataller, “Designing Slot Antennas in Finite Platforms Using Characteristic Modes,” IEEE Access , vol. 6, pp. 41 346–41 355, 2018. [26] P. Liang, Q. Wu, and D. Su, “Characteristic mode analysis of aperture antennas based on duality principle,” in 2017 11th European Conference on Antennas and Propagation (EUCAP) , 2017, pp. 2993–2997. [27] P. Liang and Q. Wu, “Duality Principle of Characteristic Modes for the Analysis and Design of Aperture Antennas,” IEEE Transactions on Antennas and Propagation , vol. 66, no. 6, pp. 2807–2817, 2018. [28] J.-M. Jin, Theory and Computation of Electromagnetic Fields . Hobo-ken, N.J: Wiley, 2010. [29] C. A. Balanis, Antenna Theory: Analysis and Design , 3rd ed. John Wiley & Sons, Inc., Hoboken, New Jersey, 2005. [30] P. Yl¨ a-Oijala and H. Wall´ en, “PMCHWT-Based Characteristic Mode Formulations for Material Bodies,” IEEE Transactions on Antennas and Propagation , vol. 68, no. 3, pp. 2158–2165, 2020. [31] D. Manteuffel and R. Martens, “Compact Multimode Multielement Antenna for Indoor UWB Massive MIMO,” IEEE Transactions on Antennas and Propagation , vol. 64, no. 7, pp. 2689–2697, Jul. 2016. [32] N. Peitzmeier and D. Manteuffel, “Upper Bounds and Design Guidelines for Realizing Uncorrelated Ports on Multimode Antennas Based on Symmetry Analysis of Characteristic Modes,” IEEE Transactions on Antennas and Propagation , vol. 67, no. 6, pp. 3902–3914, Jun. 2019. [33] N. Peitzmeier, T. Hahn, and D. Manteuffel, “Systematic Design of Multimode Antennas for MIMO Applications by Leveraging Symmetry,” 
+
+IEEE Transactions on Antennas and Propagation , vol. 70, no. 1, pp. 145–155, Jan. 2022. [34] N. Peitzmeier and D. Manteuffel, “Systematic Design of an Ultra-Wideband Six-Port Multi-Mode Antenna Element Using Symmetry Properties of Characteristic Modes,” in 2019 International Conference on Electromagnetics in Advanced Applications (ICEAA) , Sep. 2019, pp. 0466–0471. [35] ——, “Multi-Mode Antenna Concept based on Symmetry Analysis of Characteristic Modes,” in 2019 13th European Conference on Antennas and Propagation (EuCAP) , Mar. 2019, pp. 1–5. [36] M. Masek, M. Capek, L. Jelinek, and K. Schab, “Modal Tracking Based on Group Theory,” IEEE Transactions on Antennas and Propagation ,vol. 68, no. 2, pp. 927–937, Feb. 2020. [37] ——, “Utilization of Symmetries in Method of Moments,” in 2019 IEEE International Symposium on Antennas and Propagation and USNC-URSI Radio Science Meeting , Jul. 2019, pp. 2191–2192, iSSN: 1947-1491. [38] K. R. Schab and J. T. Bernhard, “A Group Theory Rule for Predicting Eigenvalue Crossings in Characteristic Mode Analyses,” IEEE Antennas and Wireless Propagation Letters , vol. 16, pp. 944–947, 2017. [39] N. Peitzmeier and D. Manteuffel, “Beamforming Concept for Multi-Beam Antennas Based on Characteristic Modes,” in 2018 IEEE In-ternational Symposium on Antennas and Propagation & USNC/URSI National Radio Science Meeting , Jul. 2018, pp. 1113–1114. [40] T. Hahn and D. Manteuffel, “Evaluation of the Beamforming Per-formance of a 4-Port Multi-Mode Antenna for Integrated Sensing and Communication Applications,” in 2024 54th European Microwave Conference (EuMC) , Sep. 2024, pp. 860–863. [41] R. J. Mailloux, Phased Array Antenna Handbook , 2nd ed. Boston: Artech House, 2005. [42] J. Wang, Y. Cao, W. Che, and Q. Xue, “Wide-Angle Beam-Scanning Millimeter-Wave Antenna Array Using Phase-Controlled Beam-Steerable Elements,” IEEE Transactions on Antennas and Prop-agation , vol. 72, no. 4, pp. 3730–3735, Apr. 2024. [43] N. V. Deshpande, M. R. Castellanos, S. R. Khosravirad, J. Du, H. Viswanathan, and R. W. Heath, “Beamforming With Hybrid Re-configurable Parasitic Antenna Arrays,” IEEE Transactions on Wireless Communications , vol. 25, pp. 7048–7064, 2026. [44] A. Salmi, A. Lehtovuori, and V. Viikari, “Synthesis of Reactively Loaded Sparse Antenna Arrays Using Optimization on Riemannian Manifold,” 
+
+IEEE Open Journal of Antennas and Propagation , vol. 5, no. 3, pp. 653–663, Jun. 2024. [45] N. Boumal, B. Mishra, P.-A. Absil, and R. Sepulchre, “Manopt, a Matlab toolbox for optimization on manifolds,” Journal of Machine Learning Research , vol. 15, no. 42, pp. 1455–1459, 2014. [46] E. Safin and D. Manteuffel, “Reconstruction of the Characteristic Modes on an Antenna Based on the Radiated Far Field,” IEEE Transactions on Antennas and Propagation , vol. 61, no. 6, pp. 2964–2971, Jun. 2013. [47] T. Hahn and D. Manteuffel, “Generation of a Square Multi-Mode Multi-Port Aperture Antenna by Selective Modal Excitation,” in 2024 18th European Conference on Antennas and Propagation (EuCAP) , Mar. 2024, pp. 1–4. [48] R. Sorrentino and G. Bianchi, Microwave and RF Engineering . Wiley, Jun. 2010. [49] D. Kelley and W. Stutzman, “Array antenna pattern modeling methods that include mutual coupling effects,” IEEE Transactions on Antennas and Propagation , vol. 41, no. 12, pp. 1625–1632, Dec. 1993. [50] J. A. Kasemodel, C.-C. Chen, and J. L. Volakis, “Wideband Planar Array With Integrated Feed and Matching Network for Wide-Angle Scanning,” 
+
+IEEE Transactions on Antennas and Propagation , vol. 61, no. 9, pp. 4528–4537, Sep. 2013. [51] E. Yetisir, N. Ghalichechian, and J. L. Volakis, “Ultrawideband Array With 70° Scanning Using FSS Superstrate,” IEEE Transactions on Antennas and Propagation , vol. 64, no. 10, pp. 4256–4265, Oct. 2016. 
+
+Tim Hahn (Graduate Student Member, IEEE) was born in Hannover, Germany, in 1997. He received the B.Sc. and M.Sc. degrees in electrical engineer-ing from Leibniz University Hannover, Hannover in 2020 and 2021, respectively. He is currently a Research Assistant with the Institute of Microwave and Wireless Systems, Leibniz University Hannover where he is pursuing his Ph.D. in Electrical En-gineering and Information Technology. His current research focuses on antenna array design based on characteristic modes, modal analysis of aperture radiators, and enhanced beamforming techniques using multi-mode multi-port antennas. Some of his further fields of interest include millimeter wave antenna integration for mobile terminals, computational electromagnetics, and RF circuit design. 
+
+Dirk Manteuffel (Member, IEEE) was born in Issum, Germany, in 1970. He received the Dipl.-Ing. and Dr.-Ing. degrees in electrical engineering from the University of Duisburg–Essen, Duisburg, Germany, in 1998 and 2002, respectively. From 1998 to 2009, he was with IMST, Kamp-Lintfort, Germany. As a Project Manager, he was responsible for industrial antenna development and advanced projects in the field of antennas and electromagnetic (EM) modeling. From 2009 to 2016, he was a Full Professor of wireless communications at Christian-Albrechts-University, Kiel, Germany. Since June 2016, he has been a Full Professor and the Executive Director of the Institute of Microwave and Wire-less Systems, Leibniz University Hannover, Hannover, Germany. His research interests include electromagnetics, antenna integration and EM modeling for mobile communications and biomedical applications. Dr. Manteuffel was a director of the European Association on Antennas and Propagation from 2012 to 2015. Heserved on the Administrative Committee (AdCom) of IEEE Antennas and Propagation Society from 2013 to 2015 and as an Associate Editor of the IEEE Transactions on Antennas and Propagation from 2014 to 2022. Since 2009 he has been an appointed member of the committee ”Antennas” of the German VDI-ITG.

@@ -1,0 +1,137 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-09T22:13:16.869291+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 0,
+    "deep_cap": 8,
+    "deep_selected": 0,
+    "quick_candidates": 3,
+    "quick_skim_target": 13,
+    "quick_selected": 3
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2606.07719v1",
+      "source": "arxiv",
+      "title": "Hessian-matching Based Weighting for Attitude Determination Using Short-Range DoA Measurements with IMU Assistance",
+      "abstract": "Accurate and reliable attitude determination (AD) is essential for unmanned vehicles operating in Global Navigation Satellite System (GNSS)-denied environments. Short-range wireless arrays can provide direction-of-arrival (DoA) measurements from multiple anchors, enabling AD by aligning corresponding direction vectors (DVs) expressed in the body and navigation frames. In short-range scenarios, navigation-frame DVs inherit non-negligible uncertainty induced by anchor/vehicle position errors in addition to DoA-induced errors in body-frame DVs. Moreover, due to projection and unit-norm normalization, the DV errors are generally anisotropic, which motivates a total least squares (TLS) viewpoint. This paper identifies the key modeling distinction in short-range AD, develops a TLS-consistent formulation based on the total DV error and solves the resulting covariance-weighted orthogonal Procrustes problem via a manifold Gauss--Newton method. To retain the efficiency and numerical robustness of the closed-form weighted Wahba solution, we further propose Hessian-matching based scalar weighting strategies that approximate the Hessian of Wahba formulation to the TLS formulation, including a full-attitude strategy for overall accuracy and a direction-of-interest (DOI) strategy for prioritizing a selected attitude component. Finally, we incorporate IMU-derived gravity as an additional DV pair for static initialization, leading to extended Wahba and extended TLS formulations. Simulation results demonstrate that the proposed Hessian-matching weighting improves accuracy and robustness compared with existing baselines, and that gravity-DV augmentation further reduces attitude errors and improves solution availability under limited anchor availability.",
+      "authors": [
+        "Chenxin Tu",
+        "Hengchuan Zhang",
+        "Xiaowei Cui",
+        "Gang Liu",
+        "Mingquan Lu"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP"
+      ],
+      "published": "2026-06-05T15:43:25+00:00",
+      "link": "https://arxiv.org/pdf/2606.07719v1",
+      "tags": [
+        "keyword:TF-SAR",
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:TF-SAR",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Attitude determination from DoA measurements provides accurate orientation necessary for precision satellite component alignment.",
+      "llm_evidence_cn": "利用到达角测量进行姿态确定，为卫星组件精密对准提供精确方向信息。",
+      "llm_evidence": "利用到达角测量进行姿态确定，为卫星组件精密对准提供精确方向信息。",
+      "canonical_evidence": "利用到达角测量进行姿态确定，为卫星组件精密对准提供精确方向信息。",
+      "llm_tldr_en": "Proposes a Hessian‑matching weighting scheme for total least squares attitude determination under anisotropic direction vector uncertainty, enabling precise orientation alignment critical for satellite assembly.",
+      "llm_tldr_cn": "针对短距离到达角测量中方向向量误差各向异性问题，提出一种基于海森匹配的加权方法，以优化总体最小二乘姿态估计。实验证明该方法有效处理导航系和体坐标系下的误差，提高姿态确定精度。该技术可应用于卫星地面装配中的精密对准，确保各组件准确集成。",
+      "llm_tldr": "针对短距离到达角测量中方向向量误差各向异性问题，提出一种基于海森匹配的加权方法，以优化总体最小二乘姿态估计。实验证明该方法有效处理导航系和体坐标系下的误差，提高姿态确定精度。该技术可应用于卫星地面装配中的精密对准，确保各组件准确集成。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "alignment and integration techniques for high precision satellite assembly",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.08320v1",
+      "source": "arxiv",
+      "title": "Enhanced Wide-Angle Steering with Multi-Mode Multi-Port Aperture Antenna Arrays",
+      "abstract": "A novel concept for wide-angle scanning is proposed based on multi-mode multi-port antennas. The theory of multi-mode multi-port antennas based on aperture radiators is developed and applied towards the design of an antenna array consisting of multi-mode aperture radiators. An advanced beamforming algorithm is developed and implemented, making use of the higher degrees of freedom available to multi-mode multi-port antennas. The manufactured antenna array is measured and compared to the expected performance. Wide-angle steering up to $\\pm77^\\circ$ from broadside with respect to a scan loss of $3\\,\\mathrm{dB}$ is achieved in both the horizontal and vertical plane with no visible grating lobe.",
+      "authors": [
+        "Tim Hahn",
+        "Dirk Manteuffel"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP"
+      ],
+      "published": "2026-06-06T20:19:11+00:00",
+      "link": "https://arxiv.org/pdf/2606.08320v1",
+      "tags": [
+        "keyword:TF-SAR",
+        "keyword:sat-asm-prec",
+        "query:TF-SAR",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Multi-mode multi-port aperture antenna array enables wide-angle beam steering, relevant to SAR antenna systems.",
+      "llm_evidence_cn": "多模多端口口径天线阵列实现广角波束扫描，与合成孔径雷达天线系统相关。",
+      "llm_evidence": "多模多端口口径天线阵列实现广角波束扫描，与合成孔径雷达天线系统相关。",
+      "canonical_evidence": "多模多端口口径天线阵列实现广角波束扫描，与合成孔径雷达天线系统相关。",
+      "llm_tldr_en": "Proposes multi-mode multi-port aperture antenna array and advanced beamforming for wide-angle steering up to ±77° with low scan loss, beneficial for SAR antennas requiring broad coverage.",
+      "llm_tldr_cn": "针对天线波束扫描范围有限的问题，提出多模多端口口径天线阵列理论与高自由度波束赋形算法。实测证明阵列在水平和垂直面均实现±77°广角扫描，3dB扫描损耗低且无栅瓣。该技术可用于合成孔径雷达等需要广域覆盖的天线系统，为宽角扫描天线设计提供了新方法。",
+      "llm_tldr": "针对天线波束扫描范围有限的问题，提出多模多端口口径天线阵列理论与高自由度波束赋形算法。实测证明阵列在水平和垂直面均实现±77°广角扫描，3dB扫描损耗低且无栅瓣。该技术可用于合成孔径雷达等需要广域覆盖的天线系统，为宽角扫描天线设计提供了新方法。",
+      "llm_tags": [
+        "query:tf-sar"
+      ],
+      "matched_query_tag": "query:tf-sar",
+      "matched_query_text": "synthetic aperture radar antenna system",
+      "matched_requirement_id": "req-19",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.08281v1",
+      "source": "arxiv",
+      "title": "Impedance MPC for Physical Human-Robot Interaction: Predictive Disturbance Rejection with Joint-Limit Safety",
+      "abstract": "Physical human-robot interaction (pHRI) demands simultaneous trajectory accuracy and compliant safety under unplanned contact. Classical impedance control incurs a nonzero steady-state position error under sustained human force -- the applied force divided by the task stiffness -- which integral action reduces only within a narrow stable-gain budget. We present a two-layer Impedance MPC that resolves this tension. Layer~1 analytically cancels gravity, Coriolis, and task-space inertia, reducing the residual plant to a configuration-independent double integrator with a constant state-transition matrix. Layer~2 solves a 30-variable convex QP at 100\\,Hz, exploiting this constant structure so the free-response matrix is precomputed once; an augmented Kalman filter estimates the persistent disturbance state, giving a formal zero-steady-state-error guarantee. A null-space inverse-barrier potential and a task-space workspace projection enforce joint-limit safety across the tested workspace. On a 7-DOF Franka FR3, Impedance MPC with Kalman augmentation attains sub-0.05\\,mm steady-state error versus 44.8\\,mm for classical impedance (a $>$800-fold reduction) under a sustained 15\\,N force, sub-millimeter tracking on four 3-D circles, and graceful robustness to measurement noise and inertial mismatch up to 30\\%.",
+      "authors": [
+        "Yongyan Cao",
+        "Jinshan Tang"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "eess.SY"
+      ],
+      "published": "2026-06-06T18:06:25+00:00",
+      "link": "https://arxiv.org/pdf/2606.08281v1",
+      "tags": [
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "analytically cancels gravity for physical human-robot interaction control",
+      "llm_evidence_cn": "在物理人机交互控制中解析地抵消重力",
+      "llm_evidence": "在物理人机交互控制中解析地抵消重力",
+      "canonical_evidence": "在物理人机交互控制中解析地抵消重力",
+      "llm_tldr_en": "Proposes a two-layer Impedance MPC for physical HRI; Layer 1 cancels gravity/Coriolis/inertia, Layer 2 solves a convex QP for compliance and disturbance rejection, achieving zero steady-state error under sustained human force.",
+      "llm_tldr_cn": "针对物理人机交互中传统阻抗控制存在稳态力误差的问题，提出双层阻抗模型预测控制。第一层解析抵消重力、科里奥利力和惯性，第二层在100Hz下求解凸二次规划实现期望阻抗和扰动抑制，能在持续外力下消除稳态位置误差并保证关节极限安全，为主动重力补偿提供了有效方法。",
+      "llm_tldr": "针对物理人机交互中传统阻抗控制存在稳态力误差的问题，提出双层阻抗模型预测控制。第一层解析抵消重力、科里奥利力和惯性，第二层在100Hz下求解凸二次规划实现期望阻抗和扰动抑制，能在持续外力下消除稳态位置误差并保证关节极限安全，为主动重力补偿提供了有效方法。",
+      "llm_tags": [
+        "query:grav-offload"
+      ],
+      "matched_query_tag": "query:grav-offload",
+      "matched_query_text": "Active gravity compensation techniques for space robots",
+      "matched_requirement_id": "req-14",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}

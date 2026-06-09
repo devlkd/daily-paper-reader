@@ -6,26 +6,32 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-08
-- 运行时间：2026-06-08 21:53:56 UTC
+- 最新运行日期：2026-06-09
+- 运行时间：2026-06-09 22:16:04 UTC
 - 运行状态：成功
-- 本次总论文数：1
+- 本次总论文数：3
 - 精读区：0
-- 速读区：1
+- 速读区：3
 
 ### 今日简报（AI）
-今日速读一篇半导体制造领域论文，探讨图注意力网络在薄膜沉积虚拟量测中的应用。  
-值得关注的是，该方法利用图结构捕获传感器间依赖，为提升先进制程的实时监控精度提供了新思路。  
-想深入的话，可对比其与传统多变量方法的实际产线表现，关注模型在不同产品切换时的迁移能力。
-- 详情：[/202606/08/README](/202606/08/README)
+今日速读3篇，聚焦姿态测量、人机交互与天线阵列的实时控制与信号处理新思路。
+基于IMU辅助与黑塞矩阵匹配的短距测向，以及兼顾扰动抑制与关节安全的阻抗模型预测控制，值得关注。
+对机器人或通信感兴趣的读者，可重点追踪预测性控制与多模式天线这两条实用化线索。
+- 详情：[/202606/09/README](/202606/09/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Graph Attention-Based Virtual Metrology for Film Deposition Processes in Semiconductor Manufacturing](/202606/08/2606.00923v1-graph-attention-based-virtual-metrology-for-film-deposition-processes-in-semiconductor-manufacturing)  
-   标签：评分：6.0/10、query:sat-asm-prec
-   evidence：图注意力虚拟量测用于薄膜沉积，作为先进量测方法可提升卫星装配精度
+1. [Hessian-matching Based Weighting for Attitude Determination Using Short-Range DoA Measurements with IMU Assistance](/202606/09/2606.07719v1-hessian-matching-based-weighting-for-attitude-determination-using-short-range-doa-measurements-with-imu-assistance)  
+   标签：评分：7.0/10、query:sat-asm-prec
+   evidence：利用到达角测量进行姿态确定，为卫星组件精密对准提供精确方向信息。
+2. [Impedance MPC for Physical Human-Robot Interaction: Predictive Disturbance Rejection with Joint-Limit Safety](/202606/09/2606.08281v1-impedance-mpc-for-physical-human-robot-interaction-predictive-disturbance-rejection-with-joint-limit-safety)  
+   标签：评分：7.0/10、query:grav-offload
+   evidence：在物理人机交互控制中解析地抵消重力
+3. [Enhanced Wide-Angle Steering with Multi-Mode Multi-Port Aperture Antenna Arrays](/202606/09/2606.08320v1-enhanced-wide-angle-steering-with-multi-mode-multi-port-aperture-antenna-arrays)  
+   标签：评分：6.0/10、query:tf-sar
+   evidence：多模多端口口径天线阵列实现广角波束扫描，与合成孔径雷达天线系统相关。
 
 
 <div class="dpr-home-promo-card">
