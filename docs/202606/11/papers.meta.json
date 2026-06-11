@@ -1,0 +1,69 @@
+{
+  "label": "2026-06-11",
+  "date": "2026-06-11",
+  "generated_at": "2026-06-11T22:30:05",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202606/11/2606.11771v1-segment-wise-soft-robotics-inspired-flexible-antenna-arrays-design-and-optimization",
+      "section": "deep",
+      "title_en": "Segment-Wise Soft Robotics Inspired Flexible Antenna Arrays: Design and Optimization",
+      "authors": "Shuaishuai Han, Konstantinos Ntougias, Elio Faddoul, Ioannis Krikidis",
+      "date": "2026-06-10",
+      "pdf": "https://arxiv.org/pdf/2606.11771v1",
+      "score": "8.0",
+      "evidence": "提出通过节段运动实现可重构位置的软体机器人柔性天线阵列",
+      "tldr": "传统可重构天线受限于固定机械结构，空间自由度不足。本文提出分段式软机器人天线系统，每根触手由多个可独立弯曲、伸缩和旋转的柔性段组成，实现天线位置大范围重配置。基于此模型，设计了分段末端天线配置（SEAC）和混合端-中天线配置（HEIAC），并分别采用罚对偶分解投影梯度上升算法和块坐标下降联合全局优化。仿真结果显示，SEAC与HEIAC相比传统三维可重构阵列分别获得37.9%和32.1%的和速率提升，在紧凑部署下增益达49.3%，验证了软体驱控阵列的优越性。",
+      "tags": "query:tf-sar",
+      "abstract_en": "In this paper, we propose a segment-wise soft robotic antenna (SRA) system, where each soft robotic arm referred to as a tentacle, comprises multiple independently controllable segments with bending, elongation-retraction, and sweeping motions. By adjusting segment motion parameters, the positions of surface-mounted antennas are reconfigured, distinguishing it from conventional reconfigurable antenna (RA) systems. Based on this model, we propose two antenna deployment schemes: the segmented end-antenna configuration (SEAC), where fixed antennas are mounted at the segment ends and reconfigured via segment motions; and the hybrid end-and-intermediate antenna configuration (HEIAC), where RAs are further integrated as intra-segment antennas. In HEIAC, soft-robot segment deformation provides large-scale spatial reconfiguration, while RAs enable fine-grained adjustment. For SEAC, we formulate a sum-rate maximization problem accounting for inter-segment connectivity and the nonlinear mapping from segment deformation parameters to antenna coordinates, and develop a penalty dual decomposition-projected gradient ascent (PDD-PGA) algorithm. For HEIAC, we jointly optimize segment deformation, intra-segment antenna positions, and antenna activation using a block coordinate descent (BCD)-PDD-PGA algorithm with greedy backward antenna selection. Simulation results demonstrate that the proposed schemes substantially outperform fixed-position antenna arrays and conventional RA baselines. In particular, SEAC and HEIAC achieve 37.9% and 32.1% sum-rate gains over conventional 3D reconfigurable arrays, respectively, while SEAC provides up to a 49.3% gain in compact array deployments.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/11/2606.11601v1-spatially-coupled-phase-to-depth-calibration-for-fringe-projection-profilometry",
+      "section": "quick",
+      "title_en": "Spatially Coupled Phase-to-Depth Calibration for Fringe Projection Profilometry",
+      "authors": "Sehoon Tak, Jae-Sang Hyun",
+      "date": "2026-06-10",
+      "pdf": "https://arxiv.org/pdf/2606.11601v1",
+      "score": "6.0",
+      "evidence": "改进条纹投影轮廓术的深度标定空间一致性，可用于卫星部件尺寸测量",
+      "tldr": "在条纹投影轮廓术中，逐像素独立拟合相位-深度关系虽局部精度高，但邻近像素可能产生不一致的校准函数，导致空间不连续和结构化伪影。为此，提出一种空间耦合相位-深度变换，所有像素共享低维映射（全局相位标量与仿射空间项），并可选加平滑校正场；同时采用原生网格配对方案，在未畸变参考相机网格上直接构建校准对。在牙科高分辨率扫描数据上，该方法实现了与主动立体参考相当的点到面RMSE约12μm，同时大幅提升了空间相干性，并将运行时映射缩减为每像素几次运算，参数存储可忽略。这有效解决了逐像素校准的空间不一致问题，提高了条纹投影轮廓术的可靠性和效率。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "In fringe projection profilometry (FPP), depth is commonly recovered by fitting a phase-to-depth relation independently at each camera pixel. Although such pixel-wise calibration achieves high local accuracy, neighboring pixels can acquire markedly different calibration functions even when they observe the same smooth surface, producing spatially inconsistent geometry and structured surface artifacts. We propose a spatially coupled phase-depth transformation in which all pixels share a single low-dimensional mapping-global phase scalars combined with affine spatial terms on the undistorted reference-camera grid-rather than independent per-pixel fits, optionally augmented by a bounded, spatially smooth correction field. We further introduce a native-grid pairing scheme that constructs phase-depth calibration pairs directly on the reference-camera grid: when depth supervision comes from a rectified active-stereo pipeline, planes are fitted in stereo 3D and sampled back onto the camera grid along native rays, so the phase maps are never rectified. On a dental target with high-resolution scanner ground truth, the proposed model attains point-to-surface RMSE comparable to an active-stereo reference (about 12μm aggregate) while substantially improving spatial coherence over pixel-wise polynomial and rational calibration, and reduces the runtime mapping to a few element-wise operations per pixel with negligible parameter storage.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/11/2606.11619v1-precision-aware-illumination-disentangled-vision-transformer-for-spacecraft-6d-pose-estimation",
+      "section": "quick",
+      "title_en": "Precision-Aware Illumination-Disentangled Vision Transformer for Spacecraft 6D Pose Estimation",
+      "authors": "Zongwu Xie, Yifan Yang, Yonglong Zhang, Guanghu Xie, Yang Liu, Shuo Zhang",
+      "date": "2026-06-10",
+      "pdf": "https://arxiv.org/pdf/2606.11619v1",
+      "score": "6.0",
+      "evidence": "用于航天器六维位姿估计的视觉Transformer，支持高精度对齐",
+      "tldr": "针对航天器单目六维位姿估计在复杂光照和背景下的不稳定性，提出了精度感知光照解耦视觉Transformer。通过分离位姿相关结构令牌与光照敏感外观令牌，并引入无参数几何优化，提升了位姿回归的鲁棒性。虽然面向在轨交会对接，该方法可迁移至卫星地面装配环节，利用视觉引导实现组件的高精度对准，特别是当装配环境存在光照变化和弱纹理挑战时。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "Vision sensors provide a lightweight solution for spacecraft proximity operations, but monocular spacecraft 6D pose estimation remains difficult under illumination variation, specular reflection, shadowing, weak texture, and background interference. These factors make local visual evidence spatially unreliable and can destabilize pose regression. This article proposes a Precision-Aware Illumination-Disentangled Vision Transformer (PAID-ViT) for robust spacecraft pose estimation.The proposed model separates pose-relevant structure tokens from illumination-sensitive appearance tokens, estimates patch reliability before pose aggregation, and uses foreground mask supervision to preserve silhouette cues. A parameter-free geometric recovery module converts normalized crop coordinates, log-depth, and a continuous 6D rotation representation into camera-frame rotation and translation. Experiments on SPEED+ V2, the SPEED+ validation/lightbox/sunlamp evaluation configuration used in this study, suggest that PAID-ViT reduces translation error and improves robustness in the challenging sunlamp domain, while ablation studies support the complementary roles of illumination disentanglement, reliability-aware token aggregation, mask supervision, and training-side regularization.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/11/2606.11708v1-explore-from-sketch-accelerating-uav-exploration-in-large-scale-environments-with-prior-maps",
+      "section": "quick",
+      "title_en": "Explore From Sketch: Accelerating UAV Exploration in Large-scale Environments with Prior Maps",
+      "authors": "Tiancheng Lai, Yuman Gao, Xiangyu Li, Ruitian Pang, Xingpeng Wang, Siqi Shen, Mengke Zhang, Yin He, Fei Gao, Chao Xu, Yanjun Cao",
+      "date": "2026-06-10",
+      "pdf": "https://arxiv.org/pdf/2606.11708v1",
+      "score": "6.0",
+      "evidence": "鲁棒的2D-3D点云配准用于与先验地图对齐",
+      "tldr": "无人机在大规模环境中自主探索效率低，而建筑图纸等先验地图虽不精确但提供全局结构。本文提出利用2D先验地图的探索框架，通过鲁棒配准与层次规划处理地图差异和不确定性。基准测试显示探索效率提升34.2%，飞行距离减少37.9%，模拟与实测验证鲁棒性。该工作为不精确先验地图的实用探索提供了高效解决方案。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "Autonomous exploration with UAVs in large-scale, topologically complex environments often suffers from low efficiency due to suboptimal scheduling and detours. Prior maps (e.g., construction drawings), although usually imprecise and flawed, are readily available in many scenarios and have the potential to provide global structural guidance. This paper presents a novel exploration framework that leverages sparse, unaligned, and even discrepant 2D prior maps for LiDAR-based UAV exploration. First, a robust 2D-3D point cloud registration pipeline is proposed to align LiDAR observations with prior maps. The registration pipeline combines a GeoContext descriptor for single-frame candidate retrieval, a multi-frame verification mechanism for coarse transformation estimation with outlier rejection, and a Scale-ICP algorithm for refinement. The registration module can handle map discrepancies and provide multiple hypotheses when geometric ambiguities arise. To effectively utilize the registration results for exploration planning, we further develop a hierarchical viewpoint planning strategy under localization uncertainties. The hierarchical strategy first spatially attaches local viewpoints to prior guidepoints and adopts a Monte Carlo Tree Search solver to determine their traversal sequence under each registration hypothesis. To mitigate registration uncertainty, a risk-aware selector evaluates prior sequences using confidence-weighted travel risk, and a fixed-endpoint traveling salesman problem is formulated to generate an efficient local coverage path under the selected prior guidance. Benchmark evaluations reveal up to 34.2% improvement in exploration efficiency and 37.9% reduction in flight distance compared to state-of-the-art methods, while extensive simulations and field experiments further demonstrate robustness to prior map incompleteness and deformations.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

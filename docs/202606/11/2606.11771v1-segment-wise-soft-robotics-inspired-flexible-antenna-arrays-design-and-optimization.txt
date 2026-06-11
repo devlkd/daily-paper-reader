@@ -1,0 +1,1227 @@
+Title: Segment-Wise Soft Robotics Inspired Flexible Antenna Arrays: Design and Optimization
+
+URL Source: https://arxiv.org/pdf/2606.11771v1
+
+Published Time: Thu, 11 Jun 2026 00:42:03 GMT
+
+Number of Pages: 13
+
+Markdown Content:
+> 1
+
+# Segment-Wise Soft Robotics Inspired Flexible Antenna Arrays: Design and Optimization 
+
+Shuaishuai Han, Member, IEEE, Konstantinos Ntougias, Senior Member, IEEE ,Elio Faddoul, Member, IEEE , and Ioannis Krikidis, Fellow, IEEE 
+
+Abstract —In this paper, we propose a segment-wise soft robotic antenna (SRA) system, where each soft robotic arm referred to as a tentacle, comprises multiple independently controllable segments with bending, elongation–retraction, and sweeping motions. By adjusting segment motion parameters, the positions of surface-mounted antennas are reconfigured, distinguishing it from conventional reconfigurable antenna (RA) systems. Based on this model, we propose two antenna deployment schemes: the segmented end-antenna configuration (SEAC), where fixed antennas are mounted at the segment ends and reconfigured via segment motions; and the hybrid end-and-intermediate antenna configuration (HEIAC), where RAs are further integrated as intra-segment antennas. In HEIAC, soft-robot segment defor-mation provides large-scale spatial reconfiguration, while RAs enable fine-grained adjustment. For SEAC, we formulate a sum-rate maximization problem accounting for inter-segment con-nectivity and the nonlinear mapping from segment deformation parameters to antenna coordinates, and develop a penalty dual decomposition–projected gradient ascent (PDD-PGA) algorithm. For HEIAC, we jointly optimize segment deformation, intra-segment antenna positions, and antenna activation using a block coordinate descent (BCD)-PDD-PGA algorithm with greedy backward antenna selection. Simulation results demonstrate that the proposed schemes substantially outperform fixed-position antenna arrays and conventional RA baselines. In particular, SEAC and HEIAC achieve 37.9% and 32.1% sum-rate gains over conventional 3D reconfigurable arrays, respectively, while SEAC provides up to a 49.3% gain in compact array deployments. 
+
+Index Terms —Segment-wise soft robot antenna, flexible an-tenna arrays, sum rate optimization, correlation mitigation 
+
+I. I NTRODUCTION 
+
+Over the past few decades, multiple-input multiple-output (MIMO) has become a cornerstone of modern wireless com-munications, owing to its capability to enhance capacity, re-liability, and efficiency. However, fixed antenna geometries fundamentally constrain conventional MIMO performance. In practical propagation environments, wireless channels may vary significantly even with small antenna displacements [1]. This location sensitivity indicates that antenna repositioning offers an additional degree of freedom (DoF) to adapt to reshaping array geometry, mitigating spatial correlation and improving user distinguishability [2]. This insight has recently sparked interest in reconfigurable antenna-position technologies, such as fluid antenna (FA) systems [3], movable antenna (MA) systems [4], and pinching antenna (PA) systems [5]. In recent years, soft robots have attracted significant attention as an emerging class of robotic systems distinct from conven-tional rigid robots, which rely on rigid materials and articulated 
+
+The authors are with the IRIDA Research Laboratory for Communication Technologies in the Department of Electrical and Computer Engineering, University of Cyprus, Nicosia, Cyprus (e-mail: shan0001@ucy.ac.cy; kn-toug01@ucy.ac.cy; efaddo01@ucy.ac.cy; krikidis@ucy.ac.cy).  
+
+> xzReaching
+> Grasping
+> Withdrawing
+> x
+
+Fig. 1. Illustration of the manipulation of the soft robotic tentacle. 
+
+structures for motion generation [6]. In contrast, soft robots are continuum systems composed of compliant materials, enabling motion through continuous elastic deformation and smooth body-curvature variations [7]. Among various soft robotic plat-forms, soft robotic arms are particularly attractive due to their high shape adaptability and flexible spatial maneuverability. Often inspired by octopus tentacles, these arms can naturally conform to object geometries, making them well suited for tasks like grasping. As illustrated in Fig. 1, a typical manipulation process consists of three successive phases: reaching, grasping, and withdrawing [8]. To realize such continuous deformation and manipulation behaviors, various actuation methods have been developed, among which pneumatic actuation is widely adopted by regulating air pressure inside internal inflatable cavities, such as channels and chambers [9]. Owing to the material composition and motion characteris-tics, soft robots exhibit several distinctive properties, includ-ing theoretically infinite DoF, inherent compliance, and safe human–robot interaction capability [10]. Unlike conventional rigid robots, soft robots can deform continuously and are often considered as continuum systems with theoretically infinite DoFs [11], [12]. Moreover, by exploiting compliant materials such as silicone and rubber, soft robots can achieve diverse adap-tive and agile motions, including twisting, bending, and grasping [12]. As a result, they generally offer higher motion flexibility than rigid robots. In addition, their compliant bodies absorb collision energy, enhancing robustness and adaptability to com-plex environments such as rough terrain. Moreover, materials 
+
+> arXiv:2606.11771v1 [cs.IT] 10 Jun 2026 2
+
+with compliance comparable to that of biological tissues reduce the risk of unintended harm, making soft robots promising for safe human–robot interaction [6]. Motivated by these advan-tages, we incorporate a segment-wise soft robotic architecture into a flexible antenna system, where each tentacle is divided into multiple controllable segments. Antenna elements can be mounted on the segment surfaces [8] and reconfigured through segment deformation. The resulting architecture is referred to as a segment-wise soft-robotic antenna (SRA) array 1.
+
+A. Related Work 
+
+Reconfigurable antenna architectures have recently attracted attention for enhancing wireless performance via adaptive antenna-position and geometry adjustment. In [13], the perfor-mance limits of a single-antenna FA system are characterized, where an antenna realized using liquid metals or ionized so-lutions is assumed to switch instantaneously among multiple ports over a fixed-length linear space. The results show that, even within a limited space, a single-antenna FA system can achieve the capacity of a multi-antenna maximum-ratio combin-ing (MRC) system. In [14], multi-beamforming for movable-antenna (MA) arrays, where antenna elements are physically displaced by motors, is investigated. Specifically, the antenna positions and beamforming weights are jointly optimized to enhance the beamforming effectiveness. The MA design is shown to outperform conventional beamforming based on fixed-position antenna (FPA) arrays in terms of beamforming gain and interference suppression. In addition, MA-enabled near-field multiuser communications are studied through movable subarray optimization in [15]. In [16], a sum-rate maximization framework for PA systems is developed, where PAs are activated along dielectric waveguides and their activation positions are jointly optimized with user power allocation. By exploiting position reconfigurability and line-of-sight (LoS)-dominant link enhancement, the PA design achieves substantial performance gains over conventional FPA systems. Furthermore, [17] in-vestigates PA systems for indoor immersive communications, accounting for random user interference and PA–user spatial coupling. Unlike conventional reconfigurable antennas based on port switching, motor-driven movement, or waveguide-based activation, this paper deploys antenna elements on soft robotic segment surfaces. This is motivated by recent soft robotic plat-forms that integrate flexible sensors, processing circuits, and wireless communication modules on the surfaces of tentacle-like soft bodies [8]. The 3D positions of the surface-mounted antennas are then reconfigured through segment deformation. This above mechanism offers a distinct reconfiguration paradigm with advantages over conventional architectures. To begin, current reconfigurable antenna systems often rely on fixed tracks. For example, in a linear space, such as a fluid container along a mobile-device perimeter, an FA can switch its radiating element among multiple preset ports [18]. MAs can be implemented using motorized slides that move anten-nas along linear [19] or circular tracks [20]. In PA systems, antennas typically move along waveguides [21]. Unlike these        
+
+> 1Motivated by mechanically feasible segment-wise tentacle actuation in robotics studies, e.g., [8], we adopt a similar segmentation strategy for communication-oriented antenna repositioning.
+
+reconfigurable antennas, SRA systems adjust the 3D positions of surface-mounted antennas without predefined tracks by control-ling segment deformation parameters, e.g., bending amplitude and frequency. Recent MA designs enable 2D trackless position-ing within a planar region via independent motors [22], or 3D reconfiguration by rotating the entire antenna plane with a rigid robotic arm [23]. In contrast, rather than relying on a fixed plane, SRA systems reconfigure the antenna array geometry through the 3D deformation of multiple tentacles, thereby providing a richer reconfiguration space and potentially enhanced reposi-tioning flexibility due to their many DoFs. Moreover, existing reconfigurable antennas are typically confined to fixed regions, e.g., a fixed 2D area for MAs [24] or fixed-length linear regions for FAs [25]. In contrast, SRA systems are mainly limited by physical constraints, such as maximum tentacle bending curvature and twisting angle. Finally, owing to their material compliance, SRA systems are more robust to collisions and bet-ter suited for human–robot interaction. Thus, while applicable to conventional urban scenarios, SRA systems are expected to offer greater advantages than traditional reconfigurable antenna systems in complex applications, such as cave exploration [26] and human–robot interaction [27] for antenna reconfiguration. 
+
+B. Motivation and Contributions 
+
+An early investigation of the SRA system was conducted in [28]. Specifically, surface-mounted antennas are reconfig-ured through bending-induced deformation of soft robotic ten-tacles, demonstrating the feasibility of soft-robot-enabled an-tenna repositioning. However, the correlation issue is ignored. Specifically, since the antenna elements move collectively with tentacle deformation, the resulting array geometry is strongly coupled. This coupling limits the controllability of individual antenna positions, restricts the achievable spatial DoF for cor-relation mitigation, and consequently reduces the performance gains enabled by antenna repositioning. Moreover, the nonlinear mapping from tentacle deformation to antenna positions can transform an initially uniform deployment into a highly non-uniform array geometry after bending, thereby significantly increasing antenna correlation. These limitations motivate the segment-wise SRA system proposed in this paper. The main contributions are as follows:  
+
+> •
+
+We develop a mathematical model for segment-wise SRAs, in which each tentacle comprises multiple independently controllable segments supporting bending, elongation, and sweeping motions. Elongation enlarges the array aperture, while bending and sweeping enable flexible 3D antenna repositioning. The proposed model also maps segment-wise deformation parameters to antenna coordinates and incorporates inter-segment smoothness constraints to en-sure physically feasible deformation. Moreover, we char-acterize different types of correlation effects inherent in segment-wise SRA systems.  
+
+> •
+
+Based on the proposed segment-wise SRA model, we propose a segmented end-antenna configuration (SEAC) scheme, where an antenna are placed at each segment end-point. SEAC reconfigures each antenna’s location through physically constrained segment-wise deformation, which differs from conventional reconfigurable antenna systems 3 
+
+> segment boundary
+> ,2 mL
+> zy
+> elongation
+> ,1 mL
+> x
+> Fig. 2. Illustration of a 3D SRA system with two segments per tentacle.
+
+and helps reduce spatial correlation. We further formulate a sum-rate maximization problem accounting for inter-segment connectivity constraints and the impact of pre-ceding segment deformations on subsequent segment’s an-tenna positions. To solve the resulting geometry-coupled problem, we develop a PDD-PGA algorithm, where the connectivity constraints are embedded into penalty terms for tractable optimization.  
+
+> •
+
+Furthermore, we propose a hybrid end-and-intermediate antenna configuration (HEIAC) scheme, where reconfig-urable antennas, such as MAs, are deployed within the seg-ments of each tentacle, in addition to the terminal antenna. This architecture exploits soft-robot deformation for large-scale antenna reconfiguration while enabling fine-grained intra-segment antenna adjustment. The resulting mixed-integer nonconvex problem jointly involves segment de-formation, intra-segment reconfigurable antenna positions, and antenna activation. To solve it efficiently, we develop a block coordinate descent (BCD)-PDD-PGA algorithm, together with a greedy backward search to determine the number of intra-segment antennas.  
+
+> •
+
+Numerical results demonstrate that the proposed SEAC and HEIAC schemes outperform FPA arrays and conventional 2D/3D reconfigurable antenna baselines, achieving up to a 49.3 % sum-rate gain over the 3D baseline in compact array deployments. The results further reveal the sources of segment-wise gains and the impact of mutual coupling on the achievable performance. 
+
+Notation: [·]T and [·]H denote the transpose and Hermitian transpose, respectively; ‖·‖ 2 denotes the Euclidean norm 
+
+II. S YSTEM MODEL 
+
+We consider an uplink multi-user single-input multiple-output (MU-SIMO) system, where K single-antenna user ter-minals at fixed locations transmit signals to a base station (BS). As shown in Fig. 2, the BS is equipped with a soft-robot-inspired flexible antenna array comprising M arms, referred to as tentacles. A segment-wise SRA model is proposed, where each tentacle is partitioned into S segments, with the s-th segment comprising Ns antenna elements, s ∈ {1, . . . , S },yielding N = ∑Ss=1 Ns antenna elements per tentacle. The surface-mounted antenna positions vary with segment deforma-tion. Specifically, each segment is actuated by several parallel silicone bellows, with segment deformation enabled by local pneumatic actuation and independent pressure control [8], [29]. 
+
+A. Segment-wise Soft Robot Antenna Array Model 
+
+The deformation of each tentacle in 3D space can be charac-terized by a combination of fundamental motion components: 1) Bending: Soft robotic platforms enable curvature varia-tion through bending and provide many DoFs [11], [12], thus allowing highly flexible antenna positioning. Without loss of generality, each tentacle is assumed to bend along the z-axis. 2) Elongation-Retraction: Material stretching and compres-sion provide an alternative mechanism for antenna reposi-tioning along the tentacle. Existing materials can achieve elongation ratios up to 870% [30], enabling large antenna displacement and spatial reconfigurability. 3) Sweeping: Horizontal repositioning of the antenna is achieved through a sweeping motion, where the entire ten-tacle rotates about its base to provide continuous coverage across the horizontal domain. To characterize tentacle deformation, we adopt a sinu-soidal profile, which is a communication-oriented reduced-order parametrization rather than a full continuum-mechanics model. It approximates the soft robot’s infinite-dimensional deforma-tion space using a tractable finite-dimensional family of sinu-soidal profiles. This choice significantly reduces the optimiza-tion complexity while preserving the key geometric variations that affect the antenna positions, inter-element spacing, and array response [28], [31]. Accordingly, the 3D position of an arbitrary point on the s-th segment of the m-th tentacle is 
+
+rm,s (ℓ, t ) = [ℓ cos θm, ℓ sin θm, z m,s (ℓ, t )]T . (1) where θm denotes the azimuth angle of the m-th tentacle, which is affected by the sweeping motion. Let L be the arc length from the coordinate origin to an arbitrary point on the s-th segment of the m-th tentacle, and let ℓ be its projection length onto the xy -plane. Due to the bending action along the z-axis, the projection length is less than or equal to its actual arc length, i.e., ℓ ≤
+
+L, as shown in Fig. 3. Moreover, zm,s (ℓ, t ) denotes the vertical sinusoidal displacement induced by the bending motion 
+
+zm,s (ℓ, t ) = Am,s sin (ωm,s t + vm,s ℓ), (2) where the parameter Am,s ∈ [0 , A max ] represents the sinusoidal displacement amplitude, and vm,s ∈ [0 , v max ] denotes the spatial frequency of the segment displacement. The angular frequency ωm,s and the time variable t are introduced to capture the dynamic bending behavior of the s-th segment in the time domain. The SRA geometry is optimized once per channel coherence interval and then kept fixed within the corresponding block. Hence, the explicit dependence on time t is omitted for notational simplicity. In practice, the arc length is typically specified, while the corresponding projected length must be determined. Using the Pythagorean relation between the differential planar projection and vertical displacement, the differential arc length is given by 
+
+dL = √dℓ2 + d z2 =
+
+√
+
+1 + 
+
+( dz
+
+dℓ
+
+)2
+
+dℓ, (3) where dz
+
+dℓ = Am,s vm,s cos( vm,s ℓ) . (4) 4
+
+> y
+> xy
+> 1
+
+q x   
+
+> mm
+> ,m S L,m S ,,
+> Sweeping Direction
+> After Bending Non-uniform Antenna Spacing mL
+> a ) b )
+> Fig. 3. 2D projection of antenna locations on segment-wise soft robotic tentacles with two antennas per tentacle as an example. a) Projected antenna locations in the undeformed configuration. b) Projected antenna locations after bending deformation, where the sweeping motion is also illustrated.
+
+Afterwards, by integrating from ¯ℓ = 0 to ¯ℓ = ℓ, the cumulative arc length of the curve is obtained as 
+
+L(ℓ) = 
+
+∫ ℓ
+
+> 0
+
+√
+
+1 + (Am,s vm,s cos (vm,s ¯ℓ)) 2 d¯ℓ, (5) where the projected length ℓ is obtained by numerically solving (5) for a given arc length L.Due to elongation–retraction motion, the arc length Lm of the m-th tentacle is constrained within [Lm, min , L m, max ], where 
+
+Lm, min and Lm, max denote its minimum and maximum lengths, respectively. According to (5), the corresponding projection length varies accordingly. For simplicity, the segment endpoints are uniformly distributed along the tentacle in terms of their cumulative arc lengths. Specifically, the endpoint of the s-th segment on the m-th tentacle is denoted by Lm,s , i.e., Lm,s ∈
+
+[sL m, min /S, sL m, max /S ].The deformation parameters are governed by the underlying actuation motions. Specifically, elongation–retraction controls the arc length Lm,s , sweeping adjusts the azimuth angle θm,and bending determines the sinusoidal parameters Am,s and 
+
+vm,s , which characterize the bending magnitude and spatial fre-quency, respectively. To ensure smooth inter-segment connec-tions and avoid discontinuities or sharp corners in practice, the position function is required to be continuous and differentiable with respect to the actual arc length, following the concept in [32]. Then, we drive the continuity constraints C0 = 0 and 
+
+C1 = 0 , where C0 and C1 are compactly written as 
+
+Cb = ∂bzm,s (L)
+
+∂L b
+
+∣∣∣∣L=Lm,s −1
+
+− ∂bzm,s −1(L)
+
+∂L b
+
+∣∣∣∣L=Lm,s −1
+
+, (6) where b ∈ { 0, 1} denotes the derivative order. By substituting (2) into (6), and invoking the chain rule and the fundamental theorem of calculus, the general expression of Cb is derived, as shown in (11) at the bottom of the next page. Based on the above formulation, the locations of the antenna elements can be explicitly determined. Thus, the position vector of the n-th element on the s-th segment of the m-th tentacle is 
+
+rm,s,n =
+
+
+
+xm,s,n 
+
+ym,s,n 
+
+zm,s,n 
+
+ =
+
+
+
+ℓ(Lm,s,n ) cos θm
+
+ℓ(Lm,s,n ) sin θm
+
+Am,s sin (vm,s ℓ(Lm,s,n )) . (7) where ℓ(Lm,s,n ) denotes the projected length from the origin to the n-th antenna element on the s-th segment of the m-th tentacle, which can be obtained from (5). Based on the proposed segment-wise SRA model, we now present the channel model. 
+
+B. Channel and Signal Model 
+
+We define rm,s ,
+
+[
+
+rTm,s, 1, . . . , rTm,s,N s
+
+]T
+
+∈ R3Ns×1
+
+as the position vector collecting antennas mounted on the 
+
+s-th segment of the m-th tentacle. Correspondingly, rm =[
+
+rTm, 1, . . . , rTm,S 
+
+]T
+
+∈ R3N ×1 denotes the positions of all an-tennas of the m-th tentacle, whereas r = [rT 
+
+> 1
+
+, . . . , rTM
+
+]T ∈
+
+R3MN ×1 denotes positions of all antennas of the SRA ar-ray. By using the spatially correlated Rayleigh fading channel model, the channel hk (r) ∈ CMN ×1 from the k-th user, 
+
+k ∈ { 1, ..., K }, to all the M N antennas of the SRA array is modeled as [33] 
+
+hk (r) ∼ CN (0 , σ 2
+
+> k
+
+C (r)) , (8) where σ2 
+
+> k
+
+denotes the large-scale channel gain of the kth user. The matrix C(r) captures the spatial correlation among the 
+
+M N antennas, determined by the proposed antenna configura-tion scheme in this paper and the antenna positions in (7). To facilitate analytical derivations, we rewrite the channel model in (8) with the following equivalent form 
+
+hk (r) = σk C1/2(r) ηk, (9) where C(r) = C1/2(r)C1/2 (r), and ηk ∼ CN (0, IMN ) is a complex Gaussian vector. Thus, the channel from all K users to all M N antennas is H(r) = [ h1(r), . . . , hK (r)] ∈ CMN ×K .After matched filtering, the received signal vector y ∈ CMN ×1
+
+at the SRA array is given by 
+
+y = H (r) s + n, (10) where s ∈ CK×1 denotes the K-user transmitted signal vector and n is an additive white Gaussian noise (AWGN) vector. To enhance the quality of the received signal, we apply the minimum mean square error (MMSE) equalizer, thus we obtain 
+
+x = Wy = ( HH (r) H (r) + 1 /γ I)−1HH (r) y, (12) 5            
+
+> TABLE I CLASSIFICATION OF SPATIAL CORRELATION
+> Level Type Correlated Antennas
+> Tentacle Inter-tentacle Antennas on different tentacles Tentacle Intra-tentacle Antennas on the same tentacle Segment Inter-segment Antennas on different segments Segment Intra-segment Antennas on the same segment
+
+where W ∈ CK×MN denotes the MMSE matrix, and γ =
+
+σ2 
+
+> s
+
+/σ 2 
+
+> n
+
+represents the signal-to-noise (SNR) power ratio. We assume perfect channel state information (CSI) at the receiver. The k-th entry of the signal vector x ∈ CK×1 is 
+
+xk = wkhk (r) sk + ∑
+
+> g∈K\{ k}
+
+wkhg (r) sg + wkn, (13) where wk ∈ C1×MN indicates the MMSE vector corresponding to the k-th user and K , {1, . . . , K } denotes the user set. 
+
+III. P ROPOSED ANTENNA DEPLOYMENT SCHEMES FOR 
+
+CORRELATION MITIGATION 
+
+We exploit segment motions to adjust the 3D coordinates of the surface-mounted antennas, thereby optimizing the array ge-ometry. However, randomly deploying multiple antennas along each tentacle may render the antenna position optimization highly susceptible to spatial correlation issue among antenna elements, which mainly arises from two factors: 1) For the antennas installed on the same segment or tentacle, any motion (e.g., bending, extension) leads to a global movement of all antennas. This prevents the antennas mounted on the tentacle from moving independently, thereby causing some antennas to be placed in highly unfavorable positions. 2) Due to sinusoidal deformation, uniform spacing in arc length does not generally yield a uniform 3D spatial dis-tribution, owing to the nonlinear mapping from the curve parameter to spatial coordinates. Consequently, certain antenna pairs may exhibit large separations while others are characterized by small inter-element distances. The above-mentioned factors lead to various correlation ef-fects. To this end, the spatial correlation among antennas on different tentacles is referred to as inter-tentacle correlation, whereas that among antennas on the same tentacle is referred to as intra-tentacle correlation. At the segment level, the intra-tentacle correlation is further divided into inter-segment and intra-segment correlations, which characterize the spatial cor-relation among antennas on different segments and on the same segment, respectively. The classification of antenna correlation can be found in Table I. 
+
+A. Segmented End-Antenna Configuration (SEAC) 
+
+To begin, we propose a SEAC scheme, in which each tentacle is divided into multiple segments, with an antenna installed at the end of each segment. By controlling each segment, we can move the segment-end antenna independently and thus the correlation issue among the antennas on the tentacle can be significantly mitigated. Moreover, the SEAC scheme can benefit from the gains provided by multiple antennas. To characterize the correlation effects in the SEAC scheme, we introduce the following correlation matrix 
+
+C ,
+
+
+
+C1,1 C1,2 · · · C1,M 
+
+C2,1 C2,2 · · · C2,M 
+
+... ... . . . ...
+
+CM, 1 CM, 2 · · · CM,M 
+
+
+
+, (14) where the diagonal blocks capture the intra-tentacle correlation, and the off-diagonal blocks characterize the inter-tentacle cor-relation. The inter-segment correlation arises from both intra-tentacle and inter-tentacle segment correlations. In (14), the 
+
+(s, q )-th entry of Cm,m ′ denotes the inter-segment correlation coefficient between the antennas mounted on the s-th segment of the m-th tentacle and the q-th segment of the m′-th tentacle. Based on the 3D Clarke’s model [33], it is given by 
+
+c(s,q ) 
+
+> m,m ′
+
+, sinc 
+
+( 2π
+
+λ ‖rm,s − rm′ ,q ‖2
+
+)
+
+, (15) where sinc( x) = sin( x)/x . Since a single antenna is mounted at the end of each segment, rm,s is obtained from rm,s,n in (7) by omitting the antenna index n.In the SEAC scheme, the influence of intra-segment corre-lation is inherently removed, since only a single antenna is in-stalled on each segment, whereas the effects of inter-tentacle and inter-segment correlations can be mitigated through independent control of each segment’s motion. 
+
+B. Hybrid End-and-Intermediate Antenna Configuration (HEIAC) 
+
+To further exploit the tentacle capability, we propose a HEIAC scheme, where antennas are mounted at both termi-nal and intermediate positions of each segment. In HEIAC, the inter-tentacle and inter-segment correlation effects can be mitigated by using the methods in SEAC. However, the intra-segment correlation effect is the most challenging to eliminate, not only due to the global movement of the antennas resulting from segment-level motions, but also due to the close spacing between adjacent antennas mounted on the same segment. 
+
+Cb = Am,s v bm,s sin (vm,s ℓ(Lm,s −1) + bπ 
+
+> 2
+
+)
+
+[
+
+1 + ( Am,s vm,s cos( vm,s ℓ(Lm,s −1))) 2] b
+
+> 2
+
+− Am,s −1v bm,s −1 sin (vm,s −1ℓ(Lm,s −1) + bπ 
+
+> 2
+
+)
+
+[
+
+1 + ( Am,s −1vm,s −1 cos( vm,s −1ℓ(Lm,s −1))) 2] b
+
+> 2
+
+. (11) 6
+
+To address this issue, conventional reconfigurable architec-tures, such as stepper-motor-driven MAs 2, can be integrated on each segment surface as intra-segment antennas 3. Although this requires additional actuation and control resources, it can significantly reduce intra-segment correlation. The movement of antennas offers multiple DoFs, benefiting from both the motions of each tentacle and conventional flexible antenna systems. In HEIAC, the optimal number of antennas per segment is generally unknown, especially under dynamic segment defor-mation. When sufficiently many antennas are deployed, adding more elements increases hardware and resource consump-tion while increasing intra-segment spatial correlation. Hence, HEIAC also optimizes the antenna-number configuration. To characterize the correlation effects under the HEIAC scheme, we adopt the tentacle-level correlation matrix defined in (14). Since HEIAC mounted multiple antennas on each segment, the segment-level correlation matrix Cm,m ′ used in SEAC need to be modified accordingly, and is given by 
+
+Cm,m ′ =
+
+
+
+C(1 ,1)  
+
+> m,m ′
+
+· · · C(1 ,S )
+
+> m,m ′
+
+... . . . ...
+
+C(S, 1)  
+
+> m,m ′
+
+· · · C(S,S )
+
+> m,m ′
+
+ , (16) where the block C(s,q ) 
+
+> m,m ′
+
+with m = m′ and s = q represents the intra-segment correlation effect, and all the remaining blocks capture the inter-segment correlation effect. In (16), the (i, j )-th entry of C(s,q ) 
+
+> m,m ′
+
+denotes the correlation coefficient between the i-th antenna on the s-th segment of the 
+
+m-th tentacle and the j-th antenna on the q-th segment of the 
+
+m′-th tentacle, and is defined as 
+
+[C(s,q ) 
+
+> m,m ′
+
+]i,j , sinc 
+
+( 2π
+
+λ ‖rm,s,i − rm′ ,q,j ‖2
+
+)
+
+, (17) where rm,s,i can be obtained from rm,s,n in (7). 
+
+Remark 1: Compared with SEAC, HEIAC is a distinct scheme that additionally installs the reconfigurable antenna system. The former exploits SRA system’s inherent reconfigura-bility, whereas the latter leverages its compatibility. Their com-parison reveals that additional antennas enhance antenna gain but incur higher resource consumption and spatial correlation. 
+
+IV. P ROBLEM FORMATION 
+
+The signal-to-interference-plus-noise ratio (SINR) of the k-th user can be represented as 
+
+γk (r) = |wkhk(r)|2
+
+∑
+
+> g∈K\{ k}
+
+|wkhg (r)|2 +σ2|| wk|| 2 . (18)   
+
+> 2In this work, MAs are considered as a representative implementation, while FA systems can also be deployed following mobile-device surface implementations [18].
+> 3In tendon-driven soft robotic mechanisms [34], predefined local tracks can be embedded on the surface of each soft segment. Stepper-motor-actuated tendons are routed along these tracks to deform the soft robotic arm and control its shape. In this work, we assume that compact antenna elements are mounted on lightweight carriers and repositioned along the tracks following the same motor-driven tendon actuation principle. This implementation is consistent with the operating principle of MAs, where antenna elements are mechanically displaced within a predefined region, thereby enabling MA-based intra-segment position reconfiguration [4].
+
+Thus, the achievable rate of the k-th user and the sum-rate can be denoted by Rk (r) = log 2 (1 + γk (r)) and R (r) = ∑ 
+
+> k∈K
+
+Rk (r), respectively. In the SEAC scheme, we optimize the motion parameters of each segment on the m-th tentacle, m ∈ M , under the physical constraints, such that the end-mounted antennas achieve posi-tions that maximize the sum rate. Specifically, the optimization variables include the deformation amplitude Am,s , spatial fre-quency vm,s , segment length Lm,s of the s-th segment, and the azimuth angle θm of the m-th tentacle. Since each segment has one end-mounted antenna, the antenna index n is omitted for notational simplicity. The problem is formulated as (P1): max 
+
+> ¯ψ
+
+∑
+
+> k∈K
+
+log 2
+
+1+ |wkhk(r)|2
+
+∑
+
+> g∈K\{ k}
+
+|wkhg (r)|2 +σ2|| wk|| 2
+
+
+
+(19a) s.t. 0 ≤ Am,s ≤ Amax , ∀m, s (19b) 
+
+0 ≤ vm,s ≤ vmax , ∀m, s (19c) 
+
+θm−1 + ∆ θ ≤ θm, ∀m (19d) 
+
+θm, min ≤ θm ≤ θm, max , ∀m (19e) 
+
+Lm,s −1 + ∆ L ≤ Lm,s , ∀m, s (19f) 
+
+s
+
+S Lm, min ≤ Lm,s ≤ s
+
+S Lm, max , ∀m (19g) 
+
+C0 = 0 , C1 = 0 , ∀m, s (19h) where the constraints in (19h) ensure smooth continuity at segment boundaries. The constraints (19b), (19c), (19e), and (19g) define the feasible ranges of Am, vm, θm, and Lm,s .The constraints (19d) and (19f) enforce the monotonic ordering of the azimuth angles and segment length Lm,s , respectively. Unless otherwise specified, m = 1 , . . . , M and s = 1 , . . . , S . In constraints involving θm−1 or Lm,s −1, the corresponding index ranges are m = 2 , . . . , M and s = 2 , . . . , S , respectively. The parameter set ¯ψ , collecting the parameters of all M
+
+tentacles, is defined as ¯ψ , { ¯ψm
+
+}Mm=1 ∈ R3MS +M , where 
+
+¯ψm , [Am, 1,..., A m,S , v m, 1,..., v m,S , L m, 1,..., L m,S , θ m]T .
+
+(20) In the HEIAC scheme, we aim to optimize the antenna posi-tions within each segment with the assistance of MA systems, together with the parameters controlling the motion of each segment, such that each antenna within the s-th segment of the 
+
+m-th tentacle, for all m ∈ M , can reach its desired position. In addition, we aim to balance the achievable rate gain from ac-tivating additional antennas against the corresponding resource cost and correlation-induced performance loss. Accordingly, we need to optimize the parameters of the s-th segment on the m-th tentacle (i.e., Am,s , vm,s ), the antenna position Lm,n,s , the azimuth angle θm of the m-th tentacle, and activated antenna index am,s,n . This problem is formulated as (P2): max 
+
+> ˜ψ
+
+∑
+
+> k∈K
+
+log 2
+
+1+ |wkhk(r)|2
+
+∑
+
+> g∈K\{ k}
+
+|wkhg (r)|2 +σ2|| wk|| 2
+
+
+
+− η
+
+> M
+
+∑
+
+> m=1
+> S
+
+∑ 
+
+> s=1
+> N−1
+
+∑
+
+> n=1
+
+am,s,n (21a) 7           
+
+> TABLE II COMPARISON OF OPTIMIZATION METHODS UNDER THE TWO SCHEMES
+> Scheme Coupling Proposed Method Convergence
+> SEAC Inter-segment continuity PDD-PGA Stationary point HEIAC Segment shape, antenna positioning, and antenna activation BCD (PDD-PGA + PGA) + Greedy backward Stationary point
+
+s.t. 0 ≤ Am,s ≤ Amax , ∀m, s (21b) 
+
+0 ≤ vm,s ≤ vmax , ∀m, s (21c) 
+
+θm−1 + ∆ θ ≤ θm, ∀m (21d) 
+
+θm, min ≤ θm ≤ θm, max , ∀m (21e) 
+
+Lm,s −1 + ∆ L ≤ Lm,s , ∀m, s (21f) 
+
+s
+
+S Lm, min ≤ Lm,s ≤ s
+
+S Lm, max , ∀m (21g) 
+
+Lm,s,n −1 + ∆ Ln ≤ Lm,s,n , ∀m, s, n (21h) 
+
+Lm,s −1 ≤ Lm,s,n ≤ Lm,s , ∀m, s, n (21i) 
+
+C0 = 0 , C1 = 0 , ∀m, s (21j) 
+
+am,s,n ∈ { 0, 1}, ∀m, s, n (21k) where η > 0 denotes the cost coefficient for activating each intra-segment antenna, measured in bps/Hz per activated an-tenna. The constraint in (21h) is imposed to preserve the ordering of antennas after movement, i.e., antenna 1 cannot move to a position ahead of antenna 2. Constraint (21i) ensures that each antenna remains within its designated segment. In addition, the parameter set ˜ψ, which collects the parameters of all M tentacles, is defined as ˜ψ ,
+
+{ ˜ψ1, ˜ψ2, ˜ψ3
+
+}Mm=1 ∈
+
+R(3 MS +M+2 MS (N −1)) . The motion parameter set ˜ψ1 is given by ˜ψ1 , [Am, 1,..., A m,S , v m, 1,..., v m,S , L m, 1,..., L m,S , θ m]T,while the reconfigurable antenna position parameter set ˜ψ2 is 
+
+˜ψ2 , [ Lm, 1,1, ..., L m,S,N −1 ]T . (22) The antenna activation set can be given by ˜ψ3 ,
+
+[ am, 1,1, ..., a m,S,N −1 ]T , where am,s,n ∈ {0, 1} indicates whether the n-th candidate intra-segment antenna on the s-th segment of the m-th tentacle is activated. Note that antennas located at segment endpoints require no activation variables, as they are always retained. 
+
+V. P ROBLEM SOLUTION OF SEAC S CHEME 
+
+Problem (P1) is non-convex due to multiple nonlinearities. Specifically, the objective contains a sum of logarithmic frac-tional terms that depend nonlinearly on the 3D antenna co-ordinates. Moreover, the antenna positions are determined by the segment motion-control parameters through an inherently nonlinear mapping. As shown in (7), each antenna coordinate is a nonlinear function of parameters such as vm,s and θm. In addition, (5) shows that the mapping from the projected segment length to the actual arc length is nonlinear. Beyond these nonlinearities, Problem (P1) also involves inter-segment coupling, as summarized in Table II. Specifically, the initial position and curvature of each segment depend on the terminal position and curvature of its preceding segment, re-quiring the continuity constraint in (19h) to ensure geometric smoothness, which further complicates Problem (P1). To handle the nonlinear equality constraints, we adopt a penalty dual decomposition (PDD) framework. To begin, we present a geometric mapping model that reformulates the array-geometry optimization in terms of the motion-control parame-ters, as the antenna locations in the segment-wise SRA system are governed by segment motions. The mapping is given by 
+
+r = g( ¯ψ), where g : R3MS +M → R3MS . Accordingly, the objective function can be equivalently expressed as 
+
+R( ¯ψ) = ∑
+
+> k∈K
+
+log 2(1 + γk( ¯ψ)) , (23) Next, we define the stacked inter-segment continuity constraint vector as 
+
+p( ¯ψ) = 
+
+{pm,s, 0( ¯ψ)}M,S m=1 ,s =2 
+
+{pm,s, 1( ¯ψ)}M,S m=1 ,s =2 
+
+ , (24) where pm,s, 0( ¯ψ) = C0 and pm,s, 1( ¯ψ) = C1. By observing the expressions of C0 and C1 in (11), we can conclude that the constraints are non-affine, involving multiplicative couplings among motion parameters and nonlinear functions. Such nonlin-ear equality constraints yield a nonconvex feasible set. Consequently, we apply the PDD method in the outer loop, the inter-segment continuity and smoothness constraints C0 and 
+
+C1 are incorporated into the penalty term of an augmented Lagrangian function. Specifically, the augmented Lagrangian function of Problem (P1) is given by 
+
+L( ¯ψ, λ) = R( ¯ψ) + λT p( ¯ψ) − ρ
+
+2 ‖p( ¯ψ)‖2, (25) where λ collects the dual variables associated with the con-tinuity constraints and ρ > 0 denotes the penalty parameter. Accordingly, Problem (P1) can be reformulated as (P1.1): 
+
+max 
+
+> ¯ψ
+
+L( ¯ψ, λ) (26a) s.t. 0 ≤ Am,s ≤ Amax , ∀m, s (26b) 
+
+0 ≤ vm,s ≤ vmax , ∀m, s (26c) 
+
+θm−1 + ∆ θ ≤ θm, ∀m (26d) 
+
+θm, min ≤ θm ≤ θm, max , ∀m (26e) 
+
+Lm,s −1 + ∆ L ≤ Lm,s , ∀m, s (26f) 
+
+s
+
+S Lm, min ≤ Lm,s ≤ s
+
+S Lm, max , ∀m (26g) Since L( ¯ψ, λ) is highly nonconcave and involves implicit geo-metric dependencies between the antenna coordinates and the motion-control parameters, we adopt the PGA method in the inner loop to approximately solve each PDD subproblem. Then, the gradient of the augmented objective is 
+
+∇ ¯ψ L( ¯ψ, λ) = ∇ ¯ψR( ¯ψ) + ∇ ¯ψ p( ¯ψ)T (λ − ρ p( ¯ψ)) , (27) where ∇ ¯ψ R( ¯ψ) and ∇ ¯ψ p( ¯ψ) denote the gradients of the rate and penalty terms with respect to ¯ψ, respectively. These gradients can be derived via the chain rule by accounting for the nonlinear mapping between the antenna coordinates and the motion-control parameters, and are omitted for brevity. 8
+
+Algorithm 1 BCD–PDD–PGA for Continuous Variables’ Op-timization Under a Fixed Activation Pattern  
+
+> 1:
+
+Input: Motions parameters ˜ψ(0) 1 = {A(0) 
+
+> m,s
+
+, v (0) 
+
+> m,s
+
+, L (0) 
+
+> m,s
+
+, θ (0)  
+
+> m
+
+}∀m, s from SEAC solution; uniformly initialized per-antenna position parameters ˜ψ(0) 2 = {L(0)  
+
+> m,s,n
+
+} ∀m, s, n ; thresholds 
+
+εout , ε in > 0; λ(0) = 0 , ρ (0) = 1 . 
+
+> 2:
+
+Output: { ˆAm,s , ˆvm,s , ˆLm,s , ˆθm, ˆLm,s,n }. 
+
+> 3:
+
+repeat  
+
+> 4:
+
+Block 1:Fix activated antenna positions; optimize motion parameters.  
+
+> 5:
+
+Fix ˜ψ(z) 2 = {L(z) 
+
+> m,s,n
+
+} ∀ m, s, n . 
+
+> 6:
+
+Run PDD-PGA inner loop:  
+
+> 7:
+
+repeat  
+
+> 8:
+
+repeat  
+
+> 9:
+
+Gradient step and projection: 
+
+˜ψ(i+1) 1 = Π D
+
+( ˜ψ(i) 1 + ηi∇ ˜ψ1 L( ˜ψ(i) 1 , λ, ˜ψ(z) 2 )
+
+) 
+
+> 10:
+
+until ‖ ˜ψ(i+1) 1 − ˜ψ(i) 1 ‖ ≤ εin  
+
+> 11:
+
+Update dual variables: 
+
+λ(t+1) = λ(t) − ρ p( ˜ψ(t+1) 1 ). 
+
+> 12:
+
+until ‖p( ˜ψ(t+1) 1 )‖ ≤ ǫpdd  
+
+> 13:
+
+Set {A(z+1)  
+
+> m,s
+
+, v (z+1)  
+
+> m,s
+
+, θ (z+1)  
+
+> m
+
+, L (z+1)  
+
+> m,s
+
+} ← ˜ψ(converged) 1 . 
+
+> 14:
+
+Block 2: Fix motion parameters; optimize activated an-tenna positions.  
+
+> 15:
+
+Fix ˜ψ(z) 1 = {A(z) 
+
+> m,s
+
+, v (z) 
+
+> m,s
+
+, L (z) 
+
+> m,s
+
+, θ (z)  
+
+> m
+
+} ∀ m, s . 
+
+> 16:
+
+Run PGA inner loop:  
+
+> 17:
+
+repeat  
+
+> 18:
+
+Gradient step and projection: 
+
+˜ψ(i+1) 2 = Π D
+
+( ˜ψ(i) 2 + ηi∇ ˜ψ2 R( ˜ψ(z) 1 , ˜ψ(i) 2 )
+
+) 
+
+> 19:
+
+until ‖ ˜ψ(i+1) 2 − ˜ψ(i) 2 ‖ ≤ εin  
+
+> 20:
+
+Set {L(z+1) 
+
+> m,s,n
+
+} ← ˜ψ(converged) 2 . 
+
+> 21:
+
+until ∣∣ ˜ψ(z+1) − ˜ψ(z) ∣∣ ≤ εout 
+
+Using the above gradient, the PGA method updates the motion-control parameters through iterative gradient ascent and projection steps. At the i-th PGA iteration, given the current point ¯ψ(i) , we first perform a gradient ascent step: 
+
+¯ψ(i+ 1  
+
+> 2)
+
+= ¯ψ(i) + ηi∇ ¯ψL( ¯ψ(i) , λ), (28) where ¯ψ(i+ 1  
+
+> 2)
+
+denotes the intermediate variable after the gradi-ent ascent step, and ηi > 0 is the step size. To ensure feasibility after the gradient ascent step, the intermediate point ¯ψ(i+ 1  
+
+> 2)
+
+is projected onto the feasible set as 
+
+¯ψ(i+1) = Π D
+
+( ¯ψ(i+ 1 
+
+> 2)
+
+)
+
+. (29) In particular, the feasible set D can be divided into ordering constraints and box constraints. The ordering constraints (26d) and (26f) are enforced via sequential forward-backward projec-tion steps, whereas the projection onto the box constraints (26b), (26c), (26e) and (26g) admits a closed-form expression for each 
+
+m, s , the update of ¯ψm,s is obtained via 
+
+¯ψ(i+1)  
+
+> m,s
+
+= min 
+
+{
+
+max 
+
+{ ¯ψ(i+ 1  
+
+> 2)
+> m,s
+
+, ¯ψm,s, min 
+
+}
+
+, ¯ψm,s, max 
+
+}
+
+. (30) where ¯ψm,s, min and ¯ψm,s, max represent the upper and lower bounds, respectively. The inner PGA loop is terminated when the variation between two consecutive primal iterates becomes sufficiently small, i.e., 
+
+∥∥∥ ¯ψ(i+1) − ¯ψ(i) 
+
+∥∥∥ < ǫ in , (31) where ǫin denotes the inner loop threshold. After the inner PGA loop converges at the t-th PDD iteration, the obtained solution is denoted by ¯ψ(t+1) , and the dual variable is updated as 
+
+λ(t+1) = λ(t) − ρp( ¯ψ(t+1) ). (32) By alternating between the primal and dual updates, the PDD framework promotes constraint satisfaction while improving the objective value. The outer loop terminates when the constraint residual satisfies ‖p( ¯ψ(t+1) )‖ ≤ ǫpdd . Otherwise, the penalty parameter ρ is adaptively updated, with an upper bound ρmax ,to balance objective improvement and constraint enforcement. 
+
+VI. P ROBLEM SOLUTION OF HEIAC S CHEME 
+
+Compared with problem (P1), problem (P2) further optimizes the intra-segment antenna positions and the number of antennas per segment. Based on the nature of the optimization variables, we partition them into two categories: binary variables am,s,n 
+
+and continuous variables, such as Am,s and Lm,s,n . Due to the nonlinear coupling among antenna activation, intra-segment an-tenna repositioning, and segment-shape control, as summarized in Table II, problem (P2) is a mixed-integer non-convex problem and is difficult to solve directly. To maintain a concise and tractable solution framework, the optimization are decoupled into two parts. Part I optimizes the continuous variables with fixed binary variables, which specify the antenna activation pattern, while Part II optimizes the binary variables. 
+
+A. Motion and Antenna Repositioning Variable Optimization 
+
+In Part I, compared to Problem (P1), we introduce the pa-rameter Lm,s,n to change the MA antenna position individually, which substantially increases the optimization dimension, espe-cially in dense-antenna scenarios. Moreover, since the antennas move along the arc length of each segment, the antenna reposi-tioning within a segment is strongly coupled with the segment shape determined by the motion parameters. To solve this challenged problem, we adopt a block coor-dinate descent (BCD) strategy within the proposed PDD-PGA framework. By using the BCD decomposition, we partition the variables into block 1 : the motion-parameter block and block 2 :the reconfigurable antenna position parameter block, and update the blocks sequentially at the inner iterations. To accelerate convergence, we adopt the SEAC solution as the initial point for the motion parameters. In addition, the intra-segment antenna positions are initialized with uniform spacing along each segment, while satisfying the constraints in (21h) and (21i). The proposed algorithm adopts a two-layer iterative structure with one outer BCD loop and two inner loops. Specifically, each block is updated through an inner iteration indexed by i, while the outer iteration is indexed by z. Specially, in the motion-parameter block, the PDD loop is indexed by t. The overall procedure is summarized in Algorithm 1. At the (z + 1) -th outer 9
+
+iteration, we first optimize the motion-parameter block ˜ψ1 =
+
+{{ Am,s }M,S m=1 ,s =2 ,{vm,s }M,S m=1 ,s =2 ,{Lm,s }M,S m=1 ,s =2 ,{θm}Mm=1 }
+
+as (P2.1): max 
+
+> ¯ψ1
+
+L( ˜ψ1, λ, ˜ψ(z) 2 ) (33a) s.t. 0 ≤ Am,s ≤ Amax , ∀m, s (33b) 
+
+0 ≤ vm,s ≤ vmax , ∀m, s (33c) 
+
+θm−1 + ∆ θ ≤ θm, ∀m (33d) 
+
+θm, min ≤ θm ≤ θm, max , ∀m (33e) 
+
+Lm,s −1 + ∆ L ≤ Lm,s , ∀m, s (33f) 
+
+s
+
+S Lm, min ≤ Lm,s ≤ s
+
+S Lm, max , ∀m (33g) where the intra-segment antenna position variable block ˜ψ2 =
+
+{Lm,s,n }M,S,N −1 
+
+> m=1 ,s =1 ,n =1
+
+has been obtained in the z-th BCD iter-ation and is treated as fixed. The term −η ∑ am,s,n is constant with respect to the continuous variables under a fixed activation pattern, and is therefore dropped from Problem (P2.1) without affecting its solution. Since L( ˜ψ1, λ, ˜ψ(z) 2 ) is non-concave, we also employ the PGA method, which consists of a gradient ascent step followed by a projection onto the feasible set as 
+
+˜ψ(i+1) 1 = Π D
+
+( ˜ψ(i) 1 + ηi∇ ˜ψ1 L( ˜ψ(i) 1 , λ, ˜ψ(z) 2 )
+
+)
+
+, (34) where the projection method is similar to that of Section V. After the PGA procedure converges, we obtain a solution denoted by 
+
+˜ψ(t+1) 1 , and then dual variables are updated as 
+
+λ(t+1) = λ(t) − ρ p( ˜ψ(t+1) 1 ). (35) Afterwards, we update per-antenna position variable block 
+
+˜ψ2 while fixing the motion-parameter block ˜ψ(z) 1 at the (z+1) -th outer iteration. Since this subproblem does not involve the non-linear segment-continuity constraints, it can be directly solved by PGA as follows:: (P2.2): max 
+
+> ˜ψ2
+
+R( ˜ψ2, ˜ψ(z) 1 ) (36a) s.t. Lm,s,n −1 + ∆ Ln ≤ Lm,s,n , ∀m, s, n (36b) 
+
+Lm,s −1 ≤ Lm,s,n ≤ Lm,s , ∀m, s, n (36c) where the motion-parameter block has been obtained at the z-th outer iteration. To solve problem (P2.2), we perform a gradient ascent step followed by a projection onto the feasible set as 
+
+˜ψ(i+1) 2 = Π D
+
+( ˜ψ(i) 2 + ηi∇ ˜ψ2 R( ˜ψ(i) 2 , ˜ψ(z) 1 )
+
+)
+
+, (37) where the ordering constraint (36b) is also enforced using a sequential forward-backward projection step, whereas the pro-jection onto the box constraint (36c) is implemented as follows 
+
+L(i+1)  
+
+> m,s,n
+
+= min 
+
+{
+
+max {L(i+ 1 
+
+> 2)
+> m,s,n
+
+, L m,s −1
+
+}, L m,s 
+
+}
+
+, (38) where L(i+ 1  
+
+> 2)
+> m,s,n
+
+denotes the intermediate point. The projection in (38) follows directly from the fact that Lm,s −1 and Lm,s are updated in the motion-parameter block and are therefore treated as known constants in the current step. We alternately optimize the aforementioned two blocks until the algorithm satisfies the following convergence criterion 
+
+∣∣ ˜ψ(z+1) − ˜ψ(z) ∣∣ ≤ εout , (39) where εout indicates the threshold. 
+
+Algorithm 2 Greedy Backward Antenna Selection for Prob-lem (P2)  
+
+> 1:
+
+Input: Greedy iteration index τ = 0 ; inital activation states a(0)  
+
+> m,s,n
+
+= 1 , ∀m, s, n  
+
+> 2:
+
+Run Algorithm 1 under a(τ ) to obtain the corresponding solution for continuous variables and the utility Φ( a(τ )); 
+
+> 3:
+
+Output: Optimized {A⋆m,s , v ⋆m,s , θ ⋆m, L ⋆m,s , L ⋆m,s,n , a⋆}. 
+
+> 4:
+
+repeat  
+
+> 5:
+
+for each active intra-segment antenna (m, s, n ) with 
+
+a(τ ) 
+
+> m,s,n
+
+= 1 do  
+
+> 6:
+
+Construct a(τ ) 
+
+> −(m,s,n )
+
+by deactivating antenna 
+
+(m, s, n ); 
+
+> 7:
+
+Run Algorithm 1 under a(τ )
+
+> −(m,s,n )
+
+; 
+
+> 8:
+
+Compute G(τ ) 
+
+> m,s,n
+
+= Φ 
+
+(
+
+a(τ )
+
+> −(m,s,n )
+
+)
+
+− Φ(a(τ )); 
+
+> 9:
+
+end for  
+
+> 10:
+
+Select (m⋆, s ⋆, n ⋆) = arg max a(τ ) 
+
+> m,s,n =1
+
+G(τ )
+
+> m,s,n
+
+; 
+
+> 11:
+
+if G(τ )   
+
+> m⋆,s ⋆,n ⋆
+
+≥ 0 then  
+
+> 12:
+
+Update a(τ +1) = a(τ )  
+
+> −(m⋆,s ⋆,n ⋆)
+
+; 
+
+> 13:
+
+Run Algorithm 1 under a(τ +1) ; 
+
+> 14:
+
+Update Φ( a(τ +1) ) and τ = τ + 1 ; 
+
+> 15:
+
+else  
+
+> 16:
+
+Terminate;  
+
+> 17:
+
+end if  
+
+> 18:
+
+until  
+
+> 19:
+
+No active antenna yields a nonnegative removal gain. 
+
+B. Binary Variables Optimization 
+
+In Part II, building upon the optimized segment shapes and antenna positions obtained in Part I, we further employ a greedy backward antenna selection strategy to determine the binary antenna activation variables am,s,n ∀ { m, s, n }, thereby jointly optimizing the array configuration and the number of activated antennas. Starting from full activation, we iteratively deactivate the intra-segment antenna whose removal yields the largest utility gain until no further improvement is achieved. At the τ -th greedy iteration, the antenna activation pattern is a(τ ) , [a(τ )
+
+> m,s,n
+
+]m,s,n , where the initialization a(0)  
+
+> m,s,n
+
+= 1 ,
+
+∀(m, s, n ), corresponds to the fully activated configuration. We further define the candidate activation pattern a(τ )
+
+> −(m,s,n )
+
+,which is obtained from a(τ ) by setting the entry associated with antenna (m, s, n ) to zero while keeping all other entries unchanged. The removal gain of antenna (m, s, n ) is defined as 
+
+G(τ ) 
+
+> m,s,n
+
+, Φ
+
+(
+
+a(τ )
+
+> −(m,s,n )
+
+)
+
+− Φ
+
+(
+
+a(τ ))
+
+, (40) where the utility function Φ( ·) is given by 
+
+Φ
+
+(
+
+a(τ ))
+
+, ˆR
+
+(
+
+a(τ ))
+
+− η
+
+> M
+
+∑
+
+> m=1
+> S
+
+∑ 
+
+> s=1
+> N−1
+
+∑
+
+> n=1
+
+a(τ )
+
+> m,s,n
+
+, (41) in which ˆR(a(τ )) denotes achieved sum-rate returned by the proposed inner BCD–PDD–PGA solver in Section VI-A under the fixed activation pattern a(τ ). Accordingly, G(τ ) 
+
+> m,s,n
+
+> 0 in-dicates that deactivating antenna (m, s, n ) improves the utility, whereas G(τ ) 
+
+> m,s,n
+
+< 0 implies that its removal is detrimental. 10                                                      
+
+> TABLE III PENALTY RESIDUAL COMPARISON OF PGA AND SCA.
+> SNR (dB) PGA SCA
+> 05.7633 ×10 −33.0400 ×10 −1
+> 36.2000 ×10 −33.8675 ×10 −1
+> 63.8154 ×10 −35.5075 ×10 −1
+> 94.5061 ×10 −36.0200 ×10 −1
+> 12 7.8271 ×10 −32.9378 ×10 −1
+> 15 4.0211 ×10 −31.9653 ×10 −1
+> 18 1.2697 ×10 −44.0477 ×10 −1
+> 21 1.6783 ×10 −33.1747 ×10 −1
+
+Among all currently active intra-segment antennas, the best removal candidate is selected as 
+
+(m⋆, s ⋆, n ⋆) = arg max  
+
+> a(τ)
+> m,s,n =1
+
+G(τ )
+
+> m,s,n
+
+, (42) where at the τ -th iteration, G(τ ) 
+
+> m,s,n
+
+is evaluated for each active antenna (m, s, n ) with a(τ ) 
+
+> m,s,n
+
+= 1 , and (m⋆, s ⋆, n ⋆) identifies the one whose removal yields the greatest utility gain. If the maximum removal gain is nonnegative, i.e., G(τ )  
+
+> m⋆,s ⋆,n ⋆
+
+≥ 0, the removal is accepted, and the activation pattern is updated as 
+
+a(τ +1) = a(τ )  
+
+> −(m⋆,s ⋆,n ⋆)
+
+. (43) Otherwise, the greedy backward procedure terminates. The backward strategy is adopted because the optimal num-ber of active antennas is unknown a priori. Starting from full activation avoids prematurely discarding useful antennas, while pruning removes antennas whose marginal gains are outweighed by activation cost and correlation. To reduce complexity, each greedy iteration uses a screening-and-refinement strategy: a lightweight pass evaluates all active candidates with a limited iteration budget, and the full inner solver is applied to the best candidate, reducing cost while mitigating incorrect pruning. 
+
+VII. N UMERICAL RESULTS 
+
+In this section, we evaluate the achievable sum-rate per-formance of the segment-wise SRA with the proposed SEAC and HEIAC schemes under various scenarios. Unless otherwise specified, the system parameters are K = 7 , Amax = 0 .2λ, and 
+
+vmax = 5 λ−1. The SEAC scheme adopts an SRA configuration with M = 4 and S = 3 , whereas the HEIAC scheme uses 
+
+M = 2, S = 2, and N = 2. Thus, each HEIAC seg-ment contains one intra-segment antenna and one segment-end antenna. The initial inter-antenna spacing along each tentacle is set to 0.1λ, consistent with [37]. The length of the m-th tentacle is constrained within [Lm, 4Lm], i.e., Lm, min = Lm
+
+and Lm, max = 4 Lm. Its angular sweeping range is θm, min =2π(m − 1) /M and θm, max = 2πm/M . Furthermore, the carrier frequency is fc = 1 .3 GHz, and all results are averaged over 1000 independent channel realizations. In the considered settings, the outer BCD loop converges within 15 iterations on average, the PDD loop requires about 12 iterations, and each PGA loop converges within 100 iterations on average. 
+
+A. Performance Comparison With Benchmark Schemes 
+
+To comprehensively evaluate the proposed schemes, we con-sider three concentric circular antenna array (CCAA)-based               
+
+> 036912 15 18 21
+> 10 20 30 40 50 60 70
+> 94.0%
+> 37.9%
+> 37.3%
+> 59.2%
+> Fig. 4. Sum-rate comparison of SRA, 3D R-CCAA, 2D R-CCAA, and CCAA under different SNR levels for SEAC scheme.
+> 036912 15 18 21
+> 10 20 30 40 50 60
+> 32.1%
+> 72.2%
+> Fig. 5. Sum-rate comparison of SRA, 3D R-CCAA, 2D R-CCAA, and CCAA under different SNR levels for HEIAC scheme.
+
+benchmarks: 1) a fixed CCAA [35], corresponding to the unde-formed soft robot, as shown in Fig. 3; 2) a 2D reconfigurable CCAA (2D R-CCAA), where antennas move along circular tracks; and 3) a 3D reconfigurable CCAA (3D R-CCAA), where antennas move along circular tracks and the tracks are translated along the z-axis. The 2D R-CCAA extends the movable uniform circular array (UCA) in [20] to multi-ring CCAA, while the 3D R-CCAA further extends the movable cylindrical array in [36] by enabling vertical movement of multiple rings with different radii. Note that in the undeformed state, the SRA and all benchmarks are initialized with identical antenna positions and array geometry, thereby ensuring that fair comparison. In Fig. 4, the sum-rate performance of the proposed SRA architecture under the SEAC scheme is evaluated against the 3D R-CCAA, 2D R-CCAA, and fixed CCAA benchmarks. Although PGA is used for SRA sum-rate optimization, the performance of successive convex approximation (SCA) is also included for comparison. Fig. 4 indicates that although SCA achieves a slightly higher converged sum rate than PGA, it is significantly inferior in reducing the penalty residual ‖p‖.11             
+
+> 0.5 0.6 0.7 0.8 0.9 11.1 1.2
+> 20 25 30 35 40 45 50
+> 456
+> Fig. 6. Performance of antenna activation in the HEIAC scheme (the left and right y-axes denote utility and the number of deactivated antennas).
+> 0.15 0.25 0.35 0.45 0.55
+> 510 15 20 25 30 35 40 45
+> 49.3%
+> Fig. 7. Performance comparison of SRA, 3D R-CCAA, and CCAA with different initial antenna spacings at an SNR of 9 dB.
+
+As shown in Table III, PGA achieves a penalty residual about two orders of magnitude lower than SCA, since it updates the variables based on the true augmented objective, whereas SCA relies on a local first-order surrogate that may not accurately capture the nonlinear constraint violation in our highly coupled problem. Compared with the SRA, the fixed CCAA achieves the worst performance, indicating that its static geometry limits spatial-correlation mitigation, thereby reducing the performance gains enabled by antenna repositioning. The 2D R-CCAA improves the sum rate by enabling antenna movement along circular tracks, while the 3D R-CCAA further enhances perfor-mance through additional z-axis translation for more flexible 3D adjustment. The proposed SRA achieves the highest sum rate. For instance, at an SNR = 18 dB, it outperforms the 3D R-CCAA and 2D R-CCAA by 37 .9% and 94 .0% , respectively. This gain stems from its flexible array-geometry reconfiguration and effective-aperture enlargement enabled by segment-wise deformation and elongation, which jointly facilitate spatial-correlation mitigation. In Fig. 5, we compare the sum-rate performance of the proposed SRA with those of the 3D R-CCCA, 2D-R-CCCA, and fixed CCAA under the HEIAC scheme, where movable intra-segment antennas are introduced in addition to the segment-end antennas. By jointly optimizing the continuous deformation of the soft robotic tentacles and the intra-segment antenna posi-tions, the proposed SRA with the HEIAC scheme consistently achieves superior performance over all benchmark schemes. For example, it outperforms the 3D R-CCCA and 2D-R-CCCA by 
+
+32 .1% and 72 .2% , respectively. Fig. 6 evaluates the greedy backward antenna activation in Algorithm 2 at SNR = 15 dB with N = 11 . Several antennas are deactivated among the M N = 44 candidates, indicating redundancy in the intermediate intra-segment antenna deploy-ment. The optimal number of active antennas depends on the cost coefficient η: five antennas are removed for η ∈ [0 .5, 0.9] 
+
+and six for η ∈ [1 .0, 1.2] , indicating that a larger η yields sparser activation. Compared with the all-active baseline, the greedy scheme achieves a higher utility value by deactivating ineffective antennas, where the utility is defined in (41) as the difference between the sum rate and the antenna activation cost. In addition, although the sum-rate curves are omitted for clarity in Fig. 6, the rate loss is marginal. For example, at η = 1 .2,the greedy scheme deactivates six antennas, reducing the sum rate from 69 .2091 to 67 .4763 bps/Hz, i.e., by only about 2.5% ,while eliminating 15% of the candidate intra-segment antennas. This highlights the effectiveness of the greedy backward antenna activation method for the HEIAC scheme. Fig. 7 compares the SRA, 3D R-CCAA, and CCAA with different initial inter-element spacings. The SRA with SEAC is considered as a representative case, as the HEIAC-based SRA exhibits a similar trend. The spacing is varied by adjusting the array radius; for the SRA, this is achieved by changing the initial tentacle length. As shown in Fig. 7, when the CCAA spacing exceeds about 0.5λ (i.e., radius larger than 1.5λ for 
+
+S = 3 ), spatial correlation becomes negligible, which agrees with classical theory. For the 3D R-CCAA, negligible correla-tion is achieved when the inter-element spacing exceeds 0.33 λ,indicating that antenna mobility along both circular tracks and the z-axis improves correlation mitigation. In contrast, the SRA suppresses spatial correlation even at an initial spacing of 0.17 λ,demonstrating superior performance for compact arrays. This gain arises from both stretching-enabled aperture enlargement and array-geometry reconfiguration enabled by various motions. 
+
+B. Performance Gain Analysis 
+
+After comparing the proposed segment-wise SRA schemes with literature-based benchmarks, we consider the following SRA variants to reveal the sources of the gains: 4) SRA with extension–retraction motions only; 5) SRA with bending and sweeping motions only; and 6) SRA with non-independent control (NIC) for antenna repositioning, i.e., without segment-wise control or intra-segment reconfigurable antenna system. In Fig. 8, the contributions of different SRA motions are evaluated by comparing the full-motion SRA with the SRA in extension—retraction-only mode and the SRA in bending— sweeping-only mode at SNR = 15 dB . The HEIAC-based SRA is used as a representative case, since the SEAC-based SRA shows a similar trend. Two cases are considered under 12                 
+
+> 11.5 22.5 33.5 44.5
+> 010 20 30 40 50 60 70 80
+> Fig. 8. Contribution of different SRA motions to the sum-rate.
+> 036912 15 18 21
+> 510 15 20 25 30 35 40
+> Fig. 9. Comparison between the HEIAC scheme and the NIC benchmark.
+
+the same aperture with an initial array radius of 0.4λ: Case I, a dense antenna with (M = 4 , S = 3 , N = 3) ; and Case II, a sparse antenna with (M = 2, S = 2, N = 2) . The result shows that, in both cases, when the maximum stretch ratio 
+
+Lm, max is small, the full-motion SRA performs similarly to the bending–sweeping-only benchmark, since extension–retraction is limited, and the gain mainly comes from shape adaptation. As 
+
+Lm, max increases, radial aperture expansion becomes dominant, while the role of extension–retraction differs between the two cases. In the dense antenna case, the stretch-only benchmark approaches the full-motion SRA at large Lm, max , indicating that most gains come from extension–retraction, with bending and sweeping providing only marginal improvement. In contrast, in the sparse antenna case, the full-motion SRA still outperforms the stretch-only benchmark, indicating that bending and sweep-ing remain important through their synergy with stretching. This is because dense deployments are mainly constrained by small inter-antenna spacing and strong spatial correlation, where stretching effectively enlarges the effective aperture. In contrast, in sparse deployments, stretching alone provides limited gains in correlation mitigation, making bending and sweeping non-        
+
+> 036912 15 18 21
+> 10 20 30 40 50 60 70
+> Fig. 10. Effect of mutual coupling on the SEAC and HEIAC schemes.
+
+negligible for further array-geometry reconfiguration. In Fig. 9, the proposed SRA architecture is compared with the NIC benchmark using the HEIAC scheme as a representa-tive example, since SEAC exhibits a similar trend. The results demonstrate that HEIAC significantly outperforms NIC, with more pronounced gains in the high-SNR regime. This is because the performance at low SNR is mainly noise-limited, whereas antenna correlation becomes more critical at high SNR, making array reconfiguration more beneficial. The gain over NIC is attributed to the additional DoFs provided by segment-wise control and the intra-segment MA mechanisms. Furthermore, comparing the one-fold and two-fold extension ranges indicates that NIC requires a higher SNR to achieve the same sum rate as HEIAC. For instance, to achieve sum rates of 10 and 21 .82 
+
+bps/Hz, NIC requires 9 and 5.62 dB higher SNR than HEIAC in the one-fold and two-fold extension cases, respectively. 
+
+C. Performance Evaluation Under Mutual Coupling 
+
+Segment-wise SRAs can alleviate mutual coupling via var-ious motions, similarly to mitigating spatial correlation. How-ever, residual coupling in compact arrays may remain non-negligible and requires evaluation. Although advanced decou-pling techniques can suppress inter-element coupling below 
+
+−20 dB for 0.12 λ spacing [37], we consider a compact SRA without such techniques and quantify mutual coupling using the model in [37] for post-optimization evaluation, where the mutual coupling matrix Γmc is given by Γmc = ZT (Z+ZT )−1,where ZT is the termination impedance matrix, and Z denotes the mutual impedance matrix. The matrix Z is computed from the optimized SRA geometry at carrier frequency fc using the MATLAB Antenna Toolbox, and the corresponding effective channel is given by ¯H = Γmc Hpost . Following [37], we consider dipoles with length 0.5λ, width 0.005 λ, initial spacing 
+
+0.1λ, and termination impedance ZT = 50 Ω .In Fig. 10, the impact of mutual coupling on the SEAC scheme (M = 2 , S = 4) and the HEIAC scheme (M = 2 , S =4, N = 2) is evaluated. For both schemes, the sum rate under the correlation-only (corr. only) model is consistently higher than that under the correlation-plus-mutual-coupling (corr. + 13 
+
+MC) model, indicating that the mutual coupling effect is non-negligible in the considered compact array setup. For example, for SEAC at SNR = 15 dB, mutual coupling causes a perfor-mance loss of about 6 bps/Hz. HEIAC consistently outperforms SEAC across both channel models, primarily due to the greater number of antennas in the considered configuration. 
+
+VIII. C ONCLUSION 
+
+In this paper, we introduced a communication-oriented segment-wise SRA framework for correlation-aware antenna re-configuration, where each soft robotic tentacle was divided into multiple independently controllable segments with elongation– retraction, bending, and sweeping motions. Based on this model, two antenna deployment schemes, namely SEAC and HEIAC, were proposed to enhance antenna-position controllability and reduce spatial correlation. In SEAC, antennas were deployed at segment endpoints and reconfigured by optimizing segment motion parameters, with the resulting sum-rate maximization problem solved via a PDD-PGA algorithm. In HEIAC, intra-segment MA-based reconfigurable antennas were incorporated to combine large-scale soft-robot deformation with fine-grained antenna positioning, and the joint optimization of segment deformation, intra-segment antenna positions, and antenna ac-tivation was solved using a BCD-PDD-PGA algorithm with greedy backward search. Simulation results showed that SEAC achieved 94.0% and 37.9% sum-rate gains over the 2D and 3D reconfigurable antenna baselines, and up to 49.3% gain over the 3D baseline under compact array deployment. HEIAC also achieved 72.2% and 32.1% gains over the 2D and 3D baselines. 
+
+REFERENCES [1] K. -K. Wong, A. Shojaeifard, K. -F. Tong and Y. Zhang “Fluid antenna systems,” IEEE Trans. Wireless Commun. , vol. 20, no. 3, pp. 1950-1962, Mar. 2021. [2] L. Zhu et al. , “A Tutorial on Movable Antennas for Wireless Networks,” 
+
+IEEE Commun. Surveys Tuts. , vol. 28, pp. 3002–3054, 2026. [3] K. -K. Wong and K. -F. Tong “Fluid antenna multiple access,” IEEE Trans. Wireless Commun. , vol. 21, no. 7, pp. 4801-4815, Jul. 2022. [4] L. Zhu, W. Ma and R. Zhang, “Movable antennas for wireless commu-nication: Opportunities and challenges,” IEEE Commun. Mag. , vol. 62, no. 6, pp. 114-120, Jun. 2024. [5] Z. Ding, R. Schober and H. V. Poor, “Flexible-antenna systems: A pinching-antenna perspective,” IEEE Trans. Commun. , vol. 73, no. 10, pp. 9236–9253, Oct. 2025. [6] D. Rus and M. T. Tolley, “Design, fabrication and control of soft robots,” 
+
+Nature , vol. 521, no. 7553, pp. 467-475, 2015. [7] C. Laschi, et al. , “Soft robotics: Technologies and systems pushing the boundaries of robot abilities, ” Sci. Robot. , vol. 1, 2016, Art. no. eaah3690. [8] Z. Xie, et al. , “Octopus-inspired sensorized soft arm for environmental interaction, ” Sci. Robot. , vol. 8, no. 84, 2023, Art. no. eadh7852. [9] A. R. Elchrif, et al. , “Modular soft pneumatic actuator mimics elephant trunk locomotion, ” Sci. Rep. , vol. 14, p. 24169, 2024. [10] Z. Chen, et al. , “Data-Driven Methods Applied to Soft Robot Modeling and Control: A Review, ” IEEE Trans. Autom. Sci. Eng. , vol. 22, pp. 2241–2256, 2025. [11] D. Feliu-Talegon, et al. , “Dynamic shape estimation of tendon-driven soft manipulators via actuation readings, ” IEEE Robot. Autom. Lett. ,vol. 10, no. 1, pp. 780–787, Jan. 2025. [12] M. Azizkhani, A. L. Gunderman, I. S. Godage, and Y. Chen, “Dynamic control of soft robotic arm: An experimental study, ” IEEE Robot. Autom. Lett. , vol. 8, no. 4, pp. 1897–1904, Apr. 2023. [13] K. K. Wong, A. Shojaeifard, K. -F. Tong, and Y. Zhang, “Performance limits of fluid antenna systems,” IEEE Commun. Lett. , vol. 24, no. 11, pp. 2469–2472, Nov. 2020. [14] W. Ma, L. Zhu and R. Zhang, “Multi-beam forming with movable-antenna array,” IEEE Commun. Lett. , vol. 28, no. 3, pp. 697-701, Mar. 2024. [15] L. Zhu, W. Ma, Z. Xiao and R. Zhang, “Movable antenna enabled near-field communications: Channel modeling and performance opti-mization,” IEEE Trans. Commun. , vol. 73, no. 9, pp. 7240-7256, Sept. 2025. [16] Z. Zhou, Z. Yang, G. Chen and Z. Ding, “Sum-rate maximization for NOMA-assisted pinching-antenna systems,” IEEE Wireless Commun. Lett. , vol. 14, no. 9, pp. 2728-2732, Sept. 2025. [17] Y. Wang, Y. Liu, Y. Fu and Z. Ding, “Pinching-antenna systems for indoor immersive communications: A 3D-modeling based performance analysis,” IEEE Wireless Commun. Lett. , vol. 15, pp. 1040-1044, 2026. [18] Z. Chai, K.-K. Wong, K.-F. Tong, Y. Chen and Y. Zhang, “Port selection for fluid antenna systems,” IEEE Commun. Lett. , vol. 26, no. 5, pp. 1180-1184, May 2022. [19] W. Ma, L. Zhu and R. Zhang, “Movable antenna enhanced wireless sens-ing via antenna position optimization,” IEEE Trans. Wireless Commun. ,vol. 23, no. 11, pp. 16575-16589, Nov. 2024. [20] S. Basbug, “Design and synthesis of antenna array with movable elements along semicircular paths,” IEEE Antennas Wireless Propag. Lett. , vol. 16, pp. 3059-3062, Oct. 2017. [21] Z. Wang, C. Ouyang, X. Mu, Y. Liu and Z. Ding, “Modeling and beamforming optimization for pinching-antenna systems,” IEEE Trans. Commun. , vol. 73, no. 12, pp. 13904-13919, Dec. 2025. [22] W. Ma, L. Zhu and R. Zhang, “Movable antenna enhanced integrated sensing and communication via antenna position optimization,” IEEE Trans. Signal Process. , vol. 74, pp. 1522-1537, 2026. [23] X. Shao, Q. Jiang and R. Zhang, “6D movable antenna based on user distribution: Modeling and optimization,” IEEE Trans. Wireless Commun. , vol. 24, no. 1, pp. 355-370, Jan. 2025. [24] L. Zhu, X. Pi, W. Ma, Z. Xiao and R. Zhang, “Dynamic beam coverage for satellite communications aided by movable-antenna array,” IEEE Trans. Wireless Commun. , vol. 24, no. 3, pp. 1916-1933, Mar. 2025. [25] F. Rostami Ghadi, K.-K. Wong, W. K. New, H. Xu, R. Murch and Y. Zhang, “On performance of RIS-aided fluid antenna systems,” IEEE Wireless Commun. Lett. , vol. 13, no. 8, pp. 2175-2179, Aug. 2024. [26] E. Gough, A. T. Conn and J. Rossiter, “Planning for a tight squeeze: Navigation of morphing soft robots in congested environments,” IEEE Robot. Autom. Lett. , vol. 6, no. 3, pp. 4752-4757, Jul. 2021. [27] G. Pang, et al. , “CoboSkin: Soft robot skin with variable stiffness for safer human–robot collaboration,” IEEE Trans. Ind. Electron. , vol. 68, no. 4, pp. 3303-3314, Apr. 2021. [28] E. Faddoul, A. Nicolaides, K. Ntougias, and I. Krikidis, “Soft robotics-inspired flexible antenna arrays,” IEEE Commun. Lett. , vol. 29, no. 11, pp. 2676–2680, Nov. 2025. [29] R. K. Katzschmann, C. Della Santina, Y. Toshimitsu, A. Bicchi, and D. Rus, “Dynamic motion control of multi-segment soft robots using piecewise constant curvature matched with an augmented rigid body model,” in Proc. 2nd IEEE Int. Conf. Soft Robot. (RoboSoft) , Seoul, South Korea, Apr. 2019, pp. 454–461. [30] Y. Tago, Y. Satake, and H. Ishii, “Novel design of a pneumatic longitudinal actuator for both extending and contracting motions, ” IEEE Robot. Automat. Lett , vol. 9, no. 2, pp. 1436–1443, Feb. 2024. [31] L. H. Blumenschein, et al. , “A tip-extending soft robot enables recon-figurable and deployable antennas, ” IEEE Robot. Automat. Lett. , vol. 3, no. 2, pp. 949–956, Apr. 2018. [32] Q. Zhao, et al. , “Shape estimation and control of a soft continuum robot under external payloads, ” IEEE/ASME Trans. Mechatron. , vol. 27, no. 5, pp. 2511–2522, Oct. 2022. [33] P. Ram´ ırez-Espinosa, D. Morales-Jimenez and K. -K. Wong “A new spatial block-correlation model for fluid antenna systems,” IEEE Trans. Wireless Commun. , vol. 23, no. 11, pp. 15829-15843, Nov. 2024. [34] L. Somm, D. Hahn, N. Kumar, and S. Coros, “Expanding foam as the material for fabrication, prototyping and experimental assessment of low-cost soft robots with embedded sensing,” IEEE Robot. Autom. Lett. , vol. 4, no. 2, pp. 761–768, Apr. 2019. [35] G. Sun, Y. Liu, Z. Chen, S. Liang, A. Wang and Y. Zhang, “Radiation beam pattern synthesis of concentric circular antenna arrays using hybrid approach based on cuckoo search,” IEEE Trans. Antennas Propag. , vol. 66, no. 9, pp. 4563–4576, Sept. 2018. [36] J. Guo et al. , “Flexible cylindrical arrays with movable antennas for MISO system: Beamforming and position optimization,” IEEE Internet Things J. , vol. 12, no. 17, pp. 35394–35405, Sep. 2025. [37] K.-K. Wong, C.-B. Chae and K.-F. Tong, “Compact ultra massive antenna array: A simple open-loop massive connectivity scheme,” IEEE Trans. Wireless Commun. , vol. 23, no. 6, pp. 6279–6294, Jun. 2024.

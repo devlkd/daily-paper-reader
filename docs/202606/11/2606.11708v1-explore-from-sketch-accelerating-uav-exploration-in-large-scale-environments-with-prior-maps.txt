@@ -1,0 +1,979 @@
+Title: Explore From Sketch: Accelerating UAV Exploration in Large-scale Environments with Prior Maps
+
+URL Source: https://arxiv.org/pdf/2606.11708v1
+
+Published Time: Thu, 11 Jun 2026 00:36:52 GMT
+
+Number of Pages: 25
+
+Markdown Content:
+<Society logo(s) and publica-tion title will appear here. >
+
+Received XX Month, XXXX; revised XX Month, XXXX; accepted XX Month, XXXX; Date of publication XX Month, XXXX; date of current version XX Month, XXXX. 
+
+> Digital Object Identifier 10.1109/XXXX.2022.1234567
+
+# Explore From Sketch: Accelerating UAV Exploration in Large-scale Environments with Prior Maps 
+
+Tiancheng Lai 1,2 , Yuman Gao 1,4 , Xiangyu Li 1,2 , Ruitian Pang 1,2 , Xingpeng Wang 1,2 , Siqi Shen 1,2 , Mengke Zhang 1,2 , Yin He 3, Fei Gao 1,4 , Chao Xu 1,2 , and Yanjun Cao 1,2     
+
+> 1Institute of Cyber-Systems and Control, College of Control Science and Engineering, Zhejiang University, Hangzhou 310027, China
+> 2Huzhou Institute, Zhejiang University, and Huzhou Key Laboratory of Autonomous System, Huzhou 313000, China.
+> 3Zhejiang Zhongyan Industry Co., Ltd, Hangzhou 310000, China.
+> 4Differential Robotics Technology Company, Hangzhou 311100, China. Corresponding author: Yanjun Cao (email: yanjunhi@zju.edu.cn), Chao Xu (email: cxu@zju.edu.cn) and Fei Gao (email: fgaoaa@zju.edu.cn). Tiancheng Lai and Yuman Gao contributed equally to this work. This work was supported by the Key R&D Project of China National Tobacco Corporation under Grant No. 110202402018, the National Key R&D Program of China under Grant No. 2023YFB4706600, the Zhejiang Provincial Science and Technology Plan Project under Grant No. 2024C01170, and the National Natural Science Foundation of China under Grant No. 62322314.
+
+ABSTRACT Autonomous exploration with unmanned aerial vehicles (UAVs) in large-scale, topologically complex environments often suffers from low efficiency due to suboptimal scheduling and detours. Prior maps (e.g., satellite imagery, construction drawings, hand-drawn maps), although usually imprecise and flawed, are readily available in many scenarios and have the potential to provide global structural guidance. This paper presents a novel exploration framework that leverages sparse, unaligned, and even discrepant 2D prior maps for LiDAR-based UAV exploration. First, a robust 2D-3D point cloud registration pipeline is proposed to align LiDAR observations with prior maps. The registration pipeline combines a GeoContext descriptor for single-frame candidate retrieval, a multi-frame verification mechanism for coarse transformation estimation with outlier rejection, and a Scale-ICP algorithm for refinement. The registration module can handle map discrepancies and provide multiple hypotheses when geometric ambiguities arise. To effectively utilize the registration results for exploration planning, we further develop a hierarchical viewpoint planning strategy under localization uncertainties. The hierarchical strategy first spatially attaches local viewpoints to prior guidepoints and adopts a Monte Carlo Tree Search solver to determine their traversal sequence under each registration hypothesis. To mitigate registration uncertainty, a risk-aware selector evaluates prior sequences using confidence-weighted travel risk, and a fixed-endpoint traveling salesman problem is formulated to generate an efficient local coverage path under the selected prior guidance. Benchmark evaluations reveal up to 34.2% improvement in exploration efficiency and 37.9% reduction in flight distance compared to state-of-the-art methods, while extensive simulations and field experiments further demonstrate robustness to prior map incompleteness and deformations. 
+
+INDEX TERMS Autonomous exploration, unmanned aerial vehicles, field robotics, search and rescue. 
+
+I. INTRODUCTION 
+
+# AUTONOMOUS exploration using unmanned aerial ve-hicles (UAVs) is a challenging task, especially in large and complex field environments. To support real-world applications like search-and-rescue or inspection missions, UAVs need to explore and map the entire environment efficiently due to the strict constraints of their limited flight endurance. However, exploration efficiency is often limited by unknown global topology, inherently causing suboptimal trajectories and prolonged mission times. Meanwhile, with the continuous advancement of satellite technology and data-sharing platforms, prior maps of many environments are becoming readily accessible. Such maps—e.g., satellite imagery, construction drawings, and floor plans—although  
+
+> This work is licensed under a Creative Commons Attribution 4.0 License. For more information, see https://creativecommons.org/licenses/by/4.0/ VOLUME , 1
+> arXiv:2606.11708v1 [cs.RO] 10 Jun 2026 Author et al.:
+
+FIGURE 1: Graphical Abstract. (a)(c) Snapshots of the UAV exploring the wild cave; (b) The overall point cloud map of the environment; (d) the registration framework that aligns a 2D prior map with 3D local point cloud data; (e)(f) The hierarchical viewpoint planning framework, where global planning (e) determines the global guidance of the exploration process, and local planning (f) determines the local viewpoints traversal sequence based on the global guidance. The light blue local viewpoints are attached to the next prior guidepoint based on their spatial relationships and will be considered in the local planning, while other viewpoints are excluded. often imprecise and flawed, contain valuable boundary and geometric information that can provide global guidance to improve exploration efficiency. However, most existing exploration frameworks, particu-larly frontier-based [1], [2] and next-best-view (NBV) [3] methods, rely solely on the robot’s current sensory obser-vations to generate local exploration guidance, resulting in inefficient exploration paths. This limitation worsens as the environment scales up, complicating the planning of globally efficient trajectories. Several recent studies [4]–[6] have attempted to incorporate prior maps into the exploration pro-cess. However, these approaches typically assume that prior maps are either dense and accurate or perfectly aligned with the real-world environment, which is often impractical. For example, in disaster-damaged environments or when dealing with outdated datasets, acquiring accurate models is difficult.  
+
+> 2VOLUME ,
+
+<Society logo(s) and publication title will appear here. >
+
+Therefore, achieving efficient autonomous exploration with flawed prior maps remains an open problem, with primary challenges as follows: 
+
+• Heterogeneous Data and Map Discrepancies: The informational mismatch between 2D priors and 3D LiDAR scans makes data alignment inherently difficult. Prior maps provide abstracted geometric boundaries, while LiDAR captures dense yet local details. This becomes more challenging when the prior maps are incomplete or deformed. 
+
+• Localization Ambiguity: Similar topological struc-tures often cause localization uncertainty, particularly during early exploration stages when local observations are limited. Multiple hypotheses should be generated if necessary. 
+
+• Prior-guided Exploration: The planner must convert uncertain registration results into global guidance while still generating executable local viewpoints, which re-mains a rarely addressed problem. This paper presents a novel framework that effectively leverages sparse, unaligned and potentially discrepant prior maps to accelerate LiDAR-based UAV exploration in large-scale and complex environments. The framework includes a robust 2D-3D point cloud registration module that aligns LiDAR observations with the prior map. First, to address the modality differences, we design a GeoContext descrip-tor, which extracts consistent geometric features to retrieve single-frame candidates. These intra-frame candidates are then aggregated via a multi-frame verification mechanism to establish coarse transformations while filtering outliers. Ul-timately, a Scale-ICP process refines these transformations, outputting multiple registration hypotheses. To boost the exploration process based on the registration results, we propose a prior-guided hierarchical viewpoint planning strategy to generate efficient local paths under registration uncertainties. First, prior guidepoints are sparsely sampled from the prior map. For each transformation result, local viewpoints are spatially attached to prior guidepoints, and a Monte Carlo Tree Search (MCTS) algorithm is then utilized to generate an optimal traversal sequence of prior guidepoints. Subsequently, a risk-aware selector identifies the most reliable prior sequence using a confidence-weighted travel risk, which then serves as the global guidance for local planning. To efficiently guide the robot’s traversal under the global guidance, a Fixed-endpoint Traveling Salesman Problem (FE-TSP) is formulated to generate an efficient local coverage path under the selected prior guidance. To summarize, the primary contributions of this paper are as follows: (1) We propose a novel framework that leverages sparse, unaligned, and even discrepant prior maps to guide au-tonomous exploration, significantly improving efficiency in large-scale environments. (2) We develop a robust 2D-3D registration framework that aligns LiDAR observations with 2D prior maps while accounting for potential discrepancies. This enables reliable localization under sparse and imperfect priors and supports multiple registration hypotheses. (3) We propose a hierarchical viewpoint planning strategy, which generates efficient local paths under global guidance. This hierarchical approach handles uncertain registration re-sults and ensures tight consistency between global guidance and local execution. (4) We evaluate the framework in registration benchmarks, exploration benchmarks, simulations, and field experiments, covering precise, partial, and deformed prior maps. 
+
+> II. RELATED WORK
+
+This section reviews works related to our approach, in-cluding autonomous exploration in large-scale environments, localization against prior maps, and prior-map-integrated exploration. 
+
+> A. AUTONOMOUS EXPLORATION IN LARGE-SCALE ENVIRONMENTS
+
+Autonomous exploration in large-scale environments re-quires both efficient traversal path planning and scalable environment representation. Among various approaches, the frontier-based method is widely adopted to guide robots by targeting boundaries between known and unknown spaces. The concept was first introduced by Yamauchi [7], whose method selects the nearest frontier. Recent research focuses on optimizing the local coverage path to maximize exploration efficiency. Zhao et al. [8] propose an exploration system that arranges the visitation order of uniformly and dynamically divided sub-regions to provide spatial guidance. Zhou et al. [9] propose a TSP-based planner to optimize the coverage path visiting all frontiers. Zhang et al. [1] improve the generation of the coverage path by taking topological connectivity into con-sideration. Some works [10], [11] utilize the MCTS method to address more complex sequential planning problems like multi-robot and bimodal vehicle exploration. To achieve scalable environment representation, Dang et al. [12] propose a hierarchical graph approach by construct-ing a sparse global map to represent the environment and an Exploring Random Graph to compute local exploration paths. Batinovic et al. [13] propose an OctoMap represen-tation of the environment that supports incremental updates, thus reducing computational burden. Yang et al. [14] and Gao et al. [15] further employ simpler geometric representations like convex polyhedra and star-convex polyhedra. Meanwhile, LiDAR-based exploration methods exploit long-range geometric measurements for accurate mapping in large-scale environments and achieve strong performance. Kaufman et al. [16] adopt multiple depth sensors including a 2D LiDAR to generate accurate occupancy probabilities for grids. Dharmadhikari et al. [17] propose a computationally  
+
+> VOLUME , 3Author et al.:
+
+efficient volumetric representation of the environment to generate motion primitives for fast navigation. Cao et al. [18] first propose a criterion to evaluate whether a viewpoint is valid based on the scanning range and bearing from the viewpoint to the point. Geng et al. [2] further improve this criterion to construct an observation map and generate frontiers to guide exploration. Although LiDAR-based perception shows great potential for large-scale exploration, existing methods often rely solely on local sensory observations to generate local exploration paths and fail to incorporate prior information into the exploration process. This inevitably causes myopic decision-making and inefficient path generation, especially in large-scale and complex environments. 
+
+> B. LOCALIZATION AGAINST PRIOR MAP
+
+Existing approaches for localization against prior maps in-clude probabilistic filtering methods such as Monte Carlo Localization (MCL) and Bayesian filtering, supervised learn-ing (SL), and feature-based methods. MCL methods usually use particle filtering to localize the robot. Matsuo et al. [19] combine SLAM with particle swarm optimization for map refinement to achieve effective outdoor localization. The works in [20], [21] simultaneously estimate local deformation of prior maps to achieve better localization. Xu et al. [22] propose a Bayesian filtering method to obtain the robot’s pose by matching the prior map and the local occupancy predictor built from the robot’s panoramic RGB observation. The global heuristic vector is then calculated via grid search for navigation. However, these methods are often confined to simple, small-scale indoor environments, as they suffer from prohibitive computational costs and are difficult to deploy in real time when the envi-ronment is large and high registration accuracy is required. For SL methods, Chen et al. [23] use a CNN to predict control points to compute the transformation between the robot’s map and the prior map via spline-based registration. Shah et al. [24], [25] propose a quadratic programming method to compute waypoints by modeling spatial relation-ship of landmarks and user-defined paths. Regarding feature-based methods, Qiao et al. [26] ex-tract triangle descriptors from line and corner features and adopt the Hough transform to match triplets via hierarchical voting. Another common approach is to project the 3D point cloud into 2D images and perform image-to-image registration. Some supervised learning methods can extract consistent features across different modalities. For example, SuperGlue [27] leverages a graph neural network to extract and match geometric features, maintaining robustness across different modalities. However, certain cross-modality image matching methods [28], [29] are ineffective in this task, as they tend to overfit to appearance cues such as color and texture, which are absent in prior maps. 
+
+> C. PRIOR-MAP-INTEGRATED EXPLORATION
+
+Several recent works have attempted to integrate prior maps into the exploration process. Feng et al. [4] propose areconstruction framework that generates viewpoints from an input point cloud via skeleton-based space decomposition and produces a high-quality coverage path by dividing the planning problem into sub-problems. However, this method requires accurate and complete 3D prior models, which can be challenging to obtain in practice. Bai et al. [5] propose a SLAM-aware exploration framework that leverages prior topo-metric graphs to enhance both exploration efficiency and pose graph reliability. By actively selecting globally informative loop closures with a theoretically pruned greedy algorithm, it improves mapping accuracy without sacrificing exploration speed. However, this method emphasizes SLAM robustness and fails to accelerate the exploration process under the prior guidance. Luperto et al. [6] present an online frontier-based exploration strategy that exploits incomplete and inaccurate prior knowledge (e.g., floor plans, footprints) to improve robot exploration performance by better estimat-ing information gain at candidate locations. Though demon-strating certain effectiveness and robustness, this method also assumes that the prior maps are perfectly aligned with the real-world environment. Moreover, this greedy viewpoint selection method only improves exploration efficiency in the early stages, but requires significant time to cover the full environment thereafter. These limitations motivate an exploration framework that can register sparse, imperfect 2D priors online and use uncertain registration hypotheses for global-to-local planning. 
+
+> III. PROBLEM DEFINITION AND SYSTEM OVERVIEW
+> A. PROBLEM DEFINITION
+
+We address the problem of efficiently exploring an unknown bounded 3D space W ⊂ R3 using a LiDAR-equipped UAV, given a prior map Mpri . The prior map is assumed to be an unaligned 2D sketch that illustrates the boundaries of the environment. The UAV should generate feasible and efficient trajectories under the guidance of the prior map, aiming to explore the whole space and generate a dense point cloud map Mobs in minimum time. 
+
+> B. SYSTEM OVERVIEW
+
+The proposed exploration framework, depicted in Figure 2, comprises three main modules: prior map pre-processing (Section IV), 2D-3D point cloud registration (Section V), and prior-guided hierarchical viewpoint planning (Section VI). The offline pre-processing extracts and stores prior guide-points and their distance matrix for online planning. During the exploration process, the registration module continu-ously aligns the prior map with the real-world environment. Given the estimated alignment, the hierarchical viewpoint planning module determines optimal guidepoint sequences and generates efficient local viewpoint coverage paths under prior guidance. The exploration terminates when no local  
+
+> 4VOLUME ,
+
+<Society logo(s) and publication title will appear here. >
+
+FIGURE 2: System overview. The framework (1) preprocesses the prior map, (2) registers online LiDAR observations to the prior map, (3) plans prior-guided local viewpoints under registration uncertainty, and (4) executes the resulting UAV trajectories. viewpoints remain in the environment. The main notations used in the paper are summarized in Table 1. 
+
+> IV. PRIOR MAP PRE-PROCESSING
+
+In offline pre-processing, we generate prior guidepoints and compute distances among them using the prior map. The prior guidepoints are sampled from the topological skeleton extracted from traversable areas, and the distance matrix be-tween every two guidepoints is calculated via a Probabilistic Roadmap (PRM) and stored for efficient querying during online planning. 
+
+> A. PRM CONSTRUCTION
+
+We construct a PRM [30] to represent the prior map and compute the prior distances between prior guidepoints (Figure 3). First, traversable regions of the prior map are extracted. We assume that the provided prior map is a binary image, where the traversable areas are surrounded by black boundary pixels. Then we build an undirected graph 
+
+Γ = ( Vp, E p) to represent the roadmap, where Vp is the set of nodes on the traversable areas and Ep is the set of collision-free edges connecting these nodes. The nodes in 
+
+Vp are sampled uniformly within the traversable region of the prior map. For every v ∈ Vp, we connect it to its k
+
+nearest neighbors if the edge between them is collision-free. The weight of each edge is defined as the Euclidean distance between the two nodes it connects. 
+
+> B. TOPOLOGY EXTRACTION AND PRIOR GUIDEPOINT GENERATION
+
+Prior guidepoints are generated based on the topology of the prior map (Figure 4(a)). The skeleton of the prior map is extracted using the morphology module in the scikit-image library [31], where the Zhang-Suen thinning algorithm [32] is applied. Once the skeleton is extracted, prior guidepoints are sampled along it guided by two key considerations to ensure effective information extraction. First, prior guidepoints should be sampled sparsely to offer high-level topological guidance without compromising local optimality. In practice, we set the sampling interval to around 2-4 times the mapping range of the robot. Second, prior guidepoints should capture key topological structures, such as new branches or independent regions, while omitting non-critical ones like intersections or skeletal endpoints that lack directional guidance for exploration.                                   
+
+> VOLUME , 5Author et al.:
+> Symbol Description
+> Spaces, Maps & Point Clouds
+> Mpri ,Mobs 2D prior sketch map and local observation map
+> P,PiVisible point cloud in the current frame, and its subset in the i-th azimuthal bin
+> XrRobot pose node
+> Descriptors & Registration
+> Ip,IoGeoContext descriptors for the prior and local maps
+> Xcand Set of candidate locations sampled on the traversable regions of the prior map
+> fp,foLow-frequency components of the descriptors extracted via FFT
+> R,t, s Rotation matrix, translation vector, and scaling factor
+> Tf, T Set of fine-registered transformations, and each transfor-mation with confidence score
+> Guidepoints & Viewpoints & Nodes
+> G,˜G,˜GiOriginal prior guidepoints, transformed prior guidepoints and the i-th transformed prior guidepoint
+> V,ViSet of sampled local viewpoints and the i-th local view-point
+> Viso ,Vtarget Sets of isolated local viewpoints and target local view-points
+> Costs & Objectives
+> L(·,·)Searched path length between two nodes
+> Crisk (i)Risk score evaluating the expected extra travel length for the i-th viewpoint group
+> Jurg (i)Urgency score for prioritizing the visitation of the i-th viewpoint
+
+TABLE 1: Summary of Key Notations. 
+
+C. DISTANCE MATRIX CONSTRUCTION 
+
+Having constructed the graph and generated the prior guide-points, we compute the prior distances between guidepoints using Dijkstra’s algorithm [33] (Figure 4(b)). Each guide-point is mapped to its nearest node in the graph and the distance between any two guidepoints is defined as the shortest distance between the corresponding nodes. These distances are precomputed and stored in a matrix for efficient online querying. 
+
+V. 2D-3D POINT CLOUD REGISTRATION 
+
+We propose a registration module that aligns 2D prior maps with 3D point clouds, recovering both the scale and the rigid transformation. Since the prior map is restricted to a horizontal plane, we decouple the vertical axis and restrict the transformation into 2D space (i.e., R ∈ SO (2) and 
+
+t ∈ R2). The method consists of single-frame candidate retrieval, multi-frame geometric verification, and Scale-ICP refinement. In this context, a frame refers to a specific timestamp at which both the sensory input and the robot pose are sampled. These frames are extracted at a low frequency (e.g., 0.2 Hz ) to provide sparse snapshots of the environment. The module only requires a rough scale guess sg to filter unreasonable correspondences initially. The main algorithm is shown in Algorithm 1. 
+
+Algorithm 1 2D-3D Point Cloud Registration 
+
+Input: Mpri : 2D Prior Map, Mobs : Online Observation Map, Xr : Robot Position, Xcand : Sampled Location Sets, 
+
+sg : Scale Guess 
+
+Output: Tf : Refined Transformations 
+
+1: // Phase 1: Descriptor Pre-computation 
+
+2: Fpri ← {} 
+
+3: for each sampled location xj in Xcand do 
+
+4: Mvisible ,j ← HPR (Mpri , x j )
+
+5: dpri ,j ← CALC DESC (Mvisible ,j )
+
+6: Fpri .insert (dpri ,j )
+
+7: end for 
+
+8: // Phase 2: Online Registration 
+
+9: Probot , C, Tpot ← {} 
+
+10: while receive Mobs and Xr do 
+
+11: Probot .insert (Xr )
+
+12: Mvisible ← HPR (Mobs , X r )
+
+13: di ← CALC DESC (Mvisible )
+
+14: Ci ← FIND CAND (Fpri , di)
+
+15: C.insert (Ci)
+
+16: if C.size () < 3 then 
+
+17: continue 
+
+18: else if C.size () == 3 then 
+
+19: Tpot ← GET POT TRAN (C, Probot , s g )
+
+20: else if C.size () > 3 then 
+
+21: Tpot ← FILTER OUTLIERS (Tpot , C, Probot )
+
+22: end if 
+
+23: Tf ← SCALE -ICP (Tpot , Mobs , Mpri )
+
+24: end while 
+
+FIGURE 3: PRM construction in traversable areas of the prior map.  
+
+> 6VOLUME ,
+
+<Society logo(s) and publication title will appear here. >
+
+FIGURE 4: (a) Skeleton extraction and prior guidepoint sampling. (b) Path search and distance matrix construction. 
+
+> A. SINGLE-FRAME CANDIDATE RETRIEVAL
+
+We introduce GeoContext, a descriptor that captures numeri-cal and sequential geometric patterns shared by the 2D prior map and the 3D LiDAR map. Unlike point-wise matching descriptors such as Scan Context [34], GeoContext em-phasizes boundary-level sequential distributions, improving robustness to noise and map discrepancies. 
+
+> 1) GeoContext Descriptor
+
+Given either a 2D or 3D point cloud, we first divide the points into azimuthal bins (from 0 to 2π) in the sensor’s polar coordinate system. Within each azimuthal bin, we record the maximum horizontal distance from the robot center to the points. Let P be the set of visible points expressed in the robot’s local sensor frame, and Pi the set of points belonging to the i-th azimuthal bin. The partition can be written as 
+
+P =
+
+> Nb
+
+[
+
+> i=1
+
+Pi, Pi ∩ P j = ∅, i̸ = j, (1) where Nb is the number of azimuthal bins. Thus, the i-th element of the GeoContext descriptor I is computed as 
+
+Ii = max 
+
+> p∈P i
+
+∥Πxy (p)∥2, (2) where Πxy (·) denotes the projection onto the horizontal plane. If no points fall within the i-th azimuthal bin (i.e., 
+
+FIGURE 5: Illustration of the extraction of the GeoContext descriptor. The purple point cloud represents the visible points extracted from the HPR process. The 2D descriptor is generated by dividing the points into azimuthal bins and recording the maximum distance in each bin. 
+
+Pi = ∅), we set Ii = 0 . The GeoContext descriptor I is a 1D vector with Nb elements. By recording the maximum distance in each azimuthal direction, GeoContext reduces the influence of local obstacles and approximates boundary-level structure. Given the prior map Mpri , we first convert it into a point cloud by extracting its black pixels, and uniformly sample a set of candidate locations Xcand with a sampling interval of dgap within the traversable regions of Mpri 
+
+(Figure 5(a)). For each location, we extract the visible subset of the point cloud using the Hidden Point Removal (HPR) strategy implemented via the Star Convex Polygon (SCP) algorithm [35] (denoted HPR (·), Figure 5(b)) and compute its GeoContext descriptor (denoted CALC DESC (·),Figure 5(c)). During exploration, historical LiDAR scans are accumulated to form a local point cloud map. We similarly apply HPR (·) and CALC DESC (·) at the current robot pose to generate the descriptor for subsequent matching. 
+
+> 2) Similarity Score of Descriptors
+
+Given a pair of GeoContext descriptors, we construct a similarity measure between the corresponding locations. We define the prior map as the point cloud map extracted from  
+
+> VOLUME , 7Author et al.:
+
+FIGURE 6: Visualization of the sequential similarity metrics. The left column shows the environment and color-coded descriptors, the middle column visualizes the distribution of the FFT similarity metric, and the right column shows the CV similarity metric. the prior sketch, and the observation map as the local point cloud map generated from the LiDAR scans. Let non-zero 
+
+Ip and Io be the GeoContext descriptors of the prior map and the observation map, respectively. The cosine similarity introduced in [34] represents the numerical similarity of two environments. Unlike the standard cosine similarity, we adopt an inverse variant that assigns larger weights to smaller values, since larger values (corresponding to distant features) tend to be noisier and less stable: 
+
+Sinv cos (Ip, Io) = 
+
+P 
+
+> i
+
+wi(Ip)i(Io)i
+
+pP  
+
+> i
+
+wi(Ip)2
+
+> i
+
+pP  
+
+> i
+
+wi(Io)2
+
+> i
+
+,wi = 1
+
+|(Ip)i| + |(Io)i| ,
+
+(3) where wi is the weight for the i-th azimuthal bin, ensuring that the elements with larger values are given less weight. Similar to Scan Context, we also calculate similarities with all possible column-shifted descriptors to find the maximum one. Let Ion be a column-shifted version of Io with n bins. The final inverse cosine similarity between two descriptors is defined as: 
+
+Scos (Ip, Io) = max  
+
+> n
+
+Sinv cos (Ip, Ion). (4) To capture the sequential spatial structure of the envi-ronment, we also measure the similarity between the two descriptors in the frequency domain. We first apply the Fast Fourier Transform (FFT) to the two descriptors and extract 
+
+Nc low-frequency components. Let f p and f o denote the extracted frequency components of Ip and Io, respectively, both of which are Nc × 1 vectors. The similarity of two descriptors in the frequency domain is defined as: 
+
+SFFT (f p, f o) = 12
+
+ f p · f o
+
+|f p|2|f o|2
+
++ 1 
+
+
+
+. (5) The low-frequency components abstract the rough, stable spatial layout. Due to the circular shift property of FFT, these components are invariant to column-shifts of the original descriptor, enabling orientation-independent matching. We further capture the overall distribution of the envi-ronment using the Coefficient of Variation (CV) of the two descriptors, defined as the ratio of the standard deviation to the mean. The CV of a descriptor I can be written as: 
+
+CV (I) = σ(I)
+
+μ(I) , (6) where σ(·) and μ(·) are the standard deviation and mean functions, respectively. The similarity of two descriptors in terms of CV is defined as: 
+
+Scv (Ip, Io) = 1 − |CV p − CV o|
+
+CV p + CV o . (7) The CV value is also scale-invariant and captures the overall spatial feature distribution. As illustrated in Figure 6, it effectively distinguishes restricted small-CV room-like environments (with more uniform point depths) from large-CV corridor-like structures. We calculate a composite similarity by combining the three similarity metrics via their weighted product: 
+
+S(Ip, Io) = Scos (Ip, Io)α1 · SFFT (f p, f o)α2 · Scv (Ip, Io)α3 ,
+
+(8) where α1, α2, and α3 are weights. This score jointly accounts for descriptor alignment, low-frequency spatial layout, and distributional variation. We rank all candidate locations by their similarity scores to the observation-map descriptor. The top-ranked locations, with a proportion denoted by the candidate rate η, are aggregated to form the raw candidate set Craw . Because candidates often cluster densely in regions with similar local geometry, we spatially downsample Craw to form the final candidate set Cfinal . This yields the correspondence set for the 
+
+i-th frame Qi = {(Ci
+
+> final
+
+, pi)}, where pi is the 2D coordinate of the robot’s current position. The j-th correspondence in the i-th frame is denoted as qij = ( cij , pi), where cij ∈ Ci
+
+> final
+
+.The whole selection process is referred to as F IND CAND (·).
+
+> B. MULTI-FRAME VERIFICATION MECHANISM
+
+Given candidates across multiple frames, we introduce a multi-frame verification mechanism based on Fourier De-scriptors (FD) that matches candidates to identify potential  
+
+> 8VOLUME ,
+
+<Society logo(s) and publication title will appear here. >
+
+transformations and filter outliers. We also incorporate a robustness enhancement strategy to handle failed single-frame results. 
+
+> 1) Potential Transformation Estimation
+
+We define the transformation Tp→r = ( R, t, s ) as a mapping from a point in the prior map c to a point in the observation map p: p = sRc + t. A potential transformation can be computed in closed form when at least three correspondences are established; for more correspondences, we optimize the transformation via least squares. When correspondences from three frames are available, we select the frames with the lowest and second-lowest number of candidates as the first and second anchor frames, respectively. The anchor frames are chosen to minimize the combinatorial complexity of triplet generation. We then connect every candidate of the two frames to form a set of potential correspondence pairs P = {(q1 
+
+> i
+
+, q 2 
+
+> j
+
+)} where 
+
+q1 
+
+> i
+
+∈ Q1 and q2 
+
+> j
+
+∈ Q2. For every correspondence pair, we can calculate the scale factor ˜s as 
+
+˜s = ∥p1 − p2∥2
+
+∥c1 
+
+> i
+
+− c2 
+
+> j
+
+∥2
+
+, (9) where c1 
+
+> i
+
+and c2 
+
+> j
+
+are candidate coordinates in the prior map, and p1 and p2 are the corresponding robot positions. Given an initial scale guess sg , we can filter out invalid correspondences with significant scale deviations. For each correspondence pair, the scale estimate ˜s is then used as the baseline for selecting the third frame’s correspondences. For each correspondence pair, we then connect every candidate of the third frame to form a set of potential correspondence triplets Q = {(q1 
+
+> i
+
+, q 2 
+
+> j
+
+, q 3
+
+> k
+
+)} where q1 
+
+> i
+
+∈ Q1,
+
+q2 
+
+> j
+
+∈ Q2 and q3 
+
+> k
+
+∈ Q3. For every correspondence triplet, we compute a potential transformation T = ( R, t, s ) in closed form. The rotation matrix R, translation vector t, and scaling factor s are given by: 
+
+R = arg min 
+
+> R∈SO (2) 3
+
+X
+
+> i=1
+
+∥R(ci − ¯c) − (pi − ¯p)∥22,s =
+
+P3
+
+> i=1
+
+(pi − ¯p)T R(ci − ¯c)
+
+P3 
+
+> i=1
+
+∥ci − ¯c∥22
+
+,
+
+t = ¯ p − sR¯c.
+
+(10) where ¯p and ¯c are the centroids of the point set pi and ci,respectively. Likewise, we reject the triplet as an outlier if its computed scale factor s deviates significantly from the previous estimate. Otherwise, we add this transformation to the potential transformation set Traw . This process is denoted as function G ET POT TRAN (·).
+
+> 2) Results Update and Outlier Filtering
+
+As more correspondences are established, we remove outliers by comparing the FD of the geometric shapes they form. The distance between two geometric shapes is defined as the Euclidean distance between their low-frequency FD components. A potential transformation in Traw is deemed valid if the mean Euclidean distance between its FD and those of all other candidate combinations falls below a predefined threshold. We then compute the transformation via least-squares optimization: 
+
+R, t, s = arg min 
+
+> R,t,s nl
+
+X
+
+> i=1
+
+∥sRc i + t − pi∥22,
+
+s.t. RT R = I, det( R) = 1 ,
+
+(11) where nl is the number of correspondences. Finally, we obtain a set of potential transformations Traw = {(Ri, ti, s i) |
+
+i ∈ {1, . . . , m }} , where m is the number of potential transformations. After Traw is obtained, we further perform clustering to group similar transformations and retain only representative ones. We first define the distance between two transforma-tions as 
+
+dT (Ti, T j ) = λ1|| ti−tj || 2+λ2θ(Ri, Rj )+ λ3|si−sj |, (12) where θ(Ri, Rj ) is the rotation angle between two rota-tion matrices Ri and Rj , and λ1, λ 2, λ 3 are the weights. We then apply DBSCAN [36] to cluster the transforma-tions based on their distances. For each cluster, we select the transformation with the best similarity score of FDs as the representative transformation of this cluster. After clustering, the final set of representative transformations is 
+
+T = {(Ri, ti, s i) | i ∈ { 1, . . . , n t}} , where nt is the number of representative transformations. The process is denoted as function F ILTER OUTLIERS (·).
+
+> 3) Robustness Enhancement Strategy
+
+The generation of valid correspondences relies heavily on the accuracy of the single-frame process. To mitigate the risk of erroneous single-frame results, we introduce a robustness enhancement strategy. For frames i ∈ { 4, 5, . . . , N f } where Nf is a user-defined parameter, we repeat the F IND CAND (·) process by randomly selecting two previous frames and combining them with the current frame, thereby generating new correspondence sets. Unselected frames are marked as dormant. This procedure is repeated for Nf − 3 frames to boost the probability of finding valid transformations. The parameter Nf balances robustness and computational cost. Additionally, if a potential solution does not find a corre-sponding candidate in the next frame, it will not be aban-doned immediately; instead, it will be marked as dormant for one frame. If no corresponding candidate is found in the subsequent frame, the solution is discarded. Otherwise, the dormant solution is reactivated. Although this dormant strategy increases computational cost and introduces some outliers, it reduces the risk of discarding valid transformations due to single-frame failures.  
+
+> VOLUME , 9Author et al.:
+> C. SCALE-ICP REFINEMENT
+
+For each potential transformation Tpot , considering that its estimated scaling factor is not precise before refinement, we apply the Scale-ICP algorithm [37] to refine the transforma-tion and calculate the fitness score. The Scale-ICP refinement estimates the prior-to-real trans-formation by minimizing 
+
+R∗, t∗, s ∗ = arg min 
+
+> R,t,s Nr
+
+X
+
+> i=1
+
+∥sRc i + t − pi∥22,
+
+s.t. RT R = I, det( R) = 1 ,
+
+(13) where ci are points in the prior map and pi are their corresponding nearest neighbors in the observation map, and 
+
+Nr is the number of point correspondences. We first project the 3D points in the observation map onto the horizontal plane to obtain a 2D point cloud, and extract its boundary points as the projected map. We adopt the method proposed in [37] to compute the optimal transformation. After refinement, we obtain a set of refined transforma-tions Tfine = {(Ri, ti, s i)}mi=1 , where Ri, ti, and si are the rotation matrix, translation vector, and scaling factor of the i-th transformation, respectively. The fitness score Fi is defined as the mean distance between the transformed prior-map points and their nearest neighbors in the projected map: 
+
+Fi = 1
+
+NpNp
+
+X
+
+> j=1
+
+∥siRicj + ti − pj ∥2, (14) where pj is the nearest neighbor of the transformed prior-map point siRicj + ti in the projected map, and Np is the number of valid point correspondences. Moderate local deformation of prior maps can also be mit-igated during the refinement process. Through iterative point-wise matching and optimization, the algorithm emphasizes global alignment and inherently tolerates local geometric mismatches. We only retain the transformations with fitness scores below the threshold Fthresh . The remaining transformations are considered the final registration results, whose confidence is computed as Conf i = exp( −τ F i)
+
+Pmj=1 exp( −τ F j ) , (15) where τ is a temperature parameter. The final result set 
+
+Tf is composed of all fine-registered transformations and their respective confidence scores {Tfine ,i , Conf i}. This set provides global guidance for the subsequent exploration and path generation. The whole process is denoted as function SCALE -ICP (·).
+
+> VI. PRIOR-GUIDED HIERARCHICAL VIEWPOINT PLANNING
+
+Given multiple possible registration results Tf , our goal is to generate an optimal local viewpoint coverage path under the guidance of the prior guidepoints. To achieve this, we propose a hierarchical viewpoint planning strategy that consists of four modules: viewpoint attachment, MCTS-based prior guidepoints sequencing, prior sequence selection, and local coverage path planning. The pipeline is illustrated in Figure 7. The main algorithm is shown in Algorithm 2. The demonstration scenario is shown in Figure 8. 
+
+Algorithm 2 Hierarchical Viewpoint Planning 
+
+Input: Tf : Transformation Results, G: Prior Guidepoints, V:Local Viewpoints, Xr : Robot Node 
+
+Output: Slocal : Local viewpoint traversal sequence  
+
+> 1:
+
+Spri ← {}  
+
+> 2:
+
+for each transformation T in Tf do  
+
+> 3:
+
+// Viewpoint Attachment:  
+
+> 4:
+
+˜G ← TRANSFORM VPS (T, G) 
+
+> 5:
+
+ATTACH VPS (V, ˜G) 
+
+> 6:
+
+// MCTS-based Prior Guidepoints Sequencing:  
+
+> 7:
+
+seq pri ← MCTS (Xr , V, ˜G) 
+
+> 8:
+
+Spri .insert (seq pri ) 
+
+> 9:
+
+end for  
+
+> 10:
+
+// Prior Sequence Selection:  
+
+> 11:
+
+GROUP VPS (V, ˜G, Tf ) 
+
+> 12:
+
+if Tf .size () > 1 then  
+
+> 13:
+
+Crisk ← CALC RISK (Tf , Spri , V) 
+
+> 14:
+
+Viso , Vtarget , seq pri ← SELECT PRI SEQ (V, ˜G, C risk ) 
+
+> 15:
+
+else if Tf .size () = 1 then  
+
+> 16:
+
+Viso , Vtarget , seq pri ← SELECT PRI SEQ (V, ˜G) 
+
+> 17:
+
+end if  
+
+> 18:
+
+// Local Coverage Path Planning:  
+
+> 19:
+
+Jurg ← CALC URGENCY (Viso , seq pri ) 
+
+> 20:
+
+J ← CALC COSTS (Vtarget , X r ) 
+
+> 21:
+
+Slocal ← FE-TSP (Viso , Vtarget , X r , Jurg , J , seq pri )
+
+> A. VIEWPOINT ATTACHMENT
+
+For each transformation result, we first transform the pre-stored prior guidepoints G to their real-world positions (func-tion T RANSFORM VPS (·)), yielding the transformed guide-points ˜G. Like most frontier-based methods, we sample local viewpoints around frontiers. We attach each local viewpoint to the nearest prior guidepoint based on Euclidean distance. The local viewpoint Vi is attached to the prior guidepoint 
+
+˜Gj if: 
+
+d(Vi, ˜Gj ) < min 
+
+
+
+ρ, min  
+
+> m̸=j
+
+d(Vi, ˜Gm)
+
+
+
+, (16) where d(·) is the horizontal Euclidean distance, ρ is the maximum attachment radius, ˜Gm is the m-th transformed prior guidepoint under one registration hypothesis. For each transformation result, each local viewpoint is attached to at most one prior guidepoint, while a prior guidepoint may have multiple local viewpoints attached. This process is denoted as function A TTACH VPS (·).Next, we define three states for each prior guidepoint: unexplored, explored, and exploring. We classify scanned points as poorly or well-observed using the criteria in  
+
+> 10 VOLUME ,
+
+<Society logo(s) and publication title will appear here. >
+
+FIGURE 7: Pipeline of the hierarchical viewpoint planning framework. 
+
+FIGURE 8: Demonstration case for the hierarchical viewpoint planning framework. EPIC [2]. A prior guidepoint is classified as: (1) unexplored 
+
+if it has no local viewpoints attached to it and has no points observed within its influence radius. (2) explored if it has no local viewpoints attached and has well-observed points within its influence radius. (3) exploring if it has local viewpoints attached to it. We update the states of all transformed prior guidepoints, which then inform the criterion for prior guidepoint sequencing. 
+
+> B. MCTS-BASED PRIOR GUIDEPOINTS SEQUENCING
+
+For each transformation result, we apply the Monte Carlo Tree Search [38] method to search for the optimal sequence of prior guidepoints. By performing iterative rollouts, the solver balances exploration and exploitation via Upper Con-fidence Bound (UCB) rules. MCTS consists of four main steps: selection, expansion, simulation, and backpropagation. Upon reaching the maximum iterations, the best sequence is used as the global path. The process of MCTS is shown in Figure 9. The whole process is denoted as function MCTS (·).
+
+> 1) Tree Structure and Reward
+
+We first define the structure of the MCTS tree. The root node is the robot’s current position. Each tree node corresponds to a prior guidepoint G and each branch represents the traversal path of prior guidepoints. The reward for each node is the negative total path length generated during the simulation process. Since the standard MCTS algorithm is designed to maximize rewards, we use negative rewards here to minimize the path length. For each transformation result, we build a distance matrix consisting of the robot’s current position and all exploring  
+
+> VOLUME , 11 Author et al.:
+
+FIGURE 9: (a) Tree structure of the proposed MCTS method. The UAV is the root node. The prior guidepoints serve as tree nodes, and each branch represents the traversal of guidepoints. (b) Criterion for the expansion process. The solid black arrow indicates a valid selection, the dashed black arrow indicates an invalid selection. The red solid arrow indicates actual selection. and unexplored prior guidepoints. ˜G(exp ) 
+
+> i
+
+is the i-th explor-ing prior guidepoint. Assume ˜G(exp ) 
+
+> i
+
+has k attached local viewpoints V0, V 1, . . . , V k−1, and let Xr denote the robot’s node. The cost from the robot’s node to the exploring prior guidepoints is defined as 
+
+J(Xr , ˜G(exp ) 
+
+> i
+
+) = 1
+
+k
+
+> k−1
+
+X
+
+> j=0
+
+L(Xr , V j ), (17) where L(·) is the searched path length between two nodes. For the distance between two prior guidepoints ˜Gi and ˜Gj ,the cost is defined as 
+
+J( ˜Gi, ˜Gj ) = s · L( ˜Gi, ˜Gj ), (18) where L(·) is the distance between the two prior guidepoints pre-calculated using the PRM, and s is the scaling factor of the current transformation. The cost from the prior guide-points to the robot’s position node is set to 0. The cost from the robot’s current position to unexplored prior guidepoints is ignored because the proposed TSP solver avoids choosing these paths. 
+
+> 2) Selection and Expansion Process
+
+In the selection process, we determine the UCB value for each child node to balance exploration and exploitation. The UCB value of a child node i is defined as UCB i = wi
+
+ni
+
++ Cu
+
+r ln Nni
+
+, (19) where wi is the total negative reward of the child node, ni
+
+is the number of times the child node has been visited, N
+
+is the total number of visits to the parent node, and Cu is the exploration constant. The node with the maximum UCB value is selected for expansion. Given a selected leaf node to be expanded, the expansion process follows specific criteria, as shown in Figure 9(b). If the selected node is the root node, expansion is limited to exploring prior guidepoints. For non-root nodes, expansion includes both exploring and unexplored guidepoints. These criteria prevent direct transitions to prior guidepoints without attached local viewpoints. 
+
+> 3) Simulation Process
+
+After expanding the leaf node, we perform a heavy simula-tion rollout from the newly expanded node to a terminal node. For unreached nodes, we solve a simplified asym-metric traveling salesman problem (ATSP) to determine the optimal path for this simulation step, providing high-fidelity estimates under minimal rollouts. The best path with its total length is continuously updated through simulation. 
+
+> 4) Backpropagation Process
+
+After each simulation step, we perform accumulative back-propagation to all nodes along the path from the newly expanded node to the root. For each node in the path, we update its reward and number of visits accordingly. This updates the UCB scores of all nodes for the next iteration’s selection. 
+
+> C. PRIOR SEQUENCE SELECTION
+
+After obtaining the traversal sequences of prior guidepoints for all transformations, we aim to select the best sequence to serve as the global guidance for subsequent local coverage path planning. We first group viewpoints based on their attachments under all registration hypotheses (function G ROUP VPS (·)). Specifically, if two local viewpoints share the exact same attachments (including no attachment) across all hypotheses, they are classified into the same group. Each group then consists of these local viewpoints together with all the prior guidepoints they are attached to. Next, for each viewpoint group, we compute a risk score that quantifies the risk of exploring this group. The risk score penalizes the expected extra travel length caused by registration uncertainty, defined as: 
+
+Crisk (i) = 
+
+> m
+
+X
+
+> j=1
+
+Conf j · ∆Lji ,
+
+∆Lji = Lji − Lj, ∗,
+
+(20)  
+
+> 12 VOLUME ,
+
+<Society logo(s) and publication title will appear here. >
+
+where Conf j is the confidence score of the j-th transfor-mation result and ∆Lji is the extra path length associated with the i-th viewpoint group. Specifically, ∆Lji represents the extra path length incurred under the j-th transformation hypothesis, defined as the difference between the path length when visiting the i-th group first (Lji ) and the lowest total path length ( Lj, ∗). Lji is obtained from the previous MCTS process where intermediate results are calculated and stored via the simulation process. This process is denoted as function C ALC RISK (·).To determine the active global guidance, a greedy strategy is applied. This function first evaluates all viewpoint groups to identify the one with the minimum risk score, and then selects its corresponding prior guidepoint sequence. If multiple prior sequences point to the same selected group, we choose the sequence with the highest confidence score. If the registration module generates only one transfor-mation result, we assume it is correct and bypass the risk calculation process. The viewpoint group attached to the next prior guidepoint is selected directly. The selection process is denoted as function S ELECT PRI SEQ (·).
+
+> D. LOCAL COVERAGE PATH PLANNING
+
+Directly solving an ATSP over all local viewpoints may generate paths inconsistent with the global guidance. We therefore formulate an FE-TSP to constrain the directional destination of local traversal. First, we select local viewpoints from both the isolated groups and the target group to be visited next. The isolated group is the group with no prior guidepoints, meaning that the local viewpoints in this group have no attachment under any registration hypothesis. The target group is the next viewpoint group selected to visit. All local viewpoints within other groups are excluded from planning. We construct three types of viewpoint nodes for the FE-TSP problem: (1) Viso : all viewpoints in the isolated groups. (2) Vtarget : all viewpoints in the target group. (3) Gt: the second next prior guidepoint in the prior sequence, which serves as the termination node of the FE-TSP problem. Viso 
+
+and Vtarget form all local viewpoints V1, · · · , V N to be visited in the FE-TSP problem. The three types of viewpoints are illustrated in Figure 10(a). Thus, the FE-TSP problem can be constructed as: 
+
+Given the robot’s current position node Xr , a set of local viewpoints V1, · · · , V N , and termination node Gt, find the optimal path from Xr to Gt that visits all V1, · · · , V N with the minimum total cost. 
+
+To solve this problem, we apply the Dummy Node Method by introducing a virtual node Gv connected to both start and terminal nodes, translating it into a general ATSP framework. The costs JGt,G v and JGv ,X r are set to zero; costs JXr ,G v ,
+
+JGv ,G t , and the costs between the virtual node and all local viewpoints ( JGv ,V 1··· N and JV1··· N ,G v ) are set to infinity to ensure the validity of the solution. The problem is then transformed into a general ATSP problem. 
+
+FIGURE 10: (a) Visualization of the local coverage path planning. (b) Distance Matrix Construction for the FE-TSP problem. We then construct the distance matrix for the ATSP problem. To encourage visiting isolated viewpoints early, we calculate and apply an urgency cost to them to prioritize their visitation (C ALC URGENCY (·)). The cost between the start node Xr and viewpoint Vi is defined as 
+
+Jurg (Xr , V i) = max 
+
+ L(Xr , V i)
+
+vmax 
+
+, dyaw( Xr , V i)
+
+ωmax 
+
+
+
++ U (Vi),U (Vi) = 
+
+(
+
+βe × dyaw( Xr ,V i) 
+
+> ωmax
+
+, Vi is isolated 
+
+0, otherwise (21) where L(·) is the searched path length between two nodes, 
+
+dyaw( ·) is the minimum yaw angle difference between the two viewpoints, vmax and ωmax are the maximum velocity and yaw rate, respectively, and βe is the urgency cost weight. The cost between two viewpoints Vi and Vj is defined as 
+
+J(Vi, V j ) = L(Vi, V j )
+
+vmax 
+
+. (22) We also calculate basic spatial distance costs for other viewpoints (C ALC COSTS (·)). Let ˜pt be the 2D coordinate of the terminal prior guidepoint transformed into the real-world frame. The cost from viewpoint Vj to the terminal node Gt
+
+is defined as 
+
+J(Vj , G t) = ∥pj − ˜pt∥2
+
+vmax 
+
+, (23) where pj is the 2D coordinate of Vj . Since the terminal node is transformed from a 2D prior guidepoint and does not correspond to an actual sampled local viewpoint, this  
+
+> VOLUME , 13 Author et al.:
+
+terminal cost is approximated by the Euclidean distance in the real-world horizontal plane. However, since this cost pro-vides only directional guidance, certain numerical estimation errors do not significantly compromise optimality. Finally, the cost from local viewpoints to the start node 
+
+J(Vi, X r ) is set to zero, as there is no need for closure. The cost from the terminal node to local viewpoints J(Gt, V j )
+
+is set to infinity to ensure the validity of the solution. The visualization of the cost matrix is shown in Figure 10(b). After constructing the cost matrix, we solve the ATSP problem using the LKH solver [39] to generate an efficient local path that is consistent with the global guidance path, which is denoted as the FE-TSP (·) function. 
+
+> E. LOCAL TRAJECTORY GENERATION
+
+After identifying the next viewpoint, we aim to generate smooth, feasible, and energy-efficient local trajectories. The 
+
+A∗ algorithm [40] serves as the front-end to find a coarse path. In the back-end, we employ the piecewise polynomial method MINCO [41] to optimize both position trajectories 
+
+p(t) = [ x(t), y (t), z (t)] T and yaw trajectory ψ(t). To en-sure safety, we construct a polyhedral flying corridor using FIRI [42]. The yaw direction is always constrained to point towards the unexplored region to maximize sensor coverage. To ensure kinodynamically feasible trajectories and stable localization and mapping, we constrain the maximum ve-locity, acceleration, yaw rate, and yaw acceleration during the optimization process. Through joint spatio-temporal op-timization with MINCO, we generate local trajectories that are safe, kinodynamically feasible, and energy-efficient for robust field operations. 
+
+> VII. SIMULATION AND BENCHMARK
+
+We first conduct several modular evaluations, then present large-scale comparative studies to benchmark both the regis-tration module and the overall exploration pipeline. Tests span four large-scale environments: a garage [192 m ×
+
+150 m × 4 m] , a simple cave [500 m × 50 m × 70 m] , a SubT cave [2024 m × 330 m × 41 m] , and an indoor architecture 
+
+[150 m × 110 m × 4 m] . The garage features high topological connectivity. The simple cave scene is collected from a real-world cave environment that has a simple topology with a few branches. The SubT cave scene is based on the DARPA SubT Cave World Dataset published in [43]. The indoor architecture environment is irregularly shaped with low connectivity. We design three input sketches for each environment—a precise, a partial, and a deformed prior map—as shown in Figure 11. All tests are executed on a computer with an AMD Ryzen 7 8845H CPU and 24 GB of RAM. Algorithmic parameters are outlined in Table 2. 
+
+> A. MODULE EVALUATION
+> 1) Single-frame Candidate Retrieval Test
+
+We perform the single-frame test at a frequency of 1 Hz 
+
+during the robot’s motion. Note that this frequency is only                             
+
+> Parameter Value Parameter Value
+> Registration Parameters
+> Nb90 α20.4
+> Nc10 α30.2
+> dgap 1 m λ15
+> τ0.3 λ210
+> Nf4λ31
+> α10.4 η5%
+> Planning Parameters
+> Cu1.414 vmax 4.0 m s −1
+> ωmax 4.0 rad s −1βe−0.2
+> ρ20 m
+
+TABLE 2: Parameters used in the experiments. used in this specific test context. If the distance of all selected candidates to the ground truth is larger than the distance threshold dcand , the registration is considered failed. In practice, we set the distance threshold to dcand = 4 × dgap .We test the performance under precise and deformed prior maps. Meanwhile, we scale the precise map (by a factor of 2 in practice) to create a scaled prior map. We record all similarity metrics, total similarity, and success rate under these scenarios in Table 3. Table 3 shows that our method achieves a high success rate (above 91%) with precise and scaled prior maps. The success rate decreases under deformation but remains above 87% in all tested environments. Furthermore, we conduct an ablation study to evaluate the proposed combined similarity metric against using only cosine similarity. Performance is measured by a ranking score, defined as the rank position of the highest-ranked correct candidate (within dcand ) among all candidates, where a higher score indicates that correct candidates are ranked closer to the top, reflecting better local environment dis-tinction. Figure 12(a) shows a case where Candidate 1 and Candidate 2 are both outliers. Individual metrics exhibit distinct blind spots: cosine similarity successfully rejects outlier Candidate 2 but fails on Candidate 1, whereas FFT similarity exhibits the opposite behavior. Fusing these metrics effectively eliminates most outliers. Quantitatively, Figure 12(b) demonstrates that the combined approach yields a better average ranking, lower variance, and a significantly raised lower bound, indicating enhanced discrimination of the local environment. Figure 13 further quantifies the distribution of the candi-date ranking score and success rate under different candidate rates η. The results indicate that true matches consistently rank highly, demonstrating that a relatively low candidate rate is sufficient to maintain a robust registration success rate without incurring excessive computational overhead.  
+
+> 14 VOLUME ,
+
+<Society logo(s) and publication title will appear here. >
+
+FIGURE 11: Simulation environments and prior maps (Precise, Partial, and Deformed). (a) Garage environment. (b) Indoor architecture environment. (c) Cave environment from the DARPA SubT challenge. (d) Simple cave environment collected from a real-world cave.                                                
+
+> Env. Scene Succ. Rate Cos. Sim. FFT Sim. CV Sim. Tot. Sim. Garage Precise 92.7% 0.95 0.98 0.85 0.941 Scaled 92.8% 0.93 0.97 0.84 0.927 Deformed 87.5% 0.87 0.94 0.80 0.882 SubT Cave Precise 93.0% 0.94 0.96 0.83 0.925 Scaled 92.7% 0.94 0.97 0.84 0.931 Deformed 88.2% 0.85 0.95 0.78 0.874 Indoor Precise 91.6% 0.94 0.98 0.84 0.935 Scaled 92.8% 0.93 0.97 0.85 0.929 Deformed 88.4% 0.84 0.93 0.84 0.875
+
+TABLE 3: Success rate of single-frame candidate retrieval and similarity score of each metric in different scenarios. 
+
+2) Multi-frame Verification and Scale-ICP Test 
+
+Multi-frame verification is designed to generate coarse reg-istration results for the Scale-ICP refinement. During the coarse phase, robust outlier rejection is paramount to provide high-quality initial results for refinement. Our method em-ploys a dual-filtering strategy combining scale and FD filter-ing. As illustrated in Figure 14, this verification mechanism effectively prunes over 60,000 initial correspondences down to 35, significantly alleviating the computational burden of the subsequent fine registration. Furthermore, we evaluate the proposed Scale-ICP refine-ment module, which aims to improve coarse registration accuracy and reject incorrect hypotheses. Figure 15 demon-strates that Scale-ICP reliably converges to correct results despite considerable initial transformation deviations. As point cloud data accumulates, the refinement process exhibits increased precision and higher tolerance for erroneous initial estimates.  
+
+> VOLUME , 15 Author et al.:
+
+FIGURE 12: (a) Demonstration case that shows the per-formance of the cosine similarity and FFT similarity. The red hexagon represents the UAV’s current position and observation viewpoint. Both Candidate 1 and Candidate 2 are outliers. (b) Candidate ranking score with and without the proposed sequential similarity metric. 
+
+FIGURE 13: Distribution of the candidate ranking score and success rate under different candidate rates.                                     
+
+> 20 nodes Optimality Time(Sequential)/ms Time(Parallel)/ms 5 iters 100% 30.65 10.58 10 iters 100% 58.14 16.75 20 iters 100% 125.53 42.97
+> 50 nodes Optimality Time(Sequential)/ms Time(Parallel)/ms 5 iters 100% 80.72 23.43 10 iters 100% 159.92 45.32 20 iters 100% 321.02 95.62
+> 100 nodes Optimality Time(Sequential)/ms Time(Parallel)/ms 5 iters 96.46% 215.14 54.36 10 iters 99.18% 429.07 123.24 20 iters 99.89% 860.54 245.50
+
+TABLE 4: Optimality and time consumption regarding dif-ferent node numbers and iteration times. 
+
+3) MCTS Solver Test 
+
+We evaluate the MCTS solver’s performance for global path planning by analyzing the computational time and path optimality. In our simulation, distance matrix entries are populated randomly, with 10% of nodes designated as attached nodes. We define optimality as the ratio of the pseudo-optimal path length (computed via 500 iterations) to the path length obtained under different iteration bud-gets. Furthermore, we track both single-threaded and multi-threaded (4 threads) execution times. As Table 4 demonstrates, the MCTS solver matches the 500-iteration reference solution for the 20-node and 50-node cases under very limited iteration budgets. When the node number increases to 100, the solver can still achieve 96.46% optimality under 5 iterations and close to 100% optimality under 20 iterations. Furthermore, leveraging its parallel na-ture, multi-threading significantly reduces the computational time. In scenarios tested in this paper, around 20-30 prior guidepoints are sufficient for global topological representa-tion. Therefore, the proposed MCTS solver delivers near-optimal real-time performance and exhibits strong scalability. 
+
+B. REGISTRATION BENCHMARK 
+
+In this section, we compare the performance of the proposed registration method with several state-of-the-art methods including BIM-reg [26] and the 2D feature-based method 
+
+SuperGlue [27]. 
+
+• BIM-reg: A 2D-3D registration framework for in-door architecture using Building Information Modeling (BIM) data. It extracts triangle descriptors from line and corner features for constant-time matching, gen-erates transformation candidates via Hough transform and hierarchical voting, and verifies them using an occupancy-aware criterion. 
+
+• SuperGlue: A 2D feature-based matching method. We project the 3D vertical LiDAR scans onto a 2D plane  
+
+> 16 VOLUME ,
+
+<Society logo(s) and publication title will appear here. >
+
+FIGURE 14: Illustration of the outlier filtering performance in the multi-frame verification process. The top row shows the outcomes of single-frame candidate retrieval in the first three frames, while the bottom row presents the results of multi-frame verification.                                                                      
+
+> Precise Deformed TTC Err. Succ. TTC Err. Succ.
+> ↓(s) ↓(m) ↑↓(s) ↓(m) ↑
+> BIM-reg 188.42 0.55 4--0SuperGlue 83.67 0.38 590.25 2.19 5Garage
+> Proposed 38.20 0.26 545.21 1.25 5BIM-reg -----0SuperGlue 173.67 0.78 5201.82 4.02 5SubT Cave
+> Proposed 66.56 0.36 589.25 2.92 5BIM-reg 286.20 0.41 3--0SuperGlue 66.50 0.36 574.50 2.74 5Indoor
+> Proposed 33.20 0.22 538.45 2.07 5
+
+TABLE 5: Benchmark results of different registration meth-ods in various environments and scenarios. TTC: Time To Convergence (s); Err.: Registration Error (m); Succ.: Success count out of 5 tests. ’-’ indicates the method fails to work in this scenario. The best and second-best results are highlighted in and , respectively. to extract SuperPoint [44] features using pre-trained outdoor weights. The optimal matching is found by solving a transportation problem, and the transforma-tion is estimated using RANSAC [45] to filter outliers.            
+
+> Scale Difference Deformation Multiple Solutions BIM-reg ✗✗✓
+> SuperGlue ✓✓✗
+> Proposed ✓✓✓
+
+TABLE 6: Comparison of different methods in terms of han-dling scale difference, deformation, and supporting multiple solutions. For each method, we conduct five tests in each envi-ronment under both precise maps and deformed maps. We adopt the same trajectory setup for all tests. Since our method may compute multiple transformation results, we select the one with the highest confidence score. As the robot explores the environment, we record three metrics: 1) Time to Convergence (TTC), i.e., the time until the first successful registration; 2) Registration Error , calculated as the root-mean-square error (RMSE) of closest point-to-point correspondences, consistent with the standard ICP formulation; and 3) Success Count . The registration process is considered successful if the registration error is below a certain threshold. A trial is marked as a failure if no  
+
+> VOLUME , 17 Author et al.:
+
+FIGURE 15: Scale-ICP performance under various scenar-ios. The dark green points are boundary points from the prior map; the red points are the local map under the coarse transformation; the blue points are the local map after Scale-ICP refinement. successful registration occurs after exploring 80% of the environment. As shown in Table 5, our method outperforms all baselines across all metrics. BIM-reg relies heavily on precise line and corner features inherent to BIM models, making it unsuitable for unstructured outdoor environments like caves. Additionally, it depends on accurate prior input to construct triangle descriptors, which makes it sensitive to discrep-ancies. This method also requires a large number of line and corner features, leading to poor performance in simpler environments. SuperGlue performs stably, but it struggles in local-to-global registration tasks as features are extracted and assigned independently while lacking spatial consistency constraints. Consequently, extracting global features for suc-cessful registration requires significantly more time. Our method achieves the lowest TTC, the lowest regis-tration error, and the highest success rate across all sce-narios, while maintaining robustness against discrepancies. In particular, it is the only method that achieves successful registration from very local environmental observations. Notably, the method maintains a 100% registration success rate across all deformed-prior trials. Both single-frame and multi-frame registration modules inherently accommodate scale variations and structural deformations, while the Scale-ICP backend actively compensates for residual errors. The robustness enhancement strategy furthermore alleviates the impact of registration failures. Table 6 summarizes the qualitative capabilities of the compared registration methods. Our method is the only one that can simultaneously handle scale differences and deformations while supporting multiple solutions. 
+
+> C. EXPLORATION BENCHMARK
+
+In this section, we compare the performance of the pro-posed exploration framework with several baseline methods including FUEL [9], EPIC [2], and Luperto et al. [6]. We tested our method’s performance under different levels of discrepancies between the prior map and the real-world environment. 
+
+• FUEL: This approach proposes a frontier information structure (FIS) to represent the environment and guide the robot to explore unknown areas. Candidate view-points are then sampled uniformly within the cylindrical coordinate system to fully cover the frontier cluster. An ATSP problem is solved to determine the optimal global tour visiting all viewpoints. 
+
+• EPIC: This approach generates frontiers on point cloud instead of grid cells and solves an ATSP among sam-pled viewpoints. We adopt the same realization of all other modules, thus the improvement of our method over EPIC is primarily attributable to the registration and the proposed planning framework. 
+
+• Luperto et al.: This method improves robot exploration by using prior knowledge (e.g., floor plans) to estimate how much new area a location will reveal. Instead of optimistically assuming all unknown space is reachable, it checks the prior map to see if the area is free and visible, enabling smarter, faster navigation. We extend the method into 3D space using EPIC’s interface, thus the comparison between our method and this method for handling prior maps is fair. We use the MARSIM [46] simulator to provide identical, high-fidelity sensor input for all methods. The input sketches include precise, partial, and deformed prior maps. Each method runs five times in each environment with a maximum velocity of 4.0 m s −1, map resolution of 0.3 m (if using a grid map), and a time limit of 2000 s . A test fails if the explored area is less than 95% or the time runs out. Table 7 shows that the proposed method reduces ex-ploration time and flight distance in all tested settings. Furthermore, our approach remains efficient with deformed or partial maps. Deformations minimally impact the global topological guidance, with minor performance drops mainly stemming from the additional registration time. For par-tial maps, the framework prioritizes exploring prior-missing regions and seamlessly re-establishes the guidance once missing areas are covered. As long as the core topology is preserved, the prior remains effective at reducing unnec-essary revisits. In addition, by consistently following the  
+
+> 18 VOLUME ,
+
+<Society logo(s) and publication title will appear here. >
+
+FIGURE 16: Exploration results in different environments with precise prior maps. The top row shows the global exploration trajectories in three environments. The bottom row illustrates the detailed exploration process. Departing from the start point (red triangle), the robot first explores without a valid registration result. After obtaining a successful registration result at the interior point (yellow star), the robot replans its exploration trajectory and moves toward the next target position (red dot) selected by the optimized global guidance. global path, our method avoids random exploratory behav-iors, yielding stable performance with low variance across most metrics. The average flight velocity remains similar or slightly lower compared to EPIC and Luperto et al., because following the global guidance may involve more deceleration maneuvers to ensure thorough local exploration. The reduced exploration time mainly comes from more efficient global coverage rather than higher flight speed. Notably, although the method of Luperto et al. also uses prior maps, it performs poorly in our tests. Its greedy strategy maximizes the expected revealed area based on the prior map, which only improves exploration efficiency in the early stages. Because it focuses only on local information gain and ignores the global topology, the UAV subsequently spends significantly more time detouring to cover small missed areas. In contrast, our method uses a global coverage path throughout the process, achieving better overall results. The trajectory visualizations are shown in Figure 16. In the early exploration phase, the UAV may fly in suboptimal directions before a successful registration. However, once registered, it quickly corrects its path and follows the global guidance. Our framework ensures early registration, which minimizes wasted time and improves overall efficiency. For instance, in environments like the simple cave, the lack of global guidance forces the baselines into long detours to revisit missed areas. Our method avoids these detours, achieving a 34.2% reduction in exploration time and a 37.9% reduction in flight distance. However, in highly connected environments like garages, the performance gap is smaller because less backtracking is needed. Nevertheless, the con-sistent global guidance still minimizes unnecessary revisits and yields better overall performance. 
+
+> VIII. FIELD EXPERIMENTS
+
+We conduct field experiments in a large-scale wild cave to validate the proposed registration and exploration frame-work. Three main experiments are conducted: single-frame candidate retrieval tests, overall registration tests, and au-tonomous exploration tests under precise, partial, and de-formed maps. 
+
+> A. EXPERIMENTAL SETUP AND IMPLEMENTATION DETAILS
+
+We utilize a LiDAR-based quadrotor platform equipped with a Kakute H7 Mini flight controller and a Livox Mid-360 LiDAR mounted at a 15 ◦ pitch angle. Two passive wheels are mounted to protect the vehicle body during contact with the cave surface and do not provide any locomotion capability. The onboard computer is an NVIDIA Jetson Orin NX, which processes the SLAM, registration, exploration, and control algorithms in real time. FAST-LIO2 [47] is adopted for localization and mapping. We use an extended Kalman filter (EKF) to fuse IMU measurements and odometry to generate high-frequency pose estimations. The control algo-rithm proposed in [48] is adopted for high-accuracy onboard 
+
+SE (3) trajectory tracking. We also adopt the differential flat-                                                                                                                                                                                                                                                                                                                  
+
+> VOLUME , 19 Author et al.:
+> Exploration Time (s) ↓Flight Distance (m) ↓Avg. Velocity (m/s) ↑
+> Scene Method Avg Std Max Min Avg Std Max Min Avg Std Max Min Fin. FUEL 1626.10 21.75 1645.23 1595.20 3091.71 47.49 3153.68 3037.93 1.90 0.01 1.92 1.89 4Luperto et al.+EPIC 848.73 99.61 958.00 719.30 2900.67 370.81 3311.11 2410.44 3.41 0.08 3.52 3.34 5EPIC 708.60 13.24 724.60 689.30 2346.42 64.06 2432.37 2271.05 3.31 0.08 3.40 3.22 5
+> Proposed(Prec.) 601.28 12.56 618.20 587.00 2052.09 22.71 2068.90 2015.60 3.41 0.05 3.47 3.35 5
+> Proposed(Part.) 625.03 9.34 637.26 613.60 2187.94 58.16 2239.91 2107.63 3.50 0.06 3.55 3.41 5Garage
+> Proposed(Deform.) 609.38 10.98 624.81 596.00 2110.75 66.11 2206.37 2044.07 3.46 0.06 3.53 3.39 5FUEL ------------0Luperto et al.+EPIC 257.94 2.96 261.40 254.50 960.04 5.65 963.98 950.16 3.72 0.06 3.78 3.65 5EPIC 276.36 6.48 284.30 267.00 986.50 7.35 996.47 976.88 3.57 0.06 3.66 3.50 5
+> Proposed(Prec.) 181.96 6.65 189.20 173.20 614.43 10.73 622.93 598.35 3.38 0.07 3.45 3.28 5Simple Cave
+> Proposed(Part.) 181.62 5.50 189.30 176.20 612.34 11.13 627.80 599.27 3.37 0.04 3.41 3.32 5FUEL 1543.48 87.15 1658.98 1447.68 2457.32 134.95 2631.05 2304.21 1.59 0.02 1.61 1.58 4Luperto et al.+EPIC 668.66 65.28 726.00 564.30 2324.52 244.56 2537.52 1937.73 3.47 0.03 3.50 3.43 5EPIC 525.20 10.89 536.00 509.00 1868.07 36.75 1916.76 1832.24 3.56 0.04 3.60 3.49 5
+> Proposed(Prec.) 474.30 7.41 482.00 464.00 1722.46 30.89 1770.00 1693.10 3.63 0.05 3.67 3.56 5
+> Proposed(Part.) 475.71 8.97 483.55 466.00 1707.88 30.44 1738.93 1674.89 3.59 0.02 3.60 3.56 5Indoor
+> Proposed(Deform.) 482.81 16.06 509.00 466.00 1735.02 60.71 1832.24 1675.71 3.59 0.02 3.61 3.56 5FUEL ------------0Luperto et al.+EPIC 1091.95 62.20 1170.30 1021.00 3611.87 223.91 3890.44 3354.00 3.31 0.02 3.32 3.29 5EPIC 1032.85 24.65 1065.20 1005.20 3059.12 37.99 3105.20 3012.38 2.96 0.06 3.05 2.92 5
+> Proposed(Part.) 897.04 15.08 910.20 875.52 2692.07 50.36 2750.20 2633.60 3.00 0.03 3.04 2.97 5SubT Cave
+> Proposed(Deform.) 906.18 28.85 936.20 869.55 2700.27 83.38 2782.70 2587.86 2.98 0.01 3.00 2.97 5
+
+TABLE 7: Statistics of the exploration benchmark. ”Fin.” denotes the number of successfully finished trials out of 5. The best and second-best results are highlighted in and , respectively. Two scenarios are not tested: simple cave with deformed map, because the deformed map is hard to design due to the simple structure; and SubT cave with precise map, because the environment has vertical features that could not be represented in a 2D map. ness property [49] for feedforward compensation of control variables. The maximum speed of the UAV is limited to 
+
+3.0 m s −1 for safety considerations. The UAV platform is shown in Figure 18. The experimental environment is a natural wild cave with an approximate range of [70 m × 110 m × 3 m] . Figure 17 shows representative third-person and onboard views of the experimental environment. Three testing conditions are pro-vided for evaluation: a precise map created by scanning pro-jection; a deformed map derived from the original blueprint with certain scaling and morphological discrepancies; and a partial map obtained by removing specific topological regions from the precise map. The prior maps and the experimental results are shown in Figure 19. 
+
+B. SINGLE-FRAME CANDIDATE RETRIEVAL TEST 
+
+We collect data by letting the UAV platform explore the cave environment while recording its position and point cloud data. After ten rounds of data collection, we perform the single-frame test at a frequency of 1 Hz and finally obtain 2348 frames of candidate data. Since the cave was under construction during the experiments, obstacles changed fre-quently and were not present in the prior map. We use the same criteria as in the simulation test to evaluate the success rate of the candidate retrieval. As shown in Table 8, the tests 
+
+Precise Map Deformed Map Candidate Rate Succ. Rate ↑ Candidate Rate Succ. Rate ↑
+
+10% 96.08% 10% 92.97% 5% 89.74% 5% 82.15% 2.50% 76.92% 2.50% 71.43% 
+
+TABLE 8: Single-frame candidate retrieval results under precise and deformed prior maps with different candidate rates. on both precise and deformed maps achieve a high success rate. The choice of candidate rate also affects the success rate. A higher candidate rate improves the success rate but may increase the computational time, so a trade-off between the two should be considered when setting the candidate rate. In practice, owing to the effective clustering and filtering, a 10% candidate proportion still yields real-time performance while ensuring a high single-frame success rate and stable overall registration. 
+
+C. OVERALL REGISTRATION TEST 
+
+We utilize the ten collected point cloud datasets to perform the overall registration tests. To obtain more diverse testing  
+
+> 20 VOLUME ,
+
+<Society logo(s) and publication title will appear here. >
+
+FIGURE 17: Experimental environment. (a)(b)(c) Third person view of the UAV flying in the wild cave. (d)(e) Onboard view of the UAV flying in the wild cave. 
+
+FIGURE 18: The LiDAR-based UAV platform used in field experiments. (a) The left view. (b) The front view.                 
+
+> TTC ↓(s) Err. ↓(m) Succ. Rate ↑
+> Precise Map 32.4 1.02 100% Partial Map 32.9 1.27 100% Deformed Map 39.5 1.57 100%
+
+TABLE 9: Overall registration results under different types of prior maps. conditions, we sample Ns = 10 frames uniformly from all frames as starting frames to simulate ten different testing rounds with varying initial conditions and trajectories. This results in 100 valid overall registration rounds. We adopt the same evaluation metrics as in the simulation test. Table 9 shows that our method achieves a 100% success rate across all types of prior maps. The TTC also remains consistently low at 32 .4 s ∼ 39 .5 s . The registration accuracy is slightly lower than in the simulation test, primarily due to the inevitable discrepancies between the prior map and the real-world environment, as the cave’s rough and irregular surfaces limit the precision of the sketch. We visualize an example of the registration process in Figure 20. In Frames 1 and 2, only the single-frame module is applied, which successfully selects the correct candidates. Despite certain errors (Frame 1), the multi-frame verification mechanism identifies the inliers and refines them via the Scale-ICP process. In Frame 3, the coarse registration results are established, and in Frame 4, the results are continuously updated for a better initial guess. Figure 1(d) illustrates the effectiveness of the Scale-ICP algorithm. Registration errors are significantly reduced, demonstrating robustness to coarse transformation inaccura-cies and prior-map discrepancies.  
+
+> VOLUME , 21 Author et al.:
+
+FIGURE 19: The experimental results under different prior maps. (a1)-(a3) Results under precise prior map. (b1)-(b3) Results under partial prior map. (c1)-(c3) Results under deformed prior map. The exploration time and distance may vary because of different layouts of obstacles in the cave. 
+
+FIGURE 20: Visualization of the registration process in the field experiment. 
+
+> D. AUTONOMOUS EXPLORATION TEST
+
+We conduct autonomous exploration tests using the UAV platform with different types of prior maps. The exploration process is recorded, and the exploration time, flight distance, and average speed are calculated for evaluation. Three trials are conducted for each type of prior map, resulting in a total of nine trials. The travel trajectories, exploration times, and flight distances are shown in Figure 19. Details of the exploration process are shown in Figure 21. More details of the exploration experiment can be found in the video attachment. The exploration time and flight distance may vary across rounds due to changing obstacle layouts during the cave’s construction, as complex layouts require more coverage time. Despite this, our UAV consistently generates efficient global guidance paths from registration results and follows them. Furthermore, the exploration path is steady and efficient under all prior maps. Figure 22 shows that the coverage rate trends are similar across the three prior-map types, indicating that the planner maintains consistent exploration behavior despite prior-map discrepancies. The coverage rates also increase steadily without long pauses, and the velocity distributions are concentrated around high values, reflecting few detours and stable, efficient motion. As shown in Figure 21(a1), at the beginning of the ex-ploration process, no reliable registration result is available, causing the UAV to head in a suboptimal direction (the optimal direction is leftward). After exploring for 29 .8 s ,a reliable registration result is obtained, allowing the UAV  
+
+> 22 VOLUME ,
+
+<Society logo(s) and publication title will appear here. >
+
+FIGURE 21: Visualization of representative real-world exploration cases. (a1)(a2) Exploration under a precise prior map. (b1)(b2) Exploration under a partial prior map. (c1)(c2) Exploration under a deformed prior map. 
+
+FIGURE 22: Coverage rate and velocity distribution in field experiments with different prior maps. The top plot shows the coverage rate over exploration time, and the bottom plot shows the UAV velocity distributions. to correct its trajectory and fly toward the left area. At 
+
+T = 99 .4 s , where the UAV reaches a crossroad in the cave, it quickly recognizes the unexplored right side and changes its direction to explore it (Figure 21(a2)). The effect of the local path planning is demonstrated with partial prior maps, where the local planning module guides the UAV to prioritize exploring prior-missing areas instead of blindly following the global guidance. This is particularly evident in Figure 21(b1), where the local FE-TSP solver detours to explore distant areas (missing areas in the partial prior map) while guided by the global coverage path, and in Figure 21(b2), where the UAV heads to the isolated viewpoints to cover the missing areas. After covering the missing areas, the UAV continues to explore the remaining areas efficiently under the global guidance. Provided with the deformed map, the registration process can no longer achieve the same high accuracy as with a precise map. Nevertheless, the generated global guidance path remains effective despite certain positional errors. The low accuracy of registration results is particularly evident in the early stages, when the local map is small and deforma-tions in local structures can significantly impact the posi-tional accuracy of distant prior guidepoints (Figure 21(c1)). However, since distant prior guidepoints only offer coarse guidance without affecting local path planning, the UAV can still effectively follow the global guidance path to explore the environment. As exploration continues, the global guidance path is continuously updated with increasingly precise reg- 
+
+> VOLUME , 23 Author et al.:
+
+istration results as more point cloud information is obtained, thereby providing more accurate guidance (Figure 21(c2)). 
+
+IX. LIMITATIONS AND DISCUSSIONS 
+
+The main limitation of the proposed method lies in the po-tential failure of registration and inefficiency of exploration when the prior map is significantly deformed. Because 2D maps provide only sparse information, significant deforma-tions render the prior too unreliable for registration. Different types of deformation also affect the performance of the proposed method differently. When the deformation affects only local areas while the overall topology remains intact, the registration process can still succeed. In our experiments, deformations primarily consisted of slight image warping or scale changes, which our method handled effectively. However, for deformations like severely elongated or short-ened corridors, the Scale-ICP process fails to achieve precise registration. Moreover, if the global topological information is highly erroneous, the resulting guidance path may be-come suboptimal or even misleading, reducing exploration efficiency. For example, unmapped roadblocks can alter the true topological structure and mislead the global guidance. Another limitation is the exploration ability in highly vertical environments, since the prior map lacks vertical information. We can only handle prior maps that represent the environment as a 2D top-down sketch, while prior maps that illustrate vertical features (e.g., multi-floor maps) are not supported. Future work will improve robustness against deformation by incorporating semantic features and temporal consistency into the registration process, and by designing more resilient global guidance strategies that can tolerate topological errors. We also plan to extend our method to handle more complex environments such as multi-floor scenarios and diverse prior formats, including 3D or semantic maps. 
+
+X. CONCLUSION 
+
+This paper presents a prior-guided LiDAR-based UAV explo-ration framework for large-scale environments with sparse, unaligned, and potentially discrepant 2D prior maps. The framework combines online 2D-3D point cloud registration with hierarchical viewpoint planning to generate efficient local exploration paths under uncertain prior-map guidance. For registration, we introduced the GeoContext descrip-tor for single-frame candidate retrieval and a multi-frame geometric verification strategy to establish robust correspon-dences between online LiDAR observations and prior maps. The resulting transformations are further refined using Scale-ICP, enabling reliable registration under partial observations and moderate map discrepancies. For planning, we devel-oped a hierarchical strategy that first determines a global traversal sequence over prior guidepoints and then generates local viewpoint traversal paths consistent with the selected guidance. The proposed framework incorporates registration uncertainty into the planning process and maintains effective exploration behavior under incomplete or deformed priors. Simulation benchmarks and field experiments demonstrated reduced exploration time and flight distance compared with baseline methods, while maintaining consistent performance across precise, partial, and deformed prior maps. 
+
+REFERENCES 
+
+[1] Y. Zhang, X. Chen, C. Feng, B. Zhou, and S. Shen, “Falcon: Fast autonomous aerial exploration using coverage path guidance,” IEEE Transactions on Robotics , 2024. [2] S. Geng, Z. Ning, F. Zhang, and B. Zhou, “Epic: A lightweight lidar-based uav exploration framework for large-scale scenarios,” IEEE Robotics and Automation Letters , 2025. [3] A. Bircher, M. Kamel, K. Alexis, H. Oleynikova, and R. Siegwart, “Receding horizon” next-best-view” planner for 3d exploration,” in 
+
+2016 IEEE international conference on robotics and automation (ICRA) . IEEE, 2016, pp. 1462–1468. [4] C. Feng, H. Li, M. Zhang, X. Chen, B. Zhou, and S. Shen, “Fc-planner: A skeleton-guided planning framework for fast aerial coverage of complex 3d scenes,” in 2024 IEEE International Conference on Robotics and Automation (ICRA) . IEEE, 2024, pp. 8686–8692. [5] R. Bai, H. Guo, W.-Y. Yau, and L. Xie, “Graph-based slam-aware exploration with prior topo-metric information,” IEEE Robotics and Automation Letters , vol. 9, no. 9, pp. 7597–7604, 2024. [6] M. Luperto, M. Antonazzi, F. Amigoni, and N. A. Borghese, “Robot exploration of indoor environments using incomplete and inaccurate prior knowledge,” Robotics and Autonomous Systems , vol. 133, p. 103622, 2020. [7] B. Yamauchi, “A frontier-based approach for autonomous exploration,” in Proceedings 1997 IEEE International Symposium on Computational Intelligence in Robotics and Automation CIRA’97.’Towards New Com-putational Principles for Robotics and Automation’ . IEEE, 1997, pp. 146–151. [8] X. Zhao, C. Yu, E. Xu, and Y. Liu, “Tdle: 2-d lidar exploration with hierarchical planning using regional division,” in 2023 IEEE 19th International Conference on Automation Science and Engineering (CASE) . IEEE, 2023, pp. 1–6. [9] B. Zhou, Y. Zhang, X. Chen, and S. Shen, “Fuel: Fast uav exploration using incremental frontier structure and hierarchical planning,” IEEE Robotics and Automation Letters , vol. 6, no. 2, pp. 779–786, 2021. [10] S. Bone, L. Bartolomei, F. Kennel-Maushart, and M. Chli, “Decen-tralised multi-robot exploration using monte carlo tree search,” in 2023 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) . IEEE, 2023, pp. 7354–7361. [11] Y. Gao, R. Zhang, T. Lai, Y. Cao, C. Xu, and F. Gao, “Autonomous exploration with terrestrial-aerial bimodal vehicles,” IEEE Robotics and Automation Letters , vol. 10, no. 10, pp. 9987–9994, 2025. [12] T. Dang, M. Tranzatto, S. Khattak, F. Mascarich, K. Alexis, and M. Hutter, “Graph-based subterranean exploration path planning using aerial and legged robots,” Journal of Field Robotics , vol. 37, no. 8, pp. 1363–1388, 2020. [13] A. Batinovic, T. Petrovic, A. Ivanovic, F. Petric, and S. Bogdan, “A multi-resolution frontier-based planner for autonomous 3d explo-ration,” IEEE Robotics and Automation Letters , vol. 6, no. 3, pp. 4528– 4535, 2021. [14] F. Yang, D.-H. Lee, J. Keller, and S. Scherer, “Graph-based topological exploration planning in large-scale 3d environments,” in 2021 IEEE international conference on robotics and automation (ICRA) . IEEE, 2021, pp. 12 730–12 736. [15] Y. Gao, Y. Wang, X. Zhong, T. Yang, M. Wang, Z. Xu, Y. Wang, Y. Lin, C. Xu, and F. Gao, “Meeting-merging-mission: A multi-robot coordi-nate framework for large-scale communication-limited exploration,” in 2022 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) . IEEE, 2022, pp. 13 700–13 707. [16] E. Kaufman, K. Takami, Z. Ai, and T. Lee, “Autonomous quadrotor 3d mapping and exploration using exact occupancy probabilities,” in 
+
+2018 Second IEEE International Conference on Robotic Computing (IRC) . IEEE, 2018, pp. 49–55. [17] M. Dharmadhikari, T. Dang, L. Solanka, J. Loje, H. Nguyen, N. Khedekar, and K. Alexis, “Motion primitives-based path planning for fast and agile exploration using aerial robots,” in 2020 IEEE  
+
+> 24 VOLUME ,
+
+<Society logo(s) and publication title will appear here. >
+
+International Conference on Robotics and Automation (ICRA) . IEEE, 2020, pp. 179–185. [18] C. Cao, H. Zhu, H. Choset, and J. Zhang, “Tare: A hierarchical framework for efficiently exploring complex 3d environments.” in 
+
+Robotics: Science and Systems , vol. 5, 2021, p. 2. [19] K. Matsuo and J. Miura, “Outdoor visual localization with a hand-drawn line drawing map using fastslam with pso-based mapping,” in 
+
+2012 IEEE/RSJ International Conference on Intelligent Robots and Systems . IEEE, 2012, pp. 202–207. [20] F. Boniardi, B. Behzadian, W. Burgard, and G. D. Tipaldi, “Robot nav-igation in hand-drawn sketched maps,” in 2015 European conference on mobile robots (ECMR) . IEEE, 2015, pp. 1–6. [21] F. Foroughi, J. Wang, and Z. Chen, “Indoor robot localization in hand-drawn maps by using convolutional neural networks and monte carlo method,” in Proceedings of the 2019 4th International Conference on Automation, Control and Robotics Engineering , 2019, pp. 1–7. [22] C. Xu, C. Amato, and L. L. Wong, “Robot navigation in unseen envi-ronments using coarse maps,” in 2024 IEEE International Conference on Robotics and Automation (ICRA) . IEEE, 2024, pp. 2932–2938. [23] K. Chen, M. V´ azquez, and S. Savarese, “Localizing against drawn maps via spline-based registration,” in 2020 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) . IEEE, 2020, pp. 8521–8526. [24] D. C. Shah and M. E. Campbell, “A robust qualitative planner for mobile robot navigation using human-provided maps,” in 2011 IEEE International Conference on Robotics and Automation . IEEE, 2011, pp. 2580–2585. [25] ——, “A qualitative path planner for robot navigation using human-provided maps,” The International Journal of Robotics Research ,vol. 32, no. 13, pp. 1517–1535, 2013. [26] Z. Qiao, H. Huang, C. Liu, Z. Yu, S. Shen, F. Zhang, and H. Yin, “Speak the same language: Global lidar registration on bim using pose hough transform,” IEEE Transactions on Automation Science and Engineering , 2025. [27] P.-E. Sarlin, D. DeTone, T. Malisiewicz, and A. Rabinovich, “Su-perglue: Learning feature matching with graph neural networks,” in 
+
+Proceedings of the IEEE/CVF conference on computer vision and pattern recognition , 2020, pp. 4938–4947. [28] ¨O. Tuzcuo˘ glu, A. K¨ oksal, B. Sofu, S. Kalkan, and A. A. Alatan, “Xoftr: Cross-modal feature matching transformer,” in Proceedings of the IEEE/CVF conference on computer vision and pattern recognition ,2024, pp. 4275–4286. [29] J. Chen, X. Chen, S. Chen, Y. Liu, Y. Rao, Y. Yang, H. Wang, and D. Wu, “Shape-former: Bridging cnn and transformer via shapeconv for multimodal image matching,” Information Fusion , vol. 91, pp. 445– 457, 2023. [30] L. E. Kavraki, M. N. Kolountzakis, and J.-C. Latombe, “Analysis of probabilistic roadmaps for path planning,” IEEE Transactions on Robotics and automation , vol. 14, no. 1, pp. 166–171, 1998. [31] S. Van der Walt, J. L. Sch¨ onberger, J. Nunez-Iglesias, F. Boulogne, J. D. Warner, N. Yager, E. Gouillart, and T. Yu, “scikit-image: image processing in python,” PeerJ , vol. 2, p. e453, 2014. [32] T. Y. Zhang and C. Y. Suen, “A fast parallel algorithm for thinning digital patterns,” Communications of the ACM , vol. 27, no. 3, pp. 236– 239, 1984. [33] M. Noto and H. Sato, “A method for the shortest path search by extended dijkstra algorithm,” in Smc 2000 conference proceedings. 2000 ieee international conference on systems, man and cybernetics. ’cybernetics evolving to systems, humans, organizations, and their complex interactions’ (cat. no.0 , vol. 3, 2000, pp. 2316–2320 vol.3. [34] G. Kim and A. Kim, “Scan context: Egocentric spatial descriptor for place recognition within 3d point cloud map,” in 2018 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) .IEEE, 2018, pp. 4802–4809. [35] X. Zhong, Y. Wu, D. Wang, Q. Wang, C. Xu, and F. Gao, “Generating large convex polytopes directly on point clouds,” arXiv preprint arXiv:2010.08744 , 2020. [36] M. Hahsler, M. Piekenbrock, and D. Doran, “dbscan: Fast density-based clustering with r,” Journal of Statistical Software , vol. 91, pp. 1–30, 2019. [37] S. Ying, J. Peng, S. Du, and H. Qiao, “A scale stretch method based on icp for 3d data registration,” IEEE Transactions on automation science and engineering , vol. 6, no. 3, pp. 559–565, 2009. [38] C. B. Browne, E. Powley, D. Whitehouse, S. M. Lucas, P. I. Cowling, P. Rohlfshagen, S. Tavener, D. Perez, S. Samothrakis, and S. Colton, “A survey of monte carlo tree search methods,” IEEE Transactions on Computational Intelligence and AI in games , vol. 4, no. 1, pp. 1–43, 2012. [39] K. Helsgaun, “General k-opt submoves for the lin–kernighan tsp heuristic,” Mathematical Programming Computation , vol. 1, no. 2, pp. 119–163, 2009. [40] G. Tang, C. Tang, C. Claramunt, X. Hu, and P. Zhou, “Geometric a-star algorithm: An improved a-star algorithm for agv path planning in a port environment,” IEEE access , vol. 9, pp. 59 196–59 210, 2021. [41] Z. Wang, X. Zhou, C. Xu, and F. Gao, “Geometrically constrained tra-jectory optimization for multicopters,” IEEE Transactions on Robotics ,vol. 38, no. 5, pp. 3259–3278, 2022. [42] Q. Wang, Z. Wang, M. Wang, J. Ji, Z. Han, T. Wu, R. Jin, Y. Gao, C. Xu, and F. Gao, “Fast iterative region inflation for computing large 2-d/3-d convex regions of obstacle-free space,” IEEE Transactions on Robotics , 2025. [43] A. Koval, C. Kanellakis, E. Vidmark, J. Haluska, and G. Nikolakopou-los, “A subterranean virtual cave world for gazebo based on the darpa subt challenge,” arXiv preprint arXiv:2004.08452 , 2020. [44] D. DeTone, T. Malisiewicz, and A. Rabinovich, “Superpoint: Self-supervised interest point detection and description,” in Proceedings of the IEEE conference on computer vision and pattern recognition workshops , 2018, pp. 224–236. [45] O. Chum, J. Matas, and J. Kittler, “Locally optimized ransac,” in Joint pattern recognition symposium . Springer, 2003, pp. 236–243. [46] F. Kong, X. Liu, B. Tang, J. Lin, Y. Ren, Y. Cai, F. Zhu, N. Chen, and F. Zhang, “Marsim: A light-weight point-realistic simulator for lidar-based uavs,” IEEE Robotics and Automation Letters , vol. 8, no. 5, pp. 2954–2961, 2023. [47] W. Xu, Y. Cai, D. He, J. Lin, and F. Zhang, “Fast-lio2: Fast direct lidar-inertial odometry,” IEEE Transactions on Robotics , vol. 38, no. 4, pp. 2053–2073, 2022. [48] S. Omari, M.-D. Hua, G. Ducard, and T. Hamel, “Nonlinear control of vtol uavs incorporating flapping dynamics,” in 2013 IEEE/RSJ international conference on intelligent robots and systems . IEEE, 2013, pp. 2419–2425. [49] Z. Wang, C. Xu, and F. Gao, “Robust trajectory planning for spatial-temporal multi-drone coordination in large scenes,” in 2022 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) .IEEE, 2022, pp. 12 182–12 188.

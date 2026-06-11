@@ -1,0 +1,431 @@
+Title: Spatially Coupled Phase-to-Depth Calibration for Fringe Projection Profilometry
+
+URL Source: https://arxiv.org/pdf/2606.11601v1
+
+Published Time: Thu, 11 Jun 2026 00:27:04 GMT
+
+Number of Pages: 11
+
+Markdown Content:
+# Spatially Coupled Phase-to-Depth Calibration for Fringe Projection Profilometry 
+
+Sehoon Tak, Jae-Sang Hyun ∗
+
+> Department of Mechanical Engineering, Yonsei University, Seoul 03722, South Korea.
+
+Abstract 
+
+In fringe projection profilometry (FPP), depth is commonly recovered by fitting a phase-to-depth relation independently at each camera pixel. Although such pixel-wise calibration achieves high local accuracy, neighboring pixels can acquire markedly di ff erent calibration functions even when they observe the same smooth surface, producing spatially inconsistent geometry and structured surface artifacts. We propose a spatially coupled phase–depth transformation in which all pixels share a single low-dimensional mapping—global phase scalars combined with a ffi ne spatial terms on the undistorted reference-camera grid—rather than independent per-pixel fits, optionally augmented by a bounded, spatially smooth correction field. We further introduce a native-grid pairing scheme that constructs phase–depth calibration pairs directly on the reference-camera grid: when depth supervision comes from a rectified active-stereo pipeline, planes are fitted in stereo 3D and sampled back onto the camera grid along native rays, so the phase maps are never rectified. On a dental target with high-resolution scanner ground truth, the proposed model attains point-to-surface RMSE comparable to an active-stereo reference (about 12 μm aggregate) while substantially improving spatial coherence over pixel-wise polynomial and rational calibration, and reduces the runtime mapping to a few element-wise operations per pixel with negligible parameter storage. 
+
+Keywords: Fringe projection profilometry, phase–depth calibration, spatial regularization, planar calibration 
+
+1. Introduction 
+
+Fringe projection profilometry (FPP) enables e ffi cient, high-resolution, noncontact 3D measurement and is used in medical, industrial, and consumer applications[ 1 , 2]. In a typical FPP system, a digital projector illuminates the object with structured light, and a camera records the deformed patterns. Object shape is first encoded in the wrapped phase recovered by phase-shifting demodulation and then in the absolute phase after phase unwrap-ping. A subsequent phase-to-depth conversion is used to recover 3D shape. In conventional FPP, depth is often recovered through ge-ometric calibration of the camera–projector pair, typically by modeling both devices as pinhole systems with lens distortion[ 3]. Camera calibration is well studied[ 4, 5, 6], whereas projector calibration is more di ffi cult because the projector cannot observe the scene directly. An alternative family of methods avoids ex-plicit projector calibration by learning a direct mapping from phase to depth at each camera pixel, often using lookup tables (LUTs), low-order polynomials, or rational functions [ 7 , 8]. In the structured-light literature, these methods are often described as pixel-wise or model-free calibration. In this paper, we use that term in the narrower sense of avoiding an explicit calibrated projector model while still treating the camera as a calibrated imaging device. A practical limitation of pixel-wise calibration is that each pixel is fitted independently. Neighboring pixels can therefore   
+
+> ∗Corresponding author
+> Email address: hyun.jaesang@yonsei.ac.kr (Jae-Sang Hyun)
+
+acquire substantially di ff erent phase-to-depth functions even when they observe the same smooth surface. This behavior is especially visible for higher-order polynomial or rational fits, whose coe ffi cient maps can fluctuate strongly from pixel to pixel and introduce structured artifacts in reconstructed surfaces. A second practical issue is the coordinate system used for calibration. Absolute phase is naturally computed on the undis-torted sampling grid of the reference camera; we refer to this grid as the native grid. By contrast, external depth labels ac-quired from external sources, such as active stereo, are typically produced in rectified coordinates. Calibration therefore requires phase and depth to be expressed on a common sampling grid. A common solution is to rectify the phase maps so that they match the rectified depth labels. In this work, we instead map the depth supervision onto the native grid and construct calibration pairs directly in the reference-camera coordinates. We refer to this choice as native-grid pairing. This avoids rectifying the phase maps and preserves the camera-grid representation used by the proposed formulation. To address these two issues, we propose a phase–depth cal-ibration whose spatial dependence is shared across the image rather than fitted independently at each pixel. We refer to this as a spatially coupled model. The shared mapping is estimated from multiple planar calibration captures and, when needed, is augmented by a bounded, spatially smooth correction field that captures small repeatable residual e ff ects not explained by the shared model. The main contributions of this paper are as follows: 1) We formulate a spatially coupled phase–depth model in which all      
+
+> Preprint submitted to Optics &Laser Technology June 11, 2026
+> arXiv:2606.11601v1 [cs.CV] 10 Jun 2026 Ref. camera
+> Projector
+> Aux. camera
+> Rectified depth map Absolute phase map
+> Fitted 3D plane
+> Transform to
+> reference frame Native ray intersection
+> Ref. camera
+> Pixel-wise calibration
+> Proposed spatially coupled calibration
+> (a) (b) (c)
+> Absolute phase map
+
+Figure 1: Overview of the proposed pipeline. (a) Calibration setup: projector, reference camera, auxiliary stereo camera, and a planar target translated through multiple depths. (b) Native-grid pairing: a plane fitted to rectified stereo depth is transferred to the reference-camera frame and intersected with native camera rays to produce native-grid depth labels zn,uv , avoiding phase rectification. (c) Pixel-wise fitting estimates an independent fuv (Φ) per pixel, whereas the proposed method shares a base mapping T (u, v, Φ) with a bounded smooth residual R(u, v). 
+
+pixels share a single low-dimensional transformation—global phase scalars with a ffi ne spatial terms on the camera grid— instead of independent per-pixel functions, together with a reg-ularized framework that jointly estimates this shared mapping and a bounded, spatially smooth correction field from planar calibration data. 2) We propose a practical native-grid pairing pipeline that constructs phase–depth calibration pairs from ex-ternal supervision, such as active stereo, by fitting planes in 3D and sampling them back onto the reference-camera grid, without rectifying the phase maps. 3) We experimentally validate the proposed method on a dental target with high-resolution scan-ner ground truth, showing improved spatial coherence relative to conventional pixel-wise polynomial and rational calibration, with accuracy competitive with an active-stereo reference under our evaluation setup. An overview of the system setup is shown in Fig. 1. 
+
+2. Principles 
+
+2.1. Absolute Phase Map Retrieval 
+
+We work with absolute phase defined on the undistorted camera pixel grid ( u, v). For an ideal planar target, the absolute phase field is expected to be smooth and, under the operating ge-ometry considered here, well-approximated by an a ffi ne (planar) function of ( u, v) on the native undistorted camera grid. For non-linear fringe families (e.g., circular or hyperbolic patterns), a monotonic reparameterization of the recovered phase index can be applied so that the resulting phase field over a plane becomes approximately a ffi ne. Fig. 2 illustrates such a reparameterization for a hyperbolic pattern pair. The proposed calibration is agnostic to the specific fringe family; we describe an N-step phase-shifting implementation for concreteness. Under standard phase-shifting profilometry [ 9], the captured intensity at pixel ( u, v) in the n-th exposure is modeled as 
+
+In,uv = I′ 
+
+> uv
+
++ I′′  
+
+> uv
+
+cos 
+
+"
+
+ϕuv − 2πnN
+
+#
+
+, (1) (a) Hyperbolic unwrapped phase, )(x,y)               
+
+> -1.5 -1 -0.5 00.5 11.5
+> x (m)
+> -1.5 -1 -0.5 00.5 11.5
+> y (m)
+> )= k(R 1- R 2)
+> (b) Rectified phase, )(?',s)
+> -0.5 00.5
+> ?' = (R 1- R 2)/d
+> -1.5 -1 -0.5 00.5 11.5
+> x (m)
+> ?'=(R 1-R 2)/d
+> ):91.45 ?' +94.25
+> 8.3776 42.7257 77.0737 111.4218 145.7699 180.1180
+> ) (rad)
+
+(a) (b) 
+
+Figure 2: Hyperbolic-phase reparameterization. (a) Raw absolute phase field 
+
+Φ(x, y) under a hyperbolic fringe parameterization. (b) After the monotonic reparameterization ϕ′ = (R1 − R2)/d, the phase becomes approximately a ffi ne. This illustrates the projector-model-free scope only; the experiments use standard phase-shifted fringes. 
+
+where I′ 
+
+> uv
+
+denotes the average intensity, I′′  
+
+> uv
+
+the modulation ampli-tude, and ϕuv the wrapped phase. The wrapped phase is obtained via 
+
+ϕuv = tan −1
+
+PN−1 
+
+> n=0
+
+In,uv sin(2 πn/N)
+
+PN−1 
+
+> n=0
+
+In,uv cos(2 πn/N)
+
+ . (2) To obtain a continuous phase field, we unwrap ϕuv by es-timating an integer fringe order kuv and forming the absolute phase 
+
+Φuv = ϕuv + 2πkuv . (3) In the experiments, kuv is obtained using temporal Gray-code-assisted unwrapping [ 10 ], but any absolute phase retrieval method (temporal, spatial, or hybrid) can be used[11]. When a phase reparameterization is required by the projected pattern family, we apply a monotonic mapping ˜Φuv = g(Φuv )prior to calibration, where g(·) is chosen such that ˜Φuv is approx-imately a ffi ne on planar targets (Fig. 2). In the following, we use Φ to denote the absolute phase used for calibration (either Φ
+
+or ˜ Φ, depending on the pattern family). 
+
+2.2. Pixel-wise Phase–Depth Calibration 
+
+Pixel-wise calibration estimates an independent phase–depth transfer function at each camera pixel. Given a set of calibration 2captures indexed by n, one obtains paired samples {(Φn,uv , zn,uv )}
+
+at each pixel ( u, v), where zn,uv denotes depth expressed in the chosen camera coordinate convention (Section 2.3). Pixel-wise calibration models 
+
+zuv = fuv (Φuv ), (4) with fuv (·) fitted independently for each ( u, v) using the available samples. In the structured-light literature, fuv is commonly implemented as a lookup table (LUT), a low-order polynomial, or a 1D rational function. As a representative example, a third-order polynomial model takes the form 
+
+fuv (Φuv ) = c0,uv + c1,uv Φuv + c2,uv Φ2 
+
+> uv
+
++ c3,uv Φ3
+
+> uv
+
+, (5) where the coe ffi cient fields {ci,uv } are defined over the camera pixel grid. Higher polynomial orders or rational models can further reduce training misfit on the calibration samples, but the resulting coe ffi cient fields may exhibit strong pixel-to-pixel variation because each pixel is fitted independently. This spatial incoherence can produce spatially inconsistent depth maps and structured surface artifacts even when per-pixel training errors are small. At runtime, reconstruction proceeds by computing an abso-lute phase map Φ and evaluating fuv (Φuv ) at each pixel. Com-pared with global geometric calibration models, pixel-wise meth-ods typically require storing multiple parameters per pixel (or a per-pixel LUT), increasing memory footprint and making the learned mapping sensitive to noise and local fitting variability across the image plane. 
+
+2.3. Coordinate Frames and Notation 
+
+Pixel-wise calibration in Section 2.2 requires phase and depth samples defined on a common sampling domain. In prac-tice, absolute phase Φ is retrieved on the undistorted reference-camera grid, whereas depth supervision z is often produced by an external sensor (e.g., active stereo) in rectified coordinates. This section defines the coordinate conventions used throughout the paper and explains why a pairing step is required to place phase and depth on a common grid for calibration. Let ( ud, vd) denote the integer pixel coordinates in the raw (distorted) camera image. We undistort the camera using a standard calibrated distortion model so that measurements are expressed on an undistorted coordinate grid ( u, v), where ( u, v)may be non-integer and represent sampling locations in the undistorted image plane. We treat the undistorted camera as a calibrated pinhole device with intrinsics K; the corresponding 3D camera coordinate frame is denoted by C, with 3D points 
+
+XC = [xC , yC , zC ]⊤ and depth defined as the axial coordinate 
+
+z ≡ zC . The planarity assumption used later is stated with respect to this undistorted camera coordinate system: for planar targets, the recovered absolute phase field Φuv is expected to be smooth and well-approximated by a planar (a ffi ne) function of (u, v) under typical FPP geometries (Section 3.1). In the experiments, dense depth supervision is obtained from an active-stereo pipeline. Such pipelines typically compute disparity and depth on a rectified image pair, where epipolar lines are horizontal and correspondences are searched along scanlines [ 12 ]. We denote rectified image coordinates by ( ur, vr)and the associated rectified 3D frame by R. For rectification with respect to a chosen reference camera (here, the left camera), the 3D relationship between frames is a rotation, XR = R1 XC , where 
+
+R1 is the rectification rotation. However, the mapping between the native undistorted image grid ( u, v) and the rectified grid (ur, vr) is a 2D resampling operation that involves interpolation and is generally not bijective in the discrete image domain [ 13 ]. Consequently, depth maps produced in the rectified domain are not naturally defined at the same sampling locations as the phase map Φuv .A common approach for pixel-wise calibration with stereo supervision is to rectify the phase maps so that phase and depth are paired in rectified coordinates [ 14 ]. While this yields valid pairs ( Φn,ur vr , zn,ur vr ), it is not the most natural representation for the present formulation. In particular, the planar structure of phase over a physical plane is most naturally expressed in the native undistorted camera coordinates, whereas rectification is an image-domain warp that can weaken that structure and requires an additional resampling step during reconstruction. Throughout the paper, depth is reported as z ≡ zC in the reference-camera frame C. Because the proposed formulation is defined on the undistorted reference-camera grid, we ultimately construct calibration pairs ( Φn,uv , zn,uv ) on that grid. Their con-struction from rectified stereo supervision is described in Sec-tion 3.2. 
+
+3. Proposed spatially coupled phase–depth model 
+
+3.1. Shared Phase–Depth Model for Planar Calibration Targets 
+
+Our objective is to estimate a structured phase–depth map-ping on the undistorted camera grid ( u, v). The model combines a shared image-wide mapping, estimated from planar calibration data, with an optional bounded, spatially smooth correction field. The planar calibration targets motivate the form of the shared mapping, while the correction field captures small repeatable deviations that are not explained by that shared model. This is what we mean by a spatially coupled formulation: pixels are linked through common image-wide parameters rather than fitted independently. For a calibrated pinhole camera, the image of any physi-cal plane induces a 2D projective mapping (homography) in undistorted image coordinates [ 15 ]. If the projector is modeled as an inverse pinhole device, then the mapping from camera coordinates to the projector image is also a homography [ 16 ]. Consider a world plane P used as a calibration target. Let s
+
+denote the projector’s 1D coordinate along the fringe direction (equivalently, the continuous fringe index). Restricted to P, s is a projective function of the camera coordinates: 
+
+suv = a⊤[u, v, 1] ⊤
+
+b⊤[u, v, 1] ⊤ . (6) Since the recovered absolute phase Φ is a monotonic reparame-terization of the fringe index (Section 2.1), Φuv inherits the same projective form on planar targets up to a monotonic scaling. 3In many laboratory FPP configurations, the phase field over planar targets is observed to be well approximated by an a ffi ne (planar) function of ( u, v) in undistorted camera coordinates, i.e., 
+
+Φuv ≈ αu + βv + γ. This behavior is exact for a ffi ne imaging configurations (e.g., telecentric or near-fronto-parallel /narrow-FOV regimes where the denominator in Eq. (6) is approximately constant) and is a useful approximation when the working dis-tance is large compared to the e ff ective focal length and the measurement volume is relatively shallow. When the projector departs from a pinhole model, the plane-induced mapping need not be exactly projective in ( u, v). We therefore use these projective arguments to motivate the form of the base mapping, not as a requirement that the projector obey an exact pinhole model. The formulation only requires that the calibration phase—directly or after a monotonic reparameteriza-tion (Section 2.1)—be approximately planar over planar targets within the calibration volume and pose range used here. The above constraint motivates a planarity-constrained base mapping whose structure is induced by planar calibration targets. Under a pinhole (or near-pinhole) camera–projector geometry, the depth z of a 3D point in the reference camera frame can be expressed as a perspective (linear-fractional) function of image location and phase: 
+
+z(u, v) = T (u, v, Φ) = p⊤[u, v, Φ, 1] ⊤
+
+q⊤[u, v, Φ, 1] ⊤ , (7) where p and q are constant vectors. Equation (7) provides a compact global description of phase-to-depth conversion while allowing perspective e ff ects. For a fixed pixel ( u, v), this reduces to a 1D rational dependence on phase, 
+
+z = f (Φ) = A(u, v) + BΦ
+
+C(u, v) + DΦ , (8) where B and D are global scalars shared across all pixels, while 
+
+A(u, v) and C(u, v) are a ffi ne functions of ( u, v) obtained by ex-panding Eq. (7) . Hence, although Eq. (8) is a one-dimensional rational function of phase at any single pixel, its coe ffi cients are not free per pixel: they are tied across the image through a few global phase terms ( B, D) and low-order a ffi ne spatial terms. This shared parameterization—replacing independent per-pixel fitting—is the core of the proposed coupling. This shared structure is well behaved on planar calibration targets: if Φuv is a ffi ne on a planar target and A(u, v) and C(u, v)are a ffi ne in ( u, v), then the resulting depth field zuv computed by Eq. (8) is a smooth projective field over the image grid. We refer to this property as plane-consistent on planar calibration targets. Using the pairing construction of Section 3.2, the model can be estimated from multi-plane calibration data on a common grid. In the following, planarity-constrained refers to the shared low-dimensional mapping induced by planar calibration targets. When the residual correction field R(u, v) is enabled, the final mapping departs from this plane-consistent model only through a bounded, spatially smooth correction. 
+
+3.2. Native-Grid Pairing of Phase and Depth 
+
+As discussed in Section 2.3, calibration requires phase and depth to be defined on a common sampling grid. In our formu-lation, phase is computed on the native undistorted reference-camera grid, while stereo supervision is initially obtained in rectified coordinates. We therefore map the planar depth super-vision onto the native reference-camera grid by evaluating fitted planes along native camera rays, yielding zn,uv directly at the same sampling locations as Φn,uv .In the experiments, undistortion and stereo rectification are implemented using standard computer-vision toolchains (e.g., OpenCV /MATLAB), which e ff ectively apply an undistortion-and-warp operation to the raw images. For the derivation below, we assume the reference camera has been undistorted and can be treated as an ideal pinhole camera with intrinsics K (Section 4.1). Let C denote the reference camera 3D frame and R the rectified 3D frame (Section 2.3). Stereo depth is initially reconstructed in the rectified domain, providing a 3D point cloud {XR} or a depth field zur vr associated with rectified pixel coordinates ( ur, vr). For each calibration capture indexed by n, we select pixels belonging to the planar target and reconstruct their 3D points in the rectified frame, yielding a set {XR,i}Mn
+
+> i=1
+
+. We fit a plane 
+
+PR,n : n⊤
+
+> R,n
+
+XR + dR,n = 0 (9) using least squares with outlier rejection using RANSAC. Stereo rectification with respect to the reference camera is a purely rotational transform in 3D [ 12 ]. Hence, the fitted plane parameters can be transferred to the reference-camera frame C
+
+by 
+
+nC,n = R⊤ 
+
+> 1
+
+nR,n, dC,n = dR,n, (10) where R1 is the rectification rotation (Section 2.3). The sign of 
+
+dC,n follows the chosen plane-normal convention; in practice, we enforce nC,n to face the camera so that ray–plane intersection yields positive depth. Let u = (u, v) denote a sampling location on the undistorted reference image. Under the pinhole model, the back-projected ray direction associated with u is 
+
+r(u) ∝ K−1[u, v, 1] ⊤, (11) expressed in the reference-camera frame C (and normalized to unit length if desired). The intersection point between this ray and the plane PC,n is 
+
+X⋆
+
+> C,n
+
+(u) = λ⋆ 
+
+> n
+
+(u) r(u), λ⋆ 
+
+> n
+
+(u) = − dC,n
+
+n⊤
+
+> C,n
+
+r(u) . (12) The depth value for pixel ( u, v) at pose n is then defined as 
+
+zn,uv ≡ hX⋆
+
+> C,n
+
+(u)i 
+
+> z
+
+, (13) where [ ·]z denotes the z-component in the reference-camera frame. This produces the native-grid depth field zn,uv required for calibration. Finally, the phase map Φn,uv is computed from the phase-shifted images on the same undistorted grid (Section 2.1). The paired samples ( Φn,uv , zn,uv ) are thus obtained in a consistent coordinate system and are used to estimate the structured phase– depth model in Section 3.3–Section 3.5. The native-grid pairing 4procedure is illustrated schematically in Fig. 1, which summa-rizes the conversion from rectified stereo plane supervision to native-grid depth labels on the reference camera. The ray–plane intersection in Eq. (12) is valid when the ray intersects the observed planar region and when n⊤
+
+> C,n
+
+r(u) is su ffi ciently far from zero (i.e., the plane is not grazing with respect to the viewing direction). In practice, we apply a binary mask Mn,uv to restrict calibration to pixels for which (i) the phase is valid (su ffi cient modulation and successful unwrapping), and (ii) the planar target is visible and used in plane fitting in the rectified 3D reconstruction. All reported calibration losses and metrics are evaluated over the masked set {(n, u, v) : Mn,uv = 1}.
+
+3.3. Model Forms and Parameter Estimation 
+
+Given the paired calibration samples ( Φn,uv , zn,uv ) constructed in Section 3.2, we estimate a structured phase–depth model with two variants: an a ffi ne model suitable for near-linear phase– depth regimes, and a perspective (linear-fractional) model for wider ranges where projective e ff ects are non-negligible. In both cases, the mapping is augmented by a pose-invariant correction field R(u, v) defined on the image grid. The model parameters are estimated jointly from all valid samples using a regular-ized objective that combines data fidelity with amplitude and smoothness constraints on R(u, v). 
+
+3.3.1. A ffi ne model 
+
+In many practical measurement volumes (e.g., shallow depth range relative to the working distance), the phase–depth rela-tionship is well approximated locally by a linear dependence on phase, with spatially varying o ff set due to the imaging geometry. We model depth as ˆzn,uv = A(u, v) + B Φn,uv + R(u, v), (14) where B is a global phase-to-depth slope shared across the im-age, A(u, v) is a spatially varying o ff set, and R(u, v) is a spatial correction field. Consistent with the planar constraint in Sec-tion 3.1, we parameterize A(u, v) as an a ffi ne function of the image coordinates, 
+
+A(u, v) = a0 + a1u + a2v. (15) The a ffi ne model thus uses a small set of global parameters (a0, a1, a2, B) together with a bounded correction field R.
+
+3.3.2. Perspective (linear-fractional) model 
+
+When the depth range spans a wider interval or when per-spective e ff ects are visible across the field of view, the depth dependence on phase is better captured by a linear-fractional form. We model ˆzn,uv = A(u, v) + B Φn,uv 
+
+C(u, v) + D Φn,uv 
+
++ R(u, v), (16) where B and D are global scalars and the spatial terms are again modeled as a ffi ne functions of ( u, v), 
+
+A(u, v) = a0 + a1u + a2v, C(u, v) = c0 + c1u + c2v. (17) Equation (16) reduces to a 1D rational dependence on phase at each pixel, but with parameters coupled across the image through the low-dimensional spatial model. This is consistent with the fact that in stereo geometry, depth is a rational function of disparity, and disparity is monotonic in phase under conven-tional fringe encoding. In the perspective model, the denominator can in principle approach zero outside the valid measurement volume. To stabi-lize estimation, we initialize the denominator near the identity form (Section 3.5) and optionally apply a mild denominator reparameterization during fitting, as described in Section 3.4. 
+
+3.4. Correction Field, Regularization, and Constraints 
+
+The correction field R(u, v) is introduced to capture residual systematic e ff ects that are not explained by the shared a ffi ne or perspective model, such as small deviations from ideal pro-jective behavior, residual lens distortion after undistortion, and repeatable phase-to-depth bias patterns due to non-ideal projec-tor behavior. Since these e ff ects are properties of the optical configuration and coordinate convention, we model R(u, v) as constant across calibration captures n (pose-invariant), while allowing it to vary smoothly over the image grid. To prevent the solution from relying excessively on R(u, v), and to discourage the correction field from absorbing trends already represented by the shared model, we constrain R(u, v) to be both low-amplitude and spatially smooth. We implement this by combining (i) a data fidelity term, (ii) a magnitude penalty on 
+
+R(u, v), and (iii) a smoothness penalty on R(u, v). For the a ffi ne model, the objective takes the form min 
+
+> a0,a1,a2,B,R
+
+X
+
+> (n,u,v)∈Ω
+
+ρ zn,uv − ˆzn,uv 
+
+ + λR ∥R∥22 + λS ∥∇ R∥22, (18) with ˆzn,uv given by Eq. (14) . The same form applies to the perspective model by substituting Eq. (16) . Here, ρ(·) is typically the squared loss (L2), although robust losses such as Huber /Tukey loss can be used if outliers are present. We use squared loss because gross outliers are removed prior to optimization via the validity mask Mn,uv (phase validity, stereo confidence, and plane inliers). With R explicitly bounded and regularized, the remaining residuals are dominated by small, approximately zero-mean measurement noise. Robust losses were therefore not required in our setting. In addition to these penalties, we bound the correction field to maintain a physically interpretable correction magnitude, 
+
+|R(u, v)| ≤ Rmax ∀(u, v), (19) implemented either as a hard projection /clipping step or as a soft barrier penalty. The weights λR and λS and the bound Rmax 
+
+are selected to trade o ff local fidelity against spatial coherence, and are reported with the implementation details (Section 3.5). When R is fixed to 0, the mapping reduces to a fully specified low-dimensional model with no regularization hyperparameters. The R , 0 variants introduce controlled flexibility to capture repeatable bias while preserving spatial coherence. 5For the perspective model, we additionally discourage de-nominator collapse during fitting by reparameterizing the de-nominator as 
+
+C(u, v) + D Φn,uv = 1 + ρd
+
+ c0 + c1u + c2v + D Φn,uv 
+
+, (20) with a small ρd (e.g., 10 −2), which keeps the denominator close to unity during early iterations and improves numerical stabil-ity. Gradient clipping and early stopping criteria are applied as needed; implementation details are given in Section 3.5. 
+
+3.5. Implementation and Computational Profile 
+
+This section summarizes practical aspects of parameter esti-mation and runtime evaluation. Since calibration is performed offl ine, our primary computational consideration is the runtime cost and memory footprint during reconstruction, rather than the wall-clock time required for the optimizer to converge. Model parameters are estimated by minimizing the regu-larized objectives in Eqs. (18) – (20) over the valid sample set defined by Mn,uv (Section 3.2). In all experiments, optimization is performed using a quasi-Newton method (L-BFGS) imple-mented in PyTorch. We found L-BFGS to converge reliably for both a ffi ne and perspective variants when initialized near the affi ne regime, although other first-order optimizers (e.g., Adam) can also be used. For the perspective model, the denominator parameters are initialized to zero. Under the reparameterization of Eq. (20) ,this yields a denominator of unity (an identity mapping), which avoids early-stage denominator collapse. ρd is set to a small constant. Gradient clipping and a maximum-iteration stopping rule are applied to ensure numerical stability. Unless otherwise stated, optimizer settings are kept at their library defaults when not exposed for configuration. 
+
+λR and λS are selected to enforce a low-amplitude, slowly varying correction field in R(u, v); rather than tuning for min-imum training misfit, we report the resulting magnitude and smoothness for R and include results with R = 0 to isolate the contribution of the correction term. For the rest of the experi-ments, ρd = 10 −2, Rmax = 2.0μm , λR = 0.001, λS = 1 was used throughout. The a ffi ne model admits closed-form least-squares initial-ization. In principle, the global slope B and the spatial o ff set parameters ( a0, a1, a2) can be obtained from a two-stage linear regression using the calibration samples ( Φn,uv , zn,uv ), and the correction field initialized as R(u, v) = 0. During reconstruction, the calibrated mapping is evaluated point-wise on the image grid using the recovered phase map Φ.In the a ffi ne case (Eq. (14) ), we precompute the spatial o ff set 
+
+A(u, v) and optionally absorb the correction field into a single off set map, 
+
+A′(u, v) = A(u, v) + R(u, v), (21) so that runtime evaluation reduces to 
+
+z(u, v) = A′(u, v) + B Φ(u, v), (22) which is a small number of element-wise operations. In the perspective case (Eq. (16) ), we precompute A(u, v)and C(u, v) as a ffi ne maps over the pixel grid and evaluate 
+
+z(u, v) = A(u, v) + B Φ(u, v)
+
+C(u, v) + D Φ(u, v) + R(u, v), (23) using element-wise tensor operations. The correction field 
+
+R(u, v) cannot generally be absorbed into a single precomputed off set in the perspective model, but it still contributes only one additional element-wise addition. We report the arithmetic cost of the proposed mappings in terms of per-pixel floating-point operations (FLOPs), since end-to-end throughput in modern 3D reconstruction pipelines is often limited by memory bandwidth and data movement rather than raw arithmetic. For reference, a conventional camera–projector triangulation pipeline typically requires solving a small linear system per pixel (or an equivalent sequence of matrix oper-ations), whereas the proposed model evaluates a fixed set of tensor operations per pixel. The resulting FLOP counts are summarized in Table 1. We also report the memory footprint of each calibration model. Pixel-wise polynomial and rational calibration store mul-tiple parameters per pixel (or per-pixel LUT entries), resulting in a parameter footprint that scales with image resolution and model order. In the proposed model, the global a ffi ne /perspective parameters contribute negligible memory, while the dominant resolution-dependent storage is the correction field R(u, v) when enabled. Table 1 summarizes parameter counts and approximate storage requirements for all compared methods. 
+
+4. Experimental protocol and reporting conventions 
+
+4.1. Hardware setup and geometric calibration 
+
+All experiments were conducted using an active-stereo struc-tured light system consisting of a calibrated stereo camera pair and an uncalibrated projector. One camera is designated as the reference camera used to index the absolute phase map and to define the native camera coordinate frame C (Section 2.3). The projector is operated as a pattern emitter only; no pinhole projector model is assumed by the proposed calibration. The system uses two monochrome cameras (uEye UI304xCP-M, 480 × 528) mounted with synchronized acquisition. The pro-jector (DLP2010LC-2205, 480 × 854) projects phase-shifting patterns under mild defocus to suppress high-frequency binary artifacts. Unless otherwise stated, all phase processing and calibration are performed on the undistorted reference-camera sampling grid at a resolution of 480 × 528. The reference camera is calibrated using a standard pinhole model with lens distortion [ 17 ]. We use an asymmetric 1 mm checkerboard target with 54 detected grid points and capture 25 calibration poses. Intrinsic parameters are estimated via Zhang’s method, and each pose’s extrinsics are refined using a PnP-based procedure. The mean reprojection error of the single-camera calibration is 0 .032 px . Using the estimated intrinsics and distortion coe ffi cients, each distorted pixel ( ud, vd) is mapped to an undistorted sampling location ( u, v), and all phase maps are subsequently computed and stored on this undistorted grid 6Table 1: Implementation details and computational profile for reconstruction. 
+
+Method Per-pixel params Global params Precomputed maps Approx. Ops per-pixel Rect. frame Notes 
+
+Active stereo 0 Pc Pc Stereo matching Y Bandwidth-bound Pinhole triangulation 0 Pc, Pp Pc, Pp Triangulation Y Requires projector cal. Pixel-wise poly (order k) k+1 floats None None 2k Y Potential discontinuities Pixel-wise 1D rational 4 floats None None ≈3 FLOPs Y Potential singularities Proposed a ffi ne ( R = 0) 0 4 floats A(u, v) ≈2 FLOPs N Element-wise Proposed a ffi ne ( R , 0) 1 float ( R) 4 floats A′(u, v) = A + R ≈2 FLOPs N Dominant storage: R
+
+Proposed perspective ( R = 0) 0 8 floats A(u, v), C(u, v) ≈5 FLOPs N Element-wise Proposed perspective ( R , 0) 1 float ( R) 8 floats A(u, v), C(u, v) ≈6 FLOPs N +R add (Section 2.1). We did not propagate calibration uncertainty through the full reconstruction chain; reprojection errors are reported as a proxy for geometric calibration quality. For the active-stereo baseline and for generating depth su-pervision during calibration, the stereo camera pair is calibrated using standard stereo calibration to estimate the relative rotation and translation between cameras, followed by stereo rectifica-tion [ 12 ]. The stereo calibration yields a mean reprojection error of 0 .039 px . Rectification parameters are computed with respect to the reference camera so that rectified epipolar lines align horizontally. For clarity, our mathematical derivations treat the reference camera as undistorted and pinhole (Section 2.3); calibration is performed on native-grid phase–depth pairs using the pairing construction of Section 3.2. Unless otherwise stated, all reported depth values are ex-pressed as the z-coordinate in the reference camera frame C
+
+(Section 2.3). Additional details on the generation of planar reference depth from stereo reconstructions and plane fitting are provided in Section 4.2. 
+
+4.2. Reference 3D Data Generation for Calibration 
+
+This section summarizes the generation of reference depth labels for the planar calibration captures only. For each pose, the rectified stereo reconstruction is used to estimate the corre-sponding 3D plane; native-grid depth labels zn,uv and the validity mask Mn,uv are then obtained by the pairing construction of Section 3.2. Absolute phase is recovered from a six-step phase-shifted sequence (Section 2.1). For each calibration pose, we capture the full pattern sequence for phase retrieval and a corresponding stereo pair for depth reconstruction. We acquire 40 planar cali-bration captures spanning a depth range of approximately 14 mm within the usable measurement volume, with the target main-tained at approximately fixed orientation relative to the reference camera while translated through depth. In our experiments, the planar target orientation was held approximately fixed across calibration captures so that variations in phase quality, stereo support, and the validity mask were driven primarily by depth rather than by pose-dependent illumination or foreshortening eff ects. For each calibration pose n, a rectified stereo pair is recon-structed using the active-stereo pipeline (Section 4.1), producing either a rectified depth map zn,ur vr or a rectified 3D point cloud 
+
+{XR,i}. Points with invalid disparity, low confidence, or satura-tion are discarded. A geometric plane is fitted directly in the reconstructed 3D coordinates (not in image coordinates) by least squares with RANSAC, yielding the plane parameters ( nR,n, dR,n) for each calibration pose. These are then transferred to the reference-camera frame and converted to native-grid depth labels by the pairing construction of Section 3.2. 
+
+4.3. Metrics and Reporting Conventions 
+
+We report results for three categories: (i) calibration diagnos-tics on planar data, (ii) reconstruction performance on freeform dental targets using an external ground-truth (GT) scanner, and (iii) spatial interpolation tests. Because di ff erent methods nat-urally produce depth in di ff erent coordinate systems (native undistorted grid vs rectified stereo grid vs scanner coordinates), we distinguish between 2D per-pixel metrics (when available) and 3D surface metrics (used for cross-system comparisons). All depth values are reported in millimeters, with micrometer-scale errors reported in μm for readability. Unless otherwise stated, depth z refers to the z-coordinate in the reference camera frame C (Section 2.3). For calibration, all losses and metrics are computed on the masked set {(n, u, v) : Mn,uv = 1}, where Mn,uv 
+
+encodes valid phase, planar visibility, and valid stereo support (Section 3.2 and Section 4.2). For phase-to-depth model fit error, highly flexible per-pixel models drive the training misfit to numerical precision; therefore, misfit alone is not used as the primary indicator of evaluating fit or spatial consistency. When the correction field R(u, v) is enabled, its e ff ects are summarized by its peak-to-peak amplitude, RMS value, and spatial smoothness proxy. We visualize R(u, v) as a 2D map later in Fig.3. For methods that produce per-pixel parameters (e.g., pixel-wise polynomial /rational fits), we report the same spatial smoothness proxy. Representative coe ffi cient maps are visualized in Fig.4 to compare spatial coherence. Freeform reconstruction is evaluated using a high-resolution 3D scanner as ground truth. Since the scanner data and the reconstructed surfaces exist in di ff erent coordinate frames, direct per-pixel depth comparison is generally not meaningful. Instead, each reconstruction is converted to a triangle mesh and compared 7to the scanner mesh via 3D registration and point-to-surface distances. Specifically, for each dental capture m, we generate a re-constructed point cloud or depth map, convert it to a surface mesh using normal-based surface integration, and apply rigid alignment to the scanner mesh using ICP with trimmed corre-spondences using the GOM Inspect 2018 software. We report the registration residual using final alignment RMSE as a sanity check for the registration quality and also report point-to-surface distance statistics over the overlapping region. These values are reported for each of the five dental views and aggregated across views. For methods that operate on the same native undistorted grid and produce dense depth maps in the same pixel coordi-nates (e.g., the proposed method and the native-grid version of pixel-wise calibration), we additionally report per-pixel depth di ff erence maps and summary statistics on common valid pixels. For baselines that operate natively in rectified coordinates, we do not force per-pixel comparisons unless a common resampling is explicitly performed, as this introduces interpolation-dependent artifacts. To evaluate the stability of the spatially coupled model under reduced calibration coverage, we perform a spatial hold-out experiment in which the model is calibrated on a subregion of the image and evaluated on the full field. We report the same dental surface-deviation statistics as above for both R = 0 and 
+
+R , 0 configurations. 
+
+5. Reconstruction experiments and results 
+
+This section evaluates the proposed spatially coupled phase– depth calibration on (i) planar calibration data for diagnostic characterization and (ii) freeform dental targets with external ground truth. All protocols, coordinate conventions, and metrics follow Section 4. Unless otherwise stated, results are reported in μm and computed over valid pixels /regions defined by the masks in Section 3.2 and Section 4.3. 
+
+5.1. Evaluation Setup for Freeform Reconstruction 
+
+This subsection introduces the additional experimental com-ponents required for freeform evaluation beyond the calibration protocol in Section 4: (i) the dental target and scanner ground truth, and (ii) additional reconstruction baselines. We evaluate reconstruction on a dental model made of col-ored gypsum with constant surface reflection properties under constant illumination. The model is captured from five di ff erent viewpoints, each focusing on a di ff erent feature of the model with variable depth and normal distribution. A high-resolution 3D scanner (ZEISS O-INSPECT, 0.9 μm resolution) provides reference geometry for each viewpoint. We compare the proposed method against four baselines: 
+
+• Active stereo baseline: depth reconstructed directly from the stereo pipeline in rectified coordinates (Section 4.1). For 3D surface comparison, the stereo reconstruction is converted to a mesh and aligned to scanner GT using the same procedure as other methods (Section 4.3). 0 200 400             
+
+> u(pixel)
+> 0
+> 100
+> 200
+> 300
+> 400
+> v (pixel)
+> (a) Affine model
+> 0200 400
+> u(pixel)
+> 0
+> 100
+> 200
+> 300
+> 400
+> v (pixel)
+> (b) Perspective model
+> 2.0
+> 1.5
+> 1.0
+> 0.5
+> 0.0
+> 0.5
+> 1.0
+> 1.5
+> 2.0
+> R(u, v) (  m)
+> (a) (b)
+> Figure 3: Estimated z-component of the correction field R(u,v). The shared color scale is saturated at ±Rmax =2.0μm. (a) A ffi ne model. (b) Perspective model.
+
+• Geometric triangulation baseline: a conventional camera– projector calibration followed by triangulation using a pinhole projector model (Zhang’s Method). This baseline is included as a reference for classical structured-light calibration assumptions. 
+
+• Pixel-wise polynomial calibration: per-pixel phase-depth regression of order-k polynomials using QR decomposi-tion. For this research, k = 3 was used. 
+
+• Pixel-wise rational calibration: per-pixel 1D rational mapping using QR decomposition. Singularities during reconstruction are detected as outliers and ignored during registration. For fair comparison, all phase maps used by per-pixel meth-ods are defined on the same undistorted reference-camera grid. When a baseline is naturally defined in rectified coordinates, we report only mesh-level metrics (Section 4.3) unless an explicit common resampling is performed. For the proposed model, we evaluate both the a ffi ne and perspective forms, each with (i) no correction field ( R ≡ 0) and (ii) a bounded, smooth correction field ( R , 0). 
+
+5.2. Calibration Diagnostics and Spatial Consistency 
+
+This subsection evaluates calibration outcomes on planar data to characterize spatial consistency and the role of the cor-rection field. Following the convention of Section 4.3, we em-phasize diagnostics of spatial stability rather than data misfit alone. We visualize the estimated correction field R(u, v) for the affi ne and perspective models and report summary statistics (RMS, peak-to-peak, and smoothness proxy). Representative maps are shown in Fig. 3. The magnitude of R is bounded by 
+
+Rmax = 2μm , and we verify that the learned R remains well within this bound across all calibration captures. For per-pixel models, training misfit approaches numerical precision and is therefore not interpreted as general measure-ment accuracy, especially for near-a ffi ne models which generally approach floating point precision. For the proposed model, train-ing misfit decreases when R is enabled, reflecting the role of the correction field in capturing repeatable bias patterns while preserving spatial structure. The model used for the experiment 80 200 400          
+
+> u(pixel)
+> 0
+> 200
+> 400
+> v (pixel)
+> (a)
+> -10 4-10 2010 210 4
+> c0Figure 4: Representative spatial parameter map of c0,uv illustrating pixel-to-pixel instability in per-pixel calibration of polynomial with order 3. Only contains pixels deemed valid by M(u,v).
+
+resulted in a training misfit of 3.344 (0.285) (R = 0) and 3.032 (0.277) (R , 0) for the a ffi ne case, while the perspective case resulted in 1.142 (0.384) (R = 0) and 0.681 (0.251) (R , 0). To relate these diagnostics to conventional per-pixel cali-bration, Fig. 4 shows a representative coe ffi cient map from a polynomial fit. Unlike the low-dimensional parameterization of the proposed model, per-pixel coe ffi cient fields can fluctu-ate sharply across neighboring pixels, providing a direct visual explanation for the structured surface artifacts later seen on freeform reconstructions. 
+
+5.3. Dental Reconstruction Accuracy Against Scanner Ground Truth 
+
+We evaluate freeform reconstruction accuracy using point-to-surface deviations between reconstructed meshes and scanner GT (Section 4.3). All methods use the same phase retrieval and masking rules when applicable; only the phase-to-depth conversion di ff ers. Fig. 5 shows 3D deviation maps for one of the views using a fixed color scale across methods along with raw image and reconstruction results. The proposed method produces smoother, spatially consistent surfaces compared to pixel-wise calibration, while maintaining comparable deviation levels to the active-stereo baseline. Table 2 summarizes deviation statistics for five dental views and an aggregate across views. The proposed a ffi ne and perspective models with R , 0 im-prove upon pixel-wise polynomial and rational baselines and achieve accuracy comparable to active-stereo. The R ≡ 0 vari-ants remain competitive in near-a ffi ne regimes, but generally underperform the R , 0 variants on freeform surfaces. This behavior is consistent with the calibration diagnostics of Section 5.2: the shared spatial parameterization suppresses the coe ffi cient-level instability visible in Fig. 4, yielding smoother reconstructed geometry while retaining competitive accuracy. In this setting, the main benefit of the proposed model is improved spatial coherence of the learned phase–depth relation rather than lower calibration-sample misfit. 
+
+5.4. Spatial Interpolation Verification 
+
+This experiment evaluates whether the proposed spatially coupled model remains stable when calibration supervision is available only on a subregion of the image. Here, “spatial inter-polation” refers to the stability of the calibrated mapping over the full native undistorted grid; we do not interpolate phase maps or depth maps themselves. This distinction matters because conventional per-pixel cal-ibration estimates independent parameter values only where valid labels are available. In contrast, the proposed mapping is defined directly on the native reference-camera grid through a low-dimensional dependence on ( u, v), optionally augmented by a bounded smooth correction field R(u, v). The experiment therefore tests whether that spatial structure yields a stable full-frame mapping under reduced calibration coverage, rather than whether missing measurements can be inferred outside the ob-served region. Because active stereo provides reliable supervision only on a subset of pixels, we restrict calibration to a 200 × 300 sub-region and exclude all other pixels from Mn,uv . The calibrated model is then applied to full-frame dental phase maps, and the resulting depth is compared, per pixel over the common valid mask, against the reconstruction obtained under full-frame cal-ibration. We report results for both R ≡ 0 and R , 0 variants in Table 3. We emphasize that this metric quantifies the stabil-ity (self-consistency) of the calibrated mapping under reduced coverage, not its accuracy against scanner ground truth. As ex-pected, the R ≡ 0 variants are the most stable (depth changes of 0.17–0 .31 μm), since they depend only on the low-dimensional shared parameters, which remain well constrained even when estimated from a subregion. The R , 0 variants change more (≈ 1 μm) because the correction field is weakly constrained out-side the supervised subregion; this is the cost of its additional flexibility and indicates that, under sparse calibration coverage, the regularized base mapping ( R ≡ 0) is preferable. We additionally note that error typically increases near im-age borders for all methods. We intentionally do not exclude border regions from evaluation, since edge behavior is part of the practical operating envelope. 
+
+6. Conclusion 
+
+We presented a spatially coupled phase–depth calibration for fringe projection profilometry in which a shared image-wide transformation is defined on the undistorted reference-camera grid and, when needed, augmented by a bounded, spatially smooth correction field. Planar calibration targets determine the form of the shared mapping, while the correction field cap-tures small repeatable deviations from that model. Two model variants were considered: an a ffi ne mapping ap-propriate for near-linear phase–depth regimes, and a perspective (linear-fractional) mapping for wider ranges where projective eff ects are more pronounced. To accommodate repeatable sys-tematic e ff ects not captured by the low-dimensional model, we 9(a) (b) (c) (d) (e) (f)       
+
+> Figure 5: Representative dental reconstructions and deviation maps against scanner ground truth, corresponding to View 4 of Table 2. Maximum deviation is capped at 0.2 mm. Coverage is 92% for rectified models and 84% for per-pixel models. (a) Raw, (b) Proposed A ffi ne model, (c) Proposed Perspective model, (d) Conventional Polynomial model with k=3, (e) Conventional Rational model with k=1, (f) Conventional Active Stereo. Table 2: Dental reconstruction deviation against scanner ground truth. Reported values are RMSE point-to-surface distances after rigid registration. (Section 4.3).
+
+Method View 1 View 2 View 3 View 4 View 5 Aggregate Active stereo 11.5 10.9 10.1 11.4 9.3 10.64 Geometric triangulation 14.1 12.2 11.9 12.0 12.5 12.54 Pixel-wise poly 10.7 13.3 15.0 14.4 13.3 13.34 Pixel-wise rational 19.4 16.4 14.4 10.2 11.8 14.44 Proposed a ffi ne ( R = 0) 18.8 15.9 12.7 14.4 10.1 14.38 Proposed a ffi ne ( R , 0) 16.8 13.1 12.2 13.4 9.2 12.94 Proposed perspective ( R = 0) 14.2 15.6 12.9 9.8 9.9 12.48 Proposed perspective ( R , 0) 13.1 14.0 12.2 10.4 9.8 11.90     
+
+> Table 3: E ff ect of reduced calibration coverage. Reported values summarize the per-pixel depth di ff erence relative to full-frame calibration (480 ×528), computed over the common valid mask M(u,v) (Section 4.3).
+
+Variant Subregion RMSE( ∆z) median(IQR) Affi ne ( R = 0) 200 ×300 0.17 μm 0.17 (0.03) μmAffi ne ( R , 0) 200 ×300 1.03 μm 1.24 (1.44) μmPerspective ( R = 0) 200 ×300 0.31 μm 0.10 (0.29) μmPerspective ( R , 0) 200 ×300 1.08 μm 0.78 (1.21) μmintroduced a bounded, spatially smooth correction field R(u, v)that is invariant across calibration captures. Experimental results show that the proposed mapping yields substantially improved spatial coherence compared with conventional pixel-wise poly-nomial and rational calibration, while achieving reconstruction accuracy comparable to an active-stereo baseline on freeform dental targets with scanner ground truth. A practical advantage of the method is that calibration is carried out on the undistorted reference-camera grid even when supervision is obtained from a rectified stereo pipeline. In the proposed formulation, this is achieved by mapping planar depth supervision onto the camera grid during calibration, so that phase maps do not need to be rectified. The resulting runtime mapping is then evaluated directly on that grid using only element-wise operations. The proposed method assumes accurate reference-camera undistortion and planar calibration targets that are well described by a single plane in the stereo reconstruction used for supervi-sion. Violations of these assumptions (e.g., residual lens distor-tion, imperfect planarity, or low-confidence stereo) can bias the estimated mapping. The correction field R(u, v) mitigates repeat-10 able systematic e ff ects but is explicitly constrained in amplitude and smoothness; consequently, large unmodeled distortions or operation outside the valid measurement volume may not be fully compensated. In practice, reconstruction performance de-pends on the chosen parameterization and regularization strength of R; we therefore report results for both R ≡ 0 and R , 0 to make this trade-o ff explicit. In addition, the experimental calibra-tion protocol varied plane depth while keeping plane orientation approximately fixed; broader pose diversity may be beneficial in other operating regimes, but was not explored here because pose-dependent changes in phase quality and valid support would confound the intended evaluation of the spatial model itself. A second limitation concerns phase quality. During calibra-tion, depth supervision on planes benefits from geometric fitting, whereas we do not enforce an analogous planar constraint on the measured phase field. Although fitting or denoising phase to an ideal planar field can improve training convergence and reduce calibration misfit, we found that such calibration-time phase smoothing may not transfer to freeform reconstructions and can degrade accuracy when the runtime phase noise statistics di ff er. As with other per-pixel mappings, the achievable reconstruction accuracy is therefore sensitive to phase SNR and to the phase-denoising strategy used at inference time. Accordingly, the role of the proposed model is not to enforce exact planarity in the re-covered phase-to-depth relation, but to retain a plane-consistent base structure while absorbing repeatable departures that persist in practical reconstruction. Overall, the proposed calibration retains the flexibility of direct phase–depth fitting while enforcing a shared spatial struc-ture across the image, thereby improving global consistency and reducing structured artifacts in reconstructed surfaces. 
+
+CRediT authorship contribution statement Sehoon Tak Conceptualization, Methodology, Software, Val-idation, Investigation, Data curation, Visualization, Writing – original draft, Writing – review & editing. 
+
+Jae-Sang Hyun Conceptualization, Methodology, Supervision, Project administration, Writing – review & editing. 
+
+Declaration of competing interest 
+
+The authors declare that they have no known competing financial interests or personal relationships that could have ap-peared to influence the work reported in this paper. 
+
+Data availability 
+
+Raw image data are not publicly available due to confiden-tiality restrictions regarding the hardware setup. Processed data supporting the findings of this study (e.g., reconstructed meshes, error statistics, and calibration parameter fields) and the scripts used to generate the reported figures are available from the cor-responding author upon reasonable request. 
+
+Acknowledgements 
+
+This research was supported by the Technology Innovation Program (Project Name: Development of AI autonomous contin-uous production system technology for gas turbine blade main-tenance and regeneration for power generation, Project Number: RS-2025-25447257, Contribution Rate: 50%) funded by the Ministry of Trade, Industry and Resources (MOTIR, Korea), the Culture, Sports and Tourism R&D Program through the Ko-rea Creative Content Agency grant funded by the Ministry of Culture, Sports and Tourism in 2024 (Project Name: Global Talent for Generative AI Copyright Infringement and Copyright Theft, Project Number: RS-2024-00398413, Contribution Rate: 30%), and the National Research Foundation of Korea (NRF) grant funded by the Korea government (MSIT) (Project Number: RS-2026-25498577, Contribution Rate: 20%). 
+
+References                   
+
+> [1] J. Xu, S. Zhang, Status, challenges, and future perspectives of fringe projection profilometry, Optics and Lasers in Engineering 135 (2020) 106193. [2] J. Qian, S. Feng, M. Xu, T. Tao, Y. Shang, Q. Chen, C. Zuo, High-resolution real-time 360 3d surface defect inspection with fringe projection profilometry, Optics and Lasers in Engineering 137 (2021) 106382. [3] L. Bu, R. Wang, X. Wang, Z. Hou, Y. Zhou, Y. Wang, F. Bu, Calibration method for fringe projection profilometry based on rational function lens distortion model, Measurement 217 (2023) 112996. [4] J. Salvi, X. Armangu ´e, J. Batlle, A comparative review of camera calibrat-ing methods with accuracy evaluation, Pattern Recognition 35 (7) (2002) 1617–1635. [5] O. Faugeras, Three-dimensional computer vision: a geometric viewpoint, MIT press, 1993. [6] Z. Zhang, A flexible new technique for camera calibration, IEEE Transac-tions on Pattern Analysis and Machine Intelligence 22 (11) (2000) 1330– 1334. [7] R. Vargas, L. A. Romero, S. Zhang, A. G. Marrugo, Pixel-wise rational model for a structured light system, Opt. Lett. 48 (10) (2023) 2712–2715. [8] S.-J. Son, Y. An, J.-S. Hyun, Fringe projection profilometry using model-free distorted patterns, Opt. Express 33 (8) (2025) 17527–17543. [9] C. Zuo, S. Feng, L. Huang, T. Tao, W. Yin, Q. Chen, Phase shifting algorithms for fringe projection profilometry: A review, Optics and Lasers in Engineering 109 (2018) 23–59. [10] S. Zhang, Recent progresses on real-time 3d shape measurement using digital fringe projection techniques, Optics and Lasers in Engineering 48 (2) (2010) 149–158, fringe Projection Techniques. [11] Y. An, J.-S. Hyun, S. Zhang, Pixel-wise absolute phase unwrapping using geometric constraints of structured light system, Opt. Express 24 (16) (2016) 18445–18459. doi:10.1364 /OE.24.018445. [12] H. Hirschmueller, Stereo processing by semi-global matching and mutual information, tpami pattern analysis and machine intelligence (2008). [13] C. Loop, Z. Zhang, Computing rectifying homographies for stereo vision, in: Proceedings. 1999 IEEE Computer Society Conference on Computer Vision and Pattern Recognition (Cat. No PR00149), Vol. 1, 1999, pp. 125–131 Vol. 1. doi:10.1109 /CVPR.1999.786928. [14] S.-J. Son, Y. An, J.-S. Hyun, Quasi-calibration method for structured light system with auxiliary camera, Optics and Laser Technology 179 (2024) 111369. [15] R. Hartley, A. Zisserman, Multiple View Geometry in Computer Vision, 2nd Edition, Cambridge University Press, 2004. [16] B. Li, S. Zhang, Flexible calibration method for microscopic structured light system using telecentric lens, Opt. Express 23 (20) (2015) 25795– 25803. doi:10.1364 /OE.23.025795. [17] X. Zhang, L. Zhu, Projector calibration from the camera image point of view, Optical Engineering 48 (11) (2009) 117208–117208.
+
+11
