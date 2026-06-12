@@ -1,0 +1,447 @@
+Title: Efficient Minimal Solvers for Visual-Inertial Relative Pose Estimation in Multi-Camera Systems
+
+URL Source: https://arxiv.org/pdf/2606.09477v1
+
+Published Time: Tue, 09 Jun 2026 02:18:15 GMT
+
+Number of Pages: 9
+
+Markdown Content:
+# Efficient Minimal Solvers for Visual-Inertial Relative Pose Estimation in Multi-Camera Systems 
+
+Tao Li 1, Zhenbao Yu 2, Banglei Guan 2∗, Jianli Han 1 and Weimin Lv 1
+
+Abstract— Estimating the relative poses of multi-camera systems is a fundamental problem in computer vision, with critical applications in autonomous vehicles, mobile devices, and unmanned aerial vehicles (UAVs). However, existing solutions often suffer from high computational complexity or rely on an excessive number of point correspondences, limiting their real-world applicability. To address these limitations, we propose two efficient minimal solvers for estimating the relative poses of multi-camera systems using a novel param-eterization. The first solver leverages the vertical direction prior provided by Inertial Measurement Units (IMUs), while the second utilizes the rotation axis direction prior from IMUs. Our methods require only four point correspondences and reduce the problem of multi-camera relative pose es-timation to solving a univariate 6th-degree polynomial— a significant improvement over existing approaches, which typically involve 8th-degree polynomials. This reduction in computational complexity and correspondence requirements makes our solvers particularly effective when integrated into RANSAC frameworks, demonstrating strong potential for visual odometry applications. Through rigorous evaluations on synthetic data and the KITTI benchmark, our methods achieved superior computational efficiency and competitive accuracy compared to state-of-the-art algorithms. 
+
+I. Introduction Relative pose estimation between two camera views is a core problem in computer vision, playing a key role in applications such as autonomous navigation, industrial inspection, and augmented reality [1]–[5]. This problem has been extensively studied, with classical solutions including the normalized 8-point algorithm [6] and the 5-point algorithm [7]. The accuracy, efficiency, and ro-bustness of these algorithms are crucial, as they directly determine both the precision of visual localization and the quality of subsequent 3D reconstruction, ultimately affecting their real-world applicability. Based on the number of cameras used, relative pose estimation systems can be generally categorized into monocular [8]–[10] and multi-camera configurations [11]– [14]. Monocular systems utilize a single camera, while multi-camera systems employ multiple cameras rigidly mounted on a common platform. Compared to monocu-lar systems, multi-camera systems offer several distinct                  
+
+> Corresponding author: Banglei Guan.
+> 1Tao Li, Jianli Han, and Weimin Lv are with the College of Aerospace Science and Engineering, Naval Aviation Univer-sity, Yantai 264000, China litao0931@alumni.nudt.edu.cn, jianli-han1585@163.com, 2016150315@jou.edu.cn
+> 2Zhenbao Yu, and Banglei Guan is with the College of Aerospace Science and Engineering, National University of Defense Technol-ogy, Changsha 410000, China zhenbaoyu@whu.edu.cn, guanban-glei12@nudt.edu.cn
+
+f1 f2
+
+## R t  
+
+> Multi -camera
+> system
+> Multi -camera
+> system
+> Fig. 1. The relative pose estimation for multi-camera systems.
+
+advantages. Primarily, they provide a wider field of view and richer environmental information, enabling synchro-nized observations from different viewpoints. Further-more, by leveraging pre-calibrated baseline distances between cameras, multi-camera systems can directly recover absolute scene scale, thereby resolving the inher-ent scale ambiguity problem in monocular approaches. Moreover, multi-camera systems exhibit remarkable flex-ibility, as the number and orientation of cameras can be precisely tailored to suit specific scenes and tasks, en-abling better adaptation to diverse challenging scenarios. While multi-camera systems offer numerous advan-tages, they also introduce significant challenges. Unlike monocular systems, where light rays converge at asingle center of projection, multi-camera configurations exhibit more complex geometric constraints due to their multiple projection centers [15], see Fig. 1. This inherent complexity makes multi-camera relative pose estimation considerably more intricate and challenging. As a result, algorithms for multi-camera pose estimation typically require more feature correspondences and ex-hibit greater computational complexity. For instance, the linear method for multi-camera systems necessitates at least 17 point correspondences [16], a substantial increase compared to the 8 point correspondences required for monocular systems. When integrated with the RANSAC framework [17]–[19], this increased point correspondence requirement would further amplify the iteration count, thereby degrading computational efficiency and making it challenging to meet real-time requirements. Therefore, 
+
+> arXiv:2606.09477v1 [cs.CV] 8 Jun 2026
+
+it is desirable to find more effective multi-camera solvers that can guarantee both high solution accuracy and computational efficiency. In this paper, we introduce two novel minimal solu-tions for this problem. The main contributions of this work are as follows:  
+
+> •
+
+Using a novel depth-based parameterization for multi-camera system translation, we reformulate the new generalized epipolar constraint.  
+
+> •
+
+We introduce two novel minimal solvers using four point correspondences for multi-camera relative pose estimation. The first exploits the IMU vertical direction prior, while the second uses the IMU rota-tion axis direction prior. Both approaches reduce the problem to solving a 6th-degree univariate polyno-mial, offering significant computational advantages over existing 8th-degree solvers [20]–[22].  
+
+> •
+
+Extensive experiments demonstrate that our pro-posed solvers achieved competitive computational efficiency and accuracy compared to state-of-the-art methods. II. RELATED WORK For generalized camera pose estimation, Stewénius et al. introduced the 6-point minimal solver based on Gröbner-basis theory, which generates up to 64 potential solutions, resulting in significant computational demands [23]. Guan et al. proposed a different set of 6-point minimal solvers, including both a general solver and specialized versions tailored for two-camera rig config-urations. A key advancement lies in the incorporation of a ray bundle constraint, which significantly reduces the potential solution space [24]. In addition to the minimum solvers based on 6-point correspondences, Li et al. advanced the linear 17-point method by incorporating camera configuration effects on algorithm performance, resulting in enhanced capability to handle degenerate scenarios such as locally central and axial configurations [16]. Kim et al. systematically analyzed the degradation of the 17-point method through the decomposition of the measurement matrix into ray direction and projection center components [25]. Chen et al. further demon-strated how visual overlap significantly impacts both the solvability and precision of the 17-point method, providing key insights for practical implementation [26]. Complementary to minimal solvers depending on point correspondences, some approaches leveraging affine cor-respondences have also shown promising experimental performance [27], [28]. Recent advances in generalized camera pose estimation have demonstrated the effectiveness of incorporating motion constraints [11] or inertial sensors [20]. Lee et al. introduced a minimal 4-point algorithm for estimating the relative pose of multi-camera systems with known vertical direction [20]. Utilizing the hidden variable resultant method, their approach reduces the problem to solving an 8th-degree univariate polynomial, which can yield up to 8 real solutions. Beyond utilizing vertical direction information, Liu et al.’s 4-point algorithm using first-order rotation approximation achieves remarkable processing efficiency, making it highly suitable for real-time applications in dense urban driving conditions [21]. Given the known rotation axis direction, Sweeney et al. developed an additional 4-point algorithm for relative pose estimation between generalized cameras [22]. More recently, Martyushev et al. introduced a minimal 5-point algorithm that leverages the known relative rotation angle [29]. These IMU-constrained approaches are par-ticularly relevant to our work as they demonstrate how prior orientation information can significantly simplify the multi-camera problem while maintaining real-time performance. III. Generalized Camera Constraints under General Motion A. Parameterization Consider a motion platform equipped with multiple cameras, also known as a multi-camera system, that moves from time t1 to t2. A 3D point P is captured by cameras ci and cj at different time instances. The motion platform’s coordinate systems at these two different instances are denoted as f1 and f2, respectively. Following the recent work of [27], the world coordinate system W
+
+is defined with its origin at point P and its orientation aligned with the platform’s initial coordinate frame f1.Throughout this paper, Tba represents the transfor-mation matrix from frame a to frame b. Specifically, the transformation matrix from frame ci to frame f1 is 
+
+Tf 1ci = [Qi si
+
+], and the transformation matrix from frame f1 to frame W is TWf 1 = [R1 t1
+
+]. Similarly, the transformation matrix from frame cj to frame f2 is 
+
+Tf 2cj = [Qj sj
+
+], and the transformation matrix from frame f2 to frame W is TWf 2 = [R2 t2
+
+]. Since the orientation of the world coordinate system W aligns with the coordinate system f1, the rotation matrix R1 = I.The transformation matrix from frame f1 to frame f2 is denoted as Tf 2f 1 = [R t], where R denotes the rota-tion matrix and t represents the translation vector. The specific meanings of each coordinate system, along with their corresponding matrix and vector representations, are illustrated in Fig. 2. Based on the coordinate system definitions above, the following transformation relationship holds: 
+
+¯Tf 2f 1 = ¯Tf 2W ¯TWf 1 =
+
+[R2 t2
+
+0 1
+
+] [ I −t1
+
+0 1
+
+]
+
+=
+
+[R2 −R2t1 + t2
+
+0 1
+
+] . (1) Here, ¯T denotes the homogeneous augmentation of the 
+
+3 × 4 matrix T, obtained by appending the row vector 
+
+[0 , 0, 0, 1] . From Eq. (1), we obtain: 
+
+R = R2
+
+t = −R2t1 + t2
+
+. (2) W
+
+x y z
+
+Qj sj
+
+x
+
+y z
+
+f1
+
+x y z
+
+f1
+
+x y z
+
+W
+
+x y z
+
+Qj sj
+
+x
+
+y z
+
+f1
+
+x y z R, t 
+
+R1, t 1 R2, t 2
+
+Rcjci , t cjci Fig. 2. The definition of coordinate systems in multi-camera systems. 
+
+In the generalized camera model, the point correspon-dence ui ↔ uj of the 3D point P can be viewed as the intersection of two Plücker lines Li = [xiT qiT]T and 
+
+Lj = [xj T qj T]T. In the Plücker line representation, 
+
+x∗ denotes the unit direction vector, given by x∗ =(Q∗ ∗ u∗)/ ∥∥Q∗ ∗ u∗
+
+∥∥, and q∗ = s∗ × x∗ denotes the moment vector. According to Plücker line geometry, any point U(λ) on the line can be parameterized as: 
+
+U(λ) = x × q + λx, λ ∈ R. (3) Since the 3D point P lies at the intersection of two Plücker lines, its coordinates can be parameterized by these two lines simultaneously. The corresponding coor-dinates of point P along these two lines are respectively given by U(λ1) and U(λ2). Specifically, U(λ1) and 
+
+U(λ2) represent the coordinates of P within the motion platform’s coordinate systems f1 and f2, respectively, where P corresponds to the origin [0 , 0, 0] T of the world coordinate system W. Therefore, the following relationships hold: 
+
+U(λ1) = x1 × q1 + λ1x1 = R1[0 , 0, 0] T + t1
+
+U(λ2) = x2 × q2 + λ2x2 = R2[0 , 0, 0] T + t2
+
+. (4) Then, the expressions of t1 and t2 can be derived using the depths λ1 and λ2.
+
+t1 = x1 × q1 + λ1x1
+
+t2 = x2 × q2 + λ2x2
+
+. (5) This shows that the translation vector t can be expressed using two depth parameters λ1 and λ2, rather than adopting the conventional [tx, t y , t z ]T representation. Utilizing this novel parameterization, we can derive new formulations for the generalized epipolar constraint (GEC). B. Generalized Epipolar Constraint Since Li and Lj represent Plücker lines in two distinct coordinate frames f1 and f2 respectively, they need to be transformed into a common coordinate system. When transforming the Plücker line Li from frame 
+
+f1 to frame f2, the resulting coordinate are given by 
+
+L′ 
+
+> i
+
+=
+
+[
+
+xi′T qi′T]T
+
+. The relationship between L′ 
+
+> i
+
+and 
+
+Li is described by the following transformation: 
+
+L′ 
+
+> i
+
+=
+
+[ R 0
+
+[t]×R R
+
+]
+
+Li =
+
+[ Rx i
+
+Rq i + [ t]×Rx i
+
+]
+
+. (6) According to [15], the necessary and sufficient condi-tion for two straight lines L′ 
+
+> i
+
+and Lj to intersect within the same coordinate system f2 is given by: 
+
+xi′Tqj + xj Tqi′ = 0 . (7) By substituting (6) into (7), the generalized epipolar constraint can be derived as follows: 
+
+(Rx i)Tqj + xj TRq i + xj T[t]×Rx i = 0 . (8) Substituting (2) into (8) yields: 
+
+xiTRTqj + xj TRq i + xj T([ t2]×R − R[t1]×)xi = 0 .
+
+(9) Finally, by substituting (5) into (9), the generalized epipolar constraints formulated in terms of depths λ1
+
+and λ2 can be derived: 
+
+− λ1xj TR[x1]×xi + λ2xj T([ x2]×R)xi + xj TRq i+
+
+xiTRTqj + xj T([ x2 × q2]×R − R[x1 × q1]×)xi = 0 .
+
+(10) IV. 4-Point algorithm for Multi-Camera Systems A. 4-Point algorithm with Known Vertical Direction Through IMU alignment, the platform’s y-axis can be precisely aligned with gravitational direction, ensuring orthogonality to the ground plane. Let Rimu 1 and 
+
+Rimu 2 denote the alignment matrices derived from IMU measurements at timestamps t1 and t2, respectively. The relationship between the original rotation matrix R and its aliened counterpart Rv2v1 is given by: 
+
+R = Rimu 2TRv2v1Rimu 1. (11) Then, the problem can be reduced to solving for Rv2v1,which depends solely on the yaw angle. Using Cayley parameterization, the aligned rotation matrix Rv2v1
+
+takes the form: 
+
+Rv2v1 = 11 + s2
+
+
+
+1 − s2 0 2s
+
+0 1 + s2 0
+
+−2s 0 1 − s2
+
+, (12) where θy denotes the yaw angle and s = tan( θy /2) .Substituting (11) into the generalized epipolar con-straint (10), we can obtain: 
+
+− λ1˜xT 
+
+> j
+
+Rv2v1[˜x1]×˜xi + λ2˜xT 
+
+> j
+
+([ ˜x2]×Rv2v1)˜xi
+
++ ˜xT 
+
+> j
+
+Rv2v1˜qi + ˜xT 
+
+> i
+
+Rv2v1T˜qj
+
++ ˜xT 
+
+> j
+
+([ ˜x2 × ˜q2]×Rv2v1 − Rv2v1[˜x1 × ˜q1]×)˜xi = 0 
+
+.
+
+(13) Comparing (13) with (10) reveals their structural simi-larity, with the key distinction being that the variables in (13) have been adjusted by alignment matrices. The detailed adjustments include: ˜xi = Rimu 1xi, ˜xj =
+
+Rimu 2xj , ˜qi = Rimu 1qi, ˜qj = Rimu 2qj .Using three non-origin point correspondences, we de-rive three equations from (13). We specifically exclude the point correspondence corresponding to the world origin P because its constraint equation reduces to 0, providing no valuable information for solving the unknown parameters. The three remaining equations can be organized in matrix form as: 
+
+F3×3(s)
+
+λ1
+
+λ2
+
+1
+
+ = 03×1. (14) Since the system of equations (14) has a non-trivial solution, the matrix F(s) must satisfy rank (F(s)) ≤ 2,which implies: det (F(s)) = 0 . (15) Based on (15), we can obtain a 6th-degree univariate polynomial in the variable s, providing up to 6 real solutions. Once the solutions for s are obtained, they can be substituted back into (12) and subsequently into (11) to recover the complete rotation matrix R.B. 4-Point algorithm with Known Rotation Axis Direc-tion Instead of using the Cayley parameterization or Euler angles to represent rotations, this section employs the quaternion representation. The rotation quaternion is de-noted as [q1 q2 q3 ω]T, which can also be compactly written as [vT ω]T, where v = [ q1, q 2, q 3]T is the vector part and ω is the scalar part. For a unit quaternion, the vector component v defines the rotation axis direction, and the scalar component ω gives the cosine of half the rotation angle. The relationship between a unit quaternion and its corresponding rotation matrix is given by: 
+
+R = vv ⊤ + ω2I + 2 ω[v]× + [ v]×
+
+> 2
+
+, (16) where [v]× denotes the skew-symmetric matrix of vector 
+
+v.When the quaternion representing R is not necessarily normalized, its vector and scalar components are denoted as ˜v and ˜ω respectively. Here, ˜v = v/|| v|| is the unit vector along the rotation axis, and ˜ω = ω/ || v|| . The ro-tation matrix ˜R constructed using these non-normalized components follows the same formula structure and is proportional to the true rotation matrix R:
+
+R ∼ ˜R = ˜v˜ v⊤ + ˜ ω2I + 2˜ ω[˜v]× + [ ˜v]×
+
+> 2
+
+. (17) Note that ˜R and R differ only by a scale factor, which does not affect the solution validity since the generalized epipolar constraint is a homogeneous equation. Substituting the quaternion-based rotation represen-tation from (17) into the generalized epipolar constraint (10), we can establish a system of three equations: 
+
+F3×3(˜ ω)
+
+
+
+λ1
+
+λ2
+
+1
+
+ = 03×1. (18) Analogous to the derivation of (15), this system leads to a similar determinant condition: det (F(˜ ω)) = 0 . (19) Consistent with the previous finding for the variable s,expanding (19) yields a 6th-degree univariate polynomial in the variable ˜ω, which provides up to 6 real solutions. The obtained solutions for ˜ω, combined with the assumed known rotation axis ˜v, define an unnormalized quaternion. By normalizing this quaternion, we recover the unit vector v and scalar ω components of the unit quaternion. Subsequently, substituting these normalized components into equation (16) enables the complete recovery of the rotation matrix R.C. Translation Vector Estimation Once the values for s or ˜ω are determined from the 6th-degree polynomial, they are substituted into the corresponding matrix F(·) defined in (14) or (18). We can obtain a homogeneous linear equation system in terms of the unknown depth parameters λ1 and λ2. Using Singular Value Decomposition (SVD), the depth parameters λ1
+
+and λ2 are obtained from the null space of the matrix 
+
+F(·).Subsequently, by substituting these calculated depths 
+
+λ1 and λ2 back into the definitions of t1 and t2 as provided in (5), we can compute the specific values for 
+
+t1 and t2. Finally, the overall translation vector t can be recovered using the following formula: 
+
+t = −Rt 1 + t2, (20) where R corresponds to the rotation matrix determined in the previous steps through either the Cayley param-eterization or quaternion representation. D. Degeneracy Analysis Prior work [20] has identified that degeneracy occurs when a multi-camera system undergoes pure translation while relying solely on intra-camera correspondences. Although our approach employs the depth-based param-eterization for translation representation rather than the conventional [tx, t y , t z ]T formulation, the multi-camera system still exhibits degeneracy under pure translational motion with intra-camera correspondences, resulting in unrecoverable scale factors [27]. Consider the case of pure translation where the relative rotation R = I, combined with intra-camera correspondences where si = sj . Un-der these conditions, the cross-term in the generalized epipolar constraint vanishes: 
+
+xiTRTqj + xj TRq i = xiTsi × xj + xj Tsi × xi = 0.
+
+(21) Consequently, the generalized epipolar constraint (9) reduces to the following form: 
+
+xj T([ t2 − t1]×)xi = 0 . (22) In this degenerate case, the constraint matrix becomes homogeneous with respect to the relative translation t2 −
+
+t1. Consequently, introducing a free parameter κ reveals that κ(t2 − t1) always satisfies equation (22), indicating the loss of scale information. V. Experiment In the experiments, the solver presented in Section IV-A is denoted as 4pt-Our, while the solver from Sec-tion IV-B is referred to as 4pt-Our-Axis. For comprehen-sive comparison, we benchmark our solvers against both state-of-the-art 4-point methods, including 4pt-Lee [20], 4pt-Liu [21], and 4pt-Sweeney [22], as well as the recently proposed 5-point method 5pt-Martyushev [29]. In the experiments, we evaluate rotation and translation errors using the following metrics [27]: 
+
+εR = arccos((trace( Rgt RT ) − 1) /2) 
+
+εt = arccos(( tTgt t)/(∥tgt ∥ · ∥ t∥)) . (23) Here, Rgt and tgt represent the ground truth values, while R and t represent the estimated values. εR
+
+represents the angular error of the rotation, εt indicates the angular error of the translation. A. Efficiency Comparison and Numerical Stability -20 -15 -10 -5 0Rotation error (log10)         
+
+> 00.2 0.4 0.6 0.8 11.2 Density
+> 5pt-Martyushev
+> 4pt_Lee
+> 4pt_Liu
+> 4pt_Sweeney
+> 4pt_Our
+> 4pt_Our_Axis
+> (a) εR-20 -15 -10 -5 0Translation direction error (log10)
+> 00.2 0.4 0.6 0.8 Density
+> 5pt-Martyushev
+> 4pt_Lee
+> 4pt_Liu
+> 4pt_Sweeney
+> 4pt_Our
+> 4pt_Our_Axis (b) εt
+> Fig. 3. Numerical stability comparison of relative pose estimation solvers.
+
+To ensure a fair comparison, all solvers were evaluated on an AMD R9-7945HX 2.50 GHz processor using C++ implementations. Table I presents the average computation times across 10,000 independent runs. The experimental results indicate that all 4-point solvers are substantially more computationally efficient than the 5-point solver 5pt-Martyushev [29]. Among them, 4pt-Liu [21] achieves the fastest runtime due to its use of a first-order rotation approximation to simplify the computation. Among solvers that do not rely on such approximations, our proposed 4pt-Our and 4pt-Our-Axis methods run more efficiently than 4pt-Lee [20] and 4pt-Sweeney [22]. This efficiency gain stems from our derivation of more compact polynomial equations with fewer terms, which reduces the computational burden of polynomial expansion and root-solving. Overall, these results demonstrate the strong computational efficiency of our proposed solvers. Fig. 3 presents a comparative analysis of solver numer-ical stability under noise-free conditions. Each solver was executed 10,000 independent runs, with the probability density functions plotted against the log 10 of the rotation errors and translation errors. A higher and more left-shifted peak in these distributions indicates superior numerical stability, whereas a broader and right-shifted distribution suggests poorer stability. Among solvers utilizing IMU vertical angle priors, our proposed 4pt-Our achieves exceptional numerical stability, with errors con-centrated around 10 −15 . The 4pt-Lee [20] solver shows nearly comparable performance, whereas 4pt-Liu [21] ex-hibits degraded stability due to its reliance on first-order rotation approximation. Similarly, for solvers using IMU rotation axis priors, our 4pt-Our-Axis method shows better performance, with errors concentrated around 
+
+10 −14 .B. Experiments on Synthetic Data For synthetic evaluation, we adopted a multi-camera system consisting of two simulated cameras with afixed baseline of 1 meter. The system’s position and orientation varied randomly over time, with translational displacements limited to a maximum of 3 meters and rotational variations confined to a range of −10 ◦ to 
+
+10 ◦. The camera intrinsics were configured with a focal length of 400 pixels and principal point coordinates centered at (320, 240). Spatially distributed 3D points were randomly generated and designed to be simultane-ously observable by both cameras. Point correspondences were exclusively intra-camera correspondences. The eval-uation comprised 1,000 independent trials, with pose estimation accuracy quantified using median rotation and translation errors. 1) Accuracy with Image Noise: We evaluate the ac-curacy of the solvers in the presence of image noise by introducing Gaussian noise with standard deviations ranging from 0 to 1.0 pixels. The multi-camera system motion patterns included forward, random, and sideways motions. As shown in Fig. 4, the 4-point solvers generally demonstrate greater robustness to image noise compared to the 5-point solver 5pt-Martyushev [29], except in the case of sideways motion. For the 4-point solvers leveraging IMU rotation axis priors, both our proposed 4pt-Our-Axis and 4pt-Sweeney [22] achieve comparable accuracy and outperform all other evaluated methods in most experimental scenarios. For the 4-point solvers utilizing IMU vertical angle priors, our 4pt-Our and 4pt-Lee [20] exhibited similar accuracy levels, while both showed significant accuracy improvements over the 4pt-Liu [21] method. This performance disparity primarily stems from 4pt-Liu’s reliance on first-order rotation approximation, which is only effective for small-angle rotations and becomes insufficient when handling larger TABLE I Runtime comparison of relative pose estimation solvers (unit: μs ). Methods 5pt-Martyushev [29] 4pt-Lee [20] 4pt-Liu [21] 4pt-Sweeney [22] 4pt-Our 4pt-Our-Axis Runtime 591.356 28.024 8.268 22.186 21.343 14.334 
+
+angular motions. 0 0.2 0.4 0.6 0.8 1Noise standard deviation (pixel) 00.5 11.5 Translation error (degree)           
+
+> 5pt-Martyushev 4pt-Lee 4pt-Liu 4pt-Sweeney 4pt-Our 4pt-Our-Axis 00.2 0.4 0.6 0.8 1Noise standard deviation (pixel)
+> 00.05 0.1 0.15 0.2 0.25 Rotation error (degree)
+
+(a) εR0 0.2 0.4 0.6 0.8 1Noise standard deviation (pixel)  
+
+> 00.2 0.4 0.6 0.8 Translation error (degree)
+
+(b) εt0 0.2 0.4 0.6 0.8 1Noise standard deviation (pixel) 
+
+> 00.1 0.2 0.3 0.4 Rotation error (degree)
+
+(c) εR0 0.2 0.4 0.6 0.8 1Noise standard deviation (pixel)  
+
+> 00.2 0.4 0.6 0.8 11.2 Translation error (degree)
+
+(d) εt0 0.2 0.4 0.6 0.8 1Noise standard deviation (pixel) 
+
+> 00.1 0.2 0.3 0.4 0.5 0.6 Rotation error (degree)
+
+(e) εR0 0.2 0.4 0.6 0.8 1Noise standard deviation (pixel)  
+
+> 00.2 0.4 0.6 0.8 11.2 Translation error (degree)
+
+(f) εt
+
+Fig. 4. Rotation and translation errors for multi-camera systems with increasing image noise. The top, middle, and bottom rows present the performance of different solvers under forward, random, and sideways motions, respectively. 
+
+2) Accuracy with IMU Noise: In practical applica-tions, high-end IMUs can achieve angle measurement accuracy as precise as 0.02 ◦, while even low-cost IMUs typically offer errors below 0.5◦ [30]. To thoroughly evaluate our algorithm’s robustness against IMU mea-surement errors, we conducted simulations with angular noise spanning 0◦ to 1◦—a range that encompasses the performance of both commercial and industrial-grade IMUs. The evaluated methods differ in their use of IMU priors. 4pt-Lee [20], 4pt-Liu [21], and 4pt-Our rely on IMU vertical angle priors, while 4pt-Our-Axis and 4pt-Sweeney [22] leverage IMU rotation axis priors. To ensure consistency in our simulations, we generated noisy data based on IMU vertical angle noise, as this can be directly transformed into equivalent IMU rotation axis noise. Specifically, noise was introduced by perturbing the pitch and roll angles, while the image noise was kept constant at 0.5 pixels. Since the 5pt-Martyushev [29] method depends on the rotation angle rather than the vertical angle, the comparison of the impact of pitch and roll angle errors is restricted to the 4pt-Lee [20], 4pt-Liu [21], and 4pt-Sweeney [22] methods. 0 0.2 0.4 0.6 0.8 1Rotation noise in degree (Pitch) 00.5 1Rotation error (degree) 
+
+4pt-Lee 4pt-Liu 4pt-Sweeney 4pt-Our 4pt-Our-Axis 0 0.2 0.4 0.6 0.8 1Rotation noise in degree (Pitch) 
+
+> 00.2 0.4 0.6 0.8 Rotation error (degree)
+
+(a) εR0 0.2 0.4 0.6 0.8 1Rotation noise in degree (Pitch)  
+
+> 00.5 11.5 22.5 3Translation error (degree)
+
+(b) εt0 0.2 0.4 0.6 0.8 1Rotation noise in degree (Pitch) 
+
+> 00.2 0.4 0.6 0.8 1Rotation error (degree)
+
+(c) εR0 0.2 0.4 0.6 0.8 1Rotation noise in degree (Pitch)  
+
+> 00.5 11.5 22.5 Translation error (degree)
+
+(d) εt0 0.2 0.4 0.6 0.8 1Rotation noise in degree (Pitch) 
+
+> 00.2 0.4 0.6 0.8 11.2 Rotation error (degree)
+
+(e) εR0 0.2 0.4 0.6 0.8 1Rotation noise in degree (Pitch)  
+
+> 012345Translation error (degree)
+
+(f) εt
+
+Fig. 5. Rotation and translation errors for multi-camera systems with increasing IMU pitch angle noise. The top, middle, and bottom rows present the performance of different solvers under forward, random, and sideways motions, respectively. 
+
+Fig. 5 illustrates the performance of the proposed solvers under increasing pitch angle noise across forward, random, and sideways motion patterns. As the pitch angle noise increases, the accuracy of all 4-point solvers gradually degrades. Among the evaluated methods, 4pt-Our-Axis and 4pt-Sweeney [22] exhibit comparable accu-racy and consistently outperform other 4-point solvers. This enhanced performance can be attributed to their rotation representation. Since IMU rotation axis direc-tion noise is generally non-orthogonal to IMU vertical 0 0.2 0.4 0.6 0.8 1Rotation noise in degree (Pitch) 00.5 1Rotation error (degree)          
+
+> 4pt-Lee 4pt-Liu 4pt-Sweeney 4pt-Our 4pt-Our-Axis 00.2 0.4 0.6 0.8 1Rotation noise in degree (Roll)
+> 00.2 0.4 0.6 0.8 Rotation error (degree)
+
+(a) εR0 0.2 0.4 0.6 0.8 1Rotation noise in degree (Roll)  
+
+> 00.5 11.5 Translation error (degree)
+
+(b) εt0 0.2 0.4 0.6 0.8 1Rotation noise in degree (Roll) 
+
+> 00.2 0.4 0.6 0.8 1Rotation error (degree)
+
+(c) εR0 0.2 0.4 0.6 0.8 1Rotation noise in degree (Roll)  
+
+> 0.5 11.5 2Translation error (degree)
+
+(d) εt0 0.2 0.4 0.6 0.8 1Rotation noise in degree (Roll) 
+
+> 00.5 11.5 2Rotation error (degree)
+
+(e) εR0 0.2 0.4 0.6 0.8 1Rotation noise in degree (Roll)  
+
+> 00.5 11.5 2Translation error (degree)
+
+(f) εt
+
+Fig. 6. Rotation and translation errors for multi-camera systems with increasing IMU roll angle noise. The top, middle, and bottom rows present the performance of different solvers under forward, random, and sideways motions, respectively. 
+
+angle noise, this representation appears to effectively mitigate the impact of disturbances caused by IMU vertical angle noise. Meanwhile, 4pt-Our and 4pt-Lee [20] exhibit similar accuracy and perform better than 4pt-Liu [21]. Fig. 6 illustrates the performance of the proposed solvers under increasing roll angle noise across forward, random, and sideways motion patterns. As the roll angle noise increases, 4pt-Our-Axis and 4pt-Sweeney [22] exhibit comparable performance and achieve better rota-tion accuracy than the other three methods. Regarding translation estimation, 4pt-Our and 4pt-Lee [20] demon-strate similar performance, and both outperform 4pt-Liu [21] in forward motion and sideways motion. In random motion, the translation errors of 4pt-Our and 4pt-Our-Axis are also smaller than those of 4pt-Liu [21]. These results reinforce the robustness of the evaluated methods under diverse angular noise conditions. C. Experiments on Real Data The proposed methods were evaluated on the KITTI dataset [31], a widely-used benchmark for evaluating autonomous driving vision algorithms. This dataset con-tains multiple sequences, with ground truth values for se-quences 00-10 provided by its onboard GPS/IMU units. We compared the performance across all 11 sequences, which collectively contain approximately 23,000 image pairs. To ensure robustness against outliers, all methods were embedded within an RANSAC framework. Notably, the final results correspond to the initial hypotheses that maximized the inlier count; no subsequent bundle ad-justment or local optimization was performed. Detailed results are presented in Table II and Table III. 
+
+TABLE II Median rotation errors for KITTI sequences(unit: degree) Seq. 5pt-Mart. [29] 4pt-Lee [20] 4pt-Liu [21] 4pt-Sw. [22] 4pt-Our 4pt-Our -Axis 00 0.059 0.031 0.032 0.033 0.031 0.032 01 0.047 0.044 0.043 0.028 0.045 0.027 02 0.056 0.028 0.028 0.030 0.027 0.029 03 0.058 0.037 0.038 0.037 0.037 0.036 04 0.036 0.019 0.022 0.021 0.020 0.022 05 0.046 0.022 0.022 0.023 0.022 0.021 06 0.038 0.024 0.023 0.022 0.023 0.021 07 0.047 0.022 0.022 0.022 0.021 0.022 08 0.048 0.023 0.022 0.024 0.021 0.024 09 0.054 0.025 0.025 0.027 0.024 0.026 10 0.057 0.024 0.024 0.026 0.023 0.025 TABLE III Median translation direction errors for KITTI sequences(unit: degree) Seq. 5pt-Mart. [29] 4pt-Lee [20] 4pt-Liu [21] 4pt-Sw. [22] 4pt-Our 4pt-Our -Axis 00 1.409 1.317 1.31 1.116 1.288 1.113 01 1.991 2.228 2.066 1.263 2.174 1.218 02 1.112 1.062 1.068 0.977 1.069 0.975 03 1.601 1.436 1.484 1.21 1.389 1.175 04 0.723 0.676 0.759 0.605 0.756 0.612 05 1.113 0.928 0.925 0.776 0.923 0.75 06 0.722 0.71 0.728 0.571 0.72 0.566 07 1.463 1.066 1.064 0.918 1.039 0.95 08 1.477 1.412 1.371 1.248 1.372 1.222 09 0.995 0.922 0.894 0.873 0.933 0.824 10 1.101 1.05 1.059 0.92 1.065 0.883 
+
+From Table II and Table III, it can be observed that the 4-point solvers consistently achieve higher rotation accuracy than the 5-point solver 5pt-Martyushev [29] across all 11 sequences. In terms of translation accuracy, the 4-point methods also outperform the 5-point solver in most sequences, with the exception of sequences 01, 04, and 06. Within the 4-point solvers, our proposed methods demonstrate a slight advantage. Notably, 4pt-Our-Axis achieves the best translation accuracy in all sequences except sequences 04 and 07. Since our proposed methods fall within the category of 4-point solvers, we provide a more intuitive comparison among these methods by visualizing the estimated camera trajectories in Fig. 7. The ground truth trajectory is shown in black, while (a) 4pt-Lee (b) 4pt-Liu 
+
+(c) 4pt-Sweeney (d) 4pt-Our 
+
+(e) 4pt-Our-Axis Fig. 7. Estimated visual odometry trajectories for KITTI se-quences 00 (unit: meter). (a) Trajectory estimation with 4pt-Lee method, (b) Trajectory estimation with 4pt-Liu method, (c) Trajectory estimation with 4pt-Sweeney method, (d) Trajectory estimation with 4pt-Our method, (e) Trajectory estimation with 4pt-Our-Axis method. 
+
+the estimated trajectories are color-coded according to their absolute trajectory error (ATE) magnitudes [32]. For conciseness, we present only the trajectory results for sequence 00. As shown in Fig. 7, the 4pt-Our-Axis and 4pt-Sweeney solver achieves the highest accuracy compared to other methods. Furthermore, among the 4-point solvers utilizing IMU vertical angle priors, 4pt-Our also exhibits smaller ATE values than 4pt-Lee and 4pt-Liu. These observations further validate the effectiveness of our proposed method in real-world settings. VI. conclusion In this work, we present two efficient minimal solvers for estimating the relative pose of multi-camera systems using a minimal number of four point correspondences. The first solver leverages the vertical direction provided by IMUs, while the second utilizes the rotation axis direction prior. Both proposed solvers are built upon a novel depth-based parameterization of translation, as opposed to traditional translation representations. Building on this foundation, we reduce the 4-DOF multi-camera relative pose estimation problem to solving a univariate 6th-degree polynomial. Extensive simulations and real-world experiments demonstrate that our solvers achieve improved computational efficiency while main-taining competitive accuracy compared to state-of-the-art solvers for multi-camera ego-motion estimation. References 
+
+[1] C. Campos, R. Elvira, J. J. G. Rodríguez, J. M. Montiel, and J. D. Tardós, “Orb-slam3: An accurate open-source library for visual, visual-inertial, and multimap slam,” IEEE Transactions on Robotics, vol. 37, no. 6, pp. 1874–1890, 2021. [2] Y. Ding, V. Kocur, V. Vávra, Z. B. Haladová, J. Yang, T. Sattler, and Z. Kukelova, “Reposed: Efficient relative pose estimation with known depth information,” in IEEE Inter-national Conference on Computer Vision, 2025, pp. 14 876– 14 886. [3] J. Astermark, Y. Ding, V. Larsson, and A. Heyden, “Fast relative pose estimation using relative depth,” in IEEE Inter-national Conference on 3D Vision, 2024, pp. 873–881. [4] L. Taihang, G. Banglei, L. Minzu, L. Xiangyu, L. Jianbing, T. Jing, S. Yang, and Y. Qifeng, “Event-based multi-view photogrammetry for high-dynamic, high-velocity target mea-surement,” Acta Mechanica Sinica, 2025. [5] I. Eichhardt and D. Barath, “Relative pose from deep learned depth and a single affine correspondence,” in European con-ference on computer vision. Springer, 2020, pp. 627–644. [6] R. Hartley and A. Zisserman, Multiple view geometry in computer vision. Cambridge university press, 2003. [7] D. Nistér, “An efficient solution to the five-point relative pose problem,” IEEE Transactions on Pattern Analysis and Machine Intelligence, vol. 26, no. 6, pp. 756–770, 2004. [8] B. Guan, J. Zhao, Z. Li, F. Sun, and F. Fraundorfer, “Relative pose estimation with a single affine correspondence,” IEEE Transactions on Cybernetics, vol. 52, no. 10, pp. 10 111–10 122, 2022. [9] Z. Liu, B. Guan, Y. Shang, Q. Yu, and L. Kneip, “Line-based 6-dof object pose estimation and tracking with an event camera,” IEEE Transactions on Image Processing, vol. 33, pp. 4765–4780, 2024. [10] T. Li, Z. Yu, B. Guan, J. Han, W. Lv, and F. Fraundorfer, “Trifocal tensor and relative pose estimation with known vertical direction,” IEEE Robotics and Automation Letters, vol. 10, no. 2, pp. 1305–1312, 2025. [11] B. Guan, J. Zhao, D. Barath, and F. Fraundorfer, “Minimal solvers for relative pose estimation of multi-camera systems using affine correspondences,” International Journal of Com-puter Vision, vol. 131, no. 1, pp. 324–345, 2023. [12] B. Guan and J. Zhao, “Relative pose estimation for multi-camera systems from point correspondences with scale ratio,” in ACM International Conference on Multimedia, 2022, pp. 5036–5044. [13] B. Guan, J. Zhao, Z. Li, F. Sun, and F. Fraundorfer, “Minimal solutions for relative pose with a single affine correspondence,” in IEEE Conference on Computer Vision and Pattern Recog-nition, 2020, pp. 1929–1938. [14] M. Tian, B. Guan, Z. Xing, and F. Fraundorfer, “Efficient ego-motion estimation for multi-camera systems with decoupled rotation and translation,” IEEE Access, vol. 8, pp. 153 804– 153 814, 2020. [15] R. Pless, “Using many cameras as one,” in IEEE Conference on Computer Vision and Pattern Recognition, vol. 2, 2003, pp. II–587. [16] H. Li, R. Hartley, and J.-h. Kim, “A linear approach to motion estimation using generalized camera models,” in IEEE Conference on Computer Vision and Pattern Recognition, 2008, pp. 1–8. [17] O. Chum and J. Matas, “Matching with prosac-progressive sample consensus,” in IEEE Conference on Computer Vision and Pattern Recognition, vol. 1, 2005, pp. 220–226. [18] D. Barath, M. Ivashechkin, and J. Matas, “Progressive nap-sac: sampling from gradually growing neighborhoods,” arXiv preprint arXiv:1906.02295, 2019. [19] D. Barath, J. Noskova, M. Ivashechkin, and J. Matas, “Magsac++, a fast, reliable and accurate robust estimator,” in IEEE Conference on Computer Vision and Pattern Recog-nition, 2020, pp. 1304–1312. [20] G. Hee Lee, M. Pollefeys, and F. Fraundorfer, “Relative pose estimation for a multi-camera system with known vertical direction,” in IEEE Conference on Computer Vision and Pattern Recognition, 2014, pp. 540–547. [21] L. Liu, H. Li, Y. Dai, and Q. Pan, “Robust and efficient relative pose with a multi-camera system for autonomous driving in highly dynamic environments,” IEEE Transactions on Intelligent Transportation Systems, vol. 19, no. 8, pp. 2432– 2444, 2017. [22] C. Sweeney, J. Flynn, and M. Turk, “Solving for relative pose with a partially known rotation is a quadratic eigenvalue problem,” in IEEE International Conference on 3D Vision, vol. 1, 2014, pp. 483–490. [23] M. HenrikStewénius, K. Aström, and D. Nistér, “Solutions to minimal generalized relative pose problems,” in Workshop on Omnidirectional Vision in conjunction with ICCV, 2005, pp. 1–8. [24] B. Guan, J. Zhao, S. Mitra, and L. Kneip, “Six-point method for multi-camera systems with reduced solution space,” In-ternational Journal of Computer Vision, vol. 133, no. 10, pp. 7270–7292, 2025. [25] J.-S. Kim and T. Kanade, “Degeneracy of the linear seventeen-point algorithm for generalized essential matrix,” Journal of Mathematical Imaging and Vision, vol. 37, pp. 40–48, 2010. [26] C. Xie, R. Xing, N. Hao, and F. He, “17-point algorithm revisited: Toward a more accurate way,” in IEEE International Conference on Robotics and Automation, 2024, pp. 10 208– 10 214. [27] B. Guan and J. Zhao, “Affine correspondences between multi-camera systems for relative pose estimation,” IEEE Transac-tions on Pattern Analysis and Machine Intelligence, 2025. [28] B. Guan, J. Zhao, D. Barath, and F. Fraundorfer, “Minimal cases for computing the generalized relative pose using affine correspondences,” in International Conference on Computer Vision, 2021, pp. 6068–6077. [29] E. Martyushev and B. Li, “Efficient relative pose estimation for cameras and generalized cameras in case of known relative rotation angle,” Journal of Mathematical Imaging and Vision, vol. 62, no. 8, pp. 1076–1086, 2020. [30] Z. Kukelova, M. Bujnak, and T. Pajdla, “Closed-form solu-tions to minimal absolute pose problems with known vertical direction,” in Asian Conference on Computer Vision, 2010, pp. 216–229. [31] A. Geiger, P. Lenz, C. Stiller, and R. Urtasun, “Vision meets robotics: The kitti dataset,” The International Journal of Robotics Research, vol. 32, no. 11, pp. 1231–1237, 2013. [32] J. Sturm, N. Engelhard, F. Endres, W. Burgard, and D. Cre-mers, “A benchmark for the evaluation of RGB-D SLAM sys-tems,” in IEEE/RSJ International Conference on Intelligent Robots and Systems, 2012, pp. 573–580.

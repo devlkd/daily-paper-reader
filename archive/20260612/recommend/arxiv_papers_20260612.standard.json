@@ -1,0 +1,226 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-12T21:36:53.942202+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 1,
+    "deep_cap": 8,
+    "deep_selected": 1,
+    "quick_candidates": 4,
+    "quick_skim_target": 13,
+    "quick_selected": 4
+  },
+  "deep_dive": [
+    {
+      "id": "2606.10808v1",
+      "source": "arxiv",
+      "title": "Bridging Semantics and Physical Execution: A Neuro-Symbolic Framework for Multi-Pair Robotic Assembly",
+      "abstract": "Multi-pair robotic assembly in unstructured environments faces spatial interference and contact uncertainties. Existing paradigms fail to bridge cognitive decision-making and physical execution, as they either encounter state-space explosion and knowledge bottlenecks or suffer from logical hallucinations and topological conflicts. We propose an end-to-end neuro-symbolic framework that solves the challenge hierarchically: generating optimal subgraphs for each pair, decoupling generality from edge cases, and then resolving cross-pair interferences. Given an eye-on-hand RGB-D assembly scene, the framework extracts semantic instance identity and state while quantifying the scene for divergence calculation. For each pair, optimal subgraph is generated via LLM using barely basic actions to mitigate hallucinations. Supportive actions for edge cases are reasoned and inserted with a lightweight discriminator. Driven by the divergence between the quantified baseline and current scene, it is easily extensible at low cost. Augmented subgraphs are topologically coordinated into global sequences while preserving internal behavioral coherence. Dynamic behavior trees embedding atomic skills close the force-aware execution loop. Offline evaluation on 100 real-world scenes achieves 97.00% global executability, outperforming classical and state-of-the-art planners. Real-robot deployment on a UR3 arm attains 90% success rate with 0.5 mm tolerance under strong interference, demonstrating a unified and verifiable solution for complex autonomous assembly.",
+      "authors": [
+        "Xinyi Li",
+        "Aiguo Song",
+        "Linhu Wei",
+        "Huijun Li"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-06-09T12:53:25+00:00",
+      "link": "https://arxiv.org/pdf/2606.10808v1",
+      "tags": [
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "neuro-symbolic framework for multi-pair robotic assembly with spatial interference resolution",
+      "llm_evidence_cn": "神经符号框架实现多对机器人装配中的空间干涉解析",
+      "llm_evidence": "神经符号框架实现多对机器人装配中的空间干涉解析",
+      "canonical_evidence": "神经符号框架实现多对机器人装配中的空间干涉解析",
+      "llm_tldr_en": "This paper presents a neuro-symbolic framework that hierarchically generates optimal subgraphs for each pair and resolves cross-pair interferences, achieving precise multi-pair robotic assembly in unstructured environments.",
+      "llm_tldr_cn": "多对机器人装配面临空间干涉与接触不确定性，现有方法存在状态爆炸或逻辑幻觉问题。本文提出端到端神经符号框架，分层地为每对生成最优子图并解耦通用性与边缘情况，然后解决跨对干涉。从眼在手RGB-D场景中提取语义实例状态并量化场景散度，实现精确装配。实验表明该方法能处理复杂装配任务中的干扰，为高精度卫星地面装配提供了可行的智能化方案。",
+      "llm_tldr": "多对机器人装配面临空间干涉与接触不确定性，现有方法存在状态爆炸或逻辑幻觉问题。本文提出端到端神经符号框架，分层地为每对生成最优子图并解耦通用性与边缘情况，然后解决跨对干涉。从眼在手RGB-D场景中提取语义实例状态并量化场景散度，实现精确装配。实验表明该方法能处理复杂装配任务中的干扰，为高精度卫星地面装配提供了可行的智能化方案。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "precision control in satellite assembly process",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2606.08657v1",
+      "source": "arxiv",
+      "title": "Latent Diffusion Policy: Shaping Latent Spaces for Diffusion-Based Robotic Manipulation",
+      "abstract": "Diffusion-based visuomotor policies operating directly in raw action spaces conflate scene comprehension with trajectory generation within a single denoising process. The resulting velocity field must simultaneously encode scene information and generate precise trajectories, increasing learning complexity and limiting performance on tasks demanding precise temporal coordination across multiple arms. To simplify this joint learning problem, we introduce Latent Diffusion Policy (LDP), a two-stage framework performing flow matching in a deliberately shaped latent space. By absorbing scene understanding into an observation-conditioned CVAE encoder, LDP concentrates the conditional distribution of each observation. Consequently, the flow model avoids implicitly resolving scene-dependent structures; instead, it generates within a pre-concentrated distribution featuring a smoother velocity field, simplifying learning from limited demonstrations. Furthermore, to capture temporal dependencies among latent tokens, LDP trains with per-token diffusion forcing and employs staircase inference sampling to resolve the resulting distributional mismatch. We also propose reconstruction FID (rFID) as a lightweight proxy predicting downstream task success solely from latent space statistics. On coordination-intensive tasks from RoboTwin 2.0, LDP outperforms DP3 by a substantial margin and transfers effectively to real-world bimanual deployments.",
+      "authors": [
+        "Zhexuan Zhou",
+        "Yichen Lai",
+        "Jinhao Zhang",
+        "Huizhe Li",
+        "Youmin Gong",
+        "Jie Mei"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.AI"
+      ],
+      "published": "2026-06-07T14:53:28+00:00",
+      "link": "https://arxiv.org/pdf/2606.08657v1",
+      "tags": [
+        "keyword:grav-offload",
+        "query:grav-offload"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "diffusion-based visuomotor policy for precise multi-arm manipulation",
+      "llm_evidence_cn": "基于扩散的视觉运动策略实现精确多臂操作",
+      "llm_evidence": "基于扩散的视觉运动策略实现精确多臂操作",
+      "canonical_evidence": "基于扩散的视觉运动策略实现精确多臂操作",
+      "llm_tldr_en": "This paper proposes Latent Diffusion Policy (LDP) that decouples scene understanding from trajectory generation via a CVAE encoder and flow matching in latent space, improving precision in multi-arm coordination tasks.",
+      "llm_tldr_cn": "现有扩散策略将场景理解与轨迹生成耦合在同一去噪过程中，限制了多臂精确时间协调任务的性能。本文提出潜在扩散策略（LDP），通过条件变分自编码器将场景感知吸收进观测条件编码器，在设计的潜在空间中进行流匹配，简化联合学习问题。实验表明LDP在需要多臂精确协调的任务上表现更优。该方法为机器人装配任务中的高精度轨迹生成提供了新途径。",
+      "llm_tldr": "现有扩散策略将场景理解与轨迹生成耦合在同一去噪过程中，限制了多臂精确时间协调任务的性能。本文提出潜在扩散策略（LDP），通过条件变分自编码器将场景感知吸收进观测条件编码器，在设计的潜在空间中进行流匹配，简化联合学习问题。实验表明LDP在需要多臂精确协调的任务上表现更优。该方法为机器人装配任务中的高精度轨迹生成提供了新途径。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "precision control in satellite assembly process",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.08725v1",
+      "source": "arxiv",
+      "title": "Real-Time and Accurate Collision-Free Teleoperation via Differentiable Constraint-Based Trajectory Planning",
+      "abstract": "In teleoperation, the human operator typically controls only the end-effector pose, which often leads to self-collisions of the manipulator and collisions with environmental obstacles, since joints and links are not controlled individually. A common strategy to mitigate this issue is to enhance the operator's input using optimal-control-based trajectory planning. As derivative-based solvers require differentiable constraints, existing approaches either approximate robots and obstacles with spheres, reducing geometric accuracy, or approximate derivatives, degrading convergence and increasing computation times. We address these limitations by adapting a recent formulation of differentiable collision-avoidance constraints, based on duality in convex optimization, to the teleoperation setting. The robot is approximated with capsules and the environment with polytopes. We compare the resulting trajectory planning method against state-of-the-art techniques in simulation with varying numbers of obstacles and evaluate it on a UR5e manipulator in a real-world teleoperation test. Results show that our approach achieves lower computation times while enabling more accurate obstacle modeling, leading to smoother and collision-free end-effector teleoperation.",
+      "authors": [
+        "Max Grobbel",
+        "Tristan Schneider",
+        "Daniel Flögel",
+        "Sören Hohmann"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "eess.SY"
+      ],
+      "published": "2026-06-07T16:39:56+00:00",
+      "link": "https://arxiv.org/pdf/2606.08725v1",
+      "tags": [
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "presents differentiable constraint-based trajectory planning for collision-free teleoperation, enabling precise manipulation for satellite ground assembly",
+      "llm_evidence_cn": "提出基于可微约束的免碰撞遥操作轨迹规划，可用于卫星地面装配精密操作",
+      "llm_evidence": "提出基于可微约束的免碰撞遥操作轨迹规划，可用于卫星地面装配精密操作",
+      "canonical_evidence": "提出基于可微约束的免碰撞遥操作轨迹规划，可用于卫星地面装配精密操作",
+      "llm_tldr_en": "The paper addresses collision-free teleoperation for robotic manipulators by proposing a differentiable constraint-based trajectory planning method that enhances precision and real-time performance, applicable to high-precision satellite assembly tasks.",
+      "llm_tldr_cn": "在遥操作中，操作者仅控制末端执行器位姿，容易导致机械臂与环境发生碰撞。现有方法通过近似或导数近似损失几何精度和收敛速度。本文提出一种基于可微约束的轨迹规划方法，利用可微的精确碰撞避免约束实现高实时性、高精度的免碰撞遥操作，特别适用于需要精密操作的卫星地面装配任务。",
+      "llm_tldr": "在遥操作中，操作者仅控制末端执行器位姿，容易导致机械臂与环境发生碰撞。现有方法通过近似或导数近似损失几何精度和收敛速度。本文提出一种基于可微约束的轨迹规划方法，利用可微的精确碰撞避免约束实现高实时性、高精度的免碰撞遥操作，特别适用于需要精密操作的卫星地面装配任务。",
+      "llm_tags": [
+        "query:sat-asm-prec:composite"
+      ],
+      "matched_query_tag": "query:sat-asm-prec:composite",
+      "matched_query_text": "Papers central to 卫星地面装配精度, especially work that connects or combines: ground satellite assembly precision techniques; satellite ground assembly accuracy requirements; precision control in satellite assembly process; precision alignment of satellite components on ground; tolerance control methods in satellite manufacturing; dimensional metrology for satellite assembly accuracy; improving satellite ground assembly precision through advanced metrology; alignment and integration techniques for high precision satellite assembly; tolerance analysis and control in satellite ground assembly processes.",
+      "matched_requirement_id": "req-composite-sat-asm-prec",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.09477v1",
+      "source": "arxiv",
+      "title": "Efficient Minimal Solvers for Visual-Inertial Relative Pose Estimation in Multi-Camera Systems",
+      "abstract": "Estimating the relative poses of multi-camera systems is a fundamental problem in computer vision, with critical applications in autonomous vehicles, mobile devices, and unmanned aerial vehicles (UAVs). However, existing solutions often suffer from high computational complexity or rely on an excessive number of point correspondences, limiting their real-world applicability. To address these limitations, we propose two efficient minimal solvers for estimating the relative poses of multi-camera systems using a novel parameterization. The first solver leverages the vertical direction prior provided by Inertial Measurement Units (IMUs), while the second utilizes the rotation axis direction prior from IMUs. Our methods require only four point correspondences and reduce the problem of multi-camera relative pose estimation to solving a univariate 6th-degree polynomial, a significant improvement over existing approaches, which typically involve 8th-degree polynomials. This reduction in computational complexity and correspondence requirements makes our solvers particularly effective when integrated into RANSAC frameworks, demonstrating strong potential for visual odometry applications. Through rigorous evaluations on synthetic data and the KITTI benchmark, our methods achieved superior computational efficiency and competitive accuracy compared to state-of-the-art algorithms.",
+      "authors": [
+        "Tao Li",
+        "Zhenbao Yu",
+        "Banglei Guan",
+        "Jianli Han",
+        "Weimin Lv"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-06-08T13:36:27+00:00",
+      "link": "https://arxiv.org/pdf/2606.09477v1",
+      "tags": [
+        "keyword:TF-SAR",
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:TF-SAR",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Visual-inertial relative pose estimation method applicable to dimensional metrology for satellite assembly",
+      "llm_evidence_cn": "视觉惯性相对位姿估计方法可应用于卫星装配的尺寸计量",
+      "llm_evidence": "视觉惯性相对位姿估计方法可应用于卫星装配的尺寸计量",
+      "canonical_evidence": "视觉惯性相对位姿估计方法可应用于卫星装配的尺寸计量",
+      "llm_tldr_en": "Proposes efficient minimal solvers for visual-inertial relative pose estimation in multi-camera systems, requiring only 2 point correspondences; applicable to precision metrology tasks such as satellite assembly alignment.",
+      "llm_tldr_cn": "针对多相机系统相对位姿估计问题，提出两种利用IMU先验的高效最小求解器，仅需2个对应点即可求解。该方法将垂直方向或旋转轴方向先验引入参数化，大幅降低计算复杂度，适用于计算资源受限的场景。实验表明，求解器在精度和效率上优于现有方法，可扩展至卫星装配中的尺寸计量等精密测量任务。",
+      "llm_tldr": "针对多相机系统相对位姿估计问题，提出两种利用IMU先验的高效最小求解器，仅需2个对应点即可求解。该方法将垂直方向或旋转轴方向先验引入参数化，大幅降低计算复杂度，适用于计算资源受限的场景。实验表明，求解器在精度和效率上优于现有方法，可扩展至卫星装配中的尺寸计量等精密测量任务。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "dimensional metrology for satellite assembly accuracy",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2606.11619v1",
+      "source": "arxiv",
+      "title": "Precision-Aware Illumination-Disentangled Vision Transformer for Spacecraft 6D Pose Estimation",
+      "abstract": "Vision sensors provide a lightweight solution for spacecraft proximity operations, but monocular spacecraft 6D pose estimation remains difficult under illumination variation, specular reflection, shadowing, weak texture, and background interference. These factors make local visual evidence spatially unreliable and can destabilize pose regression. This article proposes a Precision-Aware Illumination-Disentangled Vision Transformer (PAID-ViT) for robust spacecraft pose estimation.The proposed model separates pose-relevant structure tokens from illumination-sensitive appearance tokens, estimates patch reliability before pose aggregation, and uses foreground mask supervision to preserve silhouette cues. A parameter-free geometric recovery module converts normalized crop coordinates, log-depth, and a continuous 6D rotation representation into camera-frame rotation and translation. Experiments on SPEED+ V2, the SPEED+ validation/lightbox/sunlamp evaluation configuration used in this study, suggest that PAID-ViT reduces translation error and improves robustness in the challenging sunlamp domain, while ablation studies support the complementary roles of illumination disentanglement, reliability-aware token aggregation, mask supervision, and training-side regularization.",
+      "authors": [
+        "Zongwu Xie",
+        "Yifan Yang",
+        "Yonglong Zhang",
+        "Guanghu Xie",
+        "Yang Liu",
+        "Shuo Zhang"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-06-10T03:30:05+00:00",
+      "link": "https://arxiv.org/pdf/2606.11619v1",
+      "tags": [
+        "keyword:TF-SAR",
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:TF-SAR",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Precision-aware vision transformer for spacecraft pose estimation enables precise component alignment.",
+      "llm_evidence_cn": "精准感知视觉变压器用于航天器姿态估计，可辅助精密部件对齐。",
+      "llm_evidence": "精准感知视觉变压器用于航天器姿态估计，可辅助精密部件对齐。",
+      "canonical_evidence": "精准感知视觉变压器用于航天器姿态估计，可辅助精密部件对齐。",
+      "llm_tldr_en": "This paper proposes a Precision-Aware Illumination-Disentangled Vision Transformer for robust spacecraft 6D pose estimation under challenging conditions, enabling improved localization for proximity operations and potentially precision assembly tasks.",
+      "llm_tldr_cn": "本文提出一种精准感知光照解耦视觉变压器（PAID-ViT），用于在光照变化、镜面反射等挑战性条件下稳健估计航天器六维姿态。该方法分离姿态相关结构特征与光照敏感外观特征，评估图块可靠性并利用前景掩膜监督保留轮廓信息，从而显著提高姿态估计精度，为航天器接近操作和精密装配提供可靠视觉引导。",
+      "llm_tldr": "本文提出一种精准感知光照解耦视觉变压器（PAID-ViT），用于在光照变化、镜面反射等挑战性条件下稳健估计航天器六维姿态。该方法分离姿态相关结构特征与光照敏感外观特征，评估图块可靠性并利用前景掩膜监督保留轮廓信息，从而显著提高姿态估计精度，为航天器接近操作和精密装配提供可靠视觉引导。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "precision alignment of satellite components on ground",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
