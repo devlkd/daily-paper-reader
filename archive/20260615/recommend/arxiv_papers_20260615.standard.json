@@ -1,0 +1,101 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-15T22:26:29.149280+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 0,
+    "deep_cap": 8,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 13,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "biorxiv-10-64898-2026-06-03-729998-v1",
+      "source": "biorxiv",
+      "title": "ANNet: A first-principles neural network for forward and inverse dynamics",
+      "abstract": "Biological and robotic systems must solve two related computations to move: inverse dynamics, which determines the forces or torques needed to produce a desired movement, and forward dynamics, which maps applied forces to motion. Although these computations are coupled by the same equations of motion, they are usually estimated or implemented as distinct inverse and forward mappings, in both model-based and data-driven formulations. This separation can obscure the shared structure that constrains both problems. Here, we present ANNet, a physics-informed neural network that places both computations on a common learned representation by learning a single scalar quantity from classical mechanics--Appell acceleration energy. The network maps kinematic state and candidate accelerations to this scalar function, and inverse dynamics is obtained by differentiating the learned energy function with respect to acceleration to recover joint torques. Forward dynamics is then calculated without retraining by embedding the same learned energy landscape in an optimization objective whose unconstrained minimum satisfies the Gibbs- Appell equation. The resulting accelerations are integrated forward in time. We evaluate ANNet on a double pendulum paradigm. In trials unseen by the network during training, inverse and optimization-based forward simulations are real-time accurate. Our results provide a first-principles route for using a single learned representation to support both prediction and control.\n\nSignificanceRobots and animals must solve two problems to move: computing the forces or torques needed for a desired motion (inverse dynamics) and determining the motion produced by applied forces (forward dynamics), which are usually modeled separately. We show that both problems can be expressed using a single scalar function from classical mechanics, Appell acceleration energy. A neural network trained so that the derivative of this learned function matches reference joint torques performs inverse dynamics. The same network then computes forward dynamics by minimizing an objective built from the learned energy landscape, without retraining. This framework provides a unified representation for prediction and control in both neuroscience and robotics.",
+      "authors": [
+        "Bahdasariants, S.",
+        "Parola, L.",
+        "Kacker, K.",
+        "Feldman, A. K.",
+        "Zdobinski, Z.",
+        "Kang, I.",
+        "Weber, D. J."
+      ],
+      "primary_category": "neuroscience",
+      "categories": [
+        "neuroscience"
+      ],
+      "published": "2026-06-08T00:00:00+00:00",
+      "link": "https://www.biorxiv.org/content/10.64898/2026.06.03.729998v1.full.pdf",
+      "tags": [
+        "keyword:TF-SAR",
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Proposes a physics-informed neural network for robotic inverse dynamics, applicable to active gravity compensation.",
+      "llm_evidence_cn": "提出物理信息神经网络用于机器人逆动力学，可应用于主动重力补偿。",
+      "llm_evidence": "提出物理信息神经网络用于机器人逆动力学，可应用于主动重力补偿。",
+      "canonical_evidence": "提出物理信息神经网络用于机器人逆动力学，可应用于主动重力补偿。",
+      "llm_tldr_en": "ANNet learns both forward and inverse dynamics from first principles using Appell acceleration energy, providing a unified model for robotic systems; this can enable accurate gravity compensation for space manipulators.",
+      "llm_tldr_cn": "针对生物和机器人系统中正向与逆向动力学通常被分离学习的问题，提出物理信息神经网络ANNet，通过单一标量（Appell加速度能）统一学习两者，从运动状态映射运动产生和所需力。该方法可构建精确的动力学模型，为空间机械臂的主动重力补偿提供新途径。",
+      "llm_tldr": "针对生物和机器人系统中正向与逆向动力学通常被分离学习的问题，提出物理信息神经网络ANNet，通过单一标量（Appell加速度能）统一学习两者，从运动状态映射运动产生和所需力。该方法可构建精确的动力学模型，为空间机械臂的主动重力补偿提供新途径。",
+      "llm_tags": [
+        "query:grav-offload"
+      ],
+      "matched_query_tag": "query:grav-offload",
+      "matched_query_text": "Active gravity compensation techniques for space robots",
+      "matched_requirement_id": "req-14",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.14372v1",
+      "source": "arxiv",
+      "title": "$κ$: A Geometry-Quality Metric Complementary to GDoP for Closed-Form TDoA Multilateration",
+      "abstract": "The Geometric Dilution of Precision (GDoP) characterizes the noise sensitivity of a Time-Difference-of-Arrival (TDoA) localization system, but does not capture every way the analytical multilateration solution can become ill-conditioned. We introduce a complementary geometry-quality metric $κ$, the leading coefficient of the closed-form TDoA solver's quadratic, and derive its $N$-dimensional generalization through a vectorized formulation. Two closed-form algebraic identities relate $κ$ to the Jacobian determinant of the measurement model and to the quadratic's discriminant, establishing that the system exhibits exactly two distinct singularity loci: branch divergence and the Jacobian/branch-merge locus flagged by GDoP. A Cramér--Rao-bound-linked closed form for the noise sensitivity $σ_κ$ under the standard Gaussian ToA model is validated against Monte Carlo to 2% median relative error. An empirical atlas over a dimensionless geometry parameter space confirms both identities at machine precision and shows that $κ$-bad regions and GDoP-bad regions are non-trivially disjoint in target space, establishing the two metrics as genuinely complementary. A case study on a four-node operational array, with per-sensor time of arrival (ToA) noise estimated empirically from Automatic Dependent Surveillance Broadcast (ADS-B)-paired over-the-air captures, shows that the theory-predicted threshold and a Monte-Carlo-measured operational threshold agree on the per-subsystem ordering at the deployment noise level. Their ratio is approximately constant across the three two-dimensional subsystems, serving as a deployment-specific calibration constant between the algebraic $κ$-noise floor and the downstream operational threshold, analogous in spirit to the standard relation linking GDoP to the circular error probable.",
+      "authors": [
+        "Abeer Nasir Chaudhry",
+        "Salman Liaquat",
+        "Muhammad Mohsin Khadim"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP"
+      ],
+      "published": "2026-06-12T12:01:39+00:00",
+      "link": "https://arxiv.org/pdf/2606.14372v1",
+      "tags": [
+        "keyword:TF-SAR",
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:TF-SAR",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Proposes a geometry-quality metric for TDoA multilateration, relevant to dimensional metrology.",
+      "llm_evidence_cn": "提出用于TDoA多点定位的几何质量度量，与尺寸计量相关。",
+      "llm_evidence": "提出用于TDoA多点定位的几何质量度量，与尺寸计量相关。",
+      "canonical_evidence": "提出用于TDoA多点定位的几何质量度量，与尺寸计量相关。",
+      "llm_tldr_en": "Introduces κ, a new metric complementing GDoP to assess geometry quality in closed-form TDoA multilateration, revealing two distinct singularity loci; this can improve positioning accuracy in metrology applications such as satellite assembly.",
+      "llm_tldr_cn": "针对闭式TDoA多点定位中GDoP不能完全表征解的不适定性问题，提出互补的几何质量度量κ，通过矢量化推导将其推广到N维，并建立与雅可比行列式的关系，揭示了分支发散和雅可比/分支合并两个奇点轨迹。该度量可提升卫星装配等精密计量场景中定位系统的性能评估与优化。",
+      "llm_tldr": "针对闭式TDoA多点定位中GDoP不能完全表征解的不适定性问题，提出互补的几何质量度量κ，通过矢量化推导将其推广到N维，并建立与雅可比行列式的关系，揭示了分支发散和雅可比/分支合并两个奇点轨迹。该度量可提升卫星装配等精密计量场景中定位系统的性能评估与优化。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "dimensional metrology for satellite assembly accuracy",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

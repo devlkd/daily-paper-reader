@@ -1,0 +1,39 @@
+{
+  "label": "2026-06-15",
+  "date": "2026-06-15",
+  "generated_at": "2026-06-15T22:27:39",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202606/15/biorxiv-10-64898-2026-06-03-729998-v1-annet-a-first-principles-neural-network-for-forward-and-inverse-dynamics",
+      "section": "quick",
+      "title_en": "ANNet: A first-principles neural network for forward and inverse dynamics",
+      "authors": "Bahdasariants, S., Parola, L., Kacker, K., Feldman, A. K., Zdobinski, Z., Kang, I., Weber, D. J.",
+      "date": "2026-06-08",
+      "pdf": "https://www.biorxiv.org/content/10.64898/2026.06.03.729998v1.full.pdf",
+      "score": "7.0",
+      "evidence": "提出物理信息神经网络用于机器人逆动力学，可应用于主动重力补偿。",
+      "tldr": "生物与机器人系统在运动时需分别求解逆动力学和正动力学，常建模为独立映射，忽略共享结构。ANNet通过物理信息神经网络学习标量Appell加速度能量，将两者统一到共同表示。逆动力学直接对能量函数求导获得关节力矩，正动力学则利用相同能量景观构建优化目标，无需重训练。在双摆实验中，未见轨迹的逆解和正向模拟均达到实时精度。该框架为神经科学与机器人学的预测与控制提供了第一原理的统一路径。",
+      "tags": "query:grav-offload",
+      "abstract_en": "Biological and robotic systems must solve two related computations to move: inverse dynamics, which determines the forces or torques needed to produce a desired movement, and forward dynamics, which maps applied forces to motion. Although these computations are coupled by the same equations of motion, they are usually estimated or implemented as distinct inverse and forward mappings, in both model-based and data-driven formulations. This separation can obscure the shared structure that constrains both problems. Here, we present ANNet, a physics-informed neural network that places both computations on a common learned representation by learning a single scalar quantity from classical mechanics--Appell acceleration energy. The network maps kinematic state and candidate accelerations to this scalar function, and inverse dynamics is obtained by differentiating the learned energy function with respect to acceleration to recover joint torques. Forward dynamics is then calculated without retraining by embedding the same learned energy landscape in an optimization objective whose unconstrained minimum satisfies the Gibbs- Appell equation. The resulting accelerations are integrated forward in time. We evaluate ANNet on a double pendulum paradigm. In trials unseen by the network during training, inverse and optimization-based forward simulations are real-time accurate. Our results provide a first-principles route for using a single learned representation to support both prediction and control.\n\nSignificanceRobots and animals must solve two problems to move: computing the forces or torques needed for a desired motion (inverse dynamics) and determining the motion produced by applied forces (forward dynamics), which are usually modeled separately. We show that both problems can be expressed using a single scalar function from classical mechanics, Appell acceleration energy. A neural network trained so that the derivative of this learned function matches reference joint torques performs inverse dynamics. The same network then computes forward dynamics by minimizing an objective built from the learned energy landscape, without retraining. This framework provides a unified representation for prediction and control in both neuroscience and robotics.",
+      "source": "biorxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/15/2606.14372v1--a-geometry-quality-metric-complementary-to-gdop-for-closed-form-tdoa-multilateration",
+      "section": "quick",
+      "title_en": "$κ$: A Geometry-Quality Metric Complementary to GDoP for Closed-Form TDoA Multilateration",
+      "authors": "Abeer Nasir Chaudhry, Salman Liaquat, Muhammad Mohsin Khadim",
+      "date": "2026-06-12",
+      "pdf": "https://arxiv.org/pdf/2606.14372v1",
+      "score": "6.0",
+      "evidence": "提出用于TDoA多点定位的几何质量度量，与尺寸计量相关。",
+      "tldr": "几何精度衰减因子(GDoP)无法完全表征TDoA闭式解的病态性。本文引入互补几何质量度量κ，即闭式求解器的二次主导系数，通过向量化推广至N维。建立了κ与雅可比行列式、判别式的恒等式，揭示两种奇异性。实验表明κ不良区域与GDoP不良区域非重叠，κ噪声灵敏度闭式解误差仅2%，部署案例中理论阈值与实测阈值之比恒定。该度量完善了TDoA定位系统的几何质量评估体系。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "The Geometric Dilution of Precision (GDoP) characterizes the noise sensitivity of a Time-Difference-of-Arrival (TDoA) localization system, but does not capture every way the analytical multilateration solution can become ill-conditioned. We introduce a complementary geometry-quality metric $κ$, the leading coefficient of the closed-form TDoA solver's quadratic, and derive its $N$-dimensional generalization through a vectorized formulation. Two closed-form algebraic identities relate $κ$ to the Jacobian determinant of the measurement model and to the quadratic's discriminant, establishing that the system exhibits exactly two distinct singularity loci: branch divergence and the Jacobian/branch-merge locus flagged by GDoP. A Cramér--Rao-bound-linked closed form for the noise sensitivity $σ_κ$ under the standard Gaussian ToA model is validated against Monte Carlo to 2% median relative error. An empirical atlas over a dimensionless geometry parameter space confirms both identities at machine precision and shows that $κ$-bad regions and GDoP-bad regions are non-trivially disjoint in target space, establishing the two metrics as genuinely complementary. A case study on a four-node operational array, with per-sensor time of arrival (ToA) noise estimated empirically from Automatic Dependent Surveillance Broadcast (ADS-B)-paired over-the-air captures, shows that the theory-predicted threshold and a Monte-Carlo-measured operational threshold agree on the per-subsystem ordering at the deployment noise level. Their ratio is approximately constant across the three two-dimensional subsystems, serving as a deployment-specific calibration constant between the algebraic $κ$-noise floor and the downstream operational threshold, analogous in spirit to the standard relation linking GDoP to the circular error probable.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
