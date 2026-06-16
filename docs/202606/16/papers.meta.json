@@ -1,0 +1,39 @@
+{
+  "label": "2026-06-16",
+  "date": "2026-06-16",
+  "generated_at": "2026-06-16T23:16:18",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202606/16/2606.14911v1-moving-target-sar-imaging-using-planar-arrays-and-multidimensional-chinese-remainder-theorem-md-crt--part-ii-two-subarray-designs",
+      "section": "deep",
+      "title_en": "Moving Target SAR Imaging Using Planar Arrays And Multidimensional Chinese Remainder Theorem (MD-CRT)--Part II: Two Subarray Designs",
+      "authors": "Guangpu Guo, Xiang-Gen Xia",
+      "date": "2026-06-12",
+      "pdf": "https://arxiv.org/pdf/2606.14911v1",
+      "score": "8.0",
+      "evidence": "针对运动目标SAR成像设计平面天线子阵，与合成孔径雷达天线系统直接相关。",
+      "tldr": "动目标SAR成像中，运动引起的距离-方位耦合导致模糊解析困难。本文基于平面天线阵与多维中国剩余定理(MD-CRT)，研究两子阵公共缩放设计：两个子阵共享相同尺度因子，在公共整数频率向量上联合解析模糊。该设计在保持相同无模糊距离前提下，较通用框架获得更弱的鲁棒恢复充分条件和更紧的重构误差界。在同样平台尺寸和最小天线间距约束下，平面阵框架能实现此设计，而传统一维非均匀线阵不能；此外，非可分平面阵几何在中等天线数下比可分设计更具鲁棒性，为高稳健动目标SAR成像提供了阵列设计指导。",
+      "tags": "query:tf-sar",
+      "abstract_en": "Based on the framework proposed in Part I, the Part II of this two-part paper investigates two-subarray designs for moving target SAR imaging using planar antenna arrays and the multidimensional Chinese remainder theorem (MD-CRT). In this Part II, we focus on the performance analysis and the detailed two planar subarray designs. In particular, we study a common-scaling two-subarray design, under which the two subarrays share the same scaling factor in the MD-CRT formulation. Under this design, ambiguity resolution can be performed on a common integer frequency vector. As a result, the same unambiguous range as in the general two-subarray framework in Part~I is preserved, while the sufficient conditions for robust recovery become weaker and the corresponding reconstruction error bounds become tighter. Within this common-scaling design, we compare the proposed planar array framework with a conventional separated scheme, in which the motion-induced cross-range shift is recovered by a one-dimensional CRT-based method and the target height is estimated by cross-track interferometric processing. Under the same platform size and minimum antenna spacing constraints, the proposed planar array framework can realize the common-scaling design, whereas the corresponding one-dimensional non-uniform linear array scheme does not admit such a design. With this design, the planar array framework leads to a weaker sufficient condition for robust recovery and thus performs better in moving target imaging. We also compare several planar array designs under fixed platform size and minimum antenna spacing. The analysis shows that recovery performance depends not only on the number of antennas but also on the array geometry. In particular, non-separable planar array geometries can provide better robustness than separable ones when their antenna numbers are comparable.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/16/2606.09640v1-physics-aware-sparse-learning-and-selective-online-adaptation-for-euler-lagrange-robot-dynamics",
+      "section": "quick",
+      "title_en": "Physics-Aware Sparse Learning and Selective Online Adaptation for Euler-Lagrange Robot Dynamics",
+      "authors": "Rishabh Dev Yadav, Samaksh Ujjawal, Sihao Sun, Spandan Roy, Wei Pan",
+      "date": "2026-06-08",
+      "pdf": "https://arxiv.org/pdf/2606.09640v1",
+      "score": "7.0",
+      "evidence": "提出保持结构的欧拉-拉格朗日机器人动力学学习方法，可用于重力补偿的空间机械臂动力学模型。",
+      "tldr": "针对标称欧拉-拉格朗日模型因有效载荷变化、未建模耦合等导致不准确的问题，提出一种物理感知稀疏学习方法，通过保持系统内部机械结构（如对称性和正定性）来提升预测物理一致性，并结合选择性在线自适应应对多变工况。实验表明该方法在保持结构的同时提高了动力学模型精度，为基于模型的控制提供更可靠的预测，对空间机械臂等系统的重力补偿等任务具有潜在价值。",
+      "tags": "query:grav-offload",
+      "abstract_en": "Accurate dynamics models are essential for model-based robotic control, yet nominal Euler--Lagrange models often become inaccurate in the presence of payload variation, unmodeled coupling, friction, aerodynamic effects, and changing operating conditions. Most learning-based correction methods improve prediction accuracy by introducing a single additive residual, but do not preserve the internal mechanical structure of Euler--Lagrange systems. This leads to models that do not preserve symmetry, positive-definiteness, or the coupling between inertia and velocity-dependent terms, which can result in physically inconsistent predictions and reduced reliability when embedded in model-based controllers. We propose a structure-preserving residual learning framework that decomposes model mismatch into an inertia correction, the corresponding induced Coriolis term, and a generalized-force residual. The mechanical component is learned under physical constraints, while the disturbance-sensitive component is represented through a sparse history-dependent latent interaction model and adapted online using Bayesian linear regression. This separation preserves key mechanical structure while restricting adaptation to the part of the dynamics most affected by changing conditions. Experiments across multiple robotic platforms, including mobile, aerial, and manipulator systems, show that the proposed method improves dynamics prediction and trajectory tracking under coupled and time-varying dynamics. These results highlight the value of combining structured residual modeling, compact latent interaction selection, and selective online adaptation for real-world model-based control.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
