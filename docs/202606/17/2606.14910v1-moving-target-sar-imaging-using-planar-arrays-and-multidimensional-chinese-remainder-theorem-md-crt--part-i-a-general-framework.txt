@@ -1,0 +1,1170 @@
+Title: Moving Target SAR Imaging Using Planar Arrays And Multidimensional Chinese Remainder Theorem (MD-CRT)–Part I: A General Framework
+
+URL Source: https://arxiv.org/pdf/2606.14910v1
+
+Published Time: Tue, 16 Jun 2026 00:11:05 GMT
+
+Number of Pages: 13
+
+Markdown Content:
+> 1
+
+# Moving Target SAR Imaging Using Planar Arrays And Multidimensional Chinese Remainder Theorem (MD-CRT)–Part I: A General Framework 
+
+Guangpu Guo, Graduate Student Member , IEEE , and Xiang-Gen Xia, Fellow , IEEE 
+
+Abstract —In this two-part paper, we investigate synthetic aperture radar (SAR) moving target imaging using planar antenna arrays. For a target moving over a three-dimensional terrain, its accurate localization requires the joint estimation of the motion-induced cross-range shift and the target height. In Part I of this two-part paper, starting from the planar array imaging geometry and the corresponding signal model, we show that these two quantities can be unified into a two-dimensional parameter vector and represented, after two-dimensional discrete Fourier transform (2D-DFT) processing across the planar array, through a natural vector remainder formulation. We first develop a general 2D-DFT matrix modulus framework and show that, in the two-dimensional setting, the associated 2D-DFT matrix modulus affects the propagation of vector remainder errors. Under a fixed array geometry and antenna number constraint, we derive an optimal construction of this matrix modulus and adopt it in the subsequent analysis. Under this construction, a single planar array provides only a folded estimate when the true parameter vector lies outside its unambiguous range. To resolve this ambiguity, we develop a multi-subarray framework in which multiple planar subarrays generate multiple vector remainders with different matrix moduli, and the desired parameter vector is recovered through the multidimensional Chinese remainder theorem (MD-CRT). To account for practical errors introduced by 2D-DFT quantization and additive noise, we further introduce an approximate 2D-DFT peak model for non-integer frequency vectors, incorporate robust MD-CRT, and establish sufficient conditions together with explicit reconstruction error bounds for both noiseless and noisy settings. Numerical results verify that the proposed multi-subarray framework enlarges the unambiguous range compared with a single planar array. The formulation developed in this paper also provides the basis for planar array design and performance analysis, which are further investigated in Part II of this two-part paper. 
+
+Index Terms —Three-dimensional (3D) moving target SAR imaging, two-dimensional discrete Fourier transform (2D-DFT), robust multidimensional Chinese remainder theorem (MD-CRT), planar antenna arrays. 
+
+I. I NTRODUCTION 
+
+Synthetic aperture radar (SAR) is widely used for terrain and moving target imaging. Compared with stationary targets, moving targets introduce additional phase terms into the received signals, which usually cause a displacement of a target in the azimuth (cross-range) direction of the SAR image. Accurate estimation of this motion-induced shift is therefore essential for moving target localization. 
+
+G. Guo and X.-G. Xia are with the Department of Electrical and Computer Engineering, University of Delaware, Newark, DE 19716, USA (e-mails: guangpu@udel.edu and xxia@ee.udel.edu). This work was supported in part by the National Science Foundation (NSF) under Grant CCF-2246917. 
+
+To address this problem, many moving target localization methods have been developed in the past. The early studies mainly considered single-channel SAR systems, in which moving target parameters are estimated from azimuth phase histories [1]–[3]. However, when the Doppler centroid exceeds the pulse repetition frequency (PRF), velocity ambiguity arises and the target position can no longer be uniquely determined [4]–[6]. To improve localization performance, SAR systems with multiple receivers or antenna arrays have been studied, including space-time-frequency processing [7], multi-channel SAR [8], and velocity SAR (VSAR) based on linear arrays [9]. In the VSAR framework, multiple complex SAR images are formed from different antenna elements, and the cross-range shift is estimated through a discrete Fourier transform (DFT) across the array. Because of the inherent 2π phase folding in the DFT, a large cross-range shift caused by a fast moving target may exceed the unambiguous range and lead to ambiguity. To deal with this problem, multi-frequency VSAR, dual-speed VSAR, and VSAR with nonuniform linear arrays have been proposed [10]–[12]. These methods exploit multiple folded observations with different moduli and apply the robust Chinese remainder theorem (CRT) [13], [14] to recover the shift over an enlarged unambiguous range. The above methods are mainly designed for targets on the ground surface, where the main concern is the motion-induced cross-range shift. For targets moving over a three-dimensional terrain (or in air), however, the imaging geometry becomes more complex. In this case, accurate localization of a target requires not only the estimation of the cross-range shift, but also the estimation of the target height. Conventional VSAR systems employ one-dimensional antenna arrays and therefore provide spatial sampling only along the azimuth direction. As a result, they cannot resolve the target height. One possible extension is to introduce an additional vertical antenna and estimate the height from interferometric phase [15]. In this way, the cross-range shift and the target height are obtained from observations associated with different array directions separately. In this paper, we consider a more general target motion model. Instead of assuming that targets move on the ground or at a fixed height, we study targets moving over an arbi-trary terrain (or in air), such as mountainous environments, with three-dimensional velocities along arbitrary directions, as considered in [16]. Under this setting, accurate localization of a target requires the joint estimation of the motion-induced cross-range shift and the target height. To address this problem, 
+
+> arXiv:2606.14910v1 [eess.SP] 12 Jun 2026 2
+
+we adopt a planar antenna array, which has been explored in recent studies, for example, [17], [18], and formulate the two quantities in a unified two-dimensional vector form. The key difference from linear antenna arrays is that a planar array provides spatial sampling in two dimensions and therefore matches the two-dimensional parameter structure of the prob-lem well. This makes it possible to process the data jointly through a two-dimensional discrete Fourier transform (2D-DFT) [19]. To establish this formulation, we start from the three-dimensional imaging geometry and the corresponding signal model, which follows the standard VSAR framework but is adapted to the planar array and three-dimensional-motion setting. Based on this model, we show that, after 2D-DFT processing across the planar array, the motion-induced cross-range shift and the target height admit a two-dimensional vector remainder formulation under a general 2D-DFT matrix modulus. This is different from the one-dimensional case. For a one-dimensional linear array, the associated DFT modulus reduces to a scalar. Thus, under a given antenna number constraint there is no additional structural freedom to choose, i.e., there is only one possibility for an absolute value of a scalar. In contrast, in the two-dimensional setting, the modulus becomes a matrix, and there are many choices of different matrices for a given absolute determinant value. In the meanwhile, the matrix structure directly affects how vector remainder errors propagate to the desired parameter vector. As a result, even for planar arrays with the same number of antenna elements, i.e., the 2D-DFT matrix modulus with the same absolute determinant value, different matrix structures may exhibit different robustness behavior. We therefore further study the choice of the associated 2D-DFT matrix modulus and derive an optimal construction, for a fixed array geometry and under a fixed antenna number constraint, that minimizes the error amplification factor. In the subsequent development, we adopt this optimal construction throughout. As we shall see later, a single planar array may suffer from folding. When the true parameter vector lies outside a range, called unambiguous range , the 2D-DFT yields only a folded estimate, namely, a vector remainder of the true parameter vector modulo a certain matrix. This leads to the ambiguities for both parameters in the parameter vector. To enlarge the unambiguous range, we employ multiple planar subarrays that generate multiple folded observations with different matrix moduli, and then combine them through the multidimensional Chinese remainder theorem (MD-CRT) [20], [21]. This can be viewed as a two-dimensional extension of the idea in [12], in which multiple linear subarrays generate multiple scalar remainders that are then combined to resolve ambiguity by using the conventional 1D CRT. Comparing to the 1D linear arrays with scalars in [12], 2D planar arrays with matrices studied in this two-part paper have much more degrees of freedom in the design and are much more challenging. In practice, the 2D-DFT is evaluated on a discrete frequency grid, so the detected vector remainders are affected by quan-tization. In addition, additive noise may further perturb the detected vector remainders. Unlike the one-dimensional case, the quantization effect in two dimensions is not completely characterized by simple nearest grid rounding on the original coordinates, because for non-integer frequency vectors the exact 2D-DFT peak selection regions are generally skewed by the 2D-DFT matrix modulus. We therefore introduce an approximate 2D-DFT peak model for non-integer frequency vectors, which replaces the true frequency vector by a nearby integer vector and represents the detected peak through the corresponding standard vector remainder. This provides atractable bridge from practical 2D-DFT peak detection to the subsequent MD-CRT reconstruction analysis. Under these errors, the classical MD-CRT is no longer sufficient, be-cause even small vector remainder errors may cause a large reconstruction error. This makes robust MD-CRT necessary for robust recovery [22], [23]. Based on the proposed multi-subarray framework, we then analyze robust recovery in both noiseless (quantization errors) and noisy (additive noise in a signal) settings, and establish sufficient conditions together with explicit reconstruction error bounds for robust recovery. Particular planar subarray designs and simulation results will be presented in Part II [28] of this two-part paper. The remainder of this paper is organized as follows. Sec-tion II briefly reviews the necessary notations and concepts on integer matrices and the MD-CRT used in this paper. Section III introduces the imaging geometry and signal model, establishes the 2D-DFT-based vector remainder formulation, and studies the associated 2D-DFT matrix modulus design for a given array geometry. Section IV analyzes the ambiguity problem, presents an approximate 2D-DFT peak model for non-integer frequency vectors, and develops the robust recov-ery framework based on multiple planar subarrays. Section V presents some numerical results. Finally, Section VI concludes the paper. II. P RELIMINARIES 
+
+In this section, we briefly review several basic concepts on two-dimensional integer matrices that are needed for the MD-CRT framework used later. For further background on integer matrices and related results of the MD-CRT, we refer to [20]– [26]. Throughout this section, Z and R denote the sets of in-tegers and real numbers, respectively. Bold lowercase letters such as n, f , and r denote two-dimensional vectors, and bold uppercase letters such as M, N, and P denote 2 × 2
+
+matrices, unless stated otherwise. The identity matrix is de-noted by I, the determinant of a matrix M is denoted by 
+
+det( M), the adjugate matrix is denoted by adj( M), and ⊤
+
+denotes the transpose of a vector or matrix. For a vector 
+
+a = [ a1, a 2]⊤ ∈ R2, ∥a∥∞ ≜ max {| a1|, |a2|} , while, for a matrix A = [ Aij ] ∈ R2×2, ∥A∥∞ ≜ max 1≤i≤2
+
+P2 
+
+> j=1
+
+|Aij |.1) Lattice: Given a nonsingular matrix M ∈ R2×2, the lattice generated by M is defined as 
+
+L(M) = {Mn | n ∈ Z2}.
+
+2) Fundamental parallelepiped (FPD): For any nonsingular matrix M ∈ R2×2, define 
+
+P(M) = r ∈ R2 | r = Mx , x ∈ [0 , 1) 2 .3
+
+If M ∈ Z2×2 is a nonsingular integer matrix, we further define the fundamental parallelepiped (FPD) of M as 
+
+N (M) ≜ P(M) ∩ Z2.
+
+That is, N (M) is the set of integer vectors contained in 
+
+P(M). It contains exactly | det( M)| elements. 3) Vector remainder representation: Let M ∈ R2×2 be a nonsingular matrix. Then any vector f ∈ R2 can be uniquely written as 
+
+f = Mn + r, n ∈ Z2, r ∈ P (M).
+
+We write f ≡ r mod M, and call r the vector remainder 
+
+of f modulo M.When M ∈ Z2×2 and f ∈ Z2, the vector remainder r is also integer-valued, and hence r ∈ N (M). Therefore, any integer vector f ∈ Z2 admits the unique decomposition for 
+
+M ∈ Z2×2 as 
+
+f = Mn + r, n ∈ Z2, r ∈ N (M).
+
+This integer vector remainder representation is the one used in the MD-CRT framework. The real-valued version above will be useful later when we analyze non-integer frequency vectors and quantization effects. 4) Unimodular matrix: An integer matrix U ∈ Z2×2 is said to be unimodular if | det( U)| = 1 .5) Greatest common left divisor (gcld): Given two integer matrices M and N, a nonsingular integer matrix G is called a common left divisor (cld) of M and N if both G−1M
+
+and G−1N are integer matrices. If every cld of M and N
+
+is also a left divisor of G, then G is called the greatest common left divisor (gcld) of M and N.6) Least common right multiple (lcrm): An integer matrix 
+
+R is called a common right multiple (crm) of integer matrices M and N if there exist integer matrices P and 
+
+Q such that R = MP = NQ . If every crm of M and 
+
+N is also a right multiple of R, then R is called a least common right multiple (lcrm) of M and N. Although the lcrm is not unique, the absolute determinant value | det( R)|
+
+is uniquely determined. III. P ROBLEM SETUP 
+
+In this section, we introduce the imaging geometry and the corresponding signal model for a moving target observed by a planar array in a SAR system. Based on this setup, we derive the antenna-dependent image expression and show that, across the planar array, the images admit a two-dimensional com-plex exponential structure. We then reformulate this structure in a general lattice-based 2D-DFT framework, establish the corresponding two-dimensional vector remainder formulation for the motion-induced cross-range shift and the target height, and analyze how the choice of the associated 2D-DFT matrix modulus affects the propagation of the vector remainder error. Under a fixed array geometry and antenna number constraint, we further derive an optimal construction of this matrix mod-ulus. Finally, we illustrate the resulting planar array structure through an example. 
+
+Fig. 1: Geometry of the considered SAR imaging model. 
+
+A. Geometry Model 
+
+The geometry is shown in Fig. 1. The x-axis denotes the cross-range direction, the y-axis denotes the range direction, and the z-axis denotes the vertical direction. Consider a SAR platform moving with a constant velocity 
+
+v along the positive x-axis at a fixed altitude H. A planar antenna array is placed on the platform. All antenna elements lie in the x–z plane with fixed positions and move together with the platform. The antenna locations are modeled as a two-dimensional lattice generated by a matrix M ∈ R2×2, where the entries of 
+
+M are not necessarily integers, allowing for more general pla-nar array designs. This matrix M is called an array generating matrix or array geometry. Each antenna element is indexed by an integer vector u ∈ Z2, and its planar coordinate is given by 
+
+Mu =
+
+xu
+
+zu
+
+
+
+. (1) At slow time t = 0 , the position of the u-th antenna element is 
+
+ru(0) = [ xu, 0, z u + H]⊤.
+
+Due to the platform motion, the antenna position at slow time 
+
+t becomes 
+
+ru(t) = [ xu + vt, 0, z u + H]⊤.
+
+We consider a single moving point target, denoted by P .The initial position of the target is denoted by 
+
+rP (0) = [ x0, y 0, z 0]⊤,
+
+and the target moves with a constant velocity 
+
+vP = [ vx, v y , v z ]⊤,
+
+as illustrated in Fig. 1. Accordingly, the target position at slow time t is given by 
+
+rP (t) = [ x0 + vxt, y 0 + vy t, z 0 + vz t]⊤.4
+
+B. Signal Model and Basic Processing 
+
+The 0-th antenna element serves as both transmitter and receiver, while all the other antenna elements act as receivers. Suppose that the 0-th antenna element transmits a linear frequency modulated (LFM) signal with carrier frequency fc.We next derive the signal model and the corresponding processed images. The processing follows the standard VSAR framework [9]–[12], but the geometry is different: the target is allowed to move in three dimensions, and the antenna elements have nonzero height coordinates. As a result, additional phase terms appear. For clarity, we briefly outline the key steps below and highlight the key differences. Let Ru(t) denote the distance (range) between the u-th antenna element and the moving target at slow time t. Under the far-field and small-aperture assumptions, Ru(t) can be approximated by a second-order Taylor expansion around the reference range R = R0(0) , i.e., the distance between the target and the transmitter at time t = 0 . Following the standard VSAR processing model [9] after quadratic phase correction and subsequent range compression, the received signal phase at the u-th antenna can be expressed as 
+
+ϕu(t) = − 2πλ
+
+ R0(t) + Ru(t), (2) where λ denotes the carrier wavelength. Although the resulting phase expression has the same form as that in conventional VSAR models, the reference range R and the distance Ru(t)
+
+here are defined based on the three-dimensional target motion and the planar array geometry. Starting from (2), the second-order expansions of R0(t) and 
+
+Ru(t) give 
+
+ϕu(t) ≈ − 4πR λ − 2πRλ 
+
+
+
+(v2 
+
+> x
+
++ v2 
+
+> y
+
++ v2 
+
+> z
+
+− 2vv x)t2
+
+− 2πRλ 
+
+
+
+2( x0vx − x0v + vy y0 − Hv z + z0vz )t
+
+
+
++ 2πRλ (x0xu + z0zu) + ζ1,u(t) + ζ2,u(t),
+
+(3) where 
+
+ζ1,u(t) = − πRλ 
+
+ 2v2t2 + 2 xuvt + x2 
+
+> u
+
++ z2 
+
+> u
+
++ 2 Hz u
+
+ (4) contains only known platform parameters and antenna coordi-nates, and hence can be compensated in advance, and 
+
+ζ2,u(t) = 2πRλ (vxxu + vz zu)t (5) is a coupling term between the target velocity and the array aperture. Under the far-field and small-aperture assumptions, 
+
+|xu|, |zu| ≪ R, so ζ2,u(t) is small and can be neglected. After these simplifications, the phase at the u-th antenna can be approximated as 
+
+ϕu(t) ≈ − 4πR λ − 2πRλ 
+
+
+
+(v2 
+
+> x
+
++ v2 
+
+> y
+
++ v2 
+
+> z
+
+− 2vv x)t2 + 2( x0vx
+
+− x0v + vy y0 − Hv z + z0vz )t − x0xu − z0zu
+
+
+
+.
+
+(6) As in the conventional VSAR processing [9]–[12], the quadratic term in (6) is first estimated from the slow-time data using joint time-frequency analysis techniques and then compensated. We then take the Fourier transform, with respect to the slow time t, of the compensated version of exp( jϕ u(t)) 
+
+and obtain the complex image at the u-th antenna, 
+
+Su(n) = exp 
+
+
+
+−j 4πR λ + j 2πRλ (x0xu + z0zu)
+
+
+
+× δ n − nx0 − ∆shift 
+
+,
+
+(7) where n is the discrete cross-range index in the image and 
+
+δ(·) denotes the discrete delta function. Here, nx0 is the discrete index corresponding to the true cross-range location x0 of the moving target, namely, 
+
+x0 = ∆ x nx0 , (8) where ∆x denotes the cross-range resolution. The quantity 
+
+∆shift denotes the motion-induced shift of the target from the true position nx0 in the SAR image, and is given by 
+
+∆shift = − x0vx + y0vy + z0vz − Hv z
+
+v ∆x
+
+. (9) Once ∆shift is estimated, the true cross-range position x0 can be readily recovered. When vx = vy = vz = 0 , the shift term ∆shift becomes zero, and (7) reduces to the stationary target case. 
+
+C. 2D-DFT Formulation 
+
+From (7), the image peak appears at the index nx0 + ∆ shift ,which can be directly detected from the SAR image. We therefore compensate the corresponding cross-range phase term by multiplying (7) with 
+
+exp 
+
+
+
+−j 2πRλ 
+
+ nx0 + ∆ shift 
+
+∆x xu
+
+
+
+. (10) Using x0 = ∆ xnx0 , the compensated image becomes 
+
+Su(n) = exp 
+
+
+
+− j 4πR λ + j 2πRλ 
+
+  − ∆shift ∆x xu + z0zu
+
+
+
+× δ n − nx0 − ∆shift 
+
+.
+
+(11) For convenience, define the antenna-independent phase term 
+
+C0 = exp 
+
+
+
+−j 4πR λ
+
+
+
+, (12) which does not affect the subsequent spatial processing across the planar array. Then (11) can be rewritten as 
+
+Su(n) = C0 exp 
+
+
+
+j 2πRλ 
+
+  − ∆shift ∆x xu + z0zu
+
+
+
+× δ n − nx0 − ∆shift 
+
+.
+
+(13) We now introduce the parameter vector 
+
+g ≜
+
+−∆shift ∆x
+
+z0
+
+
+
+,
+
+which jointly characterizes the motion-induced cross-range shift and the target height. Recovering g is therefore equivalent to jointly estimating ∆shift and z0. Using the lattice represen-tation of the antenna positions, 
+
+xu
+
+zu
+
+
+
+= Mu ,5
+
+the antenna-dependent phase terms in (13) can be written as 
+
+−∆shift ∆x xu + z0zu = g⊤Mu = ( M⊤g)⊤u. (14) Therefore, across the planar array, the image follows a two-dimensional complex exponential structure with respect to the antenna index u, and can be expressed as 
+
+Su(n) = C0 exp 
+
+
+
+j 2πRλ (M⊤g)⊤u
+
+
+
+δ n − nx0 − ∆shift 
+
+.
+
+(15) This structure suggests that the parameter vector g can be efficiently extracted through a 2D-DFT across the antenna indices u.To proceed, we first develop a general lattice-based 2D-DFT formulation for an arbitrary integer matrix modulus [19]. Define 
+
+p = 1
+
+Rλ M⊤g ∈ R2. (16) Then (15) can be rewritten as 
+
+Su(n) = C0 exp  j2π p⊤u δ n − nx0 − ∆shift 
+
+. (17) Let N ∈ Z2×2 be a nonsingular integer matrix. To exploit the orthogonality over a finite lattice, we sample the antenna index on one FPD of N⊤, i.e., N (N⊤), and define the 2D-DFT over 
+
+N (N⊤), for k ∈ N (N), by 
+
+˜S(k, n ) = X 
+
+> u∈N (N⊤)
+
+Su(n) exp  −j2π k⊤N−⊤ u . (18) Substituting (17) into (18) gives 
+
+˜S(k, n ) = C0 δ n − nx0 − ∆shift 
+
+
+
+× X 
+
+> u∈N (N⊤)
+
+exp  j2π p⊤u exp  −j2π k⊤N−⊤ u .
+
+(19) Define 
+
+q ≜ Np = 1
+
+Rλ NM ⊤g. (20) Since 
+
+p⊤u = ( N−1q)⊤u = q⊤N−⊤ u,
+
+the inner summation in the right hand side of (19) can be rewritten as 
+
+X 
+
+> u∈N (N⊤)
+
+exp  j2π q⊤N−⊤ u exp  −j2π k⊤N−⊤ u
+
+= X 
+
+> u∈N (N⊤)
+
+exp  j2π (q − k)⊤N−⊤ u . (21) We first consider the ideal case where q in (20) is an integer vector. Then the summation in (21) is a finite sum of complex exponentials over N (N⊤). Let r ∈ N (N) be the vector remainder of q modulo N. When k = r, then q − r = Nz 
+
+for some z ∈ Z2, and hence 
+
+(q − r)⊤N−⊤ u = z⊤u ∈ Z
+
+for every u ∈ Z2, so each complex exponential equals 1.When k̸ = r, then the corresponding complex exponential is a nontrivial term on the finite lattice induced by N⊤, and its sum over N (N⊤) is zero. Therefore, 
+
+X 
+
+> u∈N (N⊤)
+
+exp  j2π (q − k)⊤N−⊤ u = | det( N)| δ(k − r),
+
+(22) where r is the vector remainder of q modulo N. Substitut-ing (22) into (19), we obtain 
+
+˜S(k, n ) = C0 | det( N)| δ(k − r) δ n − nx0 − ∆shift 
+
+, (23) where r ≡ q mod N.Therefore, after the 2D-DFT across the antenna index u,the peak appears at k = r, from which the vector remainder 
+
+r can be directly obtained. Since q ≡ r mod N, it follows from (20) that 
+
+1
+
+Rλ NM ⊤g ≡ r mod N. (24) Equivalently, there exists an integer vector n ∈ Z2 such that 
+
+1
+
+Rλ NM ⊤g = Nn + r. (25) Multiplying both sides by Rλ M−⊤ N−1 yields 
+
+g = Rλ M−⊤ n + Rλ M−⊤ N−1r. (26) Hence, 
+
+g ≡ Rλ M−⊤ N−1r mod Rλ M−⊤ . (27) We next consider the general case where q is not necessarily integer-valued. Then the detected 2D-DFT peak may not be exactly the discrete vector remainder of an integer vector modulo N. This may cause an error in the detected vector remainder r and thus an error in q. The error in q will propagate to g through the matrix factor M−⊤ N−1 as shown in (20). This motivates our choice of N below. To see this, let 
+
+q = Nn + rc, rc ∈ P (N), n ∈ Z2, (28) where rc is the vector remainder of the non-integer vector q
+
+modulo N. From (20), the corresponding vector remainder of 
+
+g is 
+
+grem = Rλ M−⊤ N−1rc. (29) Suppose that the detected vector remainder from the 2D-DFT peak detection can be modeled as 
+
+ˆr = rc + er , (30) where er denotes the vector remainder estimation error. Then the induced error in the vector remainder of g is 
+
+ˆgrem − grem = Rλ M−⊤ N−1er , (31) and therefore 
+
+∥ˆgrem − grem ∥∞ ≤ Rλ M−⊤ N−1 
+
+> ∞
+
+∥er ∥∞. (32) A more detailed treatment of the non-integer case and the associated quantization effect will be given in Section IV-B. The bound in (32) shows that, for a given array geometry matrix M, the choice of N directly affects the error ampli-fication from the vector remainder error er to the parameter vector g. This motivates us to select N so that 
+
+M−⊤ N−1
+
+> ∞6
+
+is as small as possible. In the meantime, the choice of N is also constrained by the array size. This is because, from (18), the antenna index u is sampled over the whole FPD set N (N⊤), whose cardinality is 
+
+|N (N⊤)| = | det( N)|.
+
+Therefore, | det( N)| equals the number of antenna elements used in the corresponding planar array. In practice, once the array geometry M is fixed, the number of available antenna elements is limited by the physical size of the platform. It is thus natural to optimize N under a fixed absolute value of the determinant, when the array geometry M in (1) is fixed. This design issue is specific to the two-dimensional set-ting considered here. For a one-dimensional linear array, the corresponding N reduces to a scalar N . In that case, N
+
+represents both the number of points in the one-dimensional DFT and the number of antenna elements in the array. Hence, under a given antenna number constraint, the choice of N is unique and one simply uses the largest admissible value, and no additional structural design freedom exists. In contrast, in the present two-dimensional case, N is a matrix, and when its absolute determinant value is fixed, it has many choices with different matrix structures that lead to different error amplification behavior. This motivates the following optimization problem: 
+
+min  
+
+> N∈Z2×2
+
+M−⊤ N−1
+
+> ∞
+
+subject to | det( N)| = l, 
+
+(33) where l is a given positive integer representing the number of available antenna elements. For convenience, define 
+
+W(N) ≜ M−⊤ N−1. (34) The following theorem characterizes the optimal solution to (33). 
+
+Theorem 1. Let l be a fixed positive integer. For the optimiza-tion problem in (33) , every feasible integer matrix N satisfies 
+
+∥W(N)∥∞ ≥ 1
+
+pl | det( M)| . (35) 
+
+Moreover, if 
+
+N⋆ = α adj( M⊤) (36) 
+
+is integer-valued for some scalar α and satisfies 
+
+l = α2| det( M)|, (37) 
+
+then N⋆ attains the equality in (35) and is therefore a global minimizer of (33) .Proof. Let N be any feasible integer matrix and write 
+
+W = W(N) = M−⊤ N−1.
+
+By Hadamard’s determinant inequality [27] applied to the rows of W, we have 
+
+| det( W)| ≤ 
+
+> 2
+
+Y
+
+> i=1
+
+∥ row i(W)∥2.
+
+Moreover, for each row vector, 
+
+∥ row i(W)∥2 ≤ ∥ row i(W)∥1 ≤ ∥ W∥∞,
+
+where ∥ · ∥ 2 and ∥ · ∥ 1 denote the Euclidean norm and the ℓ1
+
+norm of a vector, respectively. Therefore, we obtain 
+
+∥W∥∞ ≥ | det( W)|1/2. (38) Since 
+
+det( W) = det( M−⊤ ) det( N−1) = 1det( M) det( N) ,
+
+and every feasible N satisfies | det( N)| = l, we obtain 
+
+| det( W)| = 1
+
+l | det( M)| . (39) Combining (38) and (39), we have 
+
+∥W(N)∥∞ ≥ 1
+
+pl | det( M)| ,
+
+which proves (35). Now consider N⋆ = α adj( M⊤). Using 
+
+adj( M⊤) = det( M)M−⊤ ,
+
+we have 
+
+N⋆ = α det( M) M−⊤ ,
+
+and hence 
+
+W(N⋆) = M−⊤ N−1 
+
+> ⋆
+
+= 1
+
+α det( M) I.
+
+Therefore, 
+
+∥W(N⋆)∥∞ = 1
+
+|α| | det( M)| . (40) On the other hand, 
+
+| det( N⋆)| = α2 | det(adj( M⊤)) | = α2 | det( M)|. (41) If (37) holds, then (41) gives 
+
+| det( N⋆)| = l, 
+
+so N⋆ is feasible. Moreover, by (37), 
+
+1
+
+pl | det( M)| = 1
+
+pα2| det( M)|2 = 1
+
+|α| | det( M)| .
+
+Combining this with (40), we see that N⋆ attains the lower bound in (35). Therefore, N⋆ is a global minimizer of (33). 
+
+Remark 1. Although Theorem 1 is stated for the two-dimensional case considered in this paper, the same argument extends directly to an arbitrary dimension D.Theorem 1 shows that, for a given M, the choice 
+
+N = α adj( M⊤) (42) minimizes the error amplification factor 
+
+M−⊤ N−1
+
+> ∞
+
+among all integer matrices with the same absolute determinant value, whenever N is integer-valued. 7
+
+This result also has a simple intuitive explanation. Since 
+
+adj( M⊤) = det( M)M−⊤ ,
+
+choosing N proportional to adj( M⊤) makes M−⊤ N−1 ascalar multiple of the identity matrix. So, after this choice, the effect of the array geometry is the same in both coordinates. In other words, the vector remainder error is balanced in the two directions, instead of being enlarged more in one direction than in the other. The scalar α sets the scale of N in (42). Since from (18), one can see that the antenna indices need to be chosen from the whole set N (N⊤), the number of antenna elements is 
+
+| det( N)|. Therefore, when the array geometry M is fixed, a larger feasible |α| means that more antenna elements need to be used. Meanwhile, it also reduces the error amplification factor M−⊤ N−1
+
+> ∞
+
+. So α can be viewed as a scaling factor that makes full use of the available antennas and also improves robustness. On the other hand, all the antennas with indices in N (N⊤) need to be within a given platform of limited size. This means that when the array geometry M is fixed, we may use the scaling factor α to control the array occupied platform size. Therefore, in the following, we adopt the choice in (42) and conduct all subsequent analysis under this setting. Define 
+
+N ≜ α adj( M⊤), f ≜ α det( M)
+
+Rλ g, (43) where α ∈ R is chosen such that N is an integer matrix. In general, f is not necessarily an integer vector. In this subsec-tion, we first consider the ideal case where f is also an integer vector. The general non-integer case of f , which introduces quantization errors, will be addressed in Section IV-B. Since 
+
+adj( M)M = det( M)I,
+
+we have 1
+
+Rλ M⊤g = N−1f . (44) Substituting (44) into (15), we obtain 
+
+Su(n) = C0 exp  j2π f ⊤N−⊤ u δ n − nx0 − ∆shift 
+
+. (45) Applying the 2D-DFT with respect to u ∈ N (N⊤), and using the same derivation as in (18)–(23), we obtain 
+
+˜S(k, n ) = C0 | det( N)| δ k − r δ n − nx0 − ∆shift 
+
+, (46) where r ∈ N (N) is the vector remainder of f modulo N,namely, 
+
+f ≡ r mod N. (47) Therefore, the 2D-DFT directly provides the vector remain-der r of f modulo N. If f ∈ N (N), then r = f , and the parameter vector g can be uniquely recovered from (43). Otherwise, only a folded version of f , namely its vector remainder modulo N, is obtained. This ambiguity motivates the multi-subarray framework developed in the next section. 
+
+D. Planar Array Structure 
+
+To apply the above 2D-DFT formulation in practice, two conditions are needed. First, the matrix N must be an inte-ger matrix. This ensures that the complex exponential terms 
+
+exp  j2π f ⊤N−⊤ u are periodic with respect to the lattice generated by N⊤. Second, the antenna indices must fully cover the FPD of N⊤. That is, for each u ∈ N (N⊤), there must be an antenna element at the location Mu .We next give an example to illustrate how the antenna elements should be arranged so that these conditions are satisfied. 
+
+Example 1. Let 
+
+M =
+
+ 1.5 0
+
+−0.5 1
+
+
+
+,
+
+and all antenna elements are placed on the lattice generated by M, i.e., each antenna location is of the form Mu with 
+
+u ∈ Z2.
+
+Fig. 2: FPD of N⊤.
+
+Fig. 3: Planar Antenna Array of Example 1. Choose the scaling factor α = 4 . Then 
+
+N = α adj( M⊤) = 
+
+4 20 6
+
+
+
+.8
+
+The FPD of N⊤ is illustrated in Fig. 2. All integer index vectors u inside this region are marked in the figure. In this example, the region contains | det( N⊤)| = 24 vectors. For each index vector u in N (N⊤) there exists a corre-sponding antenna location Mu . The positions of all 24 antenna elements are shown in Fig. 3. This example illustrates how the antenna elements should be arranged so that the antenna indices exactly cover one FPD of N⊤, and therefore satisfy the requirements of the above 2D-DFT formulation. IV. A MBIGUITY ANALYSIS AND ROBUST RECOVERY 
+
+In this section, we address the ambiguity caused by the vector remainder structure derived in Section III. We first show that, for a single planar array, the unambiguous range is fundamentally limited, so ambiguity arises once the true parameter vector lies outside this range. We then develop a multi-subarray framework that combines vector remainders with different matrix moduli through the MD-CRT to recover the true parameter vector over an enlarged unambiguous range. Finally, we analyze the effects of practical errors, including quantization and noise, and establish sufficient conditions together with explicit reconstruction error bounds for robust recovery. 
+
+A. Multi-Subarray Ambiguity Resolution 
+
+From (46), the 2D-DFT yields only the vector remainder 
+
+r of f modulo N, rather than f itself. In this subsection, we continue to consider the ideal case where f in (43) is an integer vector. Then there exists an integer vector n ∈ Z2 such that 
+
+f = Nn + r, r ∈ N (N). (48) Hence, a single planar array recovers the exact vector f only when f ∈ N (N). Otherwise, only its folded version r is observed. Since f depends directly on the motion-induced shift and the target height, when the target velocity or height is large, f may fall outside N (N), and ambiguity then occurs. To deal with this problem, we employ multiple planar subarrays with different lattice generators similar to the one-dimensional non-uniform linear array framework in [12]. The key idea is that different subarrays are constructed with dif-ferent lattice generators, which in turn induce different matrix moduli and hence generate distinct folded observations of g.As a result, these folded observations from different subarrays form a system of matrix congruences, which can be jointly solved by the MD-CRT to enlarge the unambiguous range. Let Mj , j = 1 , 2, . . . , J , be 2 × 2 lattice generator matri-ces. For each Mj , define the corresponding 2D-DFT matrix modulus 
+
+Nj ≜ αj adj( M⊤ 
+
+> j
+
+), j = 1 , . . . , J, (49) where αj is chosen such that Nj is an integer matrix for each j. The j-th planar subarray places its antenna elements at Mj u, u ∈ N (N⊤ 
+
+> j
+
+), so that the antenna indices cover one whole FPD of N⊤ 
+
+> j
+
+. In this way, we obtain J subarrays, each associated with a different matrix modulus Nj .The complex image obtained from the j-th subarray is 
+
+S(j) 
+
+> u
+
+(n) = C(j)0 exp  j2π f ⊤ 
+
+> j
+
+N−⊤  
+
+> j
+
+u δ n − nx0 − ∆shift 
+
+,
+
+where 
+
+fj = αj det( Mj )
+
+Rλ g,
+
+which, for description convenience, is also assumed to be an integer vector now and the general case will be studied later. By applying the MD-DFT with respect to u ∈ N (N⊤ 
+
+> j
+
+) as in (45)–(47), we obtain 
+
+fj ≡ rj mod Nj .
+
+Substituting the expression of fj into the above congruence gives 
+
+g ≡ Rλ αj det( Mj ) rj mod Rλ αj det( Mj ) Nj , (50) for j = 1 , 2, · · · , J .For notational convenience, define 
+
+βj ≜ Rλ αj det( Mj ) , j = 1 , . . . , J. (51) Then (50) can be written compactly as 
+
+g ≡ βj rj mod βj Nj , j = 1 , . . . , J. (52) To apply the MD-CRT, the congruence system in (52) must be represented in integer-valued form. This can be handled in practice by appropriate scaling or quantization. For simplicity, we assume in this subsection that (52) already satisfies the integer-valued requirement of the MD-CRT. Under this as-sumption, the resulting integer-valued congruence system can be solved using the MD-CRT. 
+
+Proposition 1 (MD-CRT [20]) . Let R1, R2, . . . , RJ be non-singular integer matrices of size D×D, and let R be any lcrm of them. For any integer vector g ∈ ZD , it can be uniquely determined from its vector remainders g ≡ rj mod Rj ,
+
+1 ≤ j ≤ J, if and only if g ∈ N (R).
+
+Under the above integer-valued assumption, applying Proposition 1 to the system in (52), the parameter vector g
+
+can be uniquely recovered within the FPD of 
+
+R ≜ lcrm  β1N1, . . . , β J NJ
+
+.
+
+Therefore, the FPD N (R) defines an unambiguous range of the multi-subarray system. Since the lcrm is not unique in general, the corresponding unambiguous range is not unique either. However, the absolute determinant value | det( R)| is uniquely determined by β1N1, . . . , β J NJ for any lcrm of them. Since |N (R)| = | det( R)|, the size of an unambiguous range, i.e., the number of uniquely recoverable unknown integer vectors g, is uniquely determined, although its shape may depend on the particular choice of the lcrm. In practice, one usually fixes a particular lcrm in advance and uses the corresponding FPD as the unambiguous range. If there does not exist a matrix among β1N1, . . . , β J NJ
+
+that is a right multiple of all the others, then the FPD of the 9
+
+lcrm R contains strictly more points than that of any individual matrix modulus. That is, 
+
+| det( R)| > | det( βj Nj )|, j = 1 , . . . , J. 
+
+Therefore, the size of an unambiguous range achieved by multiple subarrays is strictly larger than that provided by any single subarray. To illustrate this enlargement geometrically, we consider the following example. 
+
+Example 2. Consider two matrices 
+
+R1 =
+
+2 10 2
+
+
+
+, R2 =
+
+2 01 2
+
+
+
+.
+
+It can be verified that their least common right multiple is [24] 
+
+R = lcrm( R1, R2) = 
+
+4 00 4
+
+
+
+.
+
+The corresponding FPDs are illustrated in Fig. 4. As shown in the figure, the FPD of R strictly contains those of R1 and R2.Therefore, the unambiguous range achieved by the two planar subarrays generated by R1 and R2 is strictly larger than that of any single subarray alone. 
+
+Fig. 4: The FPDs of Example 2. This example shows geometrically how the lcrm can gener-ate an FPD that is strictly larger than any associated with an individual matrix modulus, and therefore how multiple subarrays enlarge the unambiguous range. 
+
+B. Approximate 2D-DFT Peak Model for Non-Integer Fre-quency Vectors 
+
+In general, the frequency vector fj is not necessarily integer-valued. This makes it harder to interpret the detected 2D-DFT peak. When fj ∈ Z2, the detected peak can be identified directly with the standard vector remainder of fj modulo Nj .However, when fj /∈ Z2, this interpretation may not be exact. Specifically, let 
+
+Nj = Uj Dj Vj
+
+be a Smith normal form [26] of Nj , where Uj , Vj are unimodular and Dj is diagonal. Then the exact peak selection rule is governed by the transformed frequency vector 
+
+efj = U−1 
+
+> j
+
+fj (53) on the diagonal grid induced by Dj . Equivalently, in the original coordinates, the exact decision regions are generally skewed and depend on the unimodular matrix Uj . As a result, a direct closed-form characterization of the exact peak is difficult, and the subsequent error analysis would have to track these transformed decision boundaries explicitly. For this reason, we adopt a tractable approximation that replaces the non-integer vector fj by a nearby integer vector. Define the componentwise nearest-integer operator [·] : R2 →
+
+Z2 by 
+
+[a] ≜ [a1]Z, [a2]Z
+
+⊤, [ai]Z ∈ arg min  
+
+> n∈Z
+
+|ai − n|, (54) for a = [ a1, a 2]⊤ ∈ R2. When ai /∈ Z + 12 , the minimizer is unique. When ai ∈ Z + 12 , either of the two nearest integers may be chosen arbitrarily. We then define the integer approximation of fj as 
+
+f int  
+
+> j
+
+≜ [fj ], (55) and the associated quantization error as 
+
+ej ≜ f int  
+
+> j
+
+− fj . (56) Then, 
+
+∥ej ∥∞ ≤ 12 . (57) Using this integer approximation, we approximate the detected 2D-DFT peak by the standard vector remainder of f int  
+
+> j
+
+modulo 
+
+Nj . That is, we use the vector remainder of f int  
+
+> j
+
+modulo 
+
+Nj as an approximation of the detected peak. This converts the problem with non-integer frequency vectors into the same integer vector remainder framework used in the previous subsection, so that the subsequent MD-CRT reconstruction analysis can still be applied. This approximation is reasonable for the following reason. Substituting (56) into (53), we have 
+
+efj = U−1 
+
+> j
+
+fj = U−1 
+
+> j
+
+f int  
+
+> j
+
+− U−1 
+
+> j
+
+ej .
+
+Since U−1 
+
+> j
+
+f int  
+
+> j
+
+∈ Z2, the transformed vector efj is obtained by adding the error vector −U−1 
+
+> j
+
+ej to an integer lattice point. If 
+
+∥U−1 
+
+> j
+
+ej ∥∞ ≤ 12 , (58) then U−1 
+
+> j
+
+f int  
+
+> j
+
+is the nearest integer vector to efj . Therefore, in the transformed coordinates, the detected 2D-DFT peak corre-sponds exactly to the integer grid point U−1 
+
+> j
+
+f int  
+
+> j
+
+. Equivalently, in the original coordinates, this means that the detected peak can be represented by the vector remainder of f int  
+
+> j
+
+modulo Nj .Hence, under (58), the approximation is exact. Accordingly, in the following analysis, we adopt this approximation and represent the detected 2D-DFT peak in the non-integer case by the vector remainder of f int  
+
+> j
+
+modulo Nj . A more precise analysis of the exact peak selection rule in the non-integer vector case is left for future work. 10 
+
+C. Accuracy and Robustness Analysis 
+
+In the previous two subsections, we established the multi-subarray framework to enlarge the unambiguous range and introduced an approximate 2D-DFT peak model for non-integer frequency vectors f . When the matrix moduli used in the MD-CRT are fixed, replacing the MD-CRT by its robust version does not change the size of the unambiguous range, because the corresponding lcrm remains the same. Therefore, the main issue in this subsection is not the unambiguous range itself, but the sensitivity of the recovery result to practical errors in the detected vector remainders. We now analyze how these errors affect the recovery of g, and derive conditions for robust reconstruction. In the non-integer case, intrinsic vector remainder errors arise even without additive noise. These errors come from the quantization of the frequency vectors and the subsequent rounding of the scaled parameter vector. We first analyze this noiseless case, and then extend the result to noisy vector remainder detection. 
+
+1) Quantization Errors for Frequency Vector f : We first analyze the noiseless case. Recall that, for the j-th subarray, 
+
+fj = 1
+
+βj
+
+g, j = 1 , . . . , J. 
+
+As established in Subsection IV-B, in the non-integer case we represent the detected 2D-DFT peak by the vector remainder of 
+
+f int  
+
+> j
+
+= [ fj ],
+
+and define the corresponding quantization error by 
+
+ej ≜ f int  
+
+> j
+
+− fj . (59) Then, 
+
+∥ej ∥∞ ≤ 12 , j = 1 , . . . , J. (60) Therefore, there exists an integer vector nj ∈ Z2 such that 
+
+f int  
+
+> j
+
+= Nj nj + rj , rj ∈ N (Nj ), (61) where rj is the vector remainder of f int  
+
+> j
+
+modulo Nj . Substi-tuting f int  
+
+> j
+
+= fj + ej and fj = g/β j into (61) yields 
+
+g + βj ej = βj Nj nj + βj rj , j = 1 , . . . , J. (62) We next convert (62) into an integer-valued congruence system suitable for robust MD-CRT. Specifically, introduce a common positive integer k such that the components of 
+
+Aj ≜ kβ j Nj ∈ Z2×2, bj ≜ kβ j rj ∈ Z2, (63) are all integers, for all j = 1 , . . . , J . Multiplying (62) by k
+
+gives 
+
+kg + kβ j ej = Aj nj + bj , j = 1 , . . . , J. (64) The right hand side of (64) is integer-valued, while kg is not necessarily an integer vector. Define 
+
+x ≜ [kg] ∈ Z2 and δ ≜ x − kg. (65) Then 
+
+∥δ∥∞ ≤ 12 . (66) Substituting (65) into (64), we obtain 
+
+x = Aj nj + bj + ηj , j = 1 , . . . , J, (67) where 
+
+ηj ≜ δ − kβ j ej . (68) Using (60) and (66), we have 
+
+∥ηj ∥∞ ≤ ∥ δ∥∞ + ∥kβ j ej ∥∞ ≤ 12 + k|βj |
+
+2 . (69) Equation (67) reformulates the recovery problem as an integer-valued congruence system for the unknown integer vector x = [ kg]. Once x is estimated, the original parameter vector g is recovered by dividing it by k. Here, the detected quantities bj = kβ j rj are no longer exact vector remainders of x, because they are accompanied by the errors ηj caused by quantization. Since the MD-CRT is sensitive to such vector remainder errors, robust MD-CRT is required for robust recovery. To state the robust recovery condition, we next introduce the quantity that determines the allowable error threshold in the robust MD-CRT [22], [23]. Let Gi,j be a greatest common left divisor (gcld) of Ai and Aj , and define 
+
+Λ ≜ max  
+
+> 1≤i≤J
+
+min  
+
+> 1≤j≤Jj̸=i
+
+λL(Gi,j ), (70) where λL(Gi,j ) denotes the minimum nonzero distance of the lattice generated by Gi,j under the ℓ∞ norm. With this notation, the erroneous system in (67) is now in the standard form required by robust MD-CRT. We can therefore apply the corresponding result to characterize when the integer vector x
+
+can be robustly recovered from the matrix moduli {Aj }Jj=1 
+
+and the detected vector remainders {bj }Jj=1 .
+
+Proposition 2 (Robust MD-CRT [22]) . Consider the erro-neous congruence system in (67) . If there exists a constant τx
+
+such that 
+
+∥ηj ∥∞ ≤ τx < Λ4 , j = 1 , . . . , J, (71) 
+
+then the integer vector x can be robustly recovered from 
+
+{Aj }Jj=1 and {bj }Jj=1 and the resulting estimate ˆx satisfies 
+
+∥ˆx − x∥∞ ≤ τx. (72) This proposition directly yields the following recovery bounds for the parameter vector g. The corresponding estimate of g is given by 
+
+ˆg ≜ 1
+
+k ˆx. (73) Since x = kg + δ, we have 
+
+ˆg − g = 1
+
+k (ˆ x − x) + 1
+
+k δ.
+
+Using (66) and (72), we obtain 
+
+∥ˆg − g∥∞ ≤ τx
+
+k + 12k . (74) Let 
+
+βmax ≜ max  
+
+> 1≤j≤J
+
+|βj |. (75) 11 
+
+From (69) and (71), a sufficient condition for robust recovery in the noiseless case is 
+
+12 + kβ max 
+
+2 < Λ4 . (76) Under (76), we may choose 
+
+τx ≜ 12 + kβ max 
+
+2 , (77) which satisfies (71). Substituting (77) into (74) gives the reconstruction error bound 
+
+∥ˆg − g∥∞ ≤ βmax 
+
+2 + 1
+
+k . (78) This bound characterizes the recovery accuracy of g in the noiseless case. We summarize the above derivation by the following noise-less robust recovery result. For comparison, related robust recovery results for one-dimensional linear arrays with two subarrays under quantization errors were studied in [12]. 
+
+Theorem 2 (Noiseless robust recovery) . If the sufficient condi-tion in (76) holds, then the parameter vector g can be robustly recovered. Moreover, the reconstruction error is bounded as in (78) .2) Remainder Errors Induced from Noise: We now consider additive noises in signals that may cause errors in the detected vector remainders, in addition to the intrinsic quantization errors already analyzed above. Suppose that the detected vector remainder for the j-th subarray is 
+
+˜rj = rj + ∆ rj , j = 1 , . . . , J, 
+
+where ∆rj denotes the vector remainder error caused by noise. Recall from (63) that, in the noiseless case, we multiply each vector remainder βj rj by the factor k so that the resulting quantity bj = kβ j rj is integer-valued. In the noisy case, using the same scaling as in (63), we obtain the corresponding observed integer vector remainder 
+
+˜bj ≜ kβ j ˜rj = bj + kβ j ∆rj . (79) The derivation now proceeds in exactly the same way as in the noiseless case. Repeating the above steps, we obtain 
+
+x = Aj nj + ˜bj + ˜ ηj , j = 1 , . . . , J, (80) where the resulting vector remainder error is 
+
+˜ηj = δ − kβ j ej − kβ j ∆rj . (81) Hence, 
+
+∥˜ηj ∥∞ ≤ 12 + k|βj |
+
+2 + k|βj | ∥ ∆rj ∥∞. (82) Therefore, the noisy case in (80) remains within the robust MD-CRT framework. If there exists τx such that 
+
+∥˜ηj ∥∞ ≤ τx < Λ4 , j = 1 , . . . , J, (83) then Proposition 2 still applies, and the resulting estimate ˆx
+
+satisfies 
+
+∥ˆx − x∥∞ ≤ τx.
+
+Consequently, 
+
+∥ˆg − g∥∞ ≤ τx
+
+k + 12k . (84) Using (82) and (83), a sufficient condition for robust recovery in the noisy case is 
+
+12 + kβ max 
+
+2 + k max 
+
+> 1≤j≤J
+
+ |βj | ∥ ∆rj ∥∞
+
+ < Λ4 . (85) Under (85), we may choose 
+
+τx = 12 + kβ max 
+
+2 + k max 
+
+> 1≤j≤J
+
+ |βj | ∥ ∆rj ∥∞
+
+, (86) which satisfies (83). Substituting (86) into (84) gives 
+
+∥ˆg − g∥∞ ≤ βmax 
+
+2 + max 
+
+> 1≤j≤J
+
+ |βj | ∥ ∆rj ∥∞
+
+ + 1
+
+k . (87) We summarize the above analysis by the following noisy robust recovery result. 
+
+Theorem 3 (Noisy robust recovery) . If the sufficient condition in (85) holds, then the parameter vector g can be robustly recovered under noisy vector remainder detection. Moreover, the reconstruction error is bounded as in (87) .
+
+Theorems 2 and 3 complete the theoretical framework of this section. Together with the ambiguity analysis in the first subsection, we show that the proposed multi-subarray framework not only enlarges the unambiguous range, but also enables robust recovery of g in the presence of practical errors, with explicit reconstruction error bounds determined by quantization and remainder error levels. Moreover, the bounds in (78) and (87) directly determine the recovery accuracy of g. In practice, we usually want this bound to be as small as possible. From (87), one can see that the recovery accuracy is closely related to the quantities 
+
+{βj }Jj=1 . Since βj = Rλ αj det( Mj ) , increasing αj decreases 
+
+βj , and hence reduces both the intrinsic quantization term 
+
+βmax /2 and the noise related term max 1≤j≤J
+
+ |βj | ∥ ∆rj ∥∞
+
+.Therefore, a larger αj leads to a smaller reconstruction error bound and hence a more accurate recovery of g. However, as mentioned earlier, a larger αj leads to a larger size of array, which may not be possible for a limited platform size. When the physical platform size is fixed, this improvement can be, however, achieved through zero-padding in the 2D-DFT. To see this, for a fixed array geometry M, consider two positive scaling factors 0 < α (1) < α (2) such that N(1) =
+
+α(1) adj( M⊤) and N(2) = α(2) adj( M⊤) are both integer matrices. The smaller factor α(1) corresponds to the actual planar array, in the sense that antenna measurements are available for all indices u ∈ N (N(1) )⊤. Since α(2) >α(1) , the corresponding larger index set N (N(2) )⊤ contains 
+
+N (N(1) )⊤ as a subset. Hence, to perform the 2D-DFT with the size associated with α(2) , we keep the measured data on N (N(1) )⊤ and assign zero values to those indices in N (N(2) )⊤ \ N  (N(1) )⊤, i.e., zero-padding in two-dimensions. In this way, zero-padding provides a practical way to realize a larger size 2D-DFT with a larger effective 
+
+α, and hence to improve the reconstruction accuracy without changing the physical array. This follows the same idea of 12 
+
+zero-padding in the one-dimensional case in [12] to improve the recovery accuracy. V. S IMULATION RESULTS 
+
+In this section, we provide a representative numerical example to illustrate the enlargement of the unambiguous range achieved by the proposed multi-subarray framework. We consider only the noiseless case here. Since this Part I of the two-part paper only focuses on the basic formulation and recovery framework, we leave detailed planar subarray designs and detailed simulations in Part II of this two-part paper, [28]. In this section we show, through a simple numerical example, that using two planar subarrays jointly can enlarge the unambiguous range compared with using only a single subarray. 
+
+A. Simulation Setup 
+
+In the simulation, the radar altitude is set to H = 4000 m ,the platform velocity is set to v = 200 m /s, the cross-range resolution is set to ∆x = 2 m , and the wavelength is set to λ = 0 .05 m . The terrain and road are generated numerically. A point target is selected on the road, and its velocity is chosen along the local road direction. To emphasize the role of the unambiguous range, we use the same scene setting throughout this section and compare the corresponding reconstructed target locations in three-dimensional space. The target position and velocity are chosen as r0 = [ x0, y 0, z 0]⊤ =[175 .409811 , 263 .516684 , 94 .868794] ⊤ m and v0 =[vx, v y , v z ]⊤ = [3 .246923 , 9.450347 , 8.315553] ⊤ m/s.
+
+B. Unambiguous Range Enlargement by Two Planar Subar-rays 
+
+We consider the proposed co-prime planar array design with two subarrays. Let the two lattice generator matrices be 
+
+M1 =
+
+2 −10 2
+
+
+
+, M2 =
+
+ 2 0
+
+−1 2
+
+
+
+,
+
+and choose the factor α1 = α2 = 5 . Then, according to (49), the corresponding integer matrix moduli are 
+
+N1 =
+
+10 05 10 
+
+
+
+, N2 =
+
+10 50 10 
+
+
+
+.
+
+The resulting array is shown in Fig. 5. The entire array occupies a 19 × 19 square region. To compare the unambiguous ranges more clearly, we describe them in the discrete setting, namely, in terms of the integer frequency vector and the associated FPD set N (·).Equivalently, we assume in this comparison that the corre-sponding integer-valued frequency representation is used, so that the range can be compared directly through set inclusion. Since 
+
+β1 = β2 = β = Rλ αj det( Mj ) = Rλ 
+
+20 ,
+
+we have 
+
+lcrm( βN1, β N2) = β lcrm( N1, N2) = β(20 I) = Rλ I.
+
+Fig. 5: Placement of two co-prime planar subarrays. Hence, when both subarrays are used jointly, the correspond-ing unambiguous range of the parameter vector g is N (Rλ I).We next consider the case where only the first subarray generated by M1 is used. Then there is only one matrix modulus N1, and the unambiguous range reduces to N (βN1).Since 
+
+βN1 = Rλ 
+
+20 
+
+10 05 10 
+
+
+
+= Rλ  
+
+> 12
+
+0
+
+> 1412
+
+!
+
+,
+
+the corresponding unambiguous range is 
+
+N (βN1) = N Rλ  
+
+> 12
+
+0
+
+> 1412
+
+!! 
+
+.
+
+and it can be verified that 
+
+N (βN1) ⊊ N (βR) = N (Rλ I).
+
+This shows that using the two subarrays jointly yields a strictly larger unambiguous range than using only the subarray generated by M1.To further illustrate the effect of unambiguous range en-largement, we show the reconstructed target locations in three-dimensional space for these two cases. The reconstructed target positions are marked by red points in the figures. 
+
+Fig. 6: Reconstructed target location for the proposed two-subarray co-prime planar array design. The recovered point remains on the road. The results are shown in Figs. 6 and 7. For the proposed two-subarray design in Fig. 6, the reconstructed target remains on the road, which indicates correct localization in this noise-less example. In contrast, when only the subarray generated by M1 is used, the reconstructed target in Fig. 7 is shifted 13 
+
+Fig. 7: Reconstructed target location using only the subarray generated by M1. The recovered point is shifted away from the road. away from the road. The similar ambiguity also occurs when only the subarray generated by M2 is used. These results visually confirm that using the two subarrays jointly enlarges the unambiguous range and leads to correct target localization in this example. VI. C ONCLUSION 
+
+In this paper, we studied moving target SAR imaging with planar antenna arrays under the MD-CRT framework. For a target moving over a three-dimensional terrain (or in air), we formulated the motion-induced cross-range shift and the target height in a unified two-dimensional form, and showed that, after 2D-DFT processing across a planar array, they admit a vector remainder representation. Starting from a general 2D-DFT matrix modulus formulation, we further showed that the associated 2D-DFT matrix modulus plays an essential role in the two-dimensional setting, since it affects the propagation of vector remainder errors to the desired parameter vector. Under a fixed array geometry and antenna number constraint, we derived an optimal construction of this matrix that minimizes the error amplification factor. Based on this formulation, we developed a multi-subarray ambiguity resolution framework that enlarges the unambigu-ous range of a single planar array and enables the joint recovery of the motion-induced shift and the target height. To address practical estimation errors, we introduced an approximate 2D-DFT peak model for non-integer frequency vectors, and incorporated robust MD-CRT into the proposed framework. We then established sufficient conditions together with explicit reconstruction error bounds in both noiseless and noisy settings. Numerical results further illustrated that using two planar subarrays jointly yields a larger unambiguous range than using a single planar array alone. Detailed planar subarray designs and more detailed simulations on robustness are presented in Part II of this two-part paper [28], where we further show that recovery performance depends not only on the number of antennas but also on the array geometry. REFERENCES [1] S. A. S. Werness, W. G. Carrara, L. S. Joyce, and D. B. Franczak, “Moving target imaging algorithm for SAR data,” IEEE Trans. Aerosp. Electron. Syst. , vol. 26, no. 1, pp. 57–67, Jan. 1990. [2] S. Barbarossa, “Detection and imaging of moving objects with synthetic aperture radar. Part I: Optimal detection and parameter estimation theory,” IEE Proc. F , vol. 139, no. 1, pp. 79–88, Feb. 1992. [3] R. P. Perry, R. C. DiPietro, and R. L. Fante, “SAR imaging of moving targets,” IEEE Trans. Aerosp. Electron. Syst. , vol. 35, no. 1, pp. 188–200, Jan. 1999. [4] M. Kirsch, “Detection and imaging of arbitrarily moving targets with single-channel SAR,” IEE Proc. Radar Sonar Navig. , vol. 150, no. 1, pp. 7–11, Feb. 2003. [5] P. Marques and J. Dias, “Velocity estimation of fast moving targets using a single SAR sensor,” IEEE Trans. Aerosp. Electron. Syst. , vol. 41, no. 1, pp. 75–89, Jan. 2005. [6] G. Wang, X.-G. Xia, and V. C. Chen, “Dual-speed SAR imaging of moving targets,” IEEE Trans. Aerosp. Electron. Syst. , vol. 42, no. 1, pp. 368–379, Jan. 2006. [7] S. Barbarossa and A. Farina, “Space-time-frequency processing of synthetic aperture radar signals,” IEEE Trans. Aerosp. Electron. Syst. ,vol. 30, no. 2, pp. 341–358, Apr. 1994. [8] J. Ender, “Detection and estimation of moving target signals by multi-channel SAR,” in Proc. EUSAR , 1996, pp. 411–417. [9] B. Friedlander and B. Porat, “VSAR: A high resolution radar system for detection of moving targets,” IEE Proc. Radar Sonar Navig. , vol. 144, no. 4, pp. 205–218, Aug. 1997. [10] G. Wang, X.-G. Xia, V. C. Chen, and R. L. Fiedler, “Detection, location, and imaging of fast moving targets using multifrequency antenna array SAR,” IEEE Trans. Aerosp. Electron. Syst. , vol. 40, no. 1, pp. 345–355, Jan. 2004. [11] G. Li, J. Xu, Y.-N. Peng, and X.-G. Xia, “Moving target location and imaging using dual-speed velocity SAR,” IET Radar Sonar Navig. , vol. 1, no. 2, pp. 158–163, Apr. 2007. [12] G. Li, J. Xu, Y.-N. Peng, and X.-G. Xia, “Location and imaging of moving targets using nonuniform linear antenna array,” IEEE Trans. Aerosp. Electron. Syst. , vol. 43, no. 3, pp. 1214–1220, Jul. 2007. [13] X.-G. Xia and G. Wang, “Phase unwrapping and a robust Chinese remainder theorem,” IEEE Signal Process. Lett. , vol. 14, no. 4, pp. 247– 250, Apr. 2007. [14] B. Silva and G. Fraidenraich, “Performance analysis of the classic and robust Chinese remainder theorems in pulsed Doppler radars,” IEEE Trans. Signal Process. , vol. 66, no. 18, pp. 4898–4903, 2018. [15] X. Li and X.-G. Xia, “Location and imaging of elevated moving targets using multi-frequency velocity SAR with cross-track interferometry,” 
+
+IEEE Trans. Aerosp. Electron. Syst. , vol. 47, no. 2, pp. 1203–1212, Apr. 2011. [16] J. Chen, D. An, Y. Li, B. Ge, R. Zhou, and Z. Zhou, “Three-dimensional trajectory reconstruction of moving target with L-antenna in airborne WasSAR-GMTI,” IEEE Trans. Geosci. Remote Sens. , vol. 63, Art. no. 5213615, 2025. [17] Z. Sheng, Y. Peng, W. Hong, Y. Shi, and D. Zeng, “Incremental 3D near-field SAR imaging with block-sparse recovery,” IEEE J. Sel. Topics Signal Process. , vol. 19, no. 8, pp. 1796–1807, Dec. 2025. [18] L. Miao, S. Zhang, L. Huang, J. Ding, and W.-Q. Wang, “Moving target detection using FDA-MIMO radar with planar array,” IEEE Geosci. Remote Sens. Lett. , vol. 21, Art. no. 3503705, 2024. [19] A. Guessoum and R. Mersereau, “Fast algorithms for the multidimen-sional discrete Fourier transform,” IEEE Trans. Acoust. Speech Signal Process. , vol. 34, no. 4, pp. 937–943, 1986. [20] L. Xiao, X.-G. Xia, and Y.-P. Wang, “Exact and robust reconstructions of integer vectors based on multidimensional Chinese remainder theorem (MD-CRT),” IEEE Trans. Signal Process. , vol. 68, pp. 5349–5362, 2020. [21] G. Guo and X.-G. Xia, “A generalized multidimensional Chinese re-mainder theorem (MD-CRT) for multiple integer vectors,” IEEE Trans. Signal Process. , vol. 73, pp. 5136–5151, 2025. [22] L. Xiao, H. Huo, and X.-G. Xia, “Robust multidimensional Chinese remainder theorem for integer vector reconstruction,” IEEE Trans. Signal Process. , vol. 72, pp. 2364–2380, 2024. [23] G. Guo and X.-G. Xia, “Robust multidimensional Chinese remainder theorem (MD-CRT) with non-diagonal moduli and multi-stage frame-work,” arXiv preprint arXiv:2604.00995 , Apr. 2026. [24] G. Guo and X.-G. Xia, “A construction of pairwise co-prime integer matrices of any dimension and their least common right multiple,” IEEE Trans. Signal Process. , vol. 73, pp. 2187–2199, 2025. [25] X.-G. Xia and G. Guo, “Prime and co-prime integer matrices,” IEEE Signal Process. Lett. , vol. 32, pp. 3037–3041, 2025. [26] C. C. MacDuffee, The Theory of Matrices , New York, NY, USA: Chelsea, 1946. [27] R. A. Horn and C. R. Johnson, Matrix Analysis , 2nd ed. Cambridge, U.K.: Cambridge Univ. Press, 2012. [28] G. Guo and X.-G. Xia, “Moving target SAR imaging using planar arrays and multidimensional Chinese remainder theorem (MD-CRT)–Part II: Two subarray designs,” submitted to IEEE Trans. Signal Process. , 2026.

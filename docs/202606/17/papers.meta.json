@@ -1,0 +1,24 @@
+{
+  "label": "2026-06-17",
+  "date": "2026-06-17",
+  "generated_at": "2026-06-17T22:26:22",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202606/17/2606.14910v1-moving-target-sar-imaging-using-planar-arrays-and-multidimensional-chinese-remainder-theorem-md-crt--part-i-a-general-framework",
+      "section": "quick",
+      "title_en": "Moving Target SAR Imaging Using Planar Arrays And Multidimensional Chinese Remainder Theorem (MD-CRT)--Part I: A General Framework",
+      "authors": "Guangpu Guo, Xiang-Gen Xia",
+      "date": "2026-06-12",
+      "pdf": "https://arxiv.org/pdf/2606.14910v1",
+      "score": "6.0",
+      "evidence": "研究使用平面天线阵列的运动目标SAR成像",
+      "tldr": "针对三维地形中运动目标的合成孔径雷达成像，平面阵列需联合估计横向偏移和高度，但单阵列存在模糊。本文提出多平面子阵列框架，利用二维离散傅里叶变换形成不同模的向量余数，结合多维中国剩余定理解模糊。通过最优矩阵模设计和鲁棒算法，理论导出了噪声下重建误差界限，并验证框架有效扩大无模糊范围，为阵列SAR动目标成像提供新途径。",
+      "tags": "query:tf-sar",
+      "abstract_en": "In this two-part paper, we investigate synthetic aperture radar (SAR) moving target imaging using planar antenna arrays. For a target moving over a three-dimensional terrain, its accurate localization requires the joint estimation of the motion-induced cross-range shift and the target height. In Part I of this two-part paper, starting from the planar array imaging geometry and the corresponding signal model, we show that these two quantities can be unified into a two-dimensional parameter vector and represented, after two-dimensional discrete Fourier transform (2D-DFT) processing across the planar array, through a natural vector remainder formulation. We first develop a general 2D-DFT matrix modulus framework and show that, in the two-dimensional setting, the associated 2D-DFT matrix modulus affects the propagation of vector remainder errors. Under a fixed array geometry and antenna number constraint, we derive an optimal construction of this matrix modulus and adopt it in the subsequent analysis. Under this construction, a single planar array provides only a folded estimate when the true parameter vector lies outside its unambiguous range. To resolve this ambiguity, we develop a multi-subarray framework in which multiple planar subarrays generate multiple vector remainders with different matrix moduli, and the desired parameter vector is recovered through the multidimensional Chinese remainder theorem (MD-CRT). To account for practical errors introduced by 2D-DFT quantization and additive noise, we further introduce an approximate 2D-DFT peak model for non-integer frequency vectors, incorporate robust MD-CRT, and establish sufficient conditions together with explicit reconstruction error bounds for both noiseless and noisy settings. Numerical results verify that the proposed multi-subarray framework enlarges the unambiguous range compared with a single planar array.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
