@@ -1,0 +1,39 @@
+{
+  "label": "2026-06-18",
+  "date": "2026-06-18",
+  "generated_at": "2026-06-18T22:35:45",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202606/18/2606.19089v1-art-vs-adaptive-resolution-tiling-for-vision-transformer-visual-servoing",
+      "section": "quick",
+      "title_en": "ART-VS: Adaptive Resolution Tiling for Vision Transformer Visual Servoing",
+      "authors": "Alessandro Scherl, Bernhard Neuberger, Simon Schwaiger, David Mulero-Pérez, Lucas Muster, Jose Garcia-Rodriguez",
+      "date": "2026-06-17",
+      "pdf": "https://arxiv.org/pdf/2606.19089v1",
+      "score": "7.0",
+      "evidence": "适应性分辨率视觉伺服用于精确机器人定位",
+      "tldr": "自监督ViT特征在视觉伺服中，粗粒度描述符保障鲁棒性但精度不足，提高分辨率对收敛率提升甚微（仅从76.6%至81.0%），却带来12倍计算开销。本文提出自适应分辨率分块伺服装(ART-VS)，先以原生ViT分辨率粗对齐，再分块高分辨率局部邻域匹配，无需任务训练。在扰动下收敛率达95.4%，较标准方法提升18.8个百分点，定位误差降53%，速度提升逾10倍且显存占用少27%。成功实现透明瓶与鞋子的类别级抓取，成功率分别达95%和98%。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "Visual servoing with self-supervised Vision Transformer (ViT) features enables training-free robotic positioning with strong generalization, but faces a fundamental trade-off between robustness and precision. Coarse patch-level descriptors provide stable correspondences yet limit positioning accuracy. Increasing image resolution improves precision but yields only marginal robustness gains - under perturbation, high-resolution processing improves convergence success rate from 76.6% to just 81.0% despite 12x more ViT patches. Therefore, we propose Adaptive Resolution Tiling Visual Servoing (ART-VS), a two-phase method that adapts feature granularity to servoing progress: a coarse phase at native ViT resolution for stable alignment, then a tiled high-resolution phase that restricts matching to local neighborhoods improving positioning accuracy. Without any task-specific training, ART-VS achieves 95.4% convergence under perturbation, outperforming standard and full-resolution ViT-based servoing by 18.8 and 14.4 percentage points. Over the former it reduces positioning error by 53%, while running at over 10x higher speed and 27% lower VRAM than the latter. We validate ART-VS across three ViT backbones and demonstrate real-world category-level grasping of unseen object instances, achieving 95/100 on transparent bottles and 98/100 on shoes. Code available under https://art-vs.github.io/.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202606/18/2606.18601v1-admittance-based-surface-alignment-for-human-in-the-loop-robotic-visual-inspection",
+      "section": "quick",
+      "title_en": "Admittance-Based Surface Alignment for Human-in-the-Loop Robotic Visual Inspection",
+      "authors": "Antara Banerjee, Colin Acton, Xu Chen",
+      "date": "2026-06-17",
+      "pdf": "https://arxiv.org/pdf/2606.18601v1",
+      "score": "6.0",
+      "evidence": "航空航天制造中机器人检测时末端执行器与表面几何的精确对准",
+      "tldr": "在航空航天、半导体和医疗制造中，精密视觉检测依赖机器人末端与局部表面的精确对齐，但感知噪声和表面不规则常导致对齐失效，而人工遥操作引入的实时调整更使离线运动规划难以应对。为此，本文提出一种基于导纳控制的实时闭环姿态调整框架，将末端执行器虚拟化为在粘性介质中运动的球体，构建质量-阻尼系统，统一融合操作员输入与感知驱动的表面对齐，生成同步顺应运动。在6-DOF机械臂上实验表明，系统能稳定跟踪表面法向，最终平均姿态误差低至0.4°。该工作为面向人机协同的精密视觉检测提供了物理可解释且反应迅速的顺应控制新范式。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "Precision visual inspection underpins quality assurance across aerospace, semiconductor, and medical manufacturing, where undetected surface anomalies on high-value parts translate directly into scrap, rework, and field failures. Robotic visual inspection requires precise alignment between the end-effector and local surface geometry in the presence of perception noise and surface irregularities. In industrial settings, a human operator is often kept in the loop via teleoperation or shared autonomy, introducing real-time adjustments that render purely offline motion planning inadequate. This motivates control architectures capable of reactive, compliant behavior under combined human and perceptual uncertainty. This paper presents a novel real-time, closed-loop robotic orientation control pipeline for precision visual inspection, with an admittance-based framework that unifies operator input and perception-driven surface alignment. We design the end-effector as a virtual sphere moving through a viscous medium, such that the resulting physically interpretable mass--damper system generates synchronized, compliant motion from orientation error and operator commands. We validate the framework on a 6-DOF manipulator demonstrating stable normal-tracking and a final mean orientation error of 0.4°.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

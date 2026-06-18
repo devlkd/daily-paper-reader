@@ -6,26 +6,29 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-17
-- 运行时间：2026-06-17 22:26:17 UTC
+- 最新运行日期：2026-06-18
+- 运行时间：2026-06-18 22:35:37 UTC
 - 运行状态：成功
-- 本次总论文数：1
+- 本次总论文数：2
 - 精读区：0
-- 速读区：1
+- 速读区：2
 
 ### 今日简报（AI）
-今日速览一篇雷达成像新框架：平面阵列结合多维中国剩余定理，为动目标SAR成像提供统一解法。
-最值得关注：该通用框架用多维CRT解构空间采样模糊，有望提升城市移动监测与战场侦察的成像鲁棒性。
-若想探索成像算法新维度，不妨从这篇6分稿的“多维索引重构”方法开始深挖。
-- 详情：[/202606/17/README](/202606/17/README)
+今日速读两篇机器人视觉控制论文，聚焦自适应分辨率与力控柔顺对齐。  
+ART-VS 用动态分辨率瓦片提升视觉伺服效率，导纳式表面对齐让机器人与检测面柔顺接触。  
+若对更灵巧的机器人操作感兴趣，可先看分辨率瓦片思路。
+- 详情：[/202606/18/README](/202606/18/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Moving Target SAR Imaging Using Planar Arrays And Multidimensional Chinese Remainder Theorem (MD-CRT)--Part I: A General Framework](/202606/17/2606.14910v1-moving-target-sar-imaging-using-planar-arrays-and-multidimensional-chinese-remainder-theorem-md-crt--part-i-a-general-framework)  
-   标签：评分：6.0/10、query:tf-sar
-   evidence：研究使用平面天线阵列的运动目标SAR成像
+1. [ART-VS: Adaptive Resolution Tiling for Vision Transformer Visual Servoing](/202606/18/2606.19089v1-art-vs-adaptive-resolution-tiling-for-vision-transformer-visual-servoing)  
+   标签：评分：7.0/10、query:sat-asm-prec
+   evidence：适应性分辨率视觉伺服用于精确机器人定位
+2. [Admittance-Based Surface Alignment for Human-in-the-Loop Robotic Visual Inspection](/202606/18/2606.18601v1-admittance-based-surface-alignment-for-human-in-the-loop-robotic-visual-inspection)  
+   标签：评分：6.0/10、query:sat-asm-prec
+   evidence：航空航天制造中机器人检测时末端执行器与表面几何的精确对准
 
 
 <div class="dpr-home-promo-card">

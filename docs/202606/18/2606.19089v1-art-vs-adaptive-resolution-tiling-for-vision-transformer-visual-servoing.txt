@@ -1,0 +1,266 @@
+Title: ART-VS: Adaptive Resolution Tiling for Vision Transformer Visual Servoing
+
+URL Source: https://arxiv.org/pdf/2606.19089v1
+
+Published Time: Thu, 18 Jun 2026 01:07:37 GMT
+
+Number of Pages: 9
+
+Markdown Content:
+# ART-VS: Adaptive Resolution Tiling for Vision Transformer Visual Servoing 
+
+Alessandro Scherl 1,2 Bernhard Neuberger 2,3 Simon Schwaiger 2,4
+
+David Mulero-P´ erez 1 Lucas Muster 2,5 Jos´ e Garc´ ıa-Rodr´ ıguez 1
+
+Abstract — Visual servoing with self-supervised Vision Trans-former (ViT) features enables training-free robotic positioning with strong generalization, but faces a fundamental trade-off between robustness and precision. Coarse patch-level descrip-tors provide stable correspondences yet limit positioning accu-racy. Increasing image resolution improves precision but yields only marginal robustness gains - under perturbation, high-resolution processing improves convergence success rate from 76.6% to just 81.0% despite 12× more ViT patches. Therefore, we propose Adaptive Resolution Tiling Visual Servoing (ART-VS), a two-phase method that adapts feature granularity to servoing progress: a coarse phase at native ViT resolution for stable alignment, then a tiled high-resolution phase that restricts matching to local neighborhoods improving positioning accuracy. Without any task-specific training, ART-VS achieves 95.4% convergence under perturbation, outperforming stan-dard and full-resolution ViT-based servoing by 18.8 and 14.4 percentage points. Over the former it reduces positioning error by 53%, while running at over 10× higher speed and 27% lower VRAM than the latter. We validate ART-VS across three ViT backbones and demonstrate real-world category-level grasping of unseen object instances, achieving 95/100 on transparent bottles and 98/100 on shoes. Code available under 
+
+https://art-vs.github.io/ .
+
+I. INTRODUCTION Visual Servoing (VS) uses visual feedback to control robot motion toward a desired pose defined by a reference im-age [1], [2], and is widely applied in end-effector positioning and object manipulation tasks such as grasping [3], [4]. As real-world applications require generalization across diverse objects and scenes, central challenges arise: classical feature-based methods achieve high precision but are sensitive to occlusions and illumination changes [5]. Deep learning approaches improve robustness at the cost of task-specific training, hence sacrificing general applicability [6]–[8]. Self-Supervised-Learning (SSL) Vision Transformer (ViT) fea-tures provide a solution: models such as DINOv2 [9] produce patch-level descriptors that generalize across object instances without task-specific data. Combined with classical Image Based Visual Servoing (IBVS) control, such features achieve high convergence rates under ideal conditions, but degrade under appearance perturbations [10]. Recent ViT approaches support full input resolution [11], yielding finer features that, 
+
+> 1Department of Computer Technology, University of Alicante, Spain.
+
+(email: as358@alu.ua.es )  
+
+> 2Department of Industrial Engineering, UAS Technikum Vienna, Austria.
+> 3Automation and Control Institute, TU Wien, Vienna, Austria.
+> 4Institute of Software Engineering and Artificial Intelligence, Graz Uni-versity of Technology, Austria.
+> 5Institute for Integrative Nature Conservation Research, University of Natural Resources and Life Sciences Vienna, Austria.
+> Fig. 1. ART-VS overview. Left: During the coarse phase, standard ViT-based VS at native resolution provides stable correspondences despite large pose differences. Right: After sufficient error reduction, the tiled refinement phase increases effective resolution through spatially constrained matching, allowing for higher convergence rates. Bottom: Positioning error over-time.
+
+as we demonstrate, improve positioning precision, yet two challenges remain: 1) Robustness: ViTs employ the full image for feature matching, thus allowing long-range matches, which is detrimental to convergence at finer ranges. 2) Precision at scale: While finer features improve po-sitioning accuracy, the quadratic self-attention cost of ViTs makes full-resolution processing prohibitively slow for closed-loop control. To alleviate the aforementioned problems, we present Adaptive Resolution Tiling Visual Servoing (ART-VS), a two-phase method consisting of a coarse phase and a tiled refinement phase. During the coarse phase, ART-VS operates at the resolution the ViT was trained on, where patch-level aggregation provides stable correspondences for initial convergence. Once the average matching error drops below a threshold τ of the initial error, ensuring reliable tile-local matching (Sec. IV-C), the system transitions to the tiled refinement phase. As illustrated in Fig. 1, the input is divided into a grid of non-overlapping tiles where matches are only allowed within the corresponding ones. Consequently, ViT is forced to match features in narrow vicinities, thus reducing long-range mismatches and increasing the convergence rate. In addition, tiles are matched independently in parallel, enabling full-resolution processing with shorter processing times. ART-VS achieves both robust convergence and pre-cise positioning without any task-specific training or scene-dependent tuning. To enable deployment in cluttered scenes, 
+
+> arXiv:2606.19089v1 [cs.RO] 17 Jun 2026
+
+we further propose an optional language-guided Region of Interest (ROI) detection and tracking mode that isolates the target object before servoing, using only an open-vocabulary prompt. We evaluate ART-VS across three ViT backbones in simulation and demonstrate practical applicability through robotic end-effector positioning and category level grasping experiments. Our contributions are: 1) A training-free, backbone-agnostic method for VS based on adaptive image tiling. Coarse patch aggre-gation provides robustness to appearance variation, while tiled refinement restricts matching to local, non-redundant neighborhoods, jointly improving conver-gence behavior and scaling. Evaluation across three ViT backbones, with the best achieving 95.4% conver-gence rate under perturbation, improving over standard ViT-based servoing (18.8 pp) and full-resolution ViT processing (14.4 pp) at over 10 × higher effective frame rate and 27% lower VRAM. 2) A VS-system for language-guided category-level grasping from a single reference image, requiring no task-specific training. Validated on 200 real-world trials across unseen object instances in cluttered multi-object scenes, achieving 95% and 98% success on transparent bottles and shoes, respectively. II. RELATED WORK We review prior work along three axes: classical and learning-based servoing (Sec. II-A), self-supervised ViT fea-tures for training-free generalization (Sec. II-B), and reso-lution enhancement strategies that address their remaining spatial limitations (Sec. II-C). 
+
+A. Visual Servoing 
+
+VS is broadly categorized into Position-Based Visual Servoing (PBVS), operating on estimated pose differences, and Image-Based (IBVS), minimizing error directly in im-age space [1], [2], [12]. Classical IBVS uses hand-crafted descriptors such as SIFT [13], ORB [14], and AKAZE [15] for correspondence-based control [4], [16], achieving sub-millimeter precision under controlled conditions but degrad-ing under occlusions and illumination changes [5]. Learning-based approaches improve robustness through CNN-based pose regression [8], Siamese networks [17], unsupervised autoencoders [6], and sim-to-real transfer [3] - yet en-code scene-specific appearance, limiting generalization. A complementary line of work learns neural control policies from keypoint correspondence graphs [18], [19], replacing the classical control law while relying on instance-level handcrafted detectors (e.g., SIFT) for feature extraction. 
+
+B. Vision Transformer Features for Dense Correspondence 
+
+SSL Vision Transformers [20] produce patch-level fea-tures with strong semantic consistency across instances. Successive models such as DINO [21], DINOv2 [9], and DINOv3 [11] progressively improved zero-shot transfer and feature quality, while AM-RADIO [22] distills multiple foundation models into a single backbone. Amir et al. [23] showed that spatially binned ViT descriptors serve as ef-fective dense visual descriptors, and Goodwin et al. [24] applied cyclic consistency for zero-shot pose estimation. In visual servoing, ViT-VS [10] combined DINOv2 features with cyclic matching and IBVS control, achieving high convergence rates without task-specific training, though with reduced robustness under appearance perturbations and po-sitioning precision bounded by both the patch grid and the backbone’s fixed input resolution. 
+
+C. Spatial Refinement for Dense Correspondence 
+
+To circumvent the problem of low feature density, learned feature up-sampling methods [25], [26] increase the spatial resolution of ViT features post-hoc through self-supervised objectives, but can only interpolate sub-patch detail already aggregated by the encoder’s patch embedding. Alternatively, coarse-to-fine matching is a well-established paradigm in correspondence estimation [27]–[29]. However, spatial fea-ture refinement methods are typically trained with task-specific correspondence objectives within a given target domain. While they may generalize outside of their train-ing distribution, they represent a different trade-off in data dependence and deployment flexibility compared to purely foundation-model-based methods. To retain the advantages of spatial feature refinement w.r.t. precision and stability in a training-free setting, we present adaptive resolution tiling. Instead of forcing higher feature density through upscaled input images, as is possible with recent SSL ViT [11], we propose backbone-agnostic spatial and semantic matching in tiles. This eases computational complexity while simultaneously surpressing global mismatches [10] through spatial alignment, especially under perturbed query images. Our method achieves this while preserving the zero-shot, foundation-model-based generality of ViT features by focus-ing on fully training-free pipelines. III. METHOD Fig. 2 provides an overview of ART-VS. Given a desired RGB image I∗ defining the desired pose and a current RGB-D stream I∀t, ART-VS performs VS in two phases that exploit complementary properties of ViT features at different spatial resolutions: coarse descriptors provide stable correspondences under large pose differences, while fine-grained features improve precision but are susceptible to long-range mismatches when the viewpoint gap is still large. Both phases produce feature correspondences for a shared IBVS controller (Sec. III-A). After an initialization step that resolves in-plane rotation and optionally isolates the target object through language-guided ROI detection and tracking (Sect. III-B), the system enters the coarse phase at native ViT resolution (Sect. III-C). Once the error has been sufficiently reduced, the system transitions to the tiled high-resolution refinement phase with spatially constrained tile-local matching (Sec. III-D). Fig. 2. ART-VS pipeline overview. Inputs: an optional language prompt, desired image I∗, and RGB-D feed I∀t. a) Initialization: a language prompt triggers ROI-guided detection and tracking; otherwise full-image processing is used. In-plane rotation alignment is applied in both modes. The transition criterion (¯ et/¯e0 < τ ) selects between: b) Coarse Phase - single-pass ViT encoding produces p × p feature maps with global patch-to-patch matching between F and F∗; and c) Tiled Refinement Phase - the input is partitioned into an adaptive n × n grid of r × r tiles matching the backbone’s native resolution, each encoded independently, with matching restricted to spatially corresponding tiles between F and F∗.
+
+A. Preliminaries 
+
+Image-Based Visual Servoing. We build upon the IBVS framework [1]. Given K feature correspondences between the current and desired images, the feature error 
+
+e = s − s∗ (1) measures the displacement between current feature locations 
+
+s ∈ R2K and desired locations s∗ ∈ R2K , where each of the 
+
+K correspondences contributes a 2D pixel coordinate (u, v ).The camera velocity 
+
+vc = −λ L+ 
+
+> s
+
+e (2) drives the error toward zero, where L+ 
+
+> s
+
+is the pseudoinverse of the interaction matrix constructed from depth readings and 
+
+λ is the control gain. 
+
+ViT Feature Extraction. We employ a pretrained Vision Transformer as feature extractor fv , mapping an image of shape R3×r×r to a dense descriptor grid F ∈ RD×p×p,where r denotes the backbone’s native input resolution, i.e. the spatial dimension for which the model’s positional embeddings are defined (e.g. r=256 for DINOv3-S, r=224 
+
+for DINOv2-S), ps is the patch size, p = r/p s the resulting grid dimension, and D the descriptor dimensionality. The CLS token and, when present, register tokens are discarded; the embedding is retrieved from the remaining spatial patch tokens. The current and desired images are encoded as 
+
+F = fv (I) and F∗ = fv (I∗), respectively. 
+
+Best-Buddy Matching. We establish correspondences via best-buddy matching [30]. Given descriptor sets F∗ =
+
+{f ∗ 
+
+> 1
+
+, . . . , f ∗ 
+
+> N
+
+} and F = {f1, . . . , fN } with N = p2, the set of mutually consistent correspondences is 
+
+M = (i, j ) j = arg max 
+
+> k
+
+cos( f ∗ 
+
+> i
+
+, fk)
+
+and i = arg max 
+
+> l
+
+cos( f ∗ 
+
+> l
+
+, fj ) (3) where cos( ·, ·) denotes cosine similarity. The first condition finds the most similar current patch j for each desired patch i;the second requires that j’s closest match in the desired image is i itself, ensuring mutual consistency. From M,
+
+K correspondences are randomly subsampled per iteration to ensure spatial coverage across the descriptor grid [10]. 
+
+B. Initialization 
+
+In-Plane Rotation Alignment. As ViT patch descriptors are not rotation invariant, the in-plane offset between views is resolved by evaluating feature similarity at four discrete angles {0◦, 90 ◦, 180 ◦, 270 ◦} and applying the best-matching rotation to the robot [10]. 
+
+Language-Guided ROI (Optional). When a text prompt is provided (e.g., “transparent bottle”), ART-VS restricts processing to the target object. A language-promptable seg-mentation model generates a mask from the desired image, suppressing background patches during feature matching, while a single-object tracker propagates the bounding box across subsequent frames with re-detection on failure. We use LangSAM [31] and LightTrack [32], though the pipeline is agnostic to the specific components (Sec. IV-C). When active, both servoing phases operate within the tracked region, and the tiling grid adapts to the bounding box aspect ratio, maximizing feature density on the target. 
+
+C. Coarse Phase 
+
+During the coarse phase, the current and desired images are each processed by fv at the backbone’s input resolution r
+
+in a single forward pass, and correspondences are established via global best-buddy matching (3) over the full p×p descrip-tor grid. The resulting K correspondences drive the IBVS controller (2). We monitor the mean feature displacement 
+
+¯e = 1
+
+K
+
+> K
+
+X
+
+> i=1
+
+∥si − s∗ 
+
+> i
+
+∥ (4) where si, s∗ 
+
+> i
+
+∈ R2 are the pixel locations of the i-th correspondence and ¯e0 is the value measured at the first servoing iteration after rotation alignment. The coarse phase terminates when ¯et/¯e0 < τ , with τ = 0 .20 (i.e., 80% error reduction). Beyond this point, the remaining pose difference is small enough for reliable tile-local matching, while the coarse descriptor grid limits further refinement, motivating the transition to higher-resolution processing (Sec. IV-C). 
+
+D. Tiled Refinement Phase 
+
+After the coarse phase, ART-VS transitions to the tiled refinement phase, which increases feature resolution while constraining matches to local neighborhoods. 
+
+Tiling and Feature Extraction. To maximize feature density for a given backbone, both images are partitioned into non-overlapping tiles, each processed at the backbone’s input resolution r. For full-image tiling, the grid dimension is 
+
+n = max 
+
+ Wr
+
+
+
+,
+
+ Hr
+
+ 
+
+(5) where W × H is the original image resolution (e.g., n=6 for 
+
+r=256 with 1440 ×1080 images). Both images are resized to (n · r) × (n · r) and partitioned into n2 non-overlapping tiles of r × r pixels, preserving full spatial detail per tile. Non-overlapping partitioning ensures each pixel belongs to exactly one tile, preventing duplicate correspondences. In ROI-guided mode (Sec. III-B), the grid instead adapts to the bounding box aspect ratio with independent dimensions 
+
+nw = ⌈Wroi /r ⌉ and nh = ⌈Hroi /r ⌉, yielding nw ×nh tiles (e.g., 2×4 for a tall object). The resulting tiles from both images are processed by fv in a single batched forward pass, yielding descriptor tensors F, F∗ ∈ Rn2×D×p×p (or 
+
+Rnw nh×D×p×p in ROI mode). Desired-image descriptors are cached after the first extraction. 
+
+Spatially Constrained Matching. During tiled inference, the ViT only attends across patches within the same tile. While SSL objectives encourage context-invariant embed-dings, independent encoding provides no guarantee that de-scriptors remain comparable across tiles with different spatial context. We therefore constrain matching so that each desired tile is matched exclusively against the current tile at the same grid position via best-buddy matching (3). This assumes that the preceding coarse phase has reduced the pose difference sufficiently for corresponding content to be co-located within the same tile across views. Each tile contributes at most 
+
+Kt = max(4 , ⌊K/n 2⌋) randomly subsampled mutual near-est neighbors, ensuring that the final selection draws from spatially distributed regions. Valid correspondences from all 
+
+n2 tile pairs are pooled, and the top K by cosine similarity are selected for the IBVS controller. 
+
+Coordinate Recovery. Tile-local patch coordinates are mapped back to the original image frame by offsetting each patch position by its tile’s location in the grid and rescaling from the tiling resolution n · r to the original dimensions W × H.IV. EXPERIMENTS We evaluate ART-VS in simulation (Sec. IV-B) with ablation studies on the phase transition threshold and ROI components (Sec. IV-C), followed by end-effector position-ing and category-level grasping experiments (Sec. IV-D). 
+
+A. Experimental Setup 
+
+Simulation. We replicate the simulation setup of [7], [10]: a virtual Intel RealSense D435i captures a 60 ×80 cm poster at 1440 ×1080 resolution in Gazebo, with robot control man-aged through ROS. We sample 500 initial camera poses from a 1.2 ×1.2 ×0.3 m volume centered 0.6 m from the poster, with look-at points on four concentric circles (8 - 32 cm radii) and random focal-axis rotation within [−120 , 120] . Mean initial errors are 46.4 ±17.0 cm (position) and 74.1 ±27.7° (orientation). Trials terminate upon convergence or after 1500 iterations. Perturbed trials apply color-jitter (brightness 0.6, contrast 0.4), random erasing (probability 0.5, scale 0.02–0.33), and Gaussian blur ( σ=0.05) to the target object, simulating appearance variations. Computation runs on an NVIDIA RTX 4060 Ti GPU with Intel Core i7-13700K CPU. 
+
+Real-World Hardware. A Universal Robots UR5 with wrist-mounted Intel RealSense D435 (1440 ×1080) and Robotiq 2F-85 gripper is controlled via ROS in eye-in-hand configuration. Computation runs on an NVIDIA RTX 4070 mobile GPU with AMD Ryzen 9 7940HS CPU. 
+
+Convergence Criterion. Following [7], a trial is con-sidered converged if the pose error is reduced by >90% relative to the initial displacement and commanded end-effector velocities fall below a near-zero threshold. Position and orientation errors are reported only for converged trials. 
+
+Baselines. We compare against training-free classical de-scriptors (SIFT [13], ORB [14], AKAZE [15]) and ViT-VS method [10] (DINOv2-Small at 308 ×308 ). To isolate the effect of ViT processing resolution, we additionally evaluate the same single-pass ViT-VS scheme at two higher processing sizes: DINOv2-518 (DINOv2-Small, 518 ×518 )and DINOv3-1440 (DINOv3-Small, 1440 ×1080 ). Classical methods use standard OpenCV matchers (FLANN with Lowe’s ratio test for SIFT; brute-force with cross-check for ORB and AKAZE), while all ViT methods use best-buddy matching (3). All methods share the same IBVS control law (2), gain, convergence criteria, and number of correspon-dences ( K=24 ) on our 1440 ×1080 input. We additionally TABLE I                                                                                                                                                                                                                                                
+
+> SIMULATION BENCHMARK RESULTS .†RESULTS FROM [7], A MONG PATCH -LEVEL VITMETHODS :BOLD =BEST UNDER PERTURBATION ,
+> UNDERLINE =BEST UNPERTURBED . ART-VS FPS VALUES ARE EFFECTIVE FPS ( SEE SEC . IV-B).
+> Method Perturbed Converged [%] Position [cm] Orientation [°] VRAM [MB] FPS
+> Scene-specific finetuning
+> PBVS-CNN [8] †×75.6 3.35 ±0.65 1.71 ±0.65 ––PBVS-CNN [8] †✓36.8 3.22 ±1.57 2.37 ±1.57 ––DMLVS [7] †×100.0 0.00 ±0.00 0.00 ±0.00 ––DMLVS [7] †✓76.0 1.93 ±1.28 1.92 ±1.28 ––
+> Training-free: pixel-level descriptors
+> SIFT-IBVS ×94.8 0.06 ±0.03 0.05 ±0.02 –2.9 SIFT-IBVS ✓38.8 0.29 ±0.62 0.25 ±0.51 –2.8 AKAZE-IBVS ×90.6 0.03 ±0.01 0.03 ±0.01 –2.1 AKAZE-IBVS ✓64.8 0.09 ±0.06 0.08 ±0.06 –1.7 ORB-IBVS ×95.4 0.17 ±0.11 0.13 ±0.10 –22.4 ORB-IBVS ✓48.0 0.46 ±3.68 0.39 ±3.24 –20.8
+> Training-free: patch-level ViT
+> ViT-VS: DINOv2-308 [10] ×100.0 1.86 ±1.07 1.50 ±0.78 1254 15.1 ViT-VS: DINOv2-308 [10] ✓76.6 2.15 ±1.21 1.83 ±0.98 1230 14.4 ViT-VS: DINOv2-518 ×100.0 1.04 ±0.50 0.81 ±0.38 1328 6.3 ViT-VS: DINOv2-518 ✓77.8 2.60 ±1.17 2.22 ±1.00 1270 6.1 ViT-VS: DINOv3-1440 ×100.0 0.52 ±0.19 0.44 ±0.17 2430 1.1 ViT-VS: DINOv3-1440 ✓81.0 1.65 ±1.00 1.43 ±0.88 2431 0.9
+> ART-VS: DINOv2-7 ×7×100.0 0.74 ±0.39 0.64 ±0.31 2172 15.9
+> ART-VS: DINOv2-7 ×7✓87.2 0.88 ±0.67 0.78 ±0.63 2174 10.5
+> ART-VS: DINOv3-6 ×6×100.0 0.75 ±0.36 0.61 ±0.32 1766 16.4 ART-VS: DINOv3-6 ×6✓95 .41.01 ±0.61 0.88 ±0.56 1767 11.9
+> ART-VS: AM-Radio-6 ×6×100.0 0.87 ±0.46 0.74 ±0.38 2778 15.8
+> ART-VS: AM-Radio-6 ×6✓91.0 0.81 ±0.47 0.69 ±0.44 2779 6.8
+
+report published results for scene-specific methods (PBVS-CNN [8], DMLVS [7]). 
+
+Implementation Details. For DINOv2-Small (ViT-S/14) and DINOv3-Small (ViT-S/16), features are extracted from the final transformer block; for AM-RADIO (C-RADIOv3-B, ViT-B/16), the native spatial feature output is used. Following [23], hierarchical feature binning ( β=1) aggre-gates each patch descriptor with its 3×3 neighborhood into 9-bin descriptors. From the set of mutually consistent correspondences (3), K=24 are randomly subsampled per iteration. Control gain is λ=0.2 for simulation, and 0.1 for robotic experiments. Velocity commands are smoothed with an exponential moving average ( α=0.8) [10]. 
+
+B. Simulation Results 
+
+Table I presents results on the Hollywood poster bench-mark across 500 trials. We focus our analysis on compar-isons among training-free methods; scene-specific methods (marked †) are included for reference. 
+
+Convergence and Robustness. Under perturbation, ART-VS with DINOv3 achieves 95.4% convergence - an 18.8 percentage point improvement over ViT-VS [10] (76.6%) and 14.4 points over full-resolution DINOv3-1440 (81.0%). Among scene-specific methods, DMLVS [7] achieves perfect convergence when unperturbed but drops to 76.0% under perturbation - comparable to ViT-VS [10] - while PBVS-CNN [8] degrades to 36.8%. Classical descriptors degrade severely under perturbation (SIFT: 94.8% →38.8%, AKAZE: 90.6% →64.8%), while all three ART-VS variants remain above 87%, confirming that the adaptive tiling strategy generalizes across ViT backbones. Notably, progressively increasing single-pass resolution from DINOv2-308 through DINOv2-518 to DINOv3-1440 yields only incremental ro-bustness gains (76.6% →77.8% →81.0%) despite up to 12 ×
+
+more feature patches, whereas ART-VS’s phase-aware reso-lution switching yields a substantially larger improvement. This is consistent with the phase-dependent resolution trade-off motivating ART-VS: fine-grained features improve posi-tioning only once the viewpoint gap is small, while at large pose differences, coarse patch aggregation provides more stable correspondences. 
+
+Positioning Precision. ART-VS (DINOv3-6 ×6) reduces mean position error under perturbation by 53% relative to ViT-VS [10] (1.01 ±0.61 cm vs. 2.15 ±1.21 cm) with 50% lower variance. Against the matched backbone at full resolution (DINOv3-1440: 1.65 ±1.00 cm), the reduction is 39%. In unperturbed conditions, full-resolution DINOv3-1440 achieves slightly better precision (0.52 vs. 0.75 cm) - a trade-off we consider acceptable given the rarity of perturbation-free conditions in deployment. 
+
+Computational Cost. We report effective FPS as total iterations divided by wall-clock time to convergence, natu-rally weighting the coarse and tiled phases by their respective duration. ART-VS with DINOv3 achieves 16.4 effective FPS unperturbed and 11.9 under perturbation, compared to 1.1 and 0.9 FPS for DINOv3-1440 - over 13 × faster at 27% lower VRAM (1767 vs. 2431 MB). The lower effective rate under perturbation reflects longer convergence trajectories that spend a larger fraction of iterations in the tiled phase. The higher control frequency enables faster correction of transient matching errors, contributing to the convergence advantage over full-resolution processing. Failure analysis. We analyze the 23 non-converged trials (4.6%) of ART-VS with DINOv3-6×6, our best-performing configuration under perturbation (Fig. 3). The dominant failure mode (17/23) is severe feature corruption from si-multaneous large-area occlusion and dense noise, preventing meaningful error reduction. Four trials achieved >90% er-ror reduction before perturbation-corrupted correspondences caused slow drift. The remaining two trials diverged within the first iterations due to incorrect discrete rotation alignment under heavy noise. Since all 500 trials are drawn from the same initial pose distribution, failures are attributed to perturbation severity rather than initial pose difficulty.   
+
+> Fig. 3. Perturbed target images: from two representative non-converged ART-VS DINOv3-6×6 trials (23/500, 4.6%), showing dense noise with color jitter (left) and combined occlusion with noise (right).
+
+C. Ablation Studies 
+
+Phase Transition. Fig. 4 evaluates the coarse-to-fine transition threshold τ under perturbation on the simulation benchmark (500 trials). Early switching ( τ ≥ 0.30 ) activates the tiled refinement phase while pose differences are still large enough that corresponding content falls in different tiles across views, increasing position variance by up to 4 ×
+
+(0.59 cm → 2.45 cm at τ =0 .30 ). Late switching ( τ ≤ 0.10 )matches the precision of τ =0 .20 but prolongs the coarse phase unnecessarily. The selected threshold τ =0 .20 achieves the best trade-off: the earliest transition point at which tile correspondences remain reliable, yielding the lowest error and variance. While τ was selected in simulation, real-world tuning of such thresholds is generally impractical; the positioning and grasping experiments in Sec. IV-D confirm that this value transfers without adjustment. 
+
+ROI Detection and Tracking. The optional ROI-guided mode is used exclusively in robotic grasping experiment (Sec. IV-D); the simulation benchmark operates on full images. We therefore evaluate tracking components sep-arately on YCB-Video [33], which provides ground-truth annotations for multi-object scenes. Since ART-VS requires only a single detection at initialization followed by per-frame tracking, we assess propagation quality across three trackers (BBox CSRT [34], Optical Flow [35], LightTrack [32]) paired with two promptable detectors (LangSAM [31], SAM3 [36]) over 320 tracking instances across 67 videos. Table II reports IoU and Dice scores. Performance is primarily determined by the choice of tracker: LightTrack achieves 0.67 ±0.20 IoU with LangSAM versus 0.50 for BBox CSRT and 0.15 for Optical Flow. Detector choice         
+
+> Fig. 4. Phase transition threshold ablation . Early switching ( τ≥0.30 )increases error and variance; late switching ( τ≤0.10 ) offers no precision gain. τ=0 .20 yields the lowest median error and lowest variance.
+
+has negligible impact (LangSAM+LightTrack: 0.67 vs. SAM3+LightTrack: 0.68), so we select LangSAM for its native language-promptable interface, which enables target specification via natural language without predefined class labels or manual geometric prompts. LightTrack adds negli-gible overhead at 102 FPS; LangSAM’s 0.53 s inference is a one-time initialization cost.                                               
+
+> TABLE II ROI DETECTION AND TRACKING ABLATION ON YCB-V IDEO [33] (320
+> INSTANCES ). I OUAND DICE AS μ±σ.Detector + Tracker IoU Dice LangSAM + LightTrack 0.67 ±0.20 0.77 ±0.18
+> LangSAM + BBox CSRT 0.50 ±0.17 0.63 ±0.18 LangSAM + Optical Flow 0.15 ±0.10 0.23 ±0.13 SAM3 + LightTrack 0.68 ±0.18 0.78 ±0.16
+> SAM3 + BBox CSRT 0.51 ±0.17 0.64 ±0.17 SAM3 + Optical Flow 0.15 ±0.10 0.22 ±0.13
+
+D. Robotic Experiments 
+
+We demonstrate ART-VS on a UR5 manipulator in two settings: end-effector positioning to assess convergence be-havior, and category-level grasping to evaluate generalization under clutter. All robotic experiments use the DINOv3-Small backbone with λ=0 .1.
+
+End-Effector Positioning Fig. 5 shows a representative trial from a challenging initial displacement of 28.5 cm depth, 38.2 cm horizontal, and 17.3 cm vertical offset with −12.6° roll, −13.1° pitch, and 160.1° yaw (yaw partially resolved by rotation compensation prior to servoing). ART-VS transitions to the tiled refinement phase at iteration 133, after which the system refines to a final error of −0.06 cm depth, −0.13 cm horizontal, and 0.18 cm vertical with −0.18° roll, 0.54° pitch, and 0.37° yaw - corresponding to 99.5% position and 99.6% orientation error reduction. Positioning errors (Fig. 5d) decrease monotonically during the coarse phase, with the phase transition clearly visible as a brief transient before continued convergence. Fig. 5. Real-world positioning trial. a) Initial image. b) Desired image I*. c) Difference between desired I* and final image I. d) Pose error over iterations. e) Camera velocities. 
+
+Category-Level Grasping We evaluate category-level generalization on two challenging object categories - trans-parent PET bottles and shoes - using a single reference image per category to servo toward five visually distinct test instances (Fig. 6, left). ART-VS operates in ROI-guided mode with text prompts “transparent bottle” or “shoe.” Each of the five instances per category is tested across four backgrounds of increasing visual complexity (plain wood, textured kitchen towel, crumpled kraft paper, aluminium foil; Fig. 6 right) with six category-different distractors present in every trial. We conduct 100 trials per category (5 instances 
+
+× 4 backgrounds × 5 poses), with initial poses sampled from a 0.2×0.2×0.1 m workspace at 0.45 m elevation with 
+
+±120° roll variation (mean initial error: 8.86 ±2.45 cm, 70.19 ±23.81°). Upon convergence, the end-effector descends along the camera Z-axis and executes a parallel-jaw grasp; a trial is successful if the object is lifted. Fig. 7 shows a representative bottle grasping sequence.                   
+
+> TABLE III CATEGORY -LEVEL GRASPING RESULTS .Instance Category 12345Total Bottles 19/20 19/20 20/20 19/20 18/20 95/100
+> Shoes 20/20 20/20 19/20 20/20 19/20 98/100
+
+Table III presents per-instance results. ART-VS achieves 95/100 on transparent bottles and 98/100 on shoes. The five bottle failures stem from two causes: incorrect rotation compensation due to near-symmetric bottle appearance (3 cases) and late-stage divergence from specular reflections altering correspondences near convergence (2 cases). The two shoe failures are caused by ambiguous matching from an extreme initial viewpoint (1 case) and progressive tracker drift shrinking the bounding box below a sufficient feature count (1 case). Failures concentrate on the most challenging background (aluminium foil: 3 of 7 total), consistent with the perturbation sensitivity observed in simulation.     
+
+> Fig. 6. Grasping objects and backgrounds. Reference objects (left) and five test instances (1-5). Backgrounds (right): plain wood, aluminium foil, crumpled kraft paper, textured kitchen towel.
+> Fig. 7. Grasping sequence of a transparent bottle. a) Initial pose. b) After rotation compensation. c) After coarse phase. d) After tiled refinement phase. e) Grasping position. f) Lifted object.
+
+V. CONCLUSION We present ART-VS, an adaptive resolution method for training-free ViT-based VS that exploits a key observation: the utility of feature resolution is phase-dependent. Coarse patch descriptors provide the robustness needed for initial convergence under appearance variation, while fine-grained features enable precise positioning only once the pose dif-ference is small enough for spatially constrained matching. The convergence rate improvement when simply increasing the input resolution for matching is marginal (+4.4 pp), whereas our adaptive tiling yields a substantially larger gain (+18.8 pp) over the same baseline, while maintaining over 10 × higher effective FPS than full-resolution process-ing. Hence, convergence robustness benefits from spatially constraining matching windows. Real-world grasping ex-periments across 200 trials demonstrate reliable category-level manipulation of unseen object instances from a single reference image, validating that the approach generalizes beyond controlled benchmarks. Our failure analysis reveals two primary limitations: near-symmetric objects degrade rotation compensation, and severe simultaneous perturbations corrupt features beyond recovery. Addressing viewpoint symmetry through symmetry-aware matching is a key direction for improving robustness. Fu-ture work will also investigate RGB-only operation through monocular depth estimation and integrate language ground-ing directly into semantic feature extraction, eliminating the need for separate detection and tracking components. REFERENCES [1] F. Chaumette and S. Hutchinson, “Visual servo control. i. basic approaches,” IEEE Robotics & Automation Magazine , vol. 13, no. 4, pp. 82–90, 2006. [2] C. Francois and H. Seth, “Visual servo control part ii: Advanced approaches,” IEEE Trans on Robotics and Automation , vol. 14, no. 1, pp. 109–118, 2007. [3] E. Y. Puang, K. P. Tee, and W. Jing, “Kovis: Keypoint-based visual servoing with zero-shot sim-to-real transfer for robotics manipulation,” in 2020 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) . IEEE, 2020, pp. 7527–7533. [4] T. La Anh and J.-B. Song, “Robotic grasping based on efficient track-ing and visual servoing using local feature descriptors,” International Journal of Precision Engineering and Manufacturing , vol. 13, pp. 387–393, 2012. [5] E. Karami, S. Prasad, and M. Shehata, “Image matching using sift, surf, brief and orb: performance comparison for distorted images,” 
+
+arXiv preprint arXiv:1710.02726 , 2017. [6] S. Felton, P. Brault, E. Fromont, and E. Marchand, “Visual servoing in autoencoder latent space,” IEEE Robotics and Automation Letters ,vol. 7, no. 2, pp. 3234–3241, 2022. [7] S. Felton, E. Fromont, and E. Marchand, “Deep metric learning for visual servoing: when pose and image meet in latent space,” in 2023 IEEE International Conference on Robotics and Automation (ICRA) ,2023, pp. 741–747. [8] Q. Bateux, E. Marchand, J. Leitner, F. Chaumette, and P. Corke, “Training deep neural networks for visual servoing,” in 2018 IEEE International Conference on Robotics and Automation (ICRA) , 2018, pp. 3307–3314. [9] M. Oquab, T. Darcet, T. Moutakanni, H. Vo, M. Szafraniec, V. Khali-dov, P. Fernandez, D. Haziza, F. Massa, A. El-Nouby et al. , “Dinov2: Learning robust visual features without supervision,” arXiv preprint arXiv:2304.07193 , 2023. [10] A. Scherl, S. Thalhammer, B. Neuberger, W. W¨ ober, and J. Garc´ ıa-Rodr´ ıguez, “Vit-vs: On the applicability of pretrained vision trans-former features for generalizable visual servoing,” in 2025 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) ,2025, pp. 17 769–17 776. [11] O. Sim´ eoni, H. V. Vo, M. Seitzer, F. Baldassarre, M. Oquab, C. Jose, V. Khalidov, M. Szafraniec, S. Yi, M. Ramamonjisoa et al. , “Dinov3,” 
+
+arXiv preprint arXiv:2508.10104 , 2025. [12] S. Hutchinson, G. D. Hager, and P. I. Corke, “A tutorial on visual servo control,” IEEE transactions on robotics and automation , vol. 12, no. 5, pp. 651–670, 1996. [13] D. G. Lowe, “Distinctive image features from scale-invariant key-points,” International journal of computer vision , vol. 60, pp. 91–110, 2004. [14] E. Rublee, V. Rabaud, K. Konolige, and G. Bradski, “Orb: An efficient alternative to sift or surf,” in 2011 International conference on computer vision . Ieee, 2011, pp. 2564–2571. [15] P. F. Alcantarilla and T. Solutions, “Fast explicit diffusion for acceler-ated features in nonlinear scale spaces,” IEEE Trans. Patt. Anal. Mach. Intell , vol. 34, no. 7, pp. 1281–1298, 2011. [16] F. Hoffmann, T. Nierobisch, T. Seyffarth, and G. Rudolph, “Visual servoing with moments of sift features,” in 2006 IEEE International Conference on Systems, Man and Cybernetics , vol. 5. IEEE, 2006, pp. 4262–4267. [17] S. Felton, ´E. Fromont, and E. Marchand, “Siame-se(3): regression in se(3) for end-to-end visual servoing,” in 2021 IEEE International Conference on Robotics and Automation (ICRA) , 2021, pp. 14 454– 14 460. [18] A. Chen, H. Yu, Y. Wang, and R. Xiong, “CNS: Correspondence encoded neural image servo policy,” in IEEE International Conference on Robotics and Automation (ICRA) , 2024, pp. 17 410–17 416. [19] H. Zhang, Y. Liu, Y. Jiang, W. Lin, and C. Ye, “Depth-PC: Sim-to-real transfer for zero-shot visual servoing via cross-modal fusion,” IEEE Robotics and Automation Letters , vol. 10, no. 11, pp. 11 976–11 983, 2025. [20] A. Dosovitskiy, L. Beyer, A. Kolesnikov, D. Weissenborn, X. Zhai, T. Unterthiner, M. Dehghani, M. Minderer, G. Heigold, S. Gelly, J. Uszkoreit, and N. Houlsby, “An image is worth 16x16 words: Transformers for image recognition at scale,” in International Conference on Learning Representations , 2021. [Online]. Available: https://openreview.net/forum?id=YicbFdNTTy [21] M. Caron, H. Touvron, I. Misra, H. J´ egou, J. Mairal, P. Bojanowski, and A. Joulin, “Emerging properties in self-supervised vision trans-formers,” in Proceedings of the IEEE/CVF international conference on computer vision , 2021, pp. 9650–9660. [22] M. Ranzinger, G. Heinrich, J. Kautz, and P. Molchanov, “Am-radio: Agglomerative vision foundation model reduce all domains into one,” in Proceedings of the IEEE/CVF conference on computer vision and pattern recognition , 2024, pp. 12 490–12 500. [23] S. Amir, Y. Gandelsman, S. Bagon, and T. Dekel, “Deep vit features as dense visual descriptors,” ECCVW What is Motion For? , 2022. [24] W. Goodwin, S. Vaze, I. Havoutis, and I. Posner, “Zero-shot category-level object pose estimation,” in European Conference on Computer Vision . Springer, 2022, pp. 516–532. [25] S. Fu, M. Hamilton, L. Brandt, A. Feldman, Z. Zhang, and W. T. Freeman, “Featup: A model-agnostic framework for features at any resolution,” arXiv preprint arXiv:2403.10516 , 2024. [26] H. Huang, A. Chen, V. Havrylov, A. Geiger, and D. Zhang, “Loftup: Learning a coordinate-based feature upsampler for vision foundation models,” in Proceedings of the IEEE/CVF International Conference on Computer Vision , 2025, pp. 9913–9923. [27] I. Melekhov, A. Tiulpin, T. Sattler, M. Pollefeys, E. Rahtu, and J. Kannala, “Dgc-net: Dense geometric correspondence network,” in 
+
+2019 IEEE Winter Conference on Applications of Computer Vision (WACV) . IEEE, 2019, pp. 1034–1042. [28] J. Sun, Z. Shen, Y. Wang, H. Bao, and X. Zhou, “Loftr: Detector-free local feature matching with transformers,” in Proceedings of the IEEE/CVF conference on computer vision and pattern recognition ,2021, pp. 8922–8931. [29] P.-E. Sarlin, D. DeTone, T. Malisiewicz, and A. Rabinovich, “Su-perglue: Learning feature matching with graph neural networks,” in 
+
+Proceedings of the IEEE/CVF conference on computer vision and pattern recognition , 2020, pp. 4938–4947. [30] T. Dekel, S. Oron, M. Rubinstein, S. Avidan, and W. T. Freeman, “Best-buddies similarity for robust template matching,” in Proceedings of the IEEE conference on computer vision and pattern recognition ,2015, pp. 2021–2029. [31] Y. Xu, H. Yuan, and J. Zhu, “LangSAM: Language-guided expert routing on SAM2 for dense scene understanding,” 2025. [Online]. Available: https://openreview.net/forum?id=o0hpH7ck29 [32] B. Yan, H. Peng, K. Wu, D. Wang, J. Fu, and H. Lu, “Lighttrack: Finding lightweight neural networks for object tracking via one-shot architecture search,” in Proceedings of the IEEE/CVF conference on computer vision and pattern recognition , 2021, pp. 15 180–15 189. [33] Y. Xiang, T. Schmidt, V. Narayanan, and D. Fox, “Posecnn: Aconvolutional neural network for 6d object pose estimation in cluttered scenes,” arXiv preprint arXiv:1711.00199 , 2017. [34] A. Lukezic, T. Vojir, L. ˇCehovin Zajc, J. Matas, and M. Kristan, “Discriminative correlation filter with channel and spatial reliability,” in Proceedings of the IEEE conference on computer vision and pattern recognition , 2017, pp. 6309–6318. [35] G. Farneb¨ ack, “Two-frame motion estimation based on polynomial expansion,” in Scandinavian conference on Image analysis . Springer, 2003, pp. 363–370. [36] N. Carion, L. Gustafson, Y.-T. Hu, S. Debnath, R. Hu, D. Suris, C. Ryali, K. V. Alwala, H. Khedr, A. Huang et al. , “Sam 3: Segment anything with concepts,” arXiv preprint arXiv:2511.16719 , 2025.

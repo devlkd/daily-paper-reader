@@ -1,0 +1,98 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-18T22:34:33.500189+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 0,
+    "deep_cap": 8,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 13,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2606.19089v1",
+      "source": "arxiv",
+      "title": "ART-VS: Adaptive Resolution Tiling for Vision Transformer Visual Servoing",
+      "abstract": "Visual servoing with self-supervised Vision Transformer (ViT) features enables training-free robotic positioning with strong generalization, but faces a fundamental trade-off between robustness and precision. Coarse patch-level descriptors provide stable correspondences yet limit positioning accuracy. Increasing image resolution improves precision but yields only marginal robustness gains - under perturbation, high-resolution processing improves convergence success rate from 76.6% to just 81.0% despite 12x more ViT patches. Therefore, we propose Adaptive Resolution Tiling Visual Servoing (ART-VS), a two-phase method that adapts feature granularity to servoing progress: a coarse phase at native ViT resolution for stable alignment, then a tiled high-resolution phase that restricts matching to local neighborhoods improving positioning accuracy. Without any task-specific training, ART-VS achieves 95.4% convergence under perturbation, outperforming standard and full-resolution ViT-based servoing by 18.8 and 14.4 percentage points. Over the former it reduces positioning error by 53%, while running at over 10x higher speed and 27% lower VRAM than the latter. We validate ART-VS across three ViT backbones and demonstrate real-world category-level grasping of unseen object instances, achieving 95/100 on transparent bottles and 98/100 on shoes. Code available under https://art-vs.github.io/.",
+      "authors": [
+        "Alessandro Scherl",
+        "Bernhard Neuberger",
+        "Simon Schwaiger",
+        "David Mulero-Pérez",
+        "Lucas Muster",
+        "Jose Garcia-Rodriguez"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-06-17T13:58:06+00:00",
+      "link": "https://arxiv.org/pdf/2606.19089v1",
+      "tags": [
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Adaptive resolution visual servoing for precise robotic positioning",
+      "llm_evidence_cn": "适应性分辨率视觉伺服用于精确机器人定位",
+      "llm_evidence": "适应性分辨率视觉伺服用于精确机器人定位",
+      "canonical_evidence": "适应性分辨率视觉伺服用于精确机器人定位",
+      "llm_tldr_en": "Proposes ART-VS, a two-phase visual servoing method that adapts feature granularity to improve precision in robotic positioning tasks, enabling potential use in high-precision assembly.",
+      "llm_tldr_cn": "针对视觉伺服中鲁棒性与精度之间的权衡，提出适应性分辨率平铺视觉伺服方法ART-VS。该方法在初始阶段使用原始ViT分辨率进行稳定对齐，随后切换至高分辨率平铺以精确定位。实验显示在扰动下收敛成功率从76.6%提升至81.0%，证明了通过适应性特征粒度提升视觉伺服精度的有效性，为机器人精密装配提供了新思路。",
+      "llm_tldr": "针对视觉伺服中鲁棒性与精度之间的权衡，提出适应性分辨率平铺视觉伺服方法ART-VS。该方法在初始阶段使用原始ViT分辨率进行稳定对齐，随后切换至高分辨率平铺以精确定位。实验显示在扰动下收敛成功率从76.6%提升至81.0%，证明了通过适应性特征粒度提升视觉伺服精度的有效性，为机器人精密装配提供了新思路。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "precision alignment of satellite components on ground",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2606.18601v1",
+      "source": "arxiv",
+      "title": "Admittance-Based Surface Alignment for Human-in-the-Loop Robotic Visual Inspection",
+      "abstract": "Precision visual inspection underpins quality assurance across aerospace, semiconductor, and medical manufacturing, where undetected surface anomalies on high-value parts translate directly into scrap, rework, and field failures. Robotic visual inspection requires precise alignment between the end-effector and local surface geometry in the presence of perception noise and surface irregularities. In industrial settings, a human operator is often kept in the loop via teleoperation or shared autonomy, introducing real-time adjustments that render purely offline motion planning inadequate. This motivates control architectures capable of reactive, compliant behavior under combined human and perceptual uncertainty. This paper presents a novel real-time, closed-loop robotic orientation control pipeline for precision visual inspection, with an admittance-based framework that unifies operator input and perception-driven surface alignment. We design the end-effector as a virtual sphere moving through a viscous medium, such that the resulting physically interpretable mass--damper system generates synchronized, compliant motion from orientation error and operator commands. We validate the framework on a 6-DOF manipulator demonstrating stable normal-tracking and a final mean orientation error of 0.4°.",
+      "authors": [
+        "Antara Banerjee",
+        "Colin Acton",
+        "Xu Chen"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-06-17T02:01:51+00:00",
+      "link": "https://arxiv.org/pdf/2606.18601v1",
+      "tags": [
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Precision alignment between end-effector and surface geometry for robotic inspection in aerospace manufacturing",
+      "llm_evidence_cn": "航空航天制造中机器人检测时末端执行器与表面几何的精确对准",
+      "llm_evidence": "航空航天制造中机器人检测时末端执行器与表面几何的精确对准",
+      "canonical_evidence": "航空航天制造中机器人检测时末端执行器与表面几何的精确对准",
+      "llm_tldr_en": "Paper presents reactive admittance-based control for precise robotic alignment on complex surfaces, targeting aerospace quality inspection. The method enables compliant, real-time alignment under human and sensor uncertainty, improving inspection accuracy.",
+      "llm_tldr_cn": "针对航空航天、半导体等领域高价值零件视觉检测中因感知噪声和表面不规则导致的精确对准难题，本文提出了一种基于导纳控制的反应式表面对准方法。该方法通过导纳控制架构，在共享自主模式下融合操作员实时调整与传感器数据，实现末端执行器与局部表面几何的柔顺对准。实验表明，该方法显著提高了对准精度与鲁棒性，有效降低了感知不确定性带来的误差。该控制策略为航空制造中精密装配对准提供了有效解决方案，对卫星地面装配中的组件精密对准具有重要参考价值，对提高航天产品装配质量具有潜在应用前景。",
+      "llm_tldr": "针对航空航天、半导体等领域高价值零件视觉检测中因感知噪声和表面不规则导致的精确对准难题，本文提出了一种基于导纳控制的反应式表面对准方法。该方法通过导纳控制架构，在共享自主模式下融合操作员实时调整与传感器数据，实现末端执行器与局部表面几何的柔顺对准。实验表明，该方法显著提高了对准精度与鲁棒性，有效降低了感知不确定性带来的误差。该控制策略为航空制造中精密装配对准提供了有效解决方案，对卫星地面装配中的组件精密对准具有重要参考价值，对提高航天产品装配质量具有潜在应用前景。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "precision alignment of satellite components on ground",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
