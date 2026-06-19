@@ -1,0 +1,61 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-19T22:03:54.100339+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 0,
+    "deep_cap": 8,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 13,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2606.18928v1",
+      "source": "arxiv",
+      "title": "Advancing Control Electronics for Next-Generation Astronomical Fiber Robotic Positioners",
+      "abstract": "Next-generation spectroscopic surveys require compact, high-density fiber robotic positioner systems achieving 5um precision, placing strict constraints on the size and the power budget of the control electronics. We present a compact control electronics architecture that drives 21 theta phi SCARA positioners (42 BLDC motors) on a single board, representing a significant increase in complexity compared to the electronics used in ongoing surveys such as SDSS V and DESI, where each positioner relies on dedicated hardware. The design integrates power distribution, CAN communication, and a synchronization line for simultaneous motion in high-density environments. Sensorless Field Oriented Control with collision detection and mechanical and magnetic hard-stop calibration enables accurate positioning without Hall sensors or encoders, reducing system cost and complexity. We describe the system architecture and performance validation, demonstrating that the module meets precision requirements while reducing the space required for control electronics and improving energy efficiency for future survey instruments.",
+      "authors": [
+        "Sebastien Pernecker",
+        "Jonathan Wei",
+        "Maxime Rombach",
+        "Oliver Pineda Suarez",
+        "Tarik Ibrahimovic",
+        "Jean-Paul Kneib"
+      ],
+      "primary_category": "astro-ph.IM",
+      "categories": [
+        "astro-ph.IM"
+      ],
+      "published": "2026-06-17T11:03:32+00:00",
+      "link": "https://arxiv.org/pdf/2606.18928v1",
+      "tags": [
+        "keyword:TF-SAR",
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:TF-SAR",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Control electronics for precision robotic positioners (5um) applicable to high-precision alignment in assembly.",
+      "llm_evidence_cn": "控制电子器件实现5微米精度的机器人定位器，适用于装配中的高精度对准。",
+      "llm_evidence": "控制电子器件实现5微米精度的机器人定位器，适用于装配中的高精度对准。",
+      "canonical_evidence": "控制电子器件实现5微米精度的机器人定位器，适用于装配中的高精度对准。",
+      "llm_tldr_en": "Presents compact control electronics for high-density fiber robotic positioners, achieving 5um precision with sensorless FOC and collision detection, enabling precise motion control.",
+      "llm_tldr_cn": "本文针对下一代光谱巡天所需的高密度光纤机器人定位系统，设计了一种紧凑型控制电子架构，单板可驱动21个theta-phi SCARA定位器（42个无刷直流电机）。采用无传感器磁场定向控制，集成碰撞检测和机械角编码器，实现5微米精度。该架构在尺寸和功耗上满足严格约束，为高密度精密定位控制提供了可扩展方案。",
+      "llm_tldr": "本文针对下一代光谱巡天所需的高密度光纤机器人定位系统，设计了一种紧凑型控制电子架构，单板可驱动21个theta-phi SCARA定位器（42个无刷直流电机）。采用无传感器磁场定向控制，集成碰撞检测和机械角编码器，实现5微米精度。该架构在尺寸和功耗上满足严格约束，为高密度精密定位控制提供了可扩展方案。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "precision control in satellite assembly process",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}

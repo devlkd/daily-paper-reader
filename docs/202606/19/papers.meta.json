@@ -1,0 +1,24 @@
+{
+  "label": "2026-06-19",
+  "date": "2026-06-19",
+  "generated_at": "2026-06-19T22:05:48",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202606/19/2606.18928v1-advancing-control-electronics-for-next-generation-astronomical-fiber-robotic-positioners",
+      "section": "quick",
+      "title_en": "Advancing Control Electronics for Next-Generation Astronomical Fiber Robotic Positioners",
+      "authors": "Sebastien Pernecker, Jonathan Wei, Maxime Rombach, Oliver Pineda Suarez, Tarik Ibrahimovic, Jean-Paul Kneib",
+      "date": "2026-06-17",
+      "pdf": "https://arxiv.org/pdf/2606.18928v1",
+      "score": "7.0",
+      "evidence": "控制电子器件实现5微米精度的机器人定位器，适用于装配中的高精度对准。",
+      "tldr": "下一代光谱巡天需要高密度、5微米精度的光纤定位，对控制电子的尺寸与功耗提出严苛要求。本文提出单板驱动21个SCARA定位器（42个无刷直流电机）的紧凑架构，集成电源分配、CAN通信及同步线，采用无传感器磁场定向控制和硬限位校准实现精确定位与碰撞检测。验证表明模块达到精度指标，显著缩减电子器件体积并提升能效。该设计大幅降低系统复杂性与成本，为未来巡天仪器提供了高密度控制方案。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "Next-generation spectroscopic surveys require compact, high-density fiber robotic positioner systems achieving 5um precision, placing strict constraints on the size and the power budget of the control electronics. We present a compact control electronics architecture that drives 21 theta phi SCARA positioners (42 BLDC motors) on a single board, representing a significant increase in complexity compared to the electronics used in ongoing surveys such as SDSS V and DESI, where each positioner relies on dedicated hardware. The design integrates power distribution, CAN communication, and a synchronization line for simultaneous motion in high-density environments. Sensorless Field Oriented Control with collision detection and mechanical and magnetic hard-stop calibration enables accurate positioning without Hall sensors or encoders, reducing system cost and complexity. We describe the system architecture and performance validation, demonstrating that the module meets precision requirements while reducing the space required for control electronics and improving energy efficiency for future survey instruments.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

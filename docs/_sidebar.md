@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-06-19 <!--dpr-date:20260619-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/19/2606.18928v1-advancing-control-electronics-for-next-generation-astronomical-fiber-robotic-positioners" data-sidebar-item="{&quot;title&quot;: &quot;Advancing Control Electronics for Next-Generation Astronomical Fiber Robotic Positioners&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.18928v1-advancing-control-electronics-for-next-generation-astronomical-fiber-robotic-positioners&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;sat-asm-prec&quot;}], &quot;evidence&quot;: &quot;控制电子器件实现5微米精度的机器人定位器，适用于装配中的高精度对准。&quot;}">Advancing Control Electronics for Next-Generation Astronomical Fiber Robotic Positioners</a>
   * 2026-06-18 <!--dpr-date:20260618-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/18/2606.19089v1-art-vs-adaptive-resolution-tiling-for-vision-transformer-visual-servoing" data-sidebar-item="{&quot;title&quot;: &quot;ART-VS: Adaptive Resolution Tiling for Vision Transformer Visual Servoing&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.19089v1-art-vs-adaptive-resolution-tiling-for-vision-transformer-visual-servoing&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;sat-asm-prec&quot;}], &quot;evidence&quot;: &quot;适应性分辨率视觉伺服用于精确机器人定位&quot;}">ART-VS: Adaptive Resolution Tiling for Vision Transformer Visual Servoing</a>

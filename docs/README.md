@@ -6,29 +6,26 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-06-18
-- 运行时间：2026-06-18 22:35:37 UTC
+- 最新运行日期：2026-06-19
+- 运行时间：2026-06-19 22:05:41 UTC
 - 运行状态：成功
-- 本次总论文数：2
+- 本次总论文数：1
 - 精读区：0
-- 速读区：2
+- 速读区：1
 
 ### 今日简报（AI）
-今日速读两篇机器人视觉控制论文，聚焦自适应分辨率与力控柔顺对齐。  
-ART-VS 用动态分辨率瓦片提升视觉伺服效率，导纳式表面对齐让机器人与检测面柔顺接触。  
-若对更灵巧的机器人操作感兴趣，可先看分辨率瓦片思路。
-- 详情：[/202606/18/README](/202606/18/README)
+今日速读天文学仪器前沿：新一代光纤机器人定位器的控制电子学取得进展。  
+研究发现通过优化控制电路，有望提升大规模光纤定位的精度与速度，助力深空巡天。  
+若对自动化和天文观测感兴趣，可关注此类精密机电系统在大型望远镜中的应用突破。
+- 详情：[/202606/19/README](/202606/19/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [ART-VS: Adaptive Resolution Tiling for Vision Transformer Visual Servoing](/202606/18/2606.19089v1-art-vs-adaptive-resolution-tiling-for-vision-transformer-visual-servoing)  
+1. [Advancing Control Electronics for Next-Generation Astronomical Fiber Robotic Positioners](/202606/19/2606.18928v1-advancing-control-electronics-for-next-generation-astronomical-fiber-robotic-positioners)  
    标签：评分：7.0/10、query:sat-asm-prec
-   evidence：适应性分辨率视觉伺服用于精确机器人定位
-2. [Admittance-Based Surface Alignment for Human-in-the-Loop Robotic Visual Inspection](/202606/18/2606.18601v1-admittance-based-surface-alignment-for-human-in-the-loop-robotic-visual-inspection)  
-   标签：评分：6.0/10、query:sat-asm-prec
-   evidence：航空航天制造中机器人检测时末端执行器与表面几何的精确对准
+   evidence：控制电子器件实现5微米精度的机器人定位器，适用于装配中的高精度对准。
 
 
 <div class="dpr-home-promo-card">
