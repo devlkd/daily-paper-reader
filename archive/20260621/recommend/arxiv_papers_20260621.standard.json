@@ -1,0 +1,62 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-21T20:54:48.176719+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 0,
+    "deep_cap": 8,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 13,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2606.18915v1",
+      "source": "arxiv",
+      "title": "Testing of a 15-Positioner Module Based on the MPS Design for Stage-5 Telescopes",
+      "abstract": "Assessing the performance metrics of theta-phi micro-robotic positioners is a key step toward understanding their operational behavior and ensuring that they meet the specifications of Stage-5 astronomical facilities, including the Chinese MUST, the American Spec-S5, and the European WST. A detailed examination of these metrics enables a clear evaluation of the system's current capabilities while also revealing aspects that require further refinement, which in turn guides improvements in design and manufacturing. In this work, carried out in collaboration with Micro Precision Systems (MPS) in Switzerland, we present the results of positioning performance and angular tilt characterization conducted on a 6.2-mm-pitch robotic positioner module developed for high-density fiber placement in next-generation spectroscopic instruments. The prototype unit evaluated in this study was produced by MPS. The measured metrics, including positioning repeatability, datum repeatability, backlash, non-linearity, and angular tilt, are compared directly with the nominal performance targets defined for Stage-5 telescope systems.",
+      "authors": [
+        "Jonathan Wei",
+        "Oliver Pineda Suárez",
+        "Malak Galal",
+        "Maxime Rombach",
+        "Sébastien Pernecker",
+        "Stefane Caseiro",
+        "Corentin Magnenat",
+        "Florian Boeckle",
+        "Jean-Paul Kneib"
+      ],
+      "primary_category": "astro-ph.IM",
+      "categories": [
+        "astro-ph.IM"
+      ],
+      "published": "2026-06-17T10:42:05+00:00",
+      "link": "https://arxiv.org/pdf/2606.18915v1",
+      "tags": [
+        "keyword:TF-SAR",
+        "keyword:grav-offload",
+        "query:TF-SAR",
+        "query:grav-offload"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Precision positioning and angular tilt characterization of micro-robotic positioners for telescope assembly",
+      "llm_evidence_cn": "望远镜用微机器人定位器的精密定位与角度倾斜表征",
+      "llm_evidence": "望远镜用微机器人定位器的精密定位与角度倾斜表征",
+      "canonical_evidence": "望远镜用微机器人定位器的精密定位与角度倾斜表征",
+      "llm_tldr_en": "This work evaluates positioning performance and tilt of a 15-positioner module for Stage-5 telescopes, providing metrics and insights for high-precision component alignment and manufacturing refinement.",
+      "llm_tldr_cn": "针对第五代天文望远镜对高精度定位与对准的严苛要求，本文对一个15单元微机器人定位器模块进行了详细的定位精度与角度倾斜特性测试，获取了当前系统的能力指标，明确了定位与制造工艺中需优化的关键环节，为类似精密装配任务提供了可借鉴的测试框架与性能基准。",
+      "llm_tldr": "针对第五代天文望远镜对高精度定位与对准的严苛要求，本文对一个15单元微机器人定位器模块进行了详细的定位精度与角度倾斜特性测试，获取了当前系统的能力指标，明确了定位与制造工艺中需优化的关键环节，为类似精密装配任务提供了可借鉴的测试框架与性能基准。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "dimensional metrology for satellite assembly accuracy",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
