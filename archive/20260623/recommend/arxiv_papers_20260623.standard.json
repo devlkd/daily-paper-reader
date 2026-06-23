@@ -1,0 +1,61 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-23T22:27:41.522997+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 0,
+    "deep_cap": 8,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 13,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2606.21093v1",
+      "source": "arxiv",
+      "title": "How Should a Robot Configure Its Laser Scanner for Inspection?",
+      "abstract": "Robotic inspection relies on accurate sensing to acquire high-fidelity geometric measurements for defect detection and metrology. While prior work has focused on robot motion and viewpoint planning, how to configure sensing parameters remains largely underexplored, despite their decisive impact on measurement quality. We propose SenseHD, a robotic sensing system that formulates scanner configuration as an instruction-conditioned sensing decision. Instead of predicting precise parameter values, SenseHD treats sensing parameters as discrete sensing actions and selects stable sensing regimes through hyperdimensional associative memory. Experiments on a real robotic inspection platform demonstrate that SenseHD robustly selects appropriate sensing configurations and significantly improves inspection reliability, while remaining lightweight and efficient compared to baseline methods.",
+      "authors": [
+        "Zhiling Chen",
+        "David Gorsich",
+        "Matthew P. Castanier",
+        "Yang Zhang",
+        "Jiong Tang",
+        "Farhad Imani"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.CV"
+      ],
+      "published": "2026-06-19T04:45:11+00:00",
+      "link": "https://arxiv.org/pdf/2606.21093v1",
+      "tags": [
+        "keyword:TF-SAR",
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Robotic inspection with adaptive scanner configuration for high-fidelity metrology",
+      "llm_evidence_cn": "具有自适应扫描仪配置的机器人检测用于高保真度计量",
+      "llm_evidence": "具有自适应扫描仪配置的机器人检测用于高保真度计量",
+      "canonical_evidence": "具有自适应扫描仪配置的机器人检测用于高保真度计量",
+      "llm_tldr_en": "Proposes SenseHD, a system that selects optimal laser scanner configurations for robotic inspection using hyperdimensional associative memory, improving measurement quality for metrology tasks.",
+      "llm_tldr_cn": "针对机器人检测中传感参数配置未充分探索的问题，提出SenseHD系统，将扫描仪配置视为指令条件决策，通过超维联想记忆选择稳定的传感模式，在真实机器人检测平台上稳健地选择适当配置，提升了计量任务的测量质量。",
+      "llm_tldr": "针对机器人检测中传感参数配置未充分探索的问题，提出SenseHD系统，将扫描仪配置视为指令条件决策，通过超维联想记忆选择稳定的传感模式，在真实机器人检测平台上稳健地选择适当配置，提升了计量任务的测量质量。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "dimensional metrology for satellite assembly accuracy",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

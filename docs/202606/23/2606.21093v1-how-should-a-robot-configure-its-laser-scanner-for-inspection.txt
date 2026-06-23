@@ -1,0 +1,367 @@
+Title: How Should a Robot Configure Its Laser Scanner for Inspection?
+
+URL Source: https://arxiv.org/pdf/2606.21093v1
+
+Published Time: Tue, 23 Jun 2026 00:32:13 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# How Should a Robot Configure Its Laser Scanner for Inspection? 
+
+Zhiling Chen 1, David Gorsich 2, Matthew P. Castanier 2, Yang Zhang 1, Jiong Tang 1, and Farhad Imani 1
+
+Abstract — Robotic inspection relies on accurate sensing to ac-quire high-fidelity geometric measurements for defect detection and metrology. While prior work has focused on robot motion and viewpoint planning, how to configure sensing parameters remains largely underexplored, despite their decisive impact on measurement quality. We propose SenseHD, a robotic sensing system that formulates scanner configuration as an instruction-conditioned sensing decision. Instead of predicting precise pa-rameter values, SenseHD treats sensing parameters as discrete sensing actions and selects stable sensing regimes through hyperdimensional associative memory. Experiments on a real robotic inspection platform demonstrate that SenseHD robustly selects appropriate sensing configurations and significantly improves inspection reliability, while remaining lightweight and efficient compared to baseline methods. 
+
+I. INTRODUCTION Robotic inspection systems are widely used in manufac-turing, remanufacturing, and quality assurance to acquire geometric measurements for defect detection, dimensional verification, and metrology [1]. In many deployments, in-spection pipelines rely on predefined scanning trajectories and fixed (or manually tuned) sensing configurations that are repeatedly applied across similar parts and environments [2]. Such designs work well in structured settings, but they implicitly assume stable sensing conditions and consistent inspection requirements. In practice, these assumptions often break: variations in object geometry, surface reflectivity, lighting, and inspection intent can significantly alter sensing outcomes, making fixed configurations brittle and hard to generalize. These challenges motivate an embodied inspec-tion perspective, where sensing decisions are coupled with task specification and physical interaction rather than treated as static parameters [3], [4], [5]. As illustrated in Fig. 1, embodied inspection can be viewed as a closed-loop process spanning task initialization, sensing configuration, physical scanning, and measurement-driven analysis. Within this process, sensing configuration directly shapes the quality and completeness of acquired measurements. Despite substantial progress in robot motion planning and inspection trajectory generation, how to config-ure sensing parameters in a task- and context-aware manner             
+
+> *This work was supported under Cooperative Agreement W56HZV-21-2-0001 with the US Army DEVCOM Ground Vehicle Systems Center (GVSC), through the Virtual Prototyping of Autonomy Enabled Ground Systems (VIPR-GS) program, and by the National Science Foundation, United States (Grant No. 2434519). **DISTRIBUTION STATEMENT A. Approved for public release; dis-tribution is unlimited. OPSEC10399
+> 1Zhiling Chen, Yang Zhang, Jiong Tang, and Farhad Imani are with the University of Connecticut, Storrs, CT, USA.
+> 2David Gorsich and Matthew P. Castanier are with the US Army DEVCOM Ground Vehicle Systems Center (GVSC), Warren, MI, USA. 1.
+> Task
+> Initialization
+> 2.
+> Parameter
+> Tuning
+> 3.
+> Scanning
+> Execution
+> 4.
+> Measurement
+> Generation
+> 5.
+> Inspection
+> And
+> Analysis
+> Embodie dInspection
+> a) Range
+> Selection Failure
+> “Scan the complete top
+> surface of the blue gpu .”
+> b) Insufficient
+> exposure
+> c) Proper Tuning
+
+Fig. 1: Embodied inspection process and motivation for instruction-conditioned sensing. remains largely underexplored. Fig. 1 further illustrates this challenge through representative inspection outcomes. Given the same inspection instructions for an object, unsuitable scanner configurations can lead to inspection failure: an overly narrow measurement range results in incomplete coverage (Fig. 1a), while insufficient exposure or illumina-tion degrades fine details (Fig. 1b). In contrast, selecting a configuration that balances coverage, resolution, and signal quality enables successful inspection (Fig. 1c) [6]. These examples underscore that scanner configuration is an integral component of the inspection task rather than a secondary system setting. These observations highlight that selecting sensing pa-rameters is a challenging decision problem. The choice de-pends on multiple factors, including object geometry, surface reflectivity, illumination conditions, and inspection intent. Existing approaches often rely on expert manual tuning or cast parameter selection as continuous regression. However, predicting precise values is brittle and hard to generalize under appearance variation and environmental shift. More-over, collecting large-scale labeled data to supervise precise parameter regression is costly, making such approaches less suitable for data-scarce settings and cold-start deployment on new parts, materials, or sensing setups. In this work, we take a different perspective. Instead of predicting exact parameters, we cast scanner configuration as selecting a stable sensing regime analogous to invoking pre-validated ‘recipes’ on industrial controllers. Given an instruction and a pre-scan observation, the robot retrieves an appropriate sensing action from memory. This regime-based 
+
+> arXiv:2606.21093v1 [cs.RO] 19 Jun 2026
+
+view prioritizes reliability and direct compatibility with stan-dard Manufacturing Execution Systems (MES) [7], and is data-efficient: regimes can be defined with few exemplars and expanded by adding new experiences, enabling cold-start deployment without retraining. To support such associative sensing decisions, the under-lying representation must be robust to appearance variation, enable retrieval over discrete actions, and remain lightweight for real-time deployment. It should also admit online adap-tation: as the sensing conditions drift, the robot should up-date its memory incrementally on-device. Hyperdimensional Computing (HDC) naturally satisfies these requirements by encoding observations into high-dimensional distributed vec-tors (hypervectors) and storing them in a lightweight associa-tive memory that can be updated incrementally on-device [8]. At inference time, we form a query hypervector and retrieve the closest stored prototype(s) using a similarity metric (e.g., cosine similarity). The retrieved exemplars and their similar-ity scores provide a transparent, interpretable, and traceable rationale for the resulting sensing configuration. Building on this idea, we propose SenseHD, a robotic sensing system that performs instruction-conditioned sensing decisions using hyperdimensional representations. SenseHD jointly encodes visual observations and inspection instructions and retrieves scanner configurations through associative memory. We implement SenseHD on a real robotic inspection plat-form equipped with an industrial laser profiler and evaluate it across diverse objects and inspection tasks. Experimental results demonstrate that SenseHD reliably selects appro-priate sensing configurations, generalizes across appearance variations, and significantly improves inspection robustness compared to baseline approaches. In summary, this paper makes the following contributions:  
+
+> •
+
+We identify scanner configuration as a first-class sensing action in robotic inspection and formalize instruction-conditioned sensing as a decision problem.  
+
+> •
+
+We introduce SenseHD, a memory-based sensing sys-tem that uses hyperdimensional representations for ro-bust and efficient scanner parameter selection.  
+
+> •
+
+We validate SenseHD on a real robotic platform and show its effectiveness across diverse objects, inspection intents, and appearance variations. II. R ELATED WORK 
+
+HDC, also known as Vector Symbolic Architecture (VSA), represents information using high-dimensional distributed vectors, referred to as hypervectors, and performs infer-ence through similarity-based comparison [9]. By encod-ing sensory inputs or symbolic variables into a common hyperdimensional space and retrieving the closest matching prototype, HDC realizes associative memory that is compu-tationally efficient and robust to noise, making it well suited for robotic applications [10]. Prior work has applied HDC primarily to classification [11] and control tasks [12], where actions are selected by associating observed states with stored prototypes. However, these approaches typically focus on perception or control under simulated or highly controlled settings and assume fixed sensing configurations. In contrast, this paper adopts a sensing-centric perspective for real-world robotic inspection, treating sensing parameters as discrete sensing actions. By casting parameter selection as nearest-prototype retrieval in a shared hyperdimensional space, we reduce the decision to similarity search over discrete sensing recipes, enabling a principled and reproducible mapping from observations to controller-valid parameter configura-tions under appearance variation. III. R OBOTIC INSPECTION PROBLEM AND SYSTEM 
+
+SETUP 
+
+A. Problem Formulation 
+
+Robotic inspection differs from conventional perception in that sensing itself is a controllable robotic action rather than a passive observation step. In laser-based inspection, measurement quality depends not only on robot motion but also critically on the sensor configuration chosen prior to data acquisition. Although rescanning is possible in principle, it is often impractical under production cycle-time and repeata-bility constraints: a suboptimal configuration can saturate or truncate the signal, yielding scans that are effectively unusable and costly to redo. We consider an inspection scenario in which amanipulator-mounted laser profiler performs a scan after a short pre-sensing phase. At configuration time, the robot observes a context c = ( o, x ), where o is a pre-scan visual observation (e.g., an RGB image) and x is a natural-language instruction specifying the inspection intent and required level of detail. Before acquiring any laser data, the robot must choose a sensing configuration θ ∈ Θ. Each configuration is a combi-nation of K discrete sensing parameters, θ = ( θ1, . . . , θ K )
+
+with θk ∈ Θk, yielding a combinatorial action space Θ = Θ1 × · · · × ΘK . Executing θ determines the physical sensing regime and thus scan fidelity. 
+
+Budgeted formulation. In principle, the robot could adap-tively try multiple configurations within a limited trial bud-get B (e.g., due to cycle-time constraints). Let θ1: B =
+
+{θ1, . . . , θ B } denote a sequence of attempted configurations. We formulate budgeted configuration selection as: 
+
+max   
+
+> θ1: B⊆Θ
+
+E
+
+"
+
+max  
+
+> t≤B
+
+U (θt; o, x ) −
+
+> B
+
+X
+
+> t=1
+
+λ C (θt)
+
+#
+
+, (1) where U (θ; o, x ) measures scan utility (e.g., geometric fi-delity / defect resolvability) and C(θ) captures the cost of an attempt (time, wear, risk), with trade-off λ. In industrial inspection, B is typically very small and often effectively 
+
+B = 1 , making one-shot selection the practically relevant regime. We therefore focus on learning a one-shot predictor 
+
+fϕ : O × X → Θ that outputs a near-optimal configuration prior to scan execution: 
+
+θ = fϕ(o, x ). (2) UR3 
+
+> Keyence LJ -X8200
+> RealSense D435i
+
+Fig. 2: Robotic inspection platform used in this work. A UR3 robotic arm is equipped with a Keyence LJ-X8200 laser profiler for inspection and a RealSense D435i RGB-D camera for pre-scan observation. Phones PCBs Blocks Tools IC Modules GPUs 
+
+Fig. 3: Inspection objects used in our experiments. The experimental set consists of six categories of industrial objects: Phones, PCBs, GPUs, Blocks, Tools, and IC Modules. 
+
+B. Robotic Inspection Platform 
+
+The robotic inspection platform used in this work is shown in Fig. 2. The system consists of a 6-DOF collaborative robotic manipulator equipped with an industrial laser profiler and an RGB-D camera. A UR3 robotic arm positions and moves the sensing payload during inspection, with a Keyence LJ-X8200 laser displacement sensor rigidly mounted on the end-effector as the primary measurement device. The laser profiler is interfaced with an LJX-8000A controller for data acquisition and parameter configuration. The laser profiler acquires high-resolution 2D surface profiles and ex-poses multiple configurable parameters that are set program-matically prior to scan execution. To support instruction-conditioned sensing decisions, an Intel RealSense D435i RGB-D camera is co-mounted near the laser profiler and used exclusively in the pre-sensing phase. The captured RGB observations provide appearance cues such as geometry, scale, surface reflectivity, and illumination conditions. 
+
+C. Data Collection 
+
+To support instruction-conditioned sensing decisions on a real robotic platform, we collect inspection data using the physical system described in Section III-B. The dataset is grounded in a structured taxonomy of industrial quality in-spection tasks , spanning appearance inspection (global/local, outline/detail) and geometric metrology (dimensional veri-fication, registration). This taxonomy provides a principled basis for designing semantically consistent inspection in-structions. The dataset covers a diverse set of 16 industrial objects with substantial variation in geometry and material properties, including consumer electronics, printed circuit boards (PCBs), GPU modules, mechanical tools, and IC modules, as shown in Fig. 3. For each inspection instance, the robot acquires a pre-scan RGB observation, receives a task-conditioned instruction, and executes a specific scanner configuration. Consistent with the Keyence LJ-X8000 controller paradigm, each of the five sensing parameters is chosen from a finite, controller-defined discrete option set (with parameter-specific cardinal-ities). To avoid subjective micro-tuning while spanning valid operating regimes, we select three representative controller-valid levels per parameter (lower / mid / upper on the controller’s numeric scale), determined via pilot scans un-der objective capture criteria (e.g., non-saturated returns and stable profile acquisition). We treat each resulting pre-validated 5D configuration vector as a sensing recipe. This formulation mirrors the industrial practice of utilizing pre-validated configuration profiles over manual micro-tuning, ensuring the learned policy is directly compatible with stan-dard MES. Furthermore, by decoupling decision logic from specific hardware constraints, this design enables the policy to generalize across different scanner models via simple parameter remapping. As illustrated by the ❶ Data Evolution Flywheel in Fig. 4, data collection follows an iterative process to ensure physical validity. We employ GPT-5-based knowledge distillation to generate diverse task-conditioned instructions, while expert-guided calibration filters out infeasible or unstable con-figurations. This calibrated process produces high-quality instruction–observation–action instances, ensuring both lin-guistic diversity and task-appropriateness. The final dataset contains 856 instances across all objects and tasks. IV. S ENSE HD: I NSTRUCTION -C ONDITIONED SENSING 
+
+SYSTEM 
+
+In this paper, we present SenseHD , an HDC-based learn-ing framework for instruction-conditioned scanner parame-ter recommendation in industrial inspection. As shown in Fig. 4, SenseHD begins by organizing raw sensing data and expert knowledge through a data evolution flywheel ( ❶), which consolidates domain knowledge, calibrates representa-tive scanning samples, and produces structured instruction– observation instances suitable for learning. Based on these instances, visual observations and natural-language instruc-tions are jointly encoded into symbolic hypervectors via multimodal feature bundling and hyperdimensional encoding Training Phase   
+
+> HDC -Based Supervised
+> Learning
+> Data Evolution Flywheel
+> Deployment for Scanner Parameter Recommendation via HDC Inference
+> …
+> HDC Model
+> …
+> HDC Model
+> …
+> HDC Model
+> …
+> HDC Model
+> …
+> HDC Model
+> argmax
+> …
+> Similarity
+> Values
+> …
+> HDC Model
+> Encoding Phase
+> Hypervector
+> HDC
+> Symbolic Encoder
+> Knowledge Distillation
+> Sample Calibration
+> Instance Generation
+> Instruction
+> Multimodal
+> Feature Bundling
+> Similarity Search
+> Parameter -
+> Specific
+> Model
+> Recommend
+> Scanner
+> Settings
+> HDC -Based
+> Learning
+> Instruction
+> Input
+> Industrial
+> Quality
+> Inspection
+> Appearance
+> Inspection
+> Global
+> Outline
+> Dimensional
+> & Geometric
+> Metrology
+> Global
+> Detail
+> Local
+> Outline
+> Local
+> Detail
+> Metrology
+> Registration
+> Supervised
+> Prototype
+> Construction
+> Error -driven
+> Memory
+> Refinement
+> Observation
+> Input
+
+Fig. 4: Overview of SenseHD. Pre -trained        
+
+> Object Detector
+> Instruction Text
+> “Scan the complete
+> top surface of the
+> blue gpu .”
+> Pretrained
+> Image Encoder
+> Pretrained
+> Text Encoder
+> Appearance Representation
+> Task Representation
+> HDC
+> Encoder
+> Sample HV Joint
+> Representation
+> Initial Visual Observation
+> bundling
+> Target Prompt
+
+Fig. 5: Encoding Phase of SenseHD. (❷), yielding a compact representation that preserves both semantic intent and appearance cues. Learning in SenseHD is formulated as a supervised HDC problem, where parameter-specific associative memories are constructed by aggregat-ing encoded hypervectors according to their corresponding scanner settings ( ❸). Once trained, the resulting HDC mod-els support fast similarity-based inference at deployment time ( ❹), allowing SenseHD to directly retrieve compatible scanner parameter configurations for unseen instruction– observation inputs. 
+
+A. Encoding Phase 
+
+Given an instruction–observation pair, SenseHD encodes multimodal inputs into a unified hyperdimensional repre-sentation suitable for associative learning. As illustrated in Fig. 5, the encoding process starts from an input image I ∈ I 
+
+and a natural-language instruction T.
+
+Prompt-conditioned Object Localization. To focus on task-relevant regions and suppress background interference, SenseHD first applies a pre-trained object detection model (e.g., YOLO-World [13]) fdet : I → B , where B denotes a set of bounding boxes. The detector is guided by a target prompt derived from the instruction text, enabling prompt-conditioned localization of the object of interest. Given the detected bounding box b ∈ B , a region of interest (ROI) image Iroi ⊂ I is obtained and used for subsequent encoding. 
+
+Multimodal Feature Extraction. We adopt a pre-trained vision–language model, e.g. , OpenAI CLIP [14], to extract paired image and text embeddings without task-specific fine-tuning. Given a cropped ROI image Iroi , the image encoder produces an embedding eimg = fimg (Iroi ) ∈ Rd, while the instruction text T is mapped by the text encoder to 
+
+etxt = ftxt (T) ∈ Rd. Both encoders operate in a shared embedding space of dimension d, where eimg captures the visual appearance of the target object and etxt encodes the inspection intent specified by the instruction. 
+
+Joint Representation and HDC Projection. To integrate appearance and task semantics, SenseHD combines the two embeddings using a bundling operation, 
+
+ejoint = B(eimg , etxt ). (3) The joint embedding is then mapped into a high-dimensional symbolic space using an HDC encoder Φ : Rd → RD ,
+
+h = Φ( ejoint ), h ∈ RD , (4) where D ≫ d. The resulting hypervector h serves as the sample-level representation used for subsequent HDC-based supervised learning and inference. 
+
+B. HDC-Based Supervised Learning 
+
+Given the encoded sample hypervectors h, SenseHD for-mulates scanner parameter learning as a supervised learning problem in hyperdimensional space. As illustrated in Fig. 6, this stage focuses on constructing parameter-specific asso-ciative memories through supervised prototype learning ( ❶)and optional error-driven refinement ( ❷). 
+
+a) Supervised Prototype Construction ( ❶).: For each scanner parameter, SenseHD maintains an independent hy-perdimensional associate memory composed of a small number of prototype hypervectors, one for each discrete TABLE I: Main Results on our Dataset. Each model predicts 5 scanning parameters. For each parameter we report Exact Accuracy, Win@1 Accuracy, and F1.                                                                                                                                                                                                                                      
+
+> Sample Freq Measurement Range X Exposure Time CMOS Dynamic Range Control Light Intensity Average Method Exact Win@1 F1 Exact Win@1 F1 Exact Win@1 F1 Exact Win@1 F1 Exact Win@1 F1 Exact Win@1 F1
+> A. Rule-based Baselines
+> Rule-based Heuristic 39.9 ±1.8 59.1 ±2.6 23.3 ±1.7 56.5 ±4.7 -24.0 ±1.3 47.7 ±2.1 78.4 ±2.7 21.9 ±1.2 53.1 ±3.0 89.2 ±2.4 25.3 ±0.9 54.7 ±4.7 100.0 ±0.0 23.8 ±1.7 50.4 ±3.3 81.7 ±1.7 23.7 ±1.4
+> B. Instruction-Only Methods
+> Logistic Regression 97.9 ±1.4 98.6 ±0.9 98.0 ±1.4 93.1 ±1.7 -91.8 ±1.7 75.3 ±2.3 92.7 ±1.3 74.1 ±2.3 83.3 ±2.1 96.5 ±0.5 81.5 ±2.5 90.2 ±0.7 95.5 ±1.1 88.3 ±1.2 88.0 ±1.6 95.8 ±0.5 86.7 ±1.8 KNN 92.6 ±2.3 95.7 ±2.4 92.6 ±2.0 83.4 ±1.2 -82.1 ±2.1 74.8 ±1.5 91.9 ±1.6 73.3 ±1.3 80.9 ±2.6 95.5 ±1.3 77.7 ±3.8 79.3 ±1.4 93.5 ±1.2 75.2 ±0.8 82.2 ±1.8 94.1 ±1.6 80.2 ±2.0
+> C. Observation-Only Methods
+> ResNet 42.2 ±3.6 62.6 ±3.6 28.5 ±3.4 71.2 ±2.1 -70.5 ±2.2 74.8 ±2.4 100.0 ±0.0 73.7 ±3.2 73.7 ±3.1 100.0 ±0.0 74.8 ±4.8 100.0 ±0.0 100.0 ±0.0 100.0 ±0.0 72.4 ±2.2 90.7 ±0.9 69.5 ±2.7 ViT 44.2 ±3.1 65.0 ±3.7 31.3 ±4.5 71.4 ±1.7 -72.2 ±2.8 72.2 ±2.9 100.0 ±0.0 72.1 ±2.4 74.1 ±2.7 100.0 ±0.0 77.0 ±2.1 100.0 ±0.0 100.0 ±0.0 100.0 ±0.0 72.4 ±2.1 91.3 ±0.9 70.5 ±2.4
+> D. Fusion Methods
+> DNN 85.1 ±3.8 90.9 ±0.9 84.2 ±6.2 91.2 ±4.3 -91.6 ±4.5 84.5 ±2.8 100.0 ±0.0 85.2 ±2.8 86.2 ±0.8 99.8 ±0.5 85.6 ±1.3 98.8 ±0.6 99.4 ±0.4 98.6 ±0.7 89.2 ±2.5 97.5 ±0.3 89.0 ±3.1
+> E. Multimodal Large Language Models
+> Qwen3-VL-4B-Instruct 60.0 ±4.7 92.8 ±1.3 55.4 ±5.0 59.3 ±1.6 -48.7 ±2.3 24.0 ±2.8 89.2 ±3.2 18.9 ±2.8 65.6 ±2.4 94.3 ±1.1 53.5 ±3.4 40.2 ±5.2 79.7 ±3.8 36.6 ±4.9 49.8 ±3.3 89.0 ±1.7 42.6 ±3.7 Qwen3-VL-4B-Thinking 62.0 ±2.7 84.3 ±2.2 59.5 ±2.3 60.0 ±2.5 -47.1 ±2.3 36.7 ±1.2 80.2 ±1.0 31.3 ±1.4 52.9 ±1.8 84.3 ±1.0 43.2 ±2.0 27.8 ±1.2 78.4 ±2.0 27.7 ±1.3 47.9 ±1.9 81.8 ±0.9 41.8 ±1.9 Qwen3-VL-8B-Instruct 64.3 ±1.1 89.5 ±1.3 48.9 ±1.1 63.3 ±1.9 -46.0 ±2.0 34.2 ±1.2 69.3 ±0.9 27.2 ±1.9 53.1 ±2.8 87.1 ±2.4 42.9 ±2.0 34.9 ±2.6 78.5 ±1.6 30.1 ±2.3 49.9 ±1.9 81.1 ±0.9 39.0 ±1.9 Qwen3-VL-8B-Thinking 62.6 ±3.3 86.9 ±1.5 57.5 ±3.7 61.4 ±1.4 -45.8 ±1.0 33.3 ±1.6 84.1 ±3.3 33.2 ±1.7 47.6 ±2.0 82.0 ±2.1 40.6 ±1.9 43.3 ±2.0 82.7 ±1.5 33.8 ±2.0 49.6 ±2.1 83.9 ±0.8 42.2 ±2.1
+> Our Model SenseHD 92.1 ±1.8 95.3 ±1.6 92.0 ±1.7 97.2 ±1.8 -97.5 ±1.6 90.8 ±1.3 100.0 ±0.0 90.8 ±1.3 84.0 ±0.9 100.0 ±0.0 80.6 ±2.6 99.9 ±0.2 100.0 ±0.0 99.9 ±0.2 92.8 ±1.2 98.8 ±0.4 92.2 ±1.5 Parameter Query HV hDh1
+> . . .
+> Similarity 1
+> Similarity 2
+> Similarity N
+> Prototype HV 1C1DC11
+> Prototype HV 2C2DC21
+> Prototype HV NCkDCk1
+> Hyperdimensional Associate Memory
+> Supervised Prototype
+> Construction
+> Cosine
+> Similarity
+> . . .
+> Sample HV 1
+> Sample HV 2
+> Sample HV S
+> Parameter Label 1
+> Sample Hypervectors
+> Parameter Label 1
+> Parameter Label S
+
+. . . 
+
+> Error -driven
+> Memory Refinement
+> Highest
+> Similarity
+> Prototype
+> Similarity
+> Check
+> Recommended
+> Parameter
+> If !=: update()
+> else: keep()
+
+Fig. 6: HDC-based supervised learning of SenseHD. parameter level. Given a labeled training set {(hi, y i)}Si=1 ,where hi ∈ RD denotes a sample hypervector and yi ∈{1, . . . , N } is the corresponding parameter label, samples sharing the same label are aggregated to form a class prototype. Specifically, for class k, the prototype hypervector 
+
+ck ∈ RD is obtained by bundling the associated samples, 
+
+ck = A {hi | yi = k}, (5) where A(·) denotes the HDC aggregation operation. This prototype construction can be completed in a single pass over the training data. 
+
+b) Error-driven Memory Refinement ( ❷).: Although single-pass prototype aggregation enables fast and efficient training, industrial inspection data may contain ambiguous samples and closely spaced parameter levels that benefit from additional refinement. To address this, SenseHD adopts an error-driven memory refinement strategy inspired by OnlineHD[15]. Given a training sample hypervector hi with ground-truth parameter label yi, the associative memory first computes the similarity between hi and all class prototypes. Let cyi denote the prototype corresponding to the correct label, and cˆyi denote the prototype with the highest similarity when a misprediction occurs, where ˆyi̸ = yi. If the prediction is correct, the memory remains unchanged; otherwise, the prototypes are updated according to 
+
+cyi ← cyi + η (1 − δyi ) hi, cˆyi ← cˆyi − η (1 − δˆyi ) hi,
+
+(6) where η is a learning rate and δyi and δˆyi denote the similarity between hi and the correct and mispredicted prototypes, respectively. This update rule reinforces the as-sociation between a sample and its correct parameter class while suppressing interference from competing prototypes. 
+
+C. Deployment for Scanner Parameter Recommendation via HDC Inference 
+
+SenseHD is deployed as a lightweight inference module for real-time scanner parameter recommendation ( ❹). At deployment time, the learned hyperdimensional associative memory is fixed, and no further parameter updates are performed. Given a new inspection request, the system re-ceives a visual observation and a natural-language instruction describing the inspection intent. The observation and instruc-tion are encoded into a query hypervector hq ∈ RD . For each scanning parameter p, SenseHD maintains a parameter-specific associative memory consisting of a small set of class prototypes {c(1) 
+
+p , c(2) 
+
+p , . . . , c(K)
+
+p }, where each prototype corresponds to a discrete candidate value in the predefined parameter space. Inference is performed by computing the similarity between the query hypervector and each prototype using cosine similarity, 
+
+sk = δ(hq , c(k)
+
+p ), (7) where δ(·, ·) denotes cosine similarity. The recommended scanner parameter is selected by 
+
+ˆk = arg max 
+
+k δ(hq , c(k)
+
+p ), (8) and the corresponding parameter value is returned as the system output. This process is independently executed for each scanner parameter, enabling modular and interpretable parameter recommendation. By reducing inference to simple hypervector similarity and arg max operations, SenseHD achieves low-latency and computationally efficient deploy-ment, making it well suited for real-time industrial inspec-tion. V. E XPERIMENTS 
+
+A. Experimental Setup and Baselines 
+
+We evaluate SenseHD on the instruction-conditioned scan-ner parameter recommendation task using the proposed dataset. All methods are trained and evaluated under identical data splits and evaluation protocols to ensure fair compari-son. (a) All -Parameter Correctness (b) Training Data Efficiency (c) Inference Latency Comparison Fig. 7: Quantitative Evaluation of SenseHD. 
+
+a) Baselines: We compare SenseHD against a compre-hensive set of baselines designed to isolate the contributions of instruction semantics, visual observations, and their mul-timodal integration, as well as state-of-the-art multimodal large language models (MLLMs). Rule-based baselines fol-low manually designed heuristics for scanner parameter selection. Instruction-only baselines use natural-language in-structions as the sole input; we evaluate Logistic Regression and a k-nearest neighbor(KNN) classifier operating on CLIP text embeddings to assess how much parameter information can be inferred from inspection intent alone. Observation-only baselines rely exclusively on visual input, using ResNet [16] and ViT [17] models trained on RGB observations to measure the contribution of appearance cues. As a conven-tional multimodal learning baseline, a Deep Neural Network (DNN) fuses VLM-extracted visual and textual features via concatenation followed by a three-layer MLP. We further compare against multimodal large language models that directly predict scanner parameters from image–instruction pairs, evaluating Qwen3-VL[18] models with different pa-rameter scales and reasoning modes (Instruct vs. Thinking). All multimodal large language models are evaluated in a zero-shot setting without fine-tuning; reasoning-enabled models are allowed to use chain-of-thought prompting but must output discrete parameter choices from the predefined action space. 
+
+b) Evaluation Metrics: We report three complementary metrics: Exact Accuracy , which measures strict correctness of predicted parameters; Win@1 Accuracy , which allows one-level deviation from the ground truth; it is not reported for Measurement Range X, as adjacent levels correspond to substantially different fields of view. and Macro-F1 , which evaluates class-balanced performance across parameter cate-gories. All results are reported as mean ± standard deviation over ten runs. 
+
+c) Implementation Details: All experiments are con-ducted on a single NVIDIA RTX 4090 GPU. For our HDC-based model, we set the hypervector dimensionality to 1000. The dataset is randomly split into training and test sets with an 8:2 ratio. For stochastic learning methods, we repeat each experiment multiple times with different random seeds and report the average performance. 
+
+B. SenseHD Model Evaluation 
+
+Table I summarizes the benchmark results for predicting five scanning parameters. SenseHD consistently outperforms all baselines on Exact Accuracy, Win@1, and F1, achieving the best average performance across parameters. Rule-based heuristics perform poorly (average Exact Accuracy < 40% ), indicating that manual rules are insufficient for robust con-figuration. Instruction-only and observation-only baselines achieve only partial success: instruction-only models excel on intent-dominated parameters (e.g., 97.9% Exact Accuracy on sampling frequency) but drop on appearance-sensitive parameters, while observation-only models struggle even on core intent-related parameters (e.g., ResNet at 42.2% on sampling frequency), showing that visual cues alone cannot capture inspection intent. The DNN baseline yields moderate gains but remains limited in modeling the struc-tured dependencies needed for reliable reasoning. Zero-shot multimodal large language models show lower accuracy and higher variance, suggesting that direct generative prediction is unreliable for precise industrial parameter selection. Be-yond per-parameter evaluation, Fig. 7(a) adopts a stricter exact-all criterion that requires all five parameters to be predicted correctly. Under this setting, SenseHD achieves the highest all-parameter correctness, demonstrating supe-rior consistency in joint parameter prediction. These results validate the effectiveness and robustness of SenseHD for instruction-conditioned scanner parameter recommendation in industrial inspection. 
+
+C. Training Data Efficiency 
+
+We evaluate the data efficiency of SenseHD against the DNN baseline by varying the training fraction. As shown in Fig. 7(b), SenseHD demonstrates superior few-shot per-formance, surpassing the DNN by over 20% when only 20% of the training data is available. While the gradient-based DNN struggles to converge with limited supervision, SenseHD’s memory-based prototype learning generalizes ef-fectively from sparse samples. This efficiency is critical for industrial inspection scenarios where collecting large-scale labeled datasets is prohibitive. 
+
+D. Efficiency Evaluation 
+
+We evaluate the inference efficiency of SenseHD by com-paring its per-sample inference cost with the DNN baseline (a) Object -wise Cross -Split Evaluation (b) Ablation Study Fig. 8: Object-wise cross-split evaluation and ablation study results. and multimodal large language models. The reported latency is measured from receiving a complete sensor sample by the inference pipeline to producing the final prediction. This measurement includes method-specific preprocessing, encoding, inference computation, and decision generation, while excluding physical sensor acquisition, external com-munication, logging, and visualization overhead. As shown in Fig. 7(c), SenseHD serves as the zero-overhead baseline, outperforming the DNN baseline which incurs marginal addi-tional latency, while exhibiting substantially lower inference overhead than multimodal large language models. This effi-ciency stems from SenseHD’s lightweight inference, which requires only hypervector encoding, similarity computation, and an arg max operation, making it suitable for real-time industrial inspection. 
+
+E. Object-wise Cross-Split Evaluation 
+
+To evaluate generalization to novel industrial parts, we conduct an object-wise cross-split evaluation where entire object categories are held out during training. As shown in Figure 8(a), SenseHD demonstrates strong generalization on standard electronic components (PCBs, GPUs). For optically challenging objects like Phones (characterized by specular screens and transparency), the Exact Accuracy decreases as expected due to the complex light-matter interactions unique to these materials. However, the consistently high Win@1 accuracy ( > 75% even for Phones) demonstrates that SenseHD successfully learns the underlying physics of scanning. Instead of random guessing, the model predicts ”near-optimal” parameters that serve as a high-quality initial-ization for new objects. This capability is critical for rapid New Product Introduction (NPI), as it reduces the parameter search space from thousands of combinations to a narrow, feasible window, significantly accelerating the deployment process. 
+
+F. Ablation Study 
+
+We further conduct an ablation study to analyze the contri-bution of instruction conditioning, visual observations, and prompt-conditioned object localization (PCOL). As shown in Fig. 8 (b), removing instruction conditioning leads to the largest performance drop relative to the full model, DNN SenseHD                         
+
+> Scan the fan blades of the
+> red GPU to capture fine
+> geometric details .
+> Inspect the top surface of the
+> blue GPU at high resolution .Coverage: 65.8 %Coverage: >99%
+> Coverage: 77.1 %Coverage: >99%
+
+Fig. 9: Comparison of scanning results from different model-selected parameters. with a particularly pronounced degradation in Win@1 ac-curacy, indicating that task intent is the primary factor constraining predictions to an operationally plausible region of the discrete sensing parameter space. Removing visual observations results in a smaller yet consistent decline in both Exact and Win@1 accuracy, suggesting that visual cues mainly provide appearance-dependent refinement once the task intent is specified. In contrast, ablating PCOL causes only a marginal performance drop, implying that it primarily serves as a robustness-enhancing regularizer rather than a dominant contributor to overall performance. 
+
+G. Scan Quality Evaluation 
+
+Beyond offline parameter prediction accuracy, we further evaluate the physical scan quality resulting from model-selected sensing parameters. Coverage is computed as the percentage of ground-truth surface points whose nearest-neighbor distance to the reconstructed scan is below a fixed geometric tolerance of 0.1 mm. Fig. 9 compares SenseHD with the strongest trained baseline, DNN, under identical RGB observations, inspection instructions, and scanning trajectories, isolating the effect of parameter selection. DNN exhibits missing returns and incomplete coverage, achieving 65.8% coverage for global surface inspection and 77.1% for fine-grained fan blade scanning. In contrast, SenseHD consistently achieves substantially higher coverage under the same strict tolerance across both global and local inspection tasks, producing more stable measurements. These results highlight the importance of instruction-conditioned sensing decisions for reliable embodied robotic scanning. VI. C ONCLUSION 
+
+We present SenseHD, a hyperdimensional memory-centric framework for instruction-conditioned scanner parameter recommendation in robotic inspection. By performing as-sociative retrieval over unified multimodal representations, SenseHD outperforms rule-based, DNN and MLLM base-lines on a robotic platform. Results demonstrate high accu-racy, data efficiency, and low latency. Future work will extend the framework to richer sensing action spaces and complex inspection scenarios for real-time industrial deployment. REFERENCES [1] A. Papavasileiou, G. Michalos, and S. Makris, “Quality control in manufacturing–review and challenges on robotic applications,” Inter-national Journal of Computer Integrated Manufacturing , vol. 38, no. 1, pp. 79–115, 2025. [2] R. Almadhoun, T. Taha, L. Seneviratne, J. Dias, and G. Cai, “A survey on inspecting structures using robotic systems,” International Journal of Advanced Robotic Systems , vol. 13, no. 6, p. 1729881416663664, 2016. [3] R. Bajcsy, “Active perception,” Proceedings of the IEEE , vol. 76, no. 8, pp. 966–1005, 1988. [4] R. Bajcsy, Y. Aloimonos, and J. K. Tsotsos, “Revisiting active per-ception,” Autonomous Robots , vol. 42, no. 2, pp. 177–196, 2018. [5] Z. Chen, Y. Zhang, F. J. Piran, Q. Zhou, J. Tang, and F. Imani, “Scanbot: Towards intelligent surface scanning in embodied robotic systems,” arXiv preprint arXiv:2505.17295 , 2025. [6] U. Shin, J. Park, G. Shim, F. Rameau, and I. S. Kweon, “Camera exposure control for robust robot vision with noise-aware image quality assessment,” in 2019 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) . IEEE, 2019, pp. 1165–1172. [7] S. Mantravadi and C. Møller, “An overview of next-generation manu-facturing execution systems: How important is mes for industry 4.0?” 
+
+Procedia manufacturing , vol. 30, pp. 588–595, 2019. [8] L. Ge and K. K. Parhi, “Classification using hyperdimensional com-puting: A review,” IEEE Circuits and Systems Magazine , vol. 20, no. 2, pp. 30–47, 2020. [9] P. Kanerva, “Hyperdimensional computing: An introduction to com-puting in distributed representation with high-dimensional random vectors,” Cognitive computation , vol. 1, no. 2, pp. 139–159, 2009. [10] H. Kwon, K. Kim, J. Lee, H. Lee, J. Kim, J. Kim, T. Kim, Y. Kim, Y. Ni, M. Imani et al. , “Brain-inspired hyperdimensional computing in the wild: Lightweight symbolic learning for sensorimotor controls of wheeled robots,” in 2024 IEEE International Conference on Robotics and Automation (ICRA) . IEEE, 2024, pp. 5176–5182. [11] C. Y. Lee, S. Achour, and Z. Kapetanovic, “Navhd: Low-power learning for micro-robotic controls in the wild,” in 2025 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS) ,2025, pp. 13 399–13 405. [12] Y. Ni, M. Issa, D. Abraham, M. Imani, X. Yin, and M. Imani, “Hdpg: Hyperdimensional policy-based reinforcement learning for continuous control,” in Proceedings of the 59th ACM/IEEE Design Automation Conference , 2022, pp. 1141–1146. [13] T. Cheng, L. Song, Y. Ge, W. Liu, X. Wang, and Y. Shan, “Yolo-world: Real-time open-vocabulary object detection,” in Proceedings of the IEEE/CVF conference on computer vision and pattern recognition ,2024, pp. 16 901–16 911. [14] A. Radford, J. W. Kim, C. Hallacy, A. Ramesh, G. Goh, S. Agarwal, G. Sastry, A. Askell, P. Mishkin, J. Clark et al. , “Learning transferable visual models from natural language supervision,” in International conference on machine learning . PmLR, 2021, pp. 8748–8763. [15] A. Hern´ andez-Cano, N. Matsumoto, E. Ping, and M. Imani, “Onlinehd: Robust, efficient, and single-pass online learning using hyperdimen-sional system,” in 2021 Design, Automation & Test in Europe Con-ference & Exhibition (DATE) . IEEE, 2021, pp. 56–61. [16] K. He, X. Zhang, S. Ren, and J. Sun, “Deep residual learning for image recognition,” in Proceedings of the IEEE conference on computer vision and pattern recognition , 2016, pp. 770–778. [17] A. Dosovitskiy, L. Beyer, A. Kolesnikov, D. Weissenborn, X. Zhai, T. Unterthiner, M. Dehghani, M. Minderer, G. Heigold, S. Gelly et al. ,“An image is worth 16x16 words: Transformers for image recognition at scale,” arXiv preprint arXiv:2010.11929 , 2020. [18] S. Bai, Y. Cai, R. Chen, K. Chen, X. Chen, Z. Cheng, L. Deng, W. Ding, C. Gao, C. Ge, W. Ge, Z. Guo, Q. Huang, J. Huang, F. Huang, B. Hui, S. Jiang, Z. Li, M. Li, M. Li, K. Li, Z. Lin, J. Lin, X. Liu, J. Liu, C. Liu, Y. Liu, D. Liu, S. Liu, D. Lu, R. Luo, C. Lv, R. Men, L. Meng, X. Ren, X. Ren, S. Song, Y. Sun, J. Tang, J. Tu, J. Wan, P. Wang, P. Wang, Q. Wang, Y. Wang, T. Xie, Y. Xu, H. Xu, J. Xu, Z. Yang, M. Yang, J. Yang, A. Yang, B. Yu, F. Zhang, H. Zhang, X. Zhang, B. Zheng, H. Zhong, J. Zhou, F. Zhou, J. Zhou, Y. Zhu, and K. Zhu, “Qwen3-vl technical report,” arXiv preprint arXiv:2511.21631 , 2025.

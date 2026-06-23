@@ -1,0 +1,24 @@
+{
+  "label": "2026-06-23",
+  "date": "2026-06-23",
+  "generated_at": "2026-06-23T22:29:07",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202606/23/2606.21093v1-how-should-a-robot-configure-its-laser-scanner-for-inspection",
+      "section": "quick",
+      "title_en": "How Should a Robot Configure Its Laser Scanner for Inspection?",
+      "authors": "Zhiling Chen, David Gorsich, Matthew P. Castanier, Yang Zhang, Jiong Tang, Farhad Imani",
+      "date": "2026-06-19",
+      "pdf": "https://arxiv.org/pdf/2606.21093v1",
+      "score": "6.0",
+      "evidence": "具有自适应扫描仪配置的机器人检测用于高保真度计量",
+      "tldr": "针对机器人检测中传感参数配置未充分探索的问题，提出SenseHD系统，将扫描仪配置视为指令条件决策，通过超维联想记忆选择稳定的传感模式，在真实机器人检测平台上稳健地选择适当配置，提升了计量任务的测量质量。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "Robotic inspection relies on accurate sensing to acquire high-fidelity geometric measurements for defect detection and metrology. While prior work has focused on robot motion and viewpoint planning, how to configure sensing parameters remains largely underexplored, despite their decisive impact on measurement quality. We propose SenseHD, a robotic sensing system that formulates scanner configuration as an instruction-conditioned sensing decision. Instead of predicting precise parameter values, SenseHD treats sensing parameters as discrete sensing actions and selects stable sensing regimes through hyperdimensional associative memory. Experiments on a real robotic inspection platform demonstrate that SenseHD robustly selects appropriate sensing configurations and significantly improves inspection reliability, while remaining lightweight and efficient compared to baseline methods.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

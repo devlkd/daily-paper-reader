@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-06-23 <!--dpr-date:20260623-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/23/2606.21093v1-how-should-a-robot-configure-its-laser-scanner-for-inspection" data-sidebar-item="{&quot;title&quot;: &quot;How Should a Robot Configure Its Laser Scanner for Inspection?&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.21093v1-how-should-a-robot-configure-its-laser-scanner-for-inspection&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;sat-asm-prec&quot;}], &quot;evidence&quot;: &quot;具有自适应扫描仪配置的机器人检测用于高保真度计量&quot;}">How Should a Robot Configure Its Laser Scanner for Inspection?</a>
   * 2026-06-21 <!--dpr-date:20260621-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/21/2606.18915v1-testing-of-a-15-positioner-module-based-on-the-mps-design-for-stage-5-telescopes" data-sidebar-item="{&quot;title&quot;: &quot;Testing of a 15-Positioner Module Based on the MPS Design for Stage-5 Telescopes&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.18915v1-testing-of-a-15-positioner-module-based-on-the-mps-design-for-stage-5-telescopes&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;sat-asm-prec&quot;}], &quot;evidence&quot;: &quot;望远镜用微机器人定位器的精密定位与角度倾斜表征&quot;}">Testing of a 15-Positioner Module Based on the MPS Design for Stage-5 Telescopes</a>
