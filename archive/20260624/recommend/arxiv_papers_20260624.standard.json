@@ -1,0 +1,54 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-24T22:01:26.346533+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 0,
+    "deep_cap": 8,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 13,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "biorxiv-10-64898-2026-06-15-732510-v1",
+      "source": "biorxiv",
+      "title": "Reach-and-hold at a musculoskeletal arm posture is an unstable-equilibrium stabilization problem: the limits of fixed equilibrium-point and impedance controllers",
+      "abstract": "Holding a redundant limb at a commanded posture against gravity is a basic problem in musculoskeletal motor control. Whether fixed, biologically grounded controllers can achieve it remains unclear. Using the MyoSuite myoArm under a frozen-criterion, hash-provenanced protocol, we evaluate fixed, non-learning controllers: an equilibrium-point/referent (lambda) reflex, a reflex with co-contraction, an endpoint Cartesian impedance controller, a gravity-compensation feedforward, and an exact inverse-statics gravity-balancing command. None achieves a stable near-task hold. The tested referent reflex placed a near-target equilibrium (best 0.048 m at the lowest target), but sustained a structural limit cycle that velocity damping did not cure; endpoint impedance settled at far false equilibria; and an exact gravity-balancing activation can exist while deployment falls away. At posture-matched targets evaluated in both the 34- and 63-muscle models, the reduced acceleration-position Jacobian has positive real eigenvalues, indicating locally unstable second-order modes. In the 34-muscle model, the full fixed-controller grid also fails to produce a stable near-task hold. In the 63-muscle model, measured endpoint stiffness spans human-scale magnitudes and human-like ellipse axis ratios across a co-contraction sweep, so the failure is not explained by a limp or non-biological plant. We conclude that reach-and-hold is an unstable-dynamics stabilization problem: the tested fixed equilibrium-point/referent controller can place a near-target equilibrium, but does not stabilize it. These results motivate learned selective impedance and predictive/internal-model control as the next class of mechanisms, separating equilibrium placement from stabilization.",
+      "authors": [
+        "Kobayashi, J."
+      ],
+      "primary_category": "neuroscience",
+      "categories": [
+        "neuroscience"
+      ],
+      "published": "2026-06-20T00:00:00+00:00",
+      "link": "https://www.biorxiv.org/content/10.64898/2026.06.15.732510v1.full.pdf",
+      "tags": [
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Tests gravity compensation feedforward and exact inverse-statics gravity-balancing command for arm posture against gravity",
+      "llm_evidence_cn": "测试了重力补偿前馈和精确逆静力学重力平衡指令用于抗重力臂姿态",
+      "llm_evidence": "测试了重力补偿前馈和精确逆静力学重力平衡指令用于抗重力臂姿态",
+      "canonical_evidence": "测试了重力补偿前馈和精确逆静力学重力平衡指令用于抗重力臂姿态",
+      "llm_tldr_en": "Evaluates multiple fixed gravity compensation controllers for holding a musculoskeletal arm posture against gravity, finding none achieve stable hold, underscoring limitations of non-learning methods for gravity compensation in arm-like systems.",
+      "llm_tldr_cn": "本文评估了多种固定重力补偿控制器在骨骼肌肉臂模型抗重力姿势保持中的表现，发现所有控制器均无法实现稳定保持，表明无学习方法在臂类系统重力补偿中的局限性。研究使用MyoSuite仿真平台，测试了平衡点控制、阻抗控制、重力补偿前馈和逆静力学重力平衡等策略，结果最佳平衡点控制仍存在0.048米偏差，揭示固定策略不足以应对冗余肢体重力补偿，为空间机器人等重力卸载系统提供了参考意义。",
+      "llm_tldr": "本文评估了多种固定重力补偿控制器在骨骼肌肉臂模型抗重力姿势保持中的表现，发现所有控制器均无法实现稳定保持，表明无学习方法在臂类系统重力补偿中的局限性。研究使用MyoSuite仿真平台，测试了平衡点控制、阻抗控制、重力补偿前馈和逆静力学重力平衡等策略，结果最佳平衡点控制仍存在0.048米偏差，揭示固定策略不足以应对冗余肢体重力补偿，为空间机器人等重力卸载系统提供了参考意义。",
+      "llm_tags": [
+        "query:grav-offload"
+      ],
+      "matched_query_tag": "query:grav-offload",
+      "matched_query_text": "Active gravity compensation techniques for space robots",
+      "matched_requirement_id": "req-14",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}

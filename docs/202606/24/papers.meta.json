@@ -1,0 +1,24 @@
+{
+  "label": "2026-06-24",
+  "date": "2026-06-24",
+  "generated_at": "2026-06-24T22:02:25",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202606/24/biorxiv-10-64898-2026-06-15-732510-v1-reach-and-hold-at-a-musculoskeletal-arm-posture-is-an-unstable-equilibrium-stabilization-problem-the-limits-of-fixed-equilibrium-point-and-impedance-controllers",
+      "section": "quick",
+      "title_en": "Reach-and-hold at a musculoskeletal arm posture is an unstable-equilibrium stabilization problem: the limits of fixed equilibrium-point and impedance controllers",
+      "authors": "Kobayashi, J.",
+      "date": "2026-06-20",
+      "pdf": "https://www.biorxiv.org/content/10.64898/2026.06.15.732510v1.full.pdf",
+      "score": "7.0",
+      "evidence": "测试了重力补偿前馈和精确逆静力学重力平衡指令用于抗重力臂姿态",
+      "tldr": "在肌肉骨骼运动控制中，冗余肢体抗重力姿态保持是一个基本问题，但固定控制器能否胜任尚不明确。本研究在MyoSuite手臂模型上，用冻结标准评估了平衡点反射、阻抗控制等多种固定无学习控制器。结果显示所有方法均未能实现稳定的近目标保持，系统加速度-位置雅可比矩阵具有正实特征值，揭示局部动力学不稳定。该工作表明伸手保持本质是动力学不稳定镇定问题，固定平衡点控制器仅能放置平衡却无法稳定，推动向学习型阻抗与预测控制方向探索。",
+      "tags": "query:grav-offload",
+      "abstract_en": "Holding a redundant limb at a commanded posture against gravity is a basic problem in musculoskeletal motor control. Whether fixed, biologically grounded controllers can achieve it remains unclear. Using the MyoSuite myoArm under a frozen-criterion, hash-provenanced protocol, we evaluate fixed, non-learning controllers: an equilibrium-point/referent (lambda) reflex, a reflex with co-contraction, an endpoint Cartesian impedance controller, a gravity-compensation feedforward, and an exact inverse-statics gravity-balancing command. None achieves a stable near-task hold. The tested referent reflex placed a near-target equilibrium (best 0.048 m at the lowest target), but sustained a structural limit cycle that velocity damping did not cure; endpoint impedance settled at far false equilibria; and an exact gravity-balancing activation can exist while deployment falls away. At posture-matched targets evaluated in both the 34- and 63-muscle models, the reduced acceleration-position Jacobian has positive real eigenvalues, indicating locally unstable second-order modes. In the 34-muscle model, the full fixed-controller grid also fails to produce a stable near-task hold. In the 63-muscle model, measured endpoint stiffness spans human-scale magnitudes and human-like ellipse axis ratios across a co-contraction sweep, so the failure is not explained by a limp or non-biological plant. We conclude that reach-and-hold is an unstable-dynamics stabilization problem: the tested fixed equilibrium-point/referent controller can place a near-target equilibrium, but does not stabilize it. These results motivate learned selective impedance and predictive/internal-model control as the next class of mechanisms, separating equilibrium placement from stabilization.",
+      "source": "biorxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
