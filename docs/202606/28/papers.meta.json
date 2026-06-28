@@ -1,0 +1,24 @@
+{
+  "label": "2026-06-28",
+  "date": "2026-06-28",
+  "generated_at": "2026-06-28T21:30:08",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202606/28/2606.25646v1-calousel-extrinsic-calibration-of-non-overlapping-multi-camera-systems-from-pure-rotation",
+      "section": "quick",
+      "title_en": "Calousel: Extrinsic Calibration of Non-overlapping Multi-camera Systems from Pure Rotation",
+      "authors": "Gwanhyeong Song, Chaehyeon Song, Ayoung Kim",
+      "date": "2026-06-24",
+      "pdf": "https://arxiv.org/pdf/2606.25646v1",
+      "score": "6.0",
+      "evidence": "多相机标定用于卫星装配精密计量",
+      "tldr": "多相机系统无重叠视野的外参标定是一大挑战，传统方法或需大型标定靶或受运动退化影响。本文提出利用纯旋转运动，仅用单一静止标定板，让各相机依次观察同一靶标。通过引入潜转台坐标系，在SE(3)上全局优化3D误差，融合时序分离观测。在控制相机架和实车平台上验证，精度优异且鲁棒，无需专门精密硬件，适合现场部署，代码已开源。该方法兼顾精度与易用性，有效解决非重叠多相机系统标定难题。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "Extrinsic calibration of multi-camera systems with non-overlapping FOVs has been a challenging problem in the robotics literature. Conventional target-based methods impose substantial target setup overhead, either deploying large calibration targets or requiring pre-measured multi-target poses. Motion-based approaches instead suffer from drift error, scale ambiguity, and motion degeneracy. Securing both accuracy and usability, we propose a novel calibration method that leverages pure rotational motion, requiring only a single static calibration board. The key idea is to make all cameras sequentially observe the same target under a shared geometric reference, even without overlapping views. To integrate these time-separated observations, we formulate the problem using a latent turntable frame and a 3D error on SE(3) within a global optimization framework. We validate the proposed method on both a controlled camera rig and a full-scale vehicle platform with heterogeneous cameras, and analyze robustness under non-ideal turntable motion. Extensive experiments show that our approach maintains competitive accuracy without specialized precision hardware, proving its strong suitability for realistic on-site deployments. Our code is publicly available here.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

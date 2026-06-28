@@ -1,0 +1,59 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-28T21:29:15.690165+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 0,
+    "deep_cap": 8,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 13,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2606.25646v1",
+      "source": "arxiv",
+      "title": "Calousel: Extrinsic Calibration of Non-overlapping Multi-camera Systems from Pure Rotation",
+      "abstract": "Extrinsic calibration of multi-camera systems with non-overlapping FOVs has been a challenging problem in the robotics literature. Conventional target-based methods impose substantial target setup overhead, either deploying large calibration targets or requiring pre-measured multi-target poses. Motion-based approaches instead suffer from drift error, scale ambiguity, and motion degeneracy. Securing both accuracy and usability, we propose a novel calibration method that leverages pure rotational motion, requiring only a single static calibration board. The key idea is to make all cameras sequentially observe the same target under a shared geometric reference, even without overlapping views. To integrate these time-separated observations, we formulate the problem using a latent turntable frame and a 3D error on SE(3) within a global optimization framework. We validate the proposed method on both a controlled camera rig and a full-scale vehicle platform with heterogeneous cameras, and analyze robustness under non-ideal turntable motion. Extensive experiments show that our approach maintains competitive accuracy without specialized precision hardware, proving its strong suitability for realistic on-site deployments. Our code is publicly available here.",
+      "authors": [
+        "Gwanhyeong Song",
+        "Chaehyeon Song",
+        "Ayoung Kim"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.CV"
+      ],
+      "published": "2026-06-24T09:54:20+00:00",
+      "link": "https://arxiv.org/pdf/2606.25646v1",
+      "tags": [
+        "keyword:TF-SAR",
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:TF-SAR",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Multi-camera calibration for precision metrology applicable to satellite assembly",
+      "llm_evidence_cn": "多相机标定用于卫星装配精密计量",
+      "llm_evidence": "多相机标定用于卫星装配精密计量",
+      "canonical_evidence": "多相机标定用于卫星装配精密计量",
+      "llm_tldr_en": "Proposes a novel extrinsic calibration method for non-overlapping multi-camera systems using only a single static calibration board and pure rotational motion, achieving high accuracy without drift or ambiguity, enabling precise 3D measurement for assembly tasks.",
+      "llm_tldr_cn": "传统多相机外参标定方法或依赖大型标靶，或存在漂移和尺度歧义。本文提出一种基于纯旋转的标定方法，仅需一块静态标定板，通过相机系统纯旋转让各相机顺序观察同一目标，即使视场不重叠也能建立统一几何基准。该方法通过融合时序观测数据，实现了高精度外参估计，并有效避免运动退化问题，同时显著降低标定成本与复杂度。实验结果表明标定精度高、鲁棒性强，可直接应用于卫星地面装配过程中的大尺寸精密计量任务，为提升装配精度提供关键的测量校准支撑。",
+      "llm_tldr": "传统多相机外参标定方法或依赖大型标靶，或存在漂移和尺度歧义。本文提出一种基于纯旋转的标定方法，仅需一块静态标定板，通过相机系统纯旋转让各相机顺序观察同一目标，即使视场不重叠也能建立统一几何基准。该方法通过融合时序观测数据，实现了高精度外参估计，并有效避免运动退化问题，同时显著降低标定成本与复杂度。实验结果表明标定精度高、鲁棒性强，可直接应用于卫星地面装配过程中的大尺寸精密计量任务，为提升装配精度提供关键的测量校准支撑。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "dimensional metrology for satellite assembly accuracy",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
