@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-06-30 <!--dpr-date:20260630-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/30/2606.29301v1-pointer-cad-v2-plan-then-construct-cad-generation-with-dimension-aware-parametric-precision" data-sidebar-item="{&quot;title&quot;: &quot;Pointer-CAD v2: Plan-Then-Construct CAD Generation with Dimension-Aware Parametric Precision&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.29301v1-pointer-cad-v2-plan-then-construct-cad-generation-with-dimension-aware-parametric-precision&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;sat-asm-prec&quot;}], &quot;evidence&quot;: &quot;CAD生成强制尺寸感知精度以防止公差违规&quot;}">Pointer-CAD v2: Plan-Then-Construct CAD Generation with Dimension-Aware Parametric Precision</a>
   * 2026-06-28 <!--dpr-date:20260628-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202606/28/2606.25646v1-calousel-extrinsic-calibration-of-non-overlapping-multi-camera-systems-from-pure-rotation" data-sidebar-item="{&quot;title&quot;: &quot;Calousel: Extrinsic Calibration of Non-overlapping Multi-camera Systems from Pure Rotation&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.25646v1-calousel-extrinsic-calibration-of-non-overlapping-multi-camera-systems-from-pure-rotation&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;sat-asm-prec&quot;}], &quot;evidence&quot;: &quot;多相机标定用于卫星装配精密计量&quot;}">Calousel: Extrinsic Calibration of Non-overlapping Multi-camera Systems from Pure Rotation</a>

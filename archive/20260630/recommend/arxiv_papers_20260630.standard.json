@@ -1,0 +1,56 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-06-30T22:27:11.595814+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 0,
+    "deep_cap": 8,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 13,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2606.29301v1",
+      "source": "arxiv",
+      "title": "Pointer-CAD v2: Plan-Then-Construct CAD Generation with Dimension-Aware Parametric Precision",
+      "abstract": "Computer-aided design (CAD) plays a fundamental role in modern manufacturing by providing the high precision required for industrial production. Recent large language model based approaches formulate CAD generation as a sequence prediction problem and have achieved promising results. However, existing methods and evaluation protocols primarily emphasize visual similarity, while overlooking precise geometric parameters and correct metric scale. Small numerical deviations that are negligible at the shape-level may still violate industrial tolerance requirements, a problem further compounded by current autoregressive paradigms that utilize command sequence representations, aggressively quantize numerical parameters to ease LLM prediction. In this work, we present Pointer-CAD v2. Compared with v1 (arXiv:2603.04337), this version directly predicts continuous values, bypassing the need for quantized numerical parameters and thereby eliminating quantization errors. Specifically, we propose a unified framework that decouples parameter reasoning from geometric construction through a Plan-Then-Construct paradigm. Our method first produces a structured design plan with explicit metric scale parameters. These parameters are organized into a dictionary and directly referenced during sequence generation via a pointer mechanism, eliminating discretization errors and ensuring dimensionally consistent execution. In addition, we construct a new large-scale dataset with plan-level annotation and introduce three hierarchical geometry accuracy metrics to evaluate parametric fidelity at the vertex, edge, and face levels. Extensive experiments demonstrate that Pointer-CAD v2 consistently outperforms existing baselines and achieves substantial improvements in geometric accuracy, enabling reliable CAD generation for precision-critical engineering applications.",
+      "authors": [
+        "Dacheng Qi",
+        "Chenyu Wang",
+        "Jingwei Xu",
+        "Yi Ma",
+        "Shenghua Gao"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-06-28T09:40:20+00:00",
+      "link": "https://arxiv.org/pdf/2606.29301v1",
+      "tags": [
+        "keyword:sat-asm-prec",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "CAD generation enforces dimension-aware precision to prevent tolerance violations",
+      "llm_evidence_cn": "CAD生成强制尺寸感知精度以防止公差违规",
+      "llm_evidence": "CAD生成强制尺寸感知精度以防止公差违规",
+      "canonical_evidence": "CAD生成强制尺寸感知精度以防止公差违规",
+      "llm_tldr_en": "Pointer-CAD v2 generates CAD models with accurate geometric parameters and correct metric scale, meeting industrial tolerance requirements crucial for manufacturing.",
+      "llm_tldr_cn": "当前基于大语言模型的CAD生成方法主要关注视觉相似性，忽略了精确几何参数与正确度量尺度，导致微小偏差可能违反工业公差要求。Pointer-CAD v2提出先规划后构建的生成框架，引入尺寸感知机制，在规划阶段确定尺寸约束，构建阶段强制执行精确尺寸，避免了数值量化误差。实验证明该方法能生成满足公差要求的CAD模型，为卫星等高精度制造任务提供了可靠的设计手段。",
+      "llm_tldr": "当前基于大语言模型的CAD生成方法主要关注视觉相似性，忽略了精确几何参数与正确度量尺度，导致微小偏差可能违反工业公差要求。Pointer-CAD v2提出先规划后构建的生成框架，引入尺寸感知机制，在规划阶段确定尺寸约束，构建阶段强制执行精确尺寸，避免了数值量化误差。实验证明该方法能生成满足公差要求的CAD模型，为卫星等高精度制造任务提供了可靠的设计手段。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "tolerance control methods in satellite manufacturing",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
