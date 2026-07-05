@@ -1,0 +1,893 @@
+Title: ADC-Aware End-to-End Optimization of a Dynamic Metasurface Antenna with Strong Mutual Coupling for Monostatic Scene Classification
+
+URL Source: https://arxiv.org/pdf/2607.00253v1
+
+Published Time: Thu, 02 Jul 2026 00:15:34 GMT
+
+Number of Pages: 13
+
+Markdown Content:
+> 1
+
+# ADC-Aware End-to-End Optimization of a Dynamic Metasurface Antenna with Strong Mutual Coupling for Monostatic Scene Classification 
+
+Philipp del Hougne, Member, IEEE 
+
+Abstract —Dynamic metasurface antennas (DMAs) enable programmable wave-domain signal processing that can be jointly optimized with downstream digital processing in an end-to-end manner. Existing studies, however, typically assume ideal analog-to-digital conversion (ADC) and often rely on simplified electromagnetic models. Here, we study ADC-aware end-to-end optimization of a monostatic sensing pipeline based on a DMA with strong mutual coupling (MC). We model the wave domain using an MC-aware multiport-network model whose parameters were experimentally estimated for a fabricated chaotic-cavity-backed DMA with 96 one-bit-programmable meta-elements. We perform ADC-aware end-to-end optimization of the DMA configurations and digital classifier, either with awareness of a fixed uniform ADC or, optionally, with jointly learned ADC decision thresholds, and compare against baselines that assume an ideal ADC and/or ignore MC. Our results show that ADC awareness is essential in low-resolution ADC regimes: with one-bit ADCs and eight DMA configurations, deploying an ideal-ADC-trained system with a uniform one-bit ADC reduces the test accuracy from 95 .5% to 56 .0% , whereas ADC-aware training with the same fixed uniform one-bit ADC achieves 87 .2% . We also show that without MC awareness the accuracy drops to the random-guess level. Learning non-uniform ADC thresholds provides at most modest additional gains over fixed uniform ADCs in the considered DMA-based sensing pipeline. 
+
+Index Terms —Analog-to-digital conversion, dynamic metasurface antennas, end-to-end optimization, mutual coupling, task-aware sensing, wave-domain computing. 
+
+I. I NTRODUCTION 
+
+Next-generation wireless systems for sensing and communications are expected to partially offload their signal-processing burden from conventional digital processors to the wave domain, where electromagnetic signals can be processed in their native domain through reconfigurable wave-matter interactions [1]. Potential benefits may include improvements in power consumption, speed, and cost. One emerging technological enabler of programmable wave-matter interactions is the dynamic metasurface antenna (DMA). A DMA is an ultrathin structure that couples a small number of feed ports to a large number of radiating elements using waveguides [2] or cavities [3]; the DMA is parametrized by a set of tunable elements which are typically collocated with the radiating elements (beyond-diagonal DMAs feature 
+
+P. del Hougne is with the Department of Electronics and Nanoengineering, Aalto University, 00076 Espoo, Finland and with Univ Rennes, CNRS, IETR - UMR 6164, F-35000, Rennes, France. (e-mail: philipp.del-hougne@univ-rennes.fr) This work was supported in part by the Nokia Foundation (project 20260028), the ANR France 2030 program (project ANR-22-PEFT-0005), the ANR PRCI program (project ANR-22-CE93-0010), the European Union’s European Regional Development Fund, and the French region of Brittany and Rennes Métropole through the contrats de plan État-Région program (projects “SOPHIE/STIC & Ondes” and “CyMoCoD”). 
+
+additional tunable elements in the waveguides or cavities [4]). Compared to traditional hybrid antenna architectures consisting of a reconfigurable combining board and an antenna array [5], a DMA integrates reconfigurable combining and radiating elements in a very compact form factor [6]. DMAs were initially explored for applications in compressive sensing , by multiplexing the electromagnetic signals across a known series of random DMA configurations [2], [3]. Since often only a portion of the information carried by the electromagnetic signals is useful for downstream processing tasks, applications in learned sensing later explored the use of a series of task-aware learned DMA configurations [7]. The latter were identified through a joint end-to-end optimization of the DMA configurations and the downstream digital processing [7]. Learned DMA configurations substantially reduced the number of required measurements in a prototypical scene-classification task [7]. Subsequently, [8] endowed the learned DMA configurations additionally with an awareness of the measurement-noise distribution. All these DMA-empowered sensing applications can be interpreted as integrating wave-domain computing and sensing; in the case of learned sensing , the wave-domain computation is task-aware such that it pre-selects salient information. The joint optimization in [7], [8] of information processing in the DMA’s wave domain and in the downstream digital domain assumes that there is no information loss at the interface between the two domains. Yet, practical implementations require analog-to-digital conversion (ADC) that quantizes the analog signal and thus inherently leads to a loss of information. Of course, high-resolution ADCs could in principle minimize this information loss, but in practice they would imply substantial power consumption and cost [9]; moreover, a large acquired bit budget increases the amount of data that must be transferred, buffered, stored, and processed downstream. Meanwhile, there has been significant progress in ADC-aware signal processing for low-resolution signal acquisition [9], [10]. A first step is to account for finite-resolution uniform ADCs when jointly designing analog combining and digital processing, possibly including some ADC parameters such as the ADC’s dynamic range in the optimization [11]–[15]. A further step is to learn the ADC mapping itself: deep task-based ADCs learn task-adapted 
+
+non-uniform ADC quantization mappings jointly with analog combining and digital processing [16], [17]. Yet, to the best of our knowledge, ADC-aware DMA-empowered sensing has not been studied to date, neither with uniform nor with task-aware non-uniform ADC quantization mappings. While [14], [15] consider DMA-based analog combining, their system models do not account for important electromagnetic phenomena such as mutual coupling (MC) within the DMA. Theoretical works often neglect MC as a practical nuisance, 
+
+> arXiv:2607.00253v1 [eess.SP] 30 Jun 2026 2
+
+but it was recently shown that strong MC boosts the DMA’s wave-domain flexibility [18], [19]. Since maximal wave-domain flexibility is naturally desirable, the use of MC-aware system models is important. The experimental works in [2], [3] account for MC by measuring the DMA’s radiation pattern for the selected random sequence of DMA configurations. However, while MC-aware, this model-agnostic approach is not amenable to optimizing the DMA configurations. The theoretical works in [7], [8] use an MC-aware coupled-dipole model with practically plausible parameters. An alternative MC-aware model has been formulated in terms of multiport-network theory (MNT) [20]. While the MNT-based model’s parameters can be extracted in numerical full-wave simulations [21], [22], it is unlikely that this route is viable for applications to experimental DMA prototypes. First , the DMA design may be proprietary and thus unknown to the wireless practitioner. Second , if the fabricated DMA design is perfectly known, an accurate simulation of such an electrically large structure can involve a prohibitive computational cost. Third , fabrication inaccuracies would likely result in substantial deviations between DMA design and DMA prototype; the sensitivity to fabrication inaccuracies would be particularly high for DMAs with strong MC. Altogether, an indirect estimation of a set of proxy MNT parameters based on experimental measurements with the considered DMA prototype, as recently demonstrated in [23], is required to obtain an accurate MNT-based system model. The attribute “proxy” emphasizes inevitable ambiguities in the estimated parameters that do not affect physically measurable quantities (see Appendix A in [23]). In this paper, we study the ADC-aware optimization of a DMA with strong MC for monostatic scene classification. We use the experimentally estimated proxy MNT parameters from [23] to ground our work in a fabricated DMA prototype. We deliberately use a single transmit feed and a single receive feed on the same DMA aperture to avoid digital beamforming, thereby minimizing the RF-chain requirements. The shared-aperture monostatic architecture is compact and convenient to measure the received signal with a well-defined phase reference relative to the transmitted signal. The resulting end-to-end sensing pipeline is summarized schematically in Fig. 1. Compared to [7], [8], the main differences are, first , the ADC awareness, and, second , the experimental grounding. In addition, we consider a monostatic scenario whereas [7], [8] studied a bistatic setup. Moreover, we use an MNT-based DMA model whereas [7], [8] used a coupled-dipole-based DMA model. Compared to [16], [17], the main difference is that we consider DMA-based analog combining with an MC-aware and experimentally calibrated system model (accounting for the 1-bit-programmability constraint on the DMA’s tunable elements), instead of modeling the analog combining with a simple unconstrained real-valued matrix multiplication. Moreover, our learned-ADC case adapts only the ADC thresholds shared across the multi-shot measurements, whereas [16] considers a broader task-based acquisition design that also includes sampling choices, and [17] focuses on trainable memristive ADC hardware and its power–accuracy trade-off. Compared to [14], [15], the main differences are, first , the use of a physics-consistent (and experimentally calibrated) MNT model to describe the DMA (accounting for 1-bit-programmable DMA elements), and, second , the end-to-end joint optimization of DMA configurations, ADC quantization mapping, and digital processing layer. Our main contributions are summarized as follows: 1) We report the first end-to-end optimization of a DMA-empowered sensing scheme that is both MC-aware and ADC-aware. We consider a single transmitter and a single receiver sharing the same DMA aperture. 2) We systematically compare the performance of (i) ADC-aware hybrid analog-digital optimization and (ii) tri-hybrid analog-ADC-digital optimization, as a function of the number of measurements, the ADC bit depth, and the pre-ADC measurement noise level. 3) We inspect the resulting signal distributions and corresponding optimized ADC thresholds. 4) We benchmark our results against cases without MC awareness and/or without ADC awareness. Our systematic comparisons and benchmarking allow wireless practitioners to assess the marginal performance gains enabled by tri-hybrid analog-ADC-digital optimization compared to ADC-aware hybrid analog-digital optimization, and by MC-aware and/or ADC-aware optimization. Our paper is organized as follows. In Sec. II, we discuss additional related literature. In Sec. III, we introduce the end-to-end sensing model. In Sec. IV, we describe the considered optimization cases, differentiable relaxations, and training procedure. In Sec. V, we present the experimental setup and scene-classification results. We close with conclusions in Sec. VI. 
+
+Notation: R, C, and B ≜ {0, 1} denote the sets of real, complex, and binary numbers, respectively. ℜ{·} and ℑ{·} 
+
+denote the real and imaginary parts, respectively. (·)⊤ denotes transpose. | · | denotes absolute value for scalars and cardinality for sets. Ia denotes the a × a identity matrix. 0 and 1 denote the all-zeros and all-ones vectors/matrices of appropriate sizes. 
+
+diag( a) denotes the diagonal matrix whose diagonal entries are given by the vector a. ABC denotes the block of A selected by row indices B and column indices C. ⊙ and ⊘ denote elementwise multiplication and division, respectively. II. R ELATED LITERATURE 
+
+In this section, we complement the contextualization of our work provided in the introduction with a broader discussion of related literature beyond DMA-empowered architectures and low-resolution ADC-aware optimization. Indeed, the transition from compressive sensing with pseudo-random configurations to learned sensing with end-to-end optimized task-aware configurations has occurred broadly across many hardware modalities [24]. Closest to the DMA-empowered sensing architectures are sensing architectures empowered by reconfigurable intelligent surfaces (RISs). The main difference between a RIS and a DMA is that the RIS does not have integrated feeds, which means that RIS-based architectures require a separate feed antenna such that the overall setup is usually less compact. The MNT models have the same mathematical structure in both cases. Compressive sensing with a transmissive RIS was demonstrated in [25] while learned sensing with a reflective RIS was demonstrated in [26]. Neither [25] nor [26] use experimentally calibrated MNT models; [25] is based on a model-agnostic approach while [26] uses a data-driven system model that can implicitly account for MC. Both of these works tacitly assume ideal ADC without any ADC-related information loss. The literature further contains intermediate strategies between pseudo-random configurations and fully task-aware learned 3⋮ 
+
+> Scene DMA
+> First
+> Measurement
+> Second
+> Measurement
+> 𝑀 th
+> Measurement
+
+𝑧 1
+
+> Measured
+> Signal
+
+ℜ 𝑧 1
+
+ℑ 𝑧 1
+
+ADC -I .
+
+ADC -Q .
+
+𝑦 1
+
+> I
+
+𝑦 1
+
+> Q
+> ADC
+
+𝑧 2
+
+ℜ 𝑧 2
+
+ℑ 𝑧 2
+
+ADC -I .
+
+ADC -Q .
+
+𝑦 2
+
+> I
+
+𝑦 2
+
+> Q
+
+𝑧 𝑀 
+
+ℜ 𝑧 𝑀 
+
+ℑ 𝑧 𝑀 
+
+ADC -I .
+
+ADC -Q .
+
+𝑦 𝑀 
+
+> I
+
+𝑦 𝑀 
+
+> Q
+
+# ⋮ ⋮ ⋮ ⋮⋮⋮
+
+> Quantized
+> Signal
+
+ANN . ෠𝑘         
+
+> Predicted
+> Class ANN
+> Analog Wave Domain Analog -to -Digital Conversion Digital Domain
+> TX Feed RX Feed OC -Terminated Feed
+> Meta -Atom ON Meta -Atom OFF Via
+
+𝐯 𝑀 
+
+𝐯 2
+
+𝐯 1
+
+> DMA
+> Config .
+
+𝜽 ADC 
+
+> I
+
+𝜽 ADC 
+
+> Q
+> ADC
+> Config .
+
+𝜽 ADC 
+
+> I
+
+𝜽 ADC 
+
+> Q
+
+𝜽 ADC 
+
+> I
+
+𝜽 ADC 
+
+> Q
+
+𝜽 D
+
+> ANN
+> Config .
+> Analog Offset
+> & Gain Control
+
+AN -I
+
+AN -Q
+
+AN -I
+
+AN -Q
+
+AN -I
+
+AN -Q
+
+# ⋮ ⋮
+
+> Digital Feature
+> Normalization
+> 1
+
+DN -I
+
+> 1
+
+DN -Q
+
+> 2
+> 2
+
+DN -I
+
+DN -Q
+
+> 𝑀
+> 𝑀
+
+DN -Q
+
+DN -I     
+
+> Fig. 1. Schematic overview of the considered end-to-end scene-classification sensing pipeline, comprising the analog wave domain, the analog-to-digital conversion, and the digital domain. Each domain features optimizable parameters. Our multi-shot single-input-single-output approach relies on Mshared-aperture monostatic measurements with one transmit feed and one distinct receive feed. The two feeds are hosted by a shared DMA comprising 96 1-bit-programmable meta-elements; the DMA configuration differs for each measurement. Unused DMA feeds are terminated with open circuits; further details on the DMA are provided in Sec. V-A .The analog signals are offset and gain controlled before ADC. The ADC outputs are normalized in the digital domain before entering the ANN.
+
+configurations [24]. One line of work minimizes redundancy between measurement modes by optimizing their diversity, for instance by reducing correlations between sensing vectors, flattening the singular-value spectrum of the sensing matrix, or maximizing information-capacity-inspired objectives [27]–[32]. Another intermediate strategy is to additionally exploit prior knowledge about the scene distribution by using principal scene components as measurement modes [33], [34]. Measurement modes based on principal scene components are (ideally) orthogonal and scene-aware, but they remain task-unaware. All of these works tacitly assume ideal ADC without any ADC-related information loss. The broader trend toward end-to-end optimized systems is not limited to microwave sensing: optical systems featuring jointly optimized coded illumination, diffractive optics, metasurfaces, or microscope hardware together with downstream reconstruction or classification digital neural networks have been studied [35]–[43], and analogous ideas have been explored for learned ultrasound beamforming [44]. These works further support the general principle that task-aware acquisition can reduce the burden on downstream digital processing by acquiring measurements in a task-aware manner. However, all of these works in optics and acoustics tacitly assume ideal ADC without any ADC-related information loss. III. S YSTEM MODEL 
+
+In this section, we describe the end-to-end system model for DMA-empowered, ADC-aware, and MC-aware monostatic scene classification. The overall system architecture is shown in Fig. 1. We first describe in Sec. III-A the analog wave-domain mapping from a discretized scene reflectivity distribution to complex microwave measurements using an experimentally calibrated MNT model of the DMA. Next, we model in Sec. III-B the ADC stage that converts the complex analog measurements into a real-valued quantized feature vector. Then, we define in Sec. III-C the lightweight digital classifier. Finally, we summarize in Sec. III-D the resulting end-to-end sensing pipeline from scene reflectivity to predicted class label. 
+
+A. Analog Wave Domain 
+
+The analog wave domain maps a scene reflectivity distribution to a sequence of complex microwave measurements through the DMA. We describe this mapping in three steps. First , we introduce the MNT-based model of the DMA and its binary tunable loads in Sec. III-A 1. Second , we specify the discretized scene model used for the MNIST scene-classification task in Sec. III-A 2. Third , we formalize our monostatic measurement model involving a single transmit feed and a single receive feed in Sec. III-A3. 
+
+1) Dynamic Metasurface Antenna: The MNT-based DMA model described next applies to all DMA architectures whose reconfigurability originates from tunable lumped elements. In Sec. V-A , we provide details of the specific chaotic-cavity-based DMA prototype considered in this work. Following [23], we model the DMA together with the virtual antenna array (VAA) used to sample its radiated field as a tunable multiport network. A schematic illustration is provided in Fig. 2. The VAA samples the DMA’s radiated field at a finite set of spatial and polarization channels (see bottom panel of Fig. 5); in practice, the VAA is often implemented by mechanically displacing a probe. The DMA is a radiating structure with 
+
+NF feed ports and NM tunable lumped elements; the VAA samples the DMA’s radiation pattern at NG grid points. Each of the DMA’s tunable lumped elements can be represented as a “virtual” port terminated by an individual tunable load. The tunable multiport network comprising DMA and VAA can be partitioned into a static subsystem and a tunable subsystem. 4𝐒 ∈ ℂ𝑁 ×𝑁       
+
+> 𝑁 =𝑁 F+𝑁 M+𝑁 G
+> Feed
+> Ports
+
+𝓕  
+
+> #1
+> #2
+> #3
+> #𝑁 G
+> ⋯
+> VAA Grid
+> Ports
+
+𝓖         
+
+> Tunable Lumped -Element
+> “Virtual ”Ports 𝓜
+> Control
+> 𝑟 1
+> Encoder
+> Encoder
+> Encoder
+> Encoder
+> 𝑟 2𝑟 3𝑟 𝑁 M
+> 𝑣 1𝑣 2𝑣 3𝑣 𝑁 MVector
+> Load
+> Vector
+
+## ⋯
+
+## ⋯
+
+## ⋯    
+
+> #1
+> #2
+> #3
+> #𝑁 F
+> ⋯
+> #1#2#3#𝑁 M
+> Fig. 2. Schematic illustration of the MNT-based model for a generic multi-feed DMA together with a VAA sampling the DMA’s radiated field. Each port is depicted as a pair of two terminals.
+
+The static subsystem is characterized by its scattering matrix 
+
+S ∈ CN ×N , where N = NF+NM+NG. The tunable subsystem is the ensemble of the NM tunable loads and characterized by its scattering matrix Φ = diag( r) ∈ CNM×NM , where r =[r1, . . . , r NM ]⊤ and ri ∈ C is the reflection coefficient of the 
+
+ith tunable load. The two subsystems are connected via the NM
+
+“virtual” ports. Standard MNT yields the transmission matrix 
+
+T ∈ CNG×NF from DMA feed ports to the VAA as well as the reflection matrix R ∈ CNF×NF at the DMA’s feed ports: 
+
+T(r) = T0 + A INM − Φ(r)Γ−1Φ(r)B, (1a) 
+
+R(r) = R0 + B⊤ INM − Φ(r)Γ−1Φ(r)B, (1b) where T0 ≜ SGF ∈ CNG×NF , R0 ≜ SFF ∈ CNF×NF ,
+
+A ≜ SGM ∈ CNG×NM , B ≜ SMF ∈ CNM×NF , and 
+
+Γ ≜ SMM ∈ CNM×NM , and F, M, and G denote the port-index sets associated with the feeds, tunable elements, and VAA ports, respectively. We use SFM = S⊤MF in (1) because the DMA and the free-space radio environment are reciprocal. We assume throughout that INM − Φ(r)Γ is nonsingular for every admissible DMA configuration. We emphasize that (1) is valid irrespective of the detailed DMA architecture (as long as the tunable elements are lumped) and the VAA details. 1 Moreover, we make no assumption about the separation between DMA and VAA; in particular, this means that (1) does not require a far-field assumption. Many DMA prototypes, including ours, use binary tunable elements such as PIN diodes. We therefore parametrize the DMA configuration by a binary control vector v ∈ BNM and use the affine encoding 
+
+r(v) = α1 + ( β − α)v, (2) where α, β ∈ C are the two load reflection coefficients associated with the two states of each tunable element. 
+
+> 1While we consider a single-polarization planar VAA in this paper (see bottom panel of Fig. 5), the same model can be applied to different VAA geometries and polarization details; for instance, [45] applies the model to a spherical dual-polarized VAA (treating the two orthogonal polarizations as two separate VAA ports).
+
+To assess the importance of MC awareness, we also consider an MC-unaware benchmark model obtained by setting Γ = 0
+
+in (1), namely 
+
+TnoMC (r) = T0 + AΦ (r)B, (3a) 
+
+RnoMC (r) = R0 + B⊤Φ(r)B. (3b) The parameters involved in the MNT-based DMA model are thus α, β, T0, R0, A, B, and Γ. As mentioned in our introduction, they are typically not known for an experimental DMA prototype. As discussed in [23], unambiguously estimating these parameters based on measurements of T and R for known 
+
+v is not possible. Nonetheless, a set of proxy parameters can be estimated that accurately maps v to T and R [23]. Hence, the experimentally estimated proxy parameters are operationally equivalent to the ground-truth parameters for the purposes of the present work. 
+
+2) Scene: We model the scene as a discretized scalar reflectivity distribution ρ ∈ [0 , 1] NG defined on the same grid as the VAA ports introduced above. The gth entry ρg denotes the reflectivity associated with the gth VAA port. In line with the MNIST-based sensing task considered in this paper, ρ is a real-valued nonnegative grayscale reflectivity map. Thus, the scene model describes variations in scattering strength while using a common phase for all pixels. Consistent with the first-Born approximation that is routinely used in computational DMA-based imaging [2], [3], [7], [8], we neglect multiple scattering between distinct scene pixels. Each scene pixel is therefore treated as an independent weak scatterer. For the MNIST classification task considered in this paper, we normalize each 28 × 28 MNIST image to [0 , 1] , center-crop it to 24 × 24 , and downsample it to the 11 × 11 VAA grid by area averaging. The resulting 121 pixel values are vectorized into ρ. Hence, bright MNIST strokes correspond to more strongly reflecting scene pixels, whereas dark background pixels correspond to weakly reflecting scene pixels. 
+
+3) Monostatic Measurement Model: Our shared-aperture monostatic measurements use a single DMA feed for transmission and a distinct single DMA feed for reception, implying the requirement NF ≥ 2. If NF > 2 (as for our prototype with 
+
+NF = 7 ), we partition the feed ports into two used feeds and the remaining unused feeds. We denote the corresponding port-index sets by A and U = F \A , respectively. We terminate the NF −2
+
+unused feeds with open-circuit loads to avoid unnecessary signal loss through DMA feed ports that are not connected to RF chains. Since this termination is fixed and independent of the DMA configuration, it can be absorbed into an effective static multiport network with only the two feeds, the NM tunable-element ports, and the NG VAA ports. Specifically, let ¯P ≜ A ∪ M ∪ G 
+
+denote the retained port set. Then, we obtain the scattering matrix ¯S ∈ CNP×NP of the reduced static network, where 
+
+NP = 2 + NM + NG, by eliminating the unused feed ports U
+
+under open-circuit boundary conditions using standard MNT: 
+
+¯S ≜ S ¯P ¯P + S ¯PU 
+
+ I|U| − SUU 
+
+−1 SU ¯P . (4) Consequently, the counterpart of (1) for this reduced static network is 
+
+¯T(r) = ¯T0 + ¯A INM − Φ(r)¯Γ−1Φ(r) ¯B, (5a) 
+
+¯R(r) = ¯R0 + ¯B⊤ INM − Φ(r)¯Γ−1Φ(r) ¯B, (5b) 5
+
+where ¯T(r) ∈ CNG×2 and ¯R(r) ∈ C2×2 are the feed-to-VAA transmission matrix and feed-reflection matrix seen from the two used feeds, respectively. Here, ¯T0 ≜ ¯SGA , ¯R0 ≜ ¯SAA ,
+
+¯A ≜ ¯SGM , ¯B ≜ ¯SMA , and ¯Γ ≜ ¯SMM .Next, we further partition the two used feeds into the transmit feed and the receive feed. We denote by T and R = A \ T 
+
+the corresponding port indices. This allows us to extract the following three quantities of interest: 
+
+tGT (r) ≜ ¯TGT (r) ∈ CNG , (6a) 
+
+tGR (r) ≜ ¯TGR (r) ∈ CNG , (6b) 
+
+sRT (r) ≜ ¯RRT (r) ∈ C. (6c) Here, tGT (r) is the field radiated on the VAA grid when exciting the transmit feed, whereas tGR (r) is the corresponding VAA field associated with the receive feed. By reciprocity, the latter also characterizes the coupling from the VAA grid back to the receive feed. Finally, sRT (r) is the direct TX-to-RX self-interference term through the DMA in the absence of the scene. Under the routinely used first Born approximation [2], [3], [7], [8], which excludes multiple scattering within the scene and multiple scattering between the DMA and the scene, and assuming a unit-amplitude incident wave at the transmit feed for each DMA configuration, the received signal for the mth DMA configuration vm is the superposition of three contributions: (i) the single-scene-bounce signal that propagates from the DMA’s transmit port via the scene to the DMA’s receive port, (ii) the self-interference signal that propagates from the DMA’s transmit port to the DMA’s receive port without interacting with the scene, and (iii) the additive measurement noise: 
+
+˜zm(ρ) = ρ⊤ [tGR (rm) ⊙ tGT (rm)] + sRT (rm) + nm, (7) where rm ≜ r(vm) and nm ∈ C denotes the additive measurement noise. In the present work, we assume that the TX-to-RX self-interference term is ideally cancelled in the analog part of the receive chain, i.e., before the ADC stage. This assumption is natural in our setting because the self-interference term is independent of the scene reflectivity under the first-Born approximation and can be accurately predicted from the DMA’s experimentally calibrated proxy MNT model, as seen in (6c). In practice, such analog self-interference cancellation can be implemented by splitting off a reference copy of the transmitted signal, applying a configuration-dependent attenuation and phase shift, and injecting the resulting cancellation signal into the analog receive chain such that it destructively interferes with the direct TX-to-RX self-interference term before the ADC stage. Mathematically, this corresponds to subtracting the known complex offset sRT (rm) from the received signal for each DMA configuration. We assume ideal self-interference cancellation in order to focus on the interaction between the scene-dependent wave-domain measurements, finite-resolution ADC quantization, and downstream classification. Accordingly, after model-based self-interference cancellation, the effective analog measurement used by the ADC and digital classifier is 
+
+zm(ρ) = ˜ zm(ρ) − sRT (rm)= ρ⊤ [tGR (rm) ⊙ tGT (rm)] + nm. (8) For the MC-unaware benchmark with model-based self-interference cancellation, we compute the cancellation signal by first evaluating the full-feed MC-unaware model in (3) , then imposing the same open-circuit termination on the unused feed ports and extracting the TX-to-RX entry; we denote the resulting prediction by snoMC  
+
+> RT
+
+(rm). During testing, we use the MC-aware physical forward model with the imperfect MC-unaware self-interference cancellation: 
+
+znoMC  
+
+> m
+
+(ρ) = ˜ zm(ρ) − snoMC  
+
+> RT
+
+(rm). (9) For a sequence of M DMA configurations collected in V =[v1, . . . , vM ] ∈ BNM×M , the analog wave-domain measurement vector is 
+
+z(ρ, V) = [ z1(ρ), . . . , z M (ρ)] ⊤ ∈ CM . (10) 
+
+B. Analog-to-Digital Conversion 
+
+Since the analog wave-domain measurements in (10) are complex-valued, we assume coherent IQ reception and apply real-valued ADCs separately to the real and imaginary parts. Within each branch, the same scalar ADC is applied componentwise to all M measurements. Before quantization, the analog front-end applies offset subtraction and gain control, separately to the I and Q branches, in order to align the measured signal distribution with the available ADC input range. We model these operations using branch-dependent calibration parameters for the ADC centers cχ ∈ R and dynamic ranges γχ > 0, where 
+
+χ ∈ { I, Q}. Specifically, cχ and γχ are calibrated from the corresponding unnormalized analog branch samples over all training scenes and all measurement indices m = 1 , . . . , M ,namely from ℜ{ zm} for χ = I and from ℑ{ zm} for χ = Q .We set cχ to the corresponding empirical mean and γχ = 2 ησ χ,where σχ is the corresponding empirical standard deviation and 
+
+η > 0 is a fixed range factor specified in Sec. IV-E. We keep the dynamic ranges γχ fixed after calibration so that all ADC settings use the same input scale. For random-DMA cases, we also keep the offsets cχ fixed. For learned-DMA cases, we recompute the offsets cχ during training as deterministic calibration quantities obtained from the current front-end response; the offsets are thus not optimized. Specifically, for each current DMA front end, we set cχ to the training-set mean of the corresponding unnormalized analog branch signal. Since the analog measurement model is linear in the scene reflectivity under the first-Born approximation and the additive noise is zero-mean, this training-set mean is the expected branch response for the current front end. After model selection, we freeze the selected offsets and dynamic ranges and use them without recalibration. The analog offset subtraction and gain control map the complex wave-domain measurement zm to the normalized ADC inputs 
+
+um, I = 2 ( ℜ{ zm} − cI) /γ I, (11a) 
+
+um, Q = 2 ( ℑ{ zm} − cQ) /γ Q, (11b) for m = 1 , . . . , M . Thus, the unnormalized analog branch interval [cχ − γχ/2, c χ + γχ/2] is mapped to the normalized ADC input range [−1, 1] . All ADC thresholds and reconstruction levels below are defined in this normalized ADC-input domain. For an L-level ADC, where L = 2 B for B bits, the bin boundaries are strictly ordered: 
+
+−1 = τχ, 0 < τ χ, 1 < · · · < τ χ,L −1 < τ χ,L = 1 . (12) 6
+
+We collect the bin boundaries of branch χ in τχ ≜
+
+[τχ, 0, τ χ, 1, . . . , τ χ,L ]⊤ ∈ RL+1 , and define the corresponding quantization intervals as 
+
+Iχ,ℓ =
+
+(
+
+[τχ, 0, τ χ, 1], ℓ = 1 ,
+
+(τχ,ℓ −1, τ χ,ℓ ], ℓ = 2 , . . . , L. (13) The reconstruction levels corresponding to the bins are 
+
+qχ, 1, . . . , q χ,L ∈ R, and we collect them in qχ ≜
+
+[qχ, 1, . . . , q χ,L ]⊤ ∈ RL.The normalized ADC input is clipped, 
+
+¯um,χ = min {max {um,χ , −1} , 1} , (14) and quantized as 
+
+Qτχ,qχ (um,χ ) = qχ,ℓ if ¯um,χ ∈ I χ,ℓ , ℓ = 1 , . . . , L. 
+
+(15) For a vector input uχ = [ u1,χ , . . . , u M,χ ]⊤ ∈ RM , we define the corresponding componentwise quantizer as 
+
+Qτχ,qχ (uχ) ≜ Qτχ,qχ (u1,χ ), · · · , Q τχ,qχ (uM,χ )⊤ .
+
+(16) We consider two ADC parameterizations: 1) Uniform ADC: This case corresponds to uniformly spaced reconstruction levels over the normalized ADC input range 
+
+[−1, 1] , with internal decision thresholds placed halfway between adjacent reconstruction levels. For each branch 
+
+χ ∈ { I, Q}, the reconstruction levels are 
+
+qχ,ℓ = −1 + 2 ℓ − 1
+
+L − 1 , ℓ = 1 , . . . , L. (17) The internal bin boundaries are placed halfway between adjacent reconstruction levels, 
+
+τχ,ℓ = qχ,ℓ + qχ,ℓ +1 
+
+2 , ℓ = 1 , . . . , L − 1, (18) together with the outer clipping boundaries τχ, 0 = −1 and 
+
+τχ,L = 1 . Thus, the bin boundaries obey the ordering in (12). In the uniform-ADC case, the ADC thresholds and reconstruction levels are fixed. 2) Learned ADC: The reconstruction levels are kept fixed to the uniformly spaced values in (17). The internal bin boundaries τχ, 1, . . . , τ χ,L −1, however, are trainable, subject to the ordering constraint in (12) . Thus, the learned ADC adapts the quantization regions while keeping the scalar ADC output alphabet fixed. The trainable ADC parameters are 
+
+θLADC = {τχ, 1, . . . , τ χ,L −1}χ∈{ I,Q} . (19) In both cases, we collect the full list of ADC-stage parameters in θADC ≜ {cχ, γ χ, τ χ, 1, . . . , τ χ,L −1, q χ, 1, . . . , q χ,L }χ∈{ I,Q}.In the uniform-ADC case, no ADC thresholds or reconstruction levels are optimized. In the learned-ADC case, only the internal thresholds θLADC ⊂ θADC are trainable. The calibration quantities cχ and γχ follow the update-and-freeze protocol described above and are not optimized. Altogether, the quantized measurement vector provided to the subsequent digital processing stage is 
+
+y(ρ, V; θADC ) = 
+
+ QτI,qI (uI)
+
+QτQ,qQ (uQ)
+
+
+
+∈ R2M , (20) where uI = [ u1,I, . . . , u M, I]⊤ and uQ = [ u1,Q, . . . , u M, Q]⊤
+
+are obtained from the complex measurement vector z(ρ, V)
+
+via (11) . Because each complex DMA measurement contributes one I and one Q scalar ADC output, a scene acquired with M
+
+DMA configurations and B bits per real-valued ADC conversion has an acquisition bit budget of 2BM bits. Reducing B lowers the number of acquired bits per feature, whereas reducing M
+
+shortens the digital feature vector; both reduce the acquisition bit budget and thus the amount of data that must be transferred, stored, and processed downstream. For benchmarking purposes, we also consider the case of an 
+
+ideal ADC in which the quantization and clipping operations are bypassed and the digital processing stage receives the unquantized, offset-and-gain-controlled IQ feature vector 
+
+yideal (ρ, V) = 
+
+ uI
+
+uQ
+
+
+
+∈ R2M . (21) 
+
+C. Digital Domain 
+
+The digital domain maps the ADC output vector 
+
+y(ρ, V; θADC ) ∈ R2M defined in (20) to κ class scores, where 
+
+κ = 10 in our MNIST scene-classification scenario. The first operation in the digital-domain classifier is a fixed, non-trainable per-feature affine normalization layer: 
+
+yD(ρ, V; θADC ) = ( y(ρ, V; θADC ) − dc) ⊘ ds. (22) Before gradient-based training, the calibration vectors dc, ds ∈
+
+R2M are estimated from the ADC-output features obtained from the training set using the initial wave-domain front end. Specifically, denoting by y(0)  
+
+> i
+
+the ADC-output vector associated with training sample i during this calibration step, for j =1, . . . , 2M we set 
+
+[dc]j = 1
+
+|D tr |
+
+X
+
+> (ρi,k i)∈D tr
+
+[y(0)  
+
+> i
+
+]j , (23) 
+
+[ds]j = max 
+
+(r 
+
+Var (ρi,k i)∈D tr 
+
+
+
+[y(0)  
+
+> i
+
+]j
+
+
+
+, ϵ D
+
+)
+
+, (24) with a small ϵD > 0 for numerical stability. The vectors dc and 
+
+ds are then kept fixed throughout training, validation, and testing. Keeping this post-ADC normalization fixed is natural because the ADC reconstruction levels are fixed in both the uniform-ADC 
+
+and learned-ADC cases. Following [7], [8], [17], we then apply a fully connected artificial neural network (ANN) with one hidden layer to yD. The ANN itself contains no batch-normalization layer. We collect the ANN’s trainable parameters in 
+
+θD = {W1, b1, W2, b2} , (25) where W1 ∈ RNh×2M , b1 ∈ RNh , W2 ∈ Rκ×Nh , and b2 ∈
+
+Rκ, and Nh denotes the number of hidden units. The digital mapping is 
+
+a = fD (y(ρ, V; θADC ); θD) (26) 
+
+= W2 ReLU ( W1yD(ρ, V; θADC ) + b1) + b2, (27) where ReLU is applied componentwise and 
+
+a = [a0, . . . , a κ−1]⊤ ∈ Rκ denotes the vector of class logits. The predicted class is 
+
+ˆk = arg max  
+
+> k∈{ 0,...,κ −1}
+
+ak. (28) 7
+
+D. End-to-End Sensing Pipeline 
+
+Combining the analog wave-domain model from Sec. III-A ,the ADC model from Sec. III-B, and the digital ANN from Sec. III-C , our complete end-to-end sensing pipeline shown in Fig. 1 can be summarized as follows: 
+
+ρ V
+
+−−→ z θADC 
+
+−−−−−→ y θD
+
+−−−→ ˆk. (29) The optimization problems discussed in Sec. IV are concerned with optimizing different subsets of {V, θADC , θD} to maximize the scene-classification accuracy of the end-to-end pipeline. IV. O PTIMIZATION ALGORITHMS 
+
+This section describes our optimization of the end-to-end sensing pipeline defined in Sec. III-D . In Sec. IV-A , we introduce the supervised training objective and the validation/test accuracy metric. In Sec. IV-B, we define the optimization cases used to isolate the roles of DMA learning, ADC awareness, and ADC learning. Since the DMA configurations and the ADC quantizer both involve nondifferentiable operations, in Sec. IV-C we describe our differentiable relaxation of the binary DMA configurations, and in Sec. IV-D we describe our differentiable relaxation of ADC quantization. Finally, in Sec. IV-E , we specify the calibration, training, and model-selection procedure used in all numerical experiments. 
+
+A. Training Objective 
+
+We consider the task of single-label scene classification. To train the optimizable components of our end-to-end sensing pipeline using a supervised approach, we have access to a labelled classification dataset D = {(ρi, k i)}Ndata  
+
+> i=1
+
+, where ρi ∈ [0 , 1] NG
+
+is the ith scene reflectivity vector and ki ∈ { 0, . . . , κ − 1}
+
+is its class label. We split the available dataset into disjoint training, validation, and test sets denoted by Dtr , Dval , and 
+
+Dtest , respectively, as detailed in Sec. IV-E. As described in Sec. III, for a scene ρi, the end-to-end pipeline produces the logit vector ai = fD(y(ρi, V; θADC ); θD), where 
+
+ai,k denotes the raw class score associated with class k.The corresponding softmax probability assigned to class k is 
+
+pi,k = exp( ai,k )/ Pκ−1 
+
+> j=0
+
+exp( ai,j ). Since our task is single-label classification, the desired behavior is that the probability assigned to the correct class ki is large. We therefore train the optimizable parameters by minimizing the average cross-entropy loss over the training set, defined as 
+
+Jtr (V, θADC , θD) = − 1
+
+|D tr |
+
+X
+
+> (ρi,k i)∈D tr
+
+log pi,k i . (30) For validation and testing, we evaluate the classification accuracy 
+
+n
+
+(ρi, k i) ∈ D ′ : ˆki = ki
+
+o |D ′|, where D′ denotes either Dval or Dtest .
+
+B. Optimization Cases 
+
+The different optimization cases detailed in Table I seek to minimize the training objective in (30) with respect to different subsets of the three parameter groups {V, θADC , θD}. For notational clarity, we denote by J ideal tr (V, θD) the training objective evaluated with y = yideal (ρ, V) from (21) instead of the quantized feature vector in (20). 20                   
+
+> 40
+> 60
+> 80
+> DMA Element Index
+> 0 OFF
+> 0.5
+> 1 ON
+> Soft DMA State
+> 10 20 30 40 50 60 70
+> Training Epoch
+> 10 0
+> 10 1
+> 10 2
+> μ(s)
+> Fig. 3. Soft-to-hard DMA relaxation for a representative learned-DMA learned-ADC run with M= 1 and B= 1 . Top panel: relaxed states evn,m over training epochs. Bottom panel: hardening factor μ(s)evaluated at the end of each epoch.
+
+We further examine the importance of ADC awareness and MC awareness: 
+
+ADC awareness: For the two cases in Table I involving ideal ADCs, we additionally evaluate the optimized variables after replacing the ideal ADC by a finite-resolution uniform ADC. This evaluation quantifies the degradation caused by ignoring ADC quantization during optimization. 
+
+MC awareness: For all cases in Table I, we additionally perform model-based self-interference cancellation and training using the MC-unaware model in (3) , and evaluate the resulting optimized variables using the MC-aware model in (1) while retaining the MC-unaware self-interference cancellation signal. This quantifies the degradation caused by ignoring MC during self-interference prediction and optimization. 
+
+C. Differentiable Relaxation of Binary DMA Configurations 
+
+The learned-DMA optimization cases in Sec. IV-B require optimizing the binary DMA configuration matrix V ∈ BNM×M .Direct gradient-based optimization over this discrete set is not possible. We therefore use a soft-to-hard relaxation similar to the one used in [7], [8], which in turn built on [35]. For each tunable element n and measurement m, we introduce two trainable real-valued parameters ωn,m, 0 and ωn,m, 1
+
+associated with the two hardware states. At training step s, we define the relaxed state of the nth tunable element during the 
+
+mth measurement as 
+
+evn,m = exp ( μ(s)|ωn,m, 1|)exp ( μ(s)|ωn,m, 0|) + exp ( μ(s)|ωn,m, 1|) , (31) where μ(s) = 1 + ( γDMA s)pDMA is a gradually increasing scale factor, equivalently an “inverse temperature”, whose hyperparameters are specified in Sec. IV-E. For finite μ(s),
+
+evn,m is differentiable almost everywhere with respect to the trainable parameters and can take intermediate values between 0
+
+and 1.2 For validation and testing, we use the hardware-valid binary configuration ˇvn,m obtained by setting ˇvn,m = 1 if 
+
+|ωn,m, 1| > |ωn,m, 0| and ˇvn,m = 0 otherwise. During joint training, we evaluate the analog wave-domain with the MNT-based DMA model using the relaxed differentiable configuration eV, i.e., the load vector of the mth measurement is computed from evm = [ev1,m , . . . , evNM,m ]⊤ via (2). A     
+
+> 2Because of the absolute-value parametrization, nondifferentiabilities can occur only when ωn,m, 0= 0 or ωn,m, 1= 0 . The isolated kinks do not require special treatment in practice, since automatic differentiation uses the standard subgradient of the absolute-value operation. 8
+
+TABLE I OPTIMIZATION CASES USED TO ISOLATE THE ROLES OF DMA LEARNING , ADC AWARENESS , AND ADC-THRESHOLD LEARNING . Vrnd DENOTES A FIXED RANDOMLY CHOSEN V.
+
+Ideal ADC Uniform ADC Learned ADC Random DMA min 
+
+> θD
+
+J ideal tr (Vrnd , θD) min 
+
+> θD
+
+Jtr (Vrnd , θADC , θD) min 
+
+> θLADC ,θD
+
+Jtr (Vrnd , θADC , θD)
+
+Learned DMA min 
+
+> V,θD
+
+J ideal tr (V, θD) min 
+
+> V,θD
+
+Jtr (V, θADC , θD) min 
+
+> V,θLADC ,θD
+
+Jtr (V, θADC , θD)−1.0              
+
+> −0.5
+> 0.0
+> 0.5
+> 1.0
+> ADC Output
+> I Component Q Component
+> −1.0 −0.5 0.0 0.5 1.0
+> ADC Input
+> −1.0
+> −0.5
+> 0.0
+> 0.5
+> 1.0
+> ADC Output
+> −1.0 −0.5 0.0 0.5 1.0
+> ADC Input
+> Uniform ADC Learned ADC
+> Hard Quantizer Di ff erentiable Mapping Bin Boundaries τχ,ℓ
+
+Fig. 4. Illustration of hard ADC quantization and its differentiable relaxation for 
+
+B = 2 in the learned-DMA case with M = 1 . The orange staircases show the deployed hard quantizers Qτχ,qχ , while the blue curves show the differentiable mappings eQχ used during training. The gray vertical lines indicate the bin boundaries τχ,ℓ . Rows compare uniform-ADC and learned-ADC cases; columns show the corresponding I and Q branches. 
+
+representative evolution of the relaxed element states and of the hardening factor during training is shown in Fig. 3. For validation and testing (see further details in Sec. IV-E ), we use the corresponding hard configuration ˇV.
+
+D. Differentiable Relaxation of ADC Quantization 
+
+The ADC stage defined in Sec. III-B is also nondifferentiable, but the challenge differs from that associated with the DMA configuration in Sec. IV-C . For the DMA, nondifferentiability arises because the hardware configuration variables themselves are discrete. For the ADC, nondifferentiability arises from the hard bin assignment that maps each continuous input-signal sample to one of finitely many reconstruction levels. This staircase mapping obstructs backpropagation through the ADC stage, both when optimizing upstream variables such as the DMA configuration and when optimizing ADC parameters themselves. Following [16], we therefore replace hard step functions by smooth hyperbolic-tangent transitions during training. The resulting surrogate is differentiable almost everywhere; at clipping boundaries, automatic differentiation provides a subgradient. During training, we replace the ADC’s hard bin transitions in (15) by the differentiable surrogate 
+
+eQχ(u) = qχ, 1+
+
+> L−1
+
+X
+
+> ℓ=1
+
+(qχ,ℓ +1 −qχ,ℓ ) 1 + tanh( λADC (¯ u − τχ,ℓ )) 2 ,
+
+(32) where ¯u = min {max {u, −1}, 1} is the clipped normalized ADC input, in agreement with (14) . The fixed slope λADC > 0
+
+controls the sharpness of the smooth transitions in the normalized ADC-input domain and is not annealed during training; its numerical value is specified in Sec. IV-E. Larger values of 
+
+λADC > 0 make the surrogate closer to the corresponding hard quantizer. In the uniform-ADC baseline, both the reconstruction levels and the bin boundaries are fixed. In the learned-ADC case, the reconstruction levels remain fixed, while the internal bin boundaries are trained. Hence, the learned-ADC case adapts the quantization regions to the downstream classification task. We keep the reconstruction levels fixed in order to retain a standard ADC output alphabet and isolate the effect of learning the decision thresholds. To guarantee ordered bin boundaries throughout training in the learned-ADC case, we parameterize the spacings between consecutive boundaries rather than the boundaries themselves. For each branch χ ∈ { I, Q}, let ξχ, 1, . . . , ξ χ,L be unconstrained trainable real-valued variables and define positive spacings 
+
+∆χ,ℓ = log(1 + exp( ξχ,ℓ )) + ϵτ , with a small ϵτ > 0. Starting from the left clipping boundary, the internal bin boundaries are obtained cumulatively: 
+
+τχ,ℓ = −1 + 2 
+
+Pℓr=1 ∆χ,r 
+
+PLr=1 ∆χ,r 
+
+, ℓ = 1 , . . . , L − 1. (33) This construction guarantees −1 < τ χ, 1 < · · · < τ χ,L −1 < 1,without sorting, projection, or auxiliary ordering penalties. During joint training, we propagate gradients through the smooth quantizer in (32). For validation and testing, we use the corresponding hard quantizer in (15) , with the learned bin boundaries in the learned-ADC case. In Fig. 4, we illustrate a representative example of the hard quantizer used for validation and testing together with the differentiable surrogate used during training. The learned-ADC case generally adapts the bin boundaries differently for the I and Q branches, reflecting their generally different signal distributions. 
+
+E. Calibration, Training, and Model Selection 
+
+We use a standard MNIST split with 51000 training samples, 
+
+9000 validation samples, and 10000 test samples. The training set is used to optimize the trainable parameters and to calibrate the fixed normalization parameters described below. The validation set is used only for model selection, and the test set is used only for the final performance evaluation. Before training, we calibrate the pre-ADC affine transformation described in Sec. III-B from the training-set analog measurements. In all cases, we use η = 3 . The scale parameters γχ are kept fixed, while the offsets cχ are fixed for random-DMA cases and updated-then-frozen for learned-DMA cases, as described in Sec. III-B . We also calibrate the post-ADC normalization in (22) from the training-set features obtained with the initial front end and the initial ADC parameters. This yields the per-feature vectors dc and ds in (24), for which we use ϵD = 10 −12 .9
+
+We keep these vectors fixed during training, validation, and testing. The ANN has Nh = 256 hidden units and contains no batch-normalization layer or other adaptive normalization. For learned-DMA cases, we optimize the relaxed DMA variables described in Sec. IV-C. The hyperparameters for the inverse-temperature parameter are γDMA = 5 · 10 −4 and 
+
+pDMA = 2 .For the finite-resolution ADC cases ( uniform-ADC and learned-ADC ), we use the smooth ADC surrogate in (32) during gradient-based training. We keep the ADC slope parameter fixed and set it to λADC = 15 /∆ADC , where ∆ADC is a reference transition width in the normalized ADC-input domain. In the uniform-ADC 
+
+case, the ADC thresholds and reconstruction levels are fixed, and we use ∆ADC = 2 /L . In the learned-ADC case, we initialize the internal bin boundaries from the corresponding uniform ADC and then optimize them jointly with the other trainable parameters; for the spacing floor in (33) , we use ϵτ = 10 −6. For this case, we use ∆ADC = 2 /(L − 1) for L > 2, corresponding to the initial spacing between adjacent reconstruction levels; for L = 2 , we use ∆ADC = 2 /L . We use the Adam optimizer with learning rates 10 −3 for the ANN, 2 · 10 −2 for the DMA parameters when applicable, and 10 −3 for the learned ADC parameters when applicable. During each epoch, we use mini-batches of 100 training samples to update the trainable parameters. After each epoch, we evaluate the deployed hard system on the validation set, namely the hard DMA configuration and, for finite-resolution ADCs, the hard quantizer, using the corresponding hard-front-end calibration. We train for at most 240 epochs and retain the parameter values and calibration quantities that yield the lowest validation cross-entropy loss after a minimum of 120 training epochs. We stop training early if this validation loss does not improve for 15 consecutive epochs after the minimum number of epochs. This hard-validation selection criterion avoids selecting a model that performs well only through the differentiable training relaxations. We repeat each optimization case for ten independent random seeds. The seed controls the initialization of the DMA relaxation in learned-DMA cases or the random DMA configurations in 
+
+random-DMA cases, the ANN weights, and the mini-batch order. For each seed, we first perform model selection independently using the validation set as described above. For each optimization case and parameter setting, we then report the test accuracy of the seed yielding the best validation performance. This common validation-based selection protocol accounts for run-to-run variability without using the test set for model selection. Finally, we evaluate the selected hard system once on the test set, using the selected hard DMA configurations, the hard ADC quantizer, the frozen pre-ADC calibration, the frozen post-ADC normalization, and the trained ANN without any recalibration on validation or test data. V. R ESULTS 
+
+This section presents our results for the proposed ADC-aware and MC-aware DMA-based end-to-end sensing framework. In Sec. V-A , we describe the fabricated chaotic-cavity-backed DMA prototype and its proxy MNT-based characterization, which provides the physical and modeling basis for all evaluations. In Sec. V-B , we report scene-classification results across different operating regimes: ADC resolution constraints, single-shot operation ( M = 1 ), and pre-ADC noise. Measurement Setup        
+
+> Functioning
+> Meta -Elements
+> Malfunctioning
+> Meta -Elements
+> Fig. 5. DMA prototype and VAA-based experimental characterization setup. The top panel shows various views of the chaotic-cavity-backed multi-feed DMA prototype. The bottom panel shows the measurement setup that samples the DMA’s radiated field at 19 GHz on an 11 ×11 VAA grid located 35 cm in front of the DMA’s aperture. Further details can be found in [23].
+
+A. DMA Prototype and Experimental Setup 
+
+Our DMA prototype is based on the chaotic-cavity-backed architecture originally proposed in [3] because the resulting strong inter-element coupling boosts the DMA’s wave-domain flexibility [18], [19]. While the DMA prototype in [3] only had a single feed, ours has eight feeds to accommodate separate transmit and receive feeds, as well as auxiliary feeds used for the proxy MNT parameter estimation [23]. As seen in the top panel in Fig. 5, a chaotic cavity couples the eight feeds to 
+
+NM = 96 one-bit programmable meta-elements. The quasi-two-dimensional cavity is formed by two parallel metallic layers and an irregular via fence, whose shape is chosen to break symmetries and promote wave-chaotic coupling among the feeds and meta-elements. Each feed excites the cavity from the back side through a coaxial connector. The meta-elements are patterned on the front side of the cavity and follow the complementary electric-LC (cELC) resonator design of [46]. Each cELC resonator is loaded by a PIN diode and can be switched independently between two bias states. Bias voltages are delivered through vias and controlled electronically. We operate the DMA at 19 GHz. As displayed in the bottom panel in Fig. 5, we sample the DMA’s radiated field using a VAA realized by mechanically 10 
+
+scanning an open-ended waveguide probe in a plane parallel to the DMA aperture. The probe is oriented to receive the dominant polarization radiated by the DMA meta-elements. The VAA plane is located 35 cm in front of the DMA, and the scanned grid is an 11 × 11 square grid with spacing 2 cm , yielding NG = 121 
+
+sampled field points. We recall that the MNT model does not require any specific choice of DMA-VAA separation or VAA geometry. Our goal here is not to infer a complete far-field radiation pattern or a modal expansion of the DMA aperture field, but to obtain an accurate finite-dimensional input-output model for this fixed VAA geometry. Our estimation of the proxy MNT parameters is based on measurements conducted with an eight-port vector network analyzer (VNA). One VNA port is connected to the VAA probe and the remaining seven VNA ports are connected to seven DMA feeds. The eighth DMA feed remains open-circuited throughout all experiments: it therefore plays the role of a static scatterer within the complex scattering environment of the chaotic cavity. As described in [23], we estimate a set of proxy MNT parameters from measurements of the reflected field at the seven used feeds and the radiated field on the VAA. Our characterization uses 1000 
+
+random DMA configurations for the feed-reflection measurements and 60 random DMA configurations for the VAA measurements, in addition to one reference configuration and NM single-toggle configurations required by our segmented estimation procedure. We quantify the accuracy of the resulting calibrated proxy MNT model by its ability to predict the feed-reflection matrix and the feed-to-VAA transmission matrix for a sequence of 30 random and previously unseen DMA configurations. Our metric is defined like a signal-to-noise ratio (SNR) treating the prediction error as noise, as defined in [(18), [23]], and reaches ζR = 40 .3 dB for the feed-reflection matrix R and ζT = 37 .7 dB for the feed-to-VAA transmission matrix T. These accuracies are remarkable given that, for NF = 7 , NM = 96 , and NG = 121 , the proxy MNT model contains 17 ,821 complex-valued unknowns that are estimated only indirectly from measurements at accessible ports. Further details on the full calibration procedure can be found in [23]. 
+
+B. Scene Classification Results 
+
+We now present selected scene-classification results obtained with the proposed setup, together with a more detailed analysis of selected internal properties of the sensing pipeline. Our emphasis is not on reporting high absolute classification accuracies, but rather on qualitatively observing how the accuracy depends on key system parameters, in particular the number of measurements 
+
+M and the ADC resolution B. The most informative regimes are those in which the information flow through the pipeline is constrained, especially when the acquisition bit budget is small. For example, M = 1 creates a bottleneck in the analog measurement stage because the scene must be classified from a single complex measurement, whereas B = 1 creates a bottleneck at the ADC stage because each real-valued branch is reduced to a single binary decision. By contrast, when both 
+
+M and B are large and the noise is not too strong, enough information reaches the ANN even for random-DMA uniform-ADC scenarios, so that the marginal benefit of end-to-end learning becomes smaller and the resulting trends are less insightful. We therefore first examine the strongly ADC-limited regime with one-bit ADCs in Sec. V-B 1, and then the strongly measurement-limited regime with a single DMA configuration in Sec. V-B 2. In both cases, we assume negligible measurement noise, as in [7], in order to isolate the effects of the analog and ADC bottlenecks. Since the measurement noise in the considered microwave measurements is additive Gaussian noise, its main expected effect is a systematic degradation of the classification accuracy [8]; while noise-strength ablations are therefore not the central focus of the present section, we include an example thereof in Sec. V-B3. 
+
+1) Scene Classification with 1-Bit ADCs: We begin with the maximally ADC-limited regime by setting B = 1 , such that each real-valued ADC branch has only two output levels. This case is practically relevant because one-bit ADCs are among the lowest-complexity and lowest-power quantization architectures, but it is also scientifically useful because it exposes the information loss caused by the ADC stage most clearly. We evaluate how the classification accuracy varies with the number of measurements 
+
+M and compare the different optimization cases introduced in Sec. IV-B . The key questions are: (i) how much performance is lost when ADC quantization is ignored during optimization (as in [7], [8]); (ii) how much of this loss can be recovered by ADC-aware DMA optimization with a fixed uniform ADC; and (iii) whether additionally learning the ADC thresholds in an end-to-end manner provides a further substantial gain under severe quantization. Our results in the left panel in Fig. 6 show that one-bit ADC quantization is a severe bottleneck unless it is explicitly accounted for during optimization. In the MC-aware case, learned DMA configurations optimized with an ideal ADC achieve high accuracies, increasing from 57 .0% at M = 1 to 95 .5% 
+
+at M = 8 . However, when the DMA configurations, ANN, and normalization parameters trained under the ideal-ADC assumption are kept fixed and the ideal ADC is replaced by a uniform one-bit ADC, the accuracy drops strongly; for example, at M = 8 it decreases from 95 .5% to 56 .0% . Thus, end-to-end optimization ignoring ADC quantization can yield a pipeline whose performance strongly deteriorates under ADC quantization. Including the one-bit ADC during training recovers much of this loss. At M = 8 , ADC-aware optimization with a fixed uniform one-bit ADC improves the deployed one-bit accuracy from 56 .0% to 87 .2% . The learned DMA configurations are also substantially more effective than random DMA configurations in the one-bit regime; for example, with a fixed uniform one-bit ADC and M = 8 , the learned-DMA accuracy is 87 .2% ,compared with 59 .1% for random DMA configurations. Learning the ADC thresholds provides at best marginal improvements: for the learned-DMA case, it improves the accuracy from 60 .7% 
+
+to 63 .0% at M = 2 . This suggests that, in the one-bit regime considered here, the dominant benefit comes from ADC-aware task-specific DMA optimization, whereas learned non-uniform thresholds provide at most a secondary refinement. Finally, the MC-unaware benchmark in the right panel of Fig. 6 performs essentially at the random-guess level for all displayed values of M and for all ADC settings. For instance, at M = 8 , the learned-DMA uniform-ADC accuracy drops from 87 .2% with MC-aware optimization to 10 .3% when MC is ignored during self-interference prediction and optimization. This confirms that, for the considered DMA prototype with strong MC, MC awareness is not a minor modeling refinement but a prerequisite for transferring optimized configurations to the MC-aware physical forward model. 11 1 2 4 8 16 32  
+
+> Number of DMA configurations M
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> Test Accuracy
+
+MC-aware       
+
+> 124816 32
+> Number of DMA configurations M
+
+MC-unaware 
+
+> random DMA, ideal ADC
+> random DMA, ideal ADC tested w/ uniform 1-bit ADC
+> random DMA, uniform 1-bit ADC
+> random DMA, learned 1-bit ADC
+> learned DMA, ideal ADC
+> learned DMA, ideal ADC tested w/ uniform 1-bit ADC
+> learned DMA, uniform 1-bit ADC
+> learned DMA, learned 1-bit ADC
+
+Fig. 6. Scene-classification accuracy with one-bit ADCs as a function of the number of DMA configurations M , with (left) and without (right) MC awareness. The curves compare random (gray) and learned (blue) DMA configurations, for cases with ideal-ADC training (square symbol, solid line), deployment of ideal-ADC-trained models with a one-bit uniform ADC (square symbol, dashed line), ADC-aware training with a fixed uniform ADC (circle symbol), and joint DMA–ADC–digital training with learned ADC thresholds (star symbol). 
+
+2) Scene Classification with Single-Shot Measurement: We next consider the minimum-latency regime by setting M = 1 ,assuming that latency is dominated by the number of sequentially used DMA configurations. The entire scene is then compressed into a single complex-valued microwave measurement. A useful feature of this single-shot measurement case is that the complex analog measurement vector z(ρ, V) reduces to a single scalar that can be visualized directly in the complex plane. In Fig. 7, we compare random-DMA and learned-DMA scenarios with three ADC choices using the normalized ADC inputs um, I
+
+and um, Q, for which the clipping boundaries are located at −1
+
+and +1 . The learned DMA configuration produces visibly more class-dependent structure than the random DMA configuration: the class-colored clouds are spread over a larger portion of the normalized I-Q plane and exhibit stronger clustering. This indicates that the DMA performs a task-aware wave-domain projection that pre-selects information useful for the downstream classification task. The learned DMA also uses the available analog dynamic range more aggressively, so that notably more samples exceed the clipping boundaries. Finally, the learned-ADC cases visibly move the internal bin boundaries away from their uniform positions, with branch-dependent non-uniform spacings that adapt the quantization regions to the resulting signal distribution. We show in Fig. 8 the corresponding probability density functions (PDFs) of the I and Q components from Fig. 7. The figure confirms that learned DMA configurations substantially reshape the analog measurement distribution, spreading it more broadly over the normalized ADC-input range than random DMA configurations. In the learned-ADC columns, the internal bin boundaries are notably placed non-uniformly and differently for the I and Q branches, indicating that the quantization regions adapt substantially to the signal statistics produced by the corresponding wave-domain front end. In Fig. 9, we systematically evaluate the single-shot accuracy as a function of B. In the MC-aware case, learned-−2                 
+
+> 0
+> 2
+> u1, Q
+> Ideal ADC Uniform 2-Bit ADC Learned 2-Bit ADC
+> −202
+> u1, I
+> −2
+> 0
+> 2
+> u1, Q
+> −202
+> u1, I
+> −202
+> u1, I
+> Random DMA Learned DMA
+> 0123456789
+
+Fig. 7. Test-set ADC inputs for M = 1 , shown in the normalized I-Q plane and colored by MNIST class. Rows compare random and learned DMA configurations; columns compare ideal, uniform 2-bit, and learned 2-bit ADCs. For finite-resolution ADCs, solid black lines mark internal bin boundaries and dashed black lines mark clipping boundaries. The random-DMA distributions may differ across columns since they may be based on different random seeds. 
+
+DMA configurations consistently outperform random-DMA 
+
+configurations. With an ideal ADC , the learned-DMA case reaches 56 .3% test accuracy, compared with 37 .6% for the 
+
+random-DMA case. When the finite-resolution ADC is accounted for during training, the learned-DMA accuracy increases from 
+
+33 .3% at B = 1 to 57 .1% at B = 4 for the uniform-ADC case, and from 35 .9% to 57 .9% for the learned-ADC case. Thus, for M = 1 , ADC-aware learned-DMA optimization with only four ADC bits essentially recovers the ideal-ADC performance; the slight excess over the ideal-ADC reference should not be interpreted as a fundamental advantage of quantization, but rather as a consequence of separately optimized and validation-selected runs. The gain from learning the ADC thresholds is more modest 12 0.0                    
+
+> 0.5
+> 1.0
+> PDF
+> Random DMA
+> Ideal ADC
+> Random DMA
+> Uniform 2-Bit ADC
+> Random DMA
+> Learned 2-Bit ADC
+> Learned DMA
+> Ideal ADC
+> Learned DMA
+> Uniform 2-Bit ADC
+> Learned DMA
+> Learned 2-Bit ADC
+> −202
+> u1, χ
+> 0.0
+> 0.5
+> 1.0
+> PDF
+> −202
+> u1, χ
+> −202
+> u1, χ
+> −202
+> u1, χ
+> −202
+> u1, χ
+> −202
+> u1, χ
+> I Comp. Q Comp.
+> Internal Bin Boundaries Clipping Boundaries
+
+Fig. 8. PDFs of the normalized I and Q ADC inputs corresponding to the test-set clouds shown in Fig. 7 for M = 1 . Rows show the I and Q components; columns compare random and learned DMA configurations with ideal, uniform 2-bit, and learned 2-bit ADCs. For finite-resolution ADCs, solid black lines mark internal bin boundaries and dashed black lines mark clipping boundaries. The random-DMA distributions may differ across columns since they may be based on different random seeds. 1 2 3 4 
+
+> ADC Bit Depth B
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> Test Accuracy
+
+Fig. 9. Scene-classification accuracy for the single-shot case M = 1 as a function of ADC bit depth B, with MC awareness. Curve styles follow those explained in the caption of Fig. 6, with “1-bit ADC” replaced by “ B-bit ADC”. Dotted horizontal lines indicate the corresponding ideal-ADC references. 
+
+than the gain from learning the DMA configurations: for the 
+
+learned-DMA case, the learned-ADC curve improves over the 
+
+uniform-ADC curve by only 2.6 percentage points for B = 1 
+
+and 0.8 percentage points for B = 4 .
+
+3) Ablation Studies for Measurement Noise Level: Finally, we provide a brief ablation with respect to additive pre-ADC measurement noise. In contrast to the preceding results, which assume negligible measurement noise in order to isolate the effects of ADC awareness and MC awareness, we now train, validate and test each pipeline at the same prescribed noise level (i.e., our training is “noise-aware” [8]). We generate the additive noise term nm in (8) as zero-mean complex Gaussian noise whose real and imaginary parts are independent and have variance σ2
+
+> n
+
+. Hence, E[|nm|2] = 2 σ2
+
+> n
+
+. The noise realization is redrawn whenever the measurement model is evaluated. We report the accuracy as a function of the absolute per-quadrature pre-ADC noise standard deviation σn, rather than a normalized SNR, because the learned DMA configurations can themselves change the distribution of the absolute signal amplitudes. In Fig. 10, we observe the expected accuracy degradation as the pre-ADC noise level increases. At low and moderate noise levels, learned DMA configurations remain clearly superior to random DMA configurations. For example, at σn = 10 −5,the learned-DMA uniform-ADC case reaches 84 .8% accuracy, whereas the corresponding random-DMA case reaches only 
+
+51 .6% . At σn = 10 −4, the corresponding accuracies are 42 .0% 
+
+and 17 .3% , respectively. For larger noise levels, however, all curves approach the random-guess level of 10% , indicating that the analog measurements themselves have become noise-limited. 10 −5 10 −4 10 −3  
+
+> Additive Noise Standard Deviation σnper I/Q Branch
+> 0.0
+> 0.2
+> 0.4
+> 0.6
+> 0.8
+> 1.0
+> Test Accuracy
+
+Fig. 10. Pre-ADC measurement-noise ablation for the MC-aware case with 
+
+M = 8 DMA configurations and 1-bit ADCs. Thin horizontal lines indicate the corresponding noiseless benchmarks. Curve styles follow those explained in the caption of Fig. 6. 
+
+The comparison between the learned-DMA ideal-ADC reference and the same ideal-ADC-trained system tested with a uniform one-bit ADC further illustrates the role of ADC awareness. At σn = 10 −5, this deployment mismatch reduces the accuracy from 94 .9% to 56 .9% , whereas ADC-aware training with the fixed uniform one-bit ADC reaches 84 .8% . Hence, ADC awareness is still essential in the low-noise, low-resolution regime. As the noise level increases, this gap gradually vanishes because quantization mismatch ceases to be the dominant impairment. Finally, the learned-ADC and uniform-ADC curves remain almost identical throughout the sweep, confirming that, in the considered one-bit-ADC setting, most of the performance gain comes from task-aware DMA optimization and ADC-aware training rather than from learning non-uniform ADC thresholds. VI. C ONCLUSION 
+
+To summarize, we studied the ADC-aware end-to-end optimization of a DMA prototype with strong MC for monostatic scene classification. Our results show that ADC awareness is essential in low-resolution-ADC regimes: for instance, with 
+
+B = 1 and M = 8 , deploying an ideal-ADC-trained system with a uniform one-bit ADC reduces the accuracy from 95 .5% to 
+
+56 .0% , whereas ADC-aware training with the same fixed uniform one-bit ADC recovers an accuracy of 87 .2% . Ignoring MC during self-interference prediction and optimization deteriorates the accuracy to the random-guess level. Learned DMA configurations 13 
+
+are particularly beneficial when the number of measurements is small; for M = 1 with an ideal ADC, they improve the accuracy from 37 .6% for random DMA configurations to 56 .3% . By contrast, learning non-uniform ADC thresholds provides only modest additional gains in the considered setup: for example, at 
+
+M = 2 and B = 1 , the accuracy increases only from 60 .7% with a fixed uniform ADC to 63 .0% with learned ADC thresholds. Our separate sweeps over M and B further suggest that, under tight acquisition bit budgets, allocating bits to additional one-bit DMA measurements may be more beneficial than increasing the resolution of a single measurement; a systematic optimization over all (M, B ) pairs at fixed acquisition bit budget is left for future work. These findings contrast with the stronger learned-ADC gains reported in prior task-based ADC studies [16], [17]. A likely structural reason is that, in our pipeline, the dominant trainable acquisition degrees of freedom are the DMA configurations, while the learned ADC is a deliberately conservative threshold-only refinement with fixed reconstruction levels and shared I/Q scalar quantizers reused across the M
+
+measurements. By contrast, [16] studies the optimization of a broader set of acquisition parameters including sampling choices, while [17] focuses on trainable memristive ADC hardware and its power–accuracy trade-off. From a practical point of view, it is encouraging that for our DMA-based sensing pipeline most of the achievable performance gain can be reaped with ADC-aware wave-domain optimization and fixed uniform ADCs; indeed, this means that most of the observed performance gains can be obtained without custom trainable ADC hardware. REFERENCES [1] P. del Hougne et al. , “Programmable wave-domain computing in wireless communications,” HAL:05487878 , 2026. [2] T. Sleasman et al. , “Dynamic metamaterial aperture for microwave imaging,” 
+
+Appl. Phys. Lett. , vol. 107, no. 20, 2015. [3] T. A. Sleasman et al. , “Implementation and characterization of a two-dimensional printed circuit dynamic metasurface aperture for computational microwave imaging,” IEEE Trans. Antennas Propag. , vol. 69, no. 4, pp. 2151–2164, 2020. [4] H. Prod’homme and P. del Hougne, “Beyond-diagonal dynamic metasurface antenna,” IEEE Commun. Lett. , vol. 30, pp. 258–262, 2025. [5] T. Gong et al. , “RF chain reduction for MIMO systems: A hardware prototype,” IEEE Sys. J. , vol. 14, no. 4, pp. 5296–5307, 2020. [6] N. Shlezinger et al. , “Dynamic metasurface antennas for 6G extreme massive MIMO communications,” IEEE Wirel. Commun. , vol. 28, no. 2, pp. 106–113, 2021. [7] P. del Hougne et al. , “Learned integrated sensing pipeline: Reconfigurable metasurface transceivers as trainable physical layer in an artificial neural network,” Adv. Sci. , vol. 7, no. 3, p. 1901913, 2020. [8] C. Qian and P. del Hougne, “Noise-adaptive intelligent programmable meta-imager,” Intell. Comput. , 2022. [9] J. Zhang et al. , “On low-resolution ADCs in practical 5G millimeter-wave massive MIMO systems,” IEEE Commun. Mag. , vol. 56, no. 7, pp. 205–211, 2018. [10] A. Kipnis et al. , “Analog-to-digital compression: A new paradigm for converting signals to bits,” IEEE Signal Process. Mag. , vol. 35, no. 3, pp. 16–39, May 2018. [11] N. Shlezinger et al. , “Hardware-limited task-based quantization,” IEEE Trans. Signal Process. , vol. 67, no. 20, pp. 5223–5238, Oct. 2019. [12] N. Shlezinger et al. , “Asymptotic task-based quantization with application to massive MIMO,” IEEE Trans. Signal Process. , vol. 67, no. 15, pp. 3995–4012, Aug. 2019. [13] P. Neuhaus et al. , “Task-based analog-to-digital converters,” IEEE Trans. Signal Process. , vol. 69, pp. 5403–5418, 2021. [14] H. Wang et al. , “Dynamic metasurface antennas for MIMO-OFDM receivers with bit-limited ADCs,” IEEE Trans. Commun. , vol. 69, no. 4, pp. 2643– 2659, Apr. 2021. [15] Y. Hao et al. , “Dynamic metasurface antenna based anti-jamming with bit-limited ADC,” IEEE Trans. Veh. Technol. , vol. 75, no. 1, p. 1603, 2026. [16] N. Shlezinger et al. , “Deep task-based analog-to-digital conversion,” IEEE Trans. Signal Process. , vol. 70, pp. 6021–6034, 2022. [17] T. Vol et al. , “Learning task-based trainable neuromorphic ADCs via power-aware distillation,” IEEE Trans. Signal Process. , vol. 73, pp. 1246–1261, 2025. [18] H. Prod’homme and P. del Hougne, “Mutual coupling in dynamic metasurface antennas: Foe, but also friend,” IEEE Wirel. Commun. , vol. 32, no. 4, pp. 30–36, 2025. [19] H. Prod’homme et al. , “Benefits of mutual coupling in dynamic metasurface antennas,” IEEE Trans. Antennas Propag. , vol. 74, no. 3, p. 2589, 2025. [20] R. J. Williams et al. , “Electromagnetic based communication model for dynamic metasurface antennas,” IEEE Trans. Wirel. Commun. , vol. 21, no. 10, pp. 8616–8630, 2022. [21] M. Almunif et al. , “Network-based design of reactive beamforming metasurfaces,” IEEE Trans. Antennas Propag. , vol. 73, p. 5970, 2025. [22] P. Ramírez-Espinosa et al. , “Metasurface-based fluid antennas: from electromagnetics to communications model,” arXiv:2507.17982 , 2025. [23] J. Tapie and P. del Hougne, “Experimental multiport-network parameter estimation for a dynamic metasurface antenna,” IEEE Trans. Antennas Propag. , 2026. [24] C. Saigre-Tardif et al. , “Intelligent meta-imagers: From compressed to learned sensing,” Appl. Phys. Rev. , vol. 9, no. 1, 2022. [25] Y. B. Li et al. , “Transmission-type 2-bit programmable metasurface for single-sensor and single-frequency microwave imaging,” Sci. Rep. , vol. 6, no. 1, p. 23731, 2016. [26] H.-Y. Li et al. , “Intelligent electromagnetic sensing with learnable data acquisition and processing,” Patterns , vol. 1, no. 1, 2020. [27] R. Obermeier and J. A. Martinez-Lorenzo, “Sensing matrix design via mutual coherence minimization for electromagnetic compressive imaging applications,” IEEE Trans. Comput. Imaging , vol. 3, no. 2, p. 217, 2017. [28] ——, “Sensing matrix design via capacity maximization for block compressive sensing applications,” IEEE Trans. Comput. Imaging , vol. 5, no. 1, pp. 27–36, 2019. [29] A. Molaei et al. , “Digitized metamaterial absorber-based compressive reflector antenna for high sensing capacity imaging,” IEEE Access , vol. 7, pp. 1160–1173, 2019. [30] P. del Hougne et al. , “Optimal multiplexing of spatially encoded information across custom-tailored configurations of a metasurface-tunable chaotic cavity,” Phys. Rev. Appl. , vol. 13, no. 4, p. 041004, 2020. [31] R. Obermeier and J. A. Martinez-Lorenzo, “Generalized optimization of high-capacity compressive imaging systems,” IEEE Trans. Antennas Propag. , vol. 68, no. 4, pp. 3147–3161, 2020. [32] J. Tapie and P. del Hougne, “Optimizing dynamic metasurface antenna configurations for direction-of-arrival and polarization estimation using an experimentally calibrated multiport-network model,” Opt. Mater. Exp. ,vol. 16, no. 7, pp. 2016–2031, 2026. [33] M. Liang et al. , “Reconfigurable array design to realize principal component analysis (PCA)-based microwave compressive sensing imaging system,” 
+
+IEEE Antennas Wirel. Propag. Lett. , vol. 14, pp. 1039–1042, 2015. [34] L. Li et al. , “Machine-learning reprogrammable metasurface imager,” Nat. Commun. , vol. 10, no. 1, p. 1082, 2019. [35] A. Chakrabarti, “Learning sensor multiplexing design through back-propagation,” in Adv. Neural Inf. Process. Syst. , vol. 29, 2016, p. 3081. [36] R. Horstmeyer et al. , “Convolutional neural networks that teach microscopes how to image,” arXiv:1709.07223 , 2017. [37] M. R. Kellman et al. , “Physics-based learned design: Optimized coded-illumination for quantitative phase imaging,” IEEE Trans. Comput. Imaging ,vol. 5, no. 3, pp. 344–353, 2019. [38] V. Sitzmann et al. , “End-to-end optimization of optics and image processing for achromatic extended depth of field and super-resolution imaging,” ACM Trans. Graph. , vol. 37, no. 4, pp. 1–13, 2018. [39] J. Chang et al. , “Hybrid optical-electronic convolutional neural networks with optimized diffractive optics for image classification,” Sci. Rep. , vol. 8, p. 12324, 2018. [40] A. Muthumbi et al. , “Learned sensing: Jointly optimized microscope hardware for accurate image classification,” Biomed. Opt. Exp. , vol. 10, no. 12, pp. 6351–6369, 2019. [41] Z. Lin et al. , “End-to-end nanophotonic inverse design for imaging and polarimetry,” Nanophotonics , vol. 10, no. 3, pp. 1177–1187, 2021. [42] E. Tseng et al. , “Neural nano-optics for high-quality thin lens imaging,” 
+
+Nat. Commun. , vol. 12, p. 6493, 2021. [43] G. Arya et al. , “End-to-end optimization of metasurfaces for imaging with compressed sensing,” ACS Photonics , vol. 11, pp. 2077–2087, 2024. [44] S. Vedula et al. , “Learning beamforming in ultrasound imaging,” in Proc. Mach. Learn. Res. , vol. 102, 2019, pp. 493–511. [45] J. Tapie et al. , “Channel estimation via tensor decomposition for dynamic metasurface antennas with known mutual coupling: Algorithms and experiments,” arXiv:2603.19155 , 2026. [46] I. Yoo et al. , “Efficient complementary metamaterial element for waveguide-fed metasurface antennas,” Opt. Exp. , vol. 24, no. 25, p. 28 686, 2016.

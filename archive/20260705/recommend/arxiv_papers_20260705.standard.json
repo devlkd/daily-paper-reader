@@ -1,0 +1,95 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-05T21:29:57.171495+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 1,
+    "deep_cap": 8,
+    "deep_selected": 1,
+    "quick_candidates": 1,
+    "quick_skim_target": 13,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2607.00253v1",
+      "source": "arxiv",
+      "title": "ADC-Aware End-to-End Optimization of a Dynamic Metasurface Antenna with Strong Mutual Coupling for Monostatic Scene Classification",
+      "abstract": "Dynamic metasurface antennas (DMAs) enable programmable wave-domain signal processing that can be jointly optimized with downstream digital processing in an end-to-end manner. Existing studies, however, typically assume ideal analog-to-digital conversion (ADC) and often rely on simplified electromagnetic models. Here, we study ADC-aware end-to-end optimization of a monostatic sensing pipeline based on a DMA with strong mutual coupling (MC). We model the wave domain using an MC-aware multiport-network model whose parameters were experimentally estimated for a fabricated chaotic-cavity-backed DMA with 96 one-bit-programmable meta-elements. We perform ADC-aware end-to-end optimization of the DMA configurations and digital classifier, either with awareness of a fixed uniform ADC or, optionally, with jointly learned ADC decision thresholds, and compare against baselines that assume an ideal ADC and/or ignore MC. Our results show that ADC awareness is essential in low-resolution ADC regimes: with one-bit ADCs and eight DMA configurations, deploying an ideal-ADC-trained system with a uniform one-bit ADC reduces the test accuracy from 95.5% to 56.0%, whereas ADC-aware training with the same fixed uniform one-bit ADC achieves 87.2%. We also show that without MC awareness the accuracy drops to the random-guess level. Learning non-uniform ADC thresholds provides at most modest additional gains over fixed uniform ADCs in the considered DMA-based sensing pipeline.",
+      "authors": [
+        "Philipp del Hougne"
+      ],
+      "primary_category": "eess.SP",
+      "categories": [
+        "eess.SP",
+        "physics.app-ph"
+      ],
+      "published": "2026-06-30T23:01:38+00:00",
+      "link": "https://arxiv.org/pdf/2607.00253v1",
+      "tags": [
+        "keyword:TF-SAR",
+        "keyword:sat-asm-prec",
+        "query:TF-SAR",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "end-to-end optimization of metasurface antenna for monostatic scene classification",
+      "llm_evidence_cn": "动态超表面天线用于单基地场景分类的端到端优化",
+      "llm_evidence": "动态超表面天线用于单基地场景分类的端到端优化",
+      "canonical_evidence": "动态超表面天线用于单基地场景分类的端到端优化",
+      "llm_tldr_en": "This paper proposes an ADC-aware end-to-end optimization for a dynamic metasurface antenna with strong mutual coupling to improve monostatic scene classification, using a multiport-network model.",
+      "llm_tldr_cn": "该论文针对动态超表面天线在单基地场景分类中的应用，提出了一种考虑模数转换器影响的端到端优化方法。通过实验估计的强互耦合多端口网络模型进行波域建模，联合优化天线配置与数字处理，提升了实际感知任务中的分类性能。这为合成孔径雷达等应用提供了实用的天线设计优化框架。",
+      "llm_tldr": "该论文针对动态超表面天线在单基地场景分类中的应用，提出了一种考虑模数转换器影响的端到端优化方法。通过实验估计的强互耦合多端口网络模型进行波域建模，联合优化天线配置与数字处理，提升了实际感知任务中的分类性能。这为合成孔径雷达等应用提供了实用的天线设计优化框架。",
+      "llm_tags": [
+        "query:tf-sar"
+      ],
+      "matched_query_tag": "query:tf-sar",
+      "matched_query_text": "synthetic aperture radar antenna system",
+      "matched_requirement_id": "req-19",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.00129v1",
+      "source": "arxiv",
+      "title": "A Synthetic-Driven Vision System for Assembly Step Recognition",
+      "abstract": "Quality control in industrial assembly is essential, and real-time monitoring of the assembly process is crucial for preventing costly defects and ensuring production reliability. Vision-based automated inspection offers a powerful solution for such real-time monitoring. However, due to the specialized industrial components and processes, training these models typically relies on task-specific real-world data, which is costly and labor-intensive to collect and annotate. In this paper, we propose a system that automatically generates realistic assembly sequences and further trains real-time inspection models using the synthetic data. It can be efficiently applied to a given task within an hour, requiring only CAD models and simple step descriptions. Focusing on practical challenges, our system integrates a physics-based motion generation module to capture the variance of different human assembly, designs domain-randomized rendering to deal with the environmental complexity and variation, and employs an object-detection-based step recognition module for robust sim-to-real transfer, leading to 92.4% accuracy on a real-world assembly case with 46.7%, 15.8% and 61.2% performance improvement, respectively. Overall, our system provides a practical solution for industrial assembly inspection without requiring expensive real-world data collection and annotation, with the effectiveness validated on real industrial assembly tasks.",
+      "authors": [
+        "Hui Zhang",
+        "Xuanang Lei",
+        "Rui Wang",
+        "Julian Ferchow",
+        "Mirko Meboldt"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-06-30T20:08:47+00:00",
+      "link": "https://arxiv.org/pdf/2607.00129v1",
+      "tags": [
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Vision-based assembly step recognition for quality control in precision assembly",
+      "llm_evidence_cn": "基于视觉的装配步骤识别用于精密装配质量控制",
+      "llm_evidence": "基于视觉的装配步骤识别用于精密装配质量控制",
+      "canonical_evidence": "基于视觉的装配步骤识别用于精密装配质量控制",
+      "llm_tldr_en": "The paper presents a synthetic data-driven vision system that uses CAD models and step descriptions to generate assembly sequences for training real-time inspection models, enabling efficient, low-cost process monitoring applicable to precision satellite assembly.",
+      "llm_tldr_cn": "工业装配中，视觉检测模型的训练通常需要大量人工采集和标注真实装配数据，导致成本高、部署慢。本文提出一种合成数据驱动的装配步骤识别系统，仅利用零部件的CAD模型和简单的步骤文本描述，即可在一小时内自动生成逼真的装配序列图像并完成模型训练。在真实的装配操作数据集上，该系统能够实时识别装配步骤，准确率满足实际应用需求。该方法显著降低了智能监控系统的部署门槛，为卫星等高价值产品的精密装配过程实时质量控制提供了可行且高效的方案。",
+      "llm_tldr": "工业装配中，视觉检测模型的训练通常需要大量人工采集和标注真实装配数据，导致成本高、部署慢。本文提出一种合成数据驱动的装配步骤识别系统，仅利用零部件的CAD模型和简单的步骤文本描述，即可在一小时内自动生成逼真的装配序列图像并完成模型训练。在真实的装配操作数据集上，该系统能够实时识别装配步骤，准确率满足实际应用需求。该方法显著降低了智能监控系统的部署门槛，为卫星等高价值产品的精密装配过程实时质量控制提供了可行且高效的方案。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "precision control in satellite assembly process",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}

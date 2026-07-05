@@ -1,0 +1,39 @@
+{
+  "label": "2026-07-05",
+  "date": "2026-07-05",
+  "generated_at": "2026-07-05T21:39:11",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202607/05/2607.00253v1-adc-aware-end-to-end-optimization-of-a-dynamic-metasurface-antenna-with-strong-mutual-coupling-for-monostatic-scene-classification",
+      "section": "deep",
+      "title_en": "ADC-Aware End-to-End Optimization of a Dynamic Metasurface Antenna with Strong Mutual Coupling for Monostatic Scene Classification",
+      "authors": "Philipp del Hougne",
+      "date": "2026-06-30",
+      "pdf": "https://arxiv.org/pdf/2607.00253v1",
+      "score": "8.0",
+      "evidence": "动态超表面天线用于单基地场景分类的端到端优化",
+      "tldr": "动态超表面天线（DMA）在单站场景分类中通常忽略ADC量化和互耦效应，导致实际部署性能骤降。本文提出ADC感知的端到端优化框架，基于实验校准的强互耦多端口网络模型，联合训练DMA配置与数字分类器。结果显示，1-bit ADC下，理想ADC训练的系统精度从95.5%跌至56.0%，而ADC感知训练恢复至87.2%，忽略互耦则降至随机水平。该研究揭示了低精度ADC和精确互耦建模在可编程超表面感知中的关键价值。",
+      "tags": "query:tf-sar",
+      "abstract_en": "Dynamic metasurface antennas (DMAs) enable programmable wave-domain signal processing that can be jointly optimized with downstream digital processing in an end-to-end manner. Existing studies, however, typically assume ideal analog-to-digital conversion (ADC) and often rely on simplified electromagnetic models. Here, we study ADC-aware end-to-end optimization of a monostatic sensing pipeline based on a DMA with strong mutual coupling (MC). We model the wave domain using an MC-aware multiport-network model whose parameters were experimentally estimated for a fabricated chaotic-cavity-backed DMA with 96 one-bit-programmable meta-elements. We perform ADC-aware end-to-end optimization of the DMA configurations and digital classifier, either with awareness of a fixed uniform ADC or, optionally, with jointly learned ADC decision thresholds, and compare against baselines that assume an ideal ADC and/or ignore MC. Our results show that ADC awareness is essential in low-resolution ADC regimes: with one-bit ADCs and eight DMA configurations, deploying an ideal-ADC-trained system with a uniform one-bit ADC reduces the test accuracy from 95.5% to 56.0%, whereas ADC-aware training with the same fixed uniform one-bit ADC achieves 87.2%. We also show that without MC awareness the accuracy drops to the random-guess level. Learning non-uniform ADC thresholds provides at most modest additional gains over fixed uniform ADCs in the considered DMA-based sensing pipeline.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/05/2607.00129v1-a-synthetic-driven-vision-system-for-assembly-step-recognition",
+      "section": "quick",
+      "title_en": "A Synthetic-Driven Vision System for Assembly Step Recognition",
+      "authors": "Hui Zhang, Xuanang Lei, Rui Wang, Julian Ferchow, Mirko Meboldt",
+      "date": "2026-06-30",
+      "pdf": "https://arxiv.org/pdf/2607.00129v1",
+      "score": "7.0",
+      "evidence": "基于视觉的装配步骤识别用于精密装配质量控制",
+      "tldr": "工业装配中，视觉检测模型的训练通常需要大量人工采集和标注真实装配数据，导致成本高、部署慢。本文提出一种合成数据驱动的装配步骤识别系统，仅利用零部件的CAD模型和简单的步骤文本描述，即可在一小时内自动生成逼真的装配序列图像并完成模型训练。在真实的装配操作数据集上，该系统能够实时识别装配步骤，准确率满足实际应用需求。该方法显著降低了智能监控系统的部署门槛，为卫星等高价值产品的精密装配过程实时质量控制提供了可行且高效的方案。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "Quality control in industrial assembly is essential, and real-time monitoring of the assembly process is crucial for preventing costly defects and ensuring production reliability. Vision-based automated inspection offers a powerful solution for such real-time monitoring. However, due to the specialized industrial components and processes, training these models typically relies on task-specific real-world data, which is costly and labor-intensive to collect and annotate. In this paper, we propose a system that automatically generates realistic assembly sequences and further trains real-time inspection models using the synthetic data. It can be efficiently applied to a given task within an hour, requiring only CAD models and simple step descriptions. Focusing on practical challenges, our system integrates a physics-based motion generation module to capture the variance of different human assembly, designs domain-randomized rendering to deal with the environmental complexity and variation, and employs an object-detection-based step recognition module for robust sim-to-real transfer, leading to 92.4% accuracy on a real-world assembly case with 46.7%, 15.8% and 61.2% performance improvement, respectively. Overall, our system provides a practical solution for industrial assembly inspection without requiring expensive real-world data collection and annotation, with the effectiveness validated on real industrial assembly tasks.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
