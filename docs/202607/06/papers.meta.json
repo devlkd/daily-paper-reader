@@ -1,0 +1,24 @@
+{
+  "label": "2026-07-06",
+  "date": "2026-07-06",
+  "generated_at": "2026-07-06T21:57:00",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202607/06/2606.31727v1-focal-plate-prototyping-for-modular-focal-planes-of-stage-5-instruments-for-ground-based-telescopes",
+      "section": "quick",
+      "title_en": "Focal Plate Prototyping for Modular Focal Planes of Stage-5 Instruments For Ground-Based Telescopes",
+      "authors": "Maxime Rombach, Jean-David Perriard, Laurent Chevalley, Diane Chapuis, Markus Thurneysen, Jean-Paul Kneib",
+      "date": "2026-06-30",
+      "pdf": "https://arxiv.org/pdf/2606.31727v1",
+      "score": "7.0",
+      "evidence": "焦板原型研制需满足严格倾斜和焦点公差以实现光学元件精密对准",
+      "tldr": "当前多目标光谱仪进入Stage-5时代，需开发支持2万光纤的模块化焦平面，其中焦板结构需在倾斜±0.05°、聚焦±30μm级公差下安装光纤定位器与导星设备。本研究提出采用5轴加工工艺制作焦板原型，验证其能否满足苛刻要求。实验表明，5轴加工有望达成规定公差，为大尺寸焦板制造提供可行方案，推动下一代大规模光谱巡天仪器的发展。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "As current Stage-4 multi-object instruments such as SDSS-V, DESI, MOONS or 4MOST are providing astrophysicists data to study the objects of the Universe, effort is arising to build the next generation of Stage-5 multi-object focal planes; aiming for 20'000 fibers-class instruments. The focal plate structure is a central element of the future focal plane assemblies. It maintains the fiber positioners, the Guide, Focus and Alignment cameras (GFAs) and wave-front sensors together on the focal surface of the telescope. In addition to being optimized for stiffness and mass, the plate needs to meet tight tolerances in tilt, typically pm 0.05 degres, and focus, typically, pm 30 um, to match the telescope's curved focal surface. The presented focal plate prototype shows that 5-axes machining is promising to meet the desired tolerances.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

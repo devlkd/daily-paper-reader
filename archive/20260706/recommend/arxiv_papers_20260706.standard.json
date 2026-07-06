@@ -1,0 +1,61 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-06T21:55:39.870123+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 0,
+    "deep_cap": 8,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 13,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2606.31727v1",
+      "source": "arxiv",
+      "title": "Focal Plate Prototyping for Modular Focal Planes of Stage-5 Instruments For Ground-Based Telescopes",
+      "abstract": "As current Stage-4 multi-object instruments such as SDSS-V, DESI, MOONS or 4MOST are providing astrophysicists data to study the objects of the Universe, effort is arising to build the next generation of Stage-5 multi-object focal planes; aiming for 20'000 fibers-class instruments. The focal plate structure is a central element of the future focal plane assemblies. It maintains the fiber positioners, the Guide, Focus and Alignment cameras (GFAs) and wave-front sensors together on the focal surface of the telescope. In addition to being optimized for stiffness and mass, the plate needs to meet tight tolerances in tilt, typically pm 0.05 degres, and focus, typically, pm 30 um, to match the telescope's curved focal surface. The presented focal plate prototype shows that 5-axes machining is promising to meet the desired tolerances.",
+      "authors": [
+        "Maxime Rombach",
+        "Jean-David Perriard",
+        "Laurent Chevalley",
+        "Diane Chapuis",
+        "Markus Thurneysen",
+        "Jean-Paul Kneib"
+      ],
+      "primary_category": "astro-ph.IM",
+      "categories": [
+        "astro-ph.IM"
+      ],
+      "published": "2026-06-30T14:26:58+00:00",
+      "link": "https://arxiv.org/pdf/2606.31727v1",
+      "tags": [
+        "keyword:TF-SAR",
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:TF-SAR",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Focal plate prototyping requires tight tilt and focus tolerances for precision alignment of optical components",
+      "llm_evidence_cn": "焦板原型研制需满足严格倾斜和焦点公差以实现光学元件精密对准",
+      "llm_evidence": "焦板原型研制需满足严格倾斜和焦点公差以实现光学元件精密对准",
+      "canonical_evidence": "焦板原型研制需满足严格倾斜和焦点公差以实现光学元件精密对准",
+      "llm_tldr_en": "This paper addresses the need for high-precision focal plates in astronomical instrumentation, demonstrating prototyping with tight tilt and focus tolerances. The approach for precision alignment and integration can be adapted to satellite ground assembly processes.",
+      "llm_tldr_cn": "大规模多目标光谱巡天仪器需要高精度焦平面，其中焦板需同时保证结构刚度和微米级装配公差。本文提出焦板原型研制方法，通过优化设计满足±0.05度倾斜和±30微米焦点公差，并集成数千个光纤定位器和导星相机。该工作实现的精密对准与公差控制技术可为卫星地面装配提供方法论借鉴。",
+      "llm_tldr": "大规模多目标光谱巡天仪器需要高精度焦平面，其中焦板需同时保证结构刚度和微米级装配公差。本文提出焦板原型研制方法，通过优化设计满足±0.05度倾斜和±30微米焦点公差，并集成数千个光纤定位器和导星相机。该工作实现的精密对准与公差控制技术可为卫星地面装配提供方法论借鉴。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "precision alignment of satellite components on ground",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
