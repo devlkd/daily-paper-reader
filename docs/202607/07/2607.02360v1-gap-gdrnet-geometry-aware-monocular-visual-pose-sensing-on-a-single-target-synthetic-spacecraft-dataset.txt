@@ -1,0 +1,1043 @@
+Title: GAP-GDRNet: Geometry-Aware Monocular Visual Pose Sensing on a Single-Target Synthetic Spacecraft Dataset
+
+URL Source: https://arxiv.org/pdf/2607.02360v1
+
+Published Time: Fri, 03 Jul 2026 01:31:32 GMT
+
+Number of Pages: 11
+
+Markdown Content:
+> IEEE SENSORS JOURNAL, VOL. XX, NO. XX, XXXX 2026 1
+
+# GAP-GDRNet: Geometry-Aware Monocular Visual Pose Sensing on a Single-Target Synthetic Spacecraft Dataset 
+
+Yonglong Zhang, Yang Liu †
+
+Abstract —Monocular relative pose sensing is a central perception prob-lem in non-cooperative rendezvous and on-orbit servicing. In spacecraft images, however, weak surface texture, thin appendages, illumination changes, and partial occlusion often leave only sparse and unstable ge-ometric evidence. This article presents GAP-GDRNet, a geometry-aware attention-enhanced framework for monocular RGB-based 6D pose sens-ing. The method follows the geometry-guided direct regression paradigm of GDR-Net and modifies two points in the pipeline: an attention-based feature refinement (AFR) module is placed before dense geometric prediction, and a patch-level geometric self-attention (PGSA) module is inserted into Patch-PnP. AFR reinforces global spacecraft structure together with local weak-texture cues; PGSA then relates downsampled geometric patches before final pose regression. A Blender-based annota-tion process supplies target masks, visible-region masks, dense model-coordinate maps, camera intrinsics, and 6D pose labels for supervised training. 
+
+The primary evaluation uses a single-target synthetic spacecraft dataset built from one CAD model. GAP-GDRNet reaches a rotation error of 1.96 ◦, a translation error of 0.0165 m, and an ADD@0.02 m accuracy of 95.16%, exceeding the reproduced GDR-Net baseline by 3.88 percentage points while running at 35.97 FPS for pose-network inference. Supplementary evaluations on T-LESS and LM-O give BOP AR gains of 6.8 and 3.1 percentage points over the reproduced baseline. 
+
+Index Terms — visual pose sensing, monocular vision, spacecraft pose estimation, 6D pose estimation, geometry-guided regression, synthetic data. 
+
+I. I NTRODUCTION 
+
+# ACCURATE 6D pose sensing of non-cooperative space-craft is required in rendezvous, proximity operation, on-orbit servicing, and space situational awareness. A monoc-ular camera is attractive in these tasks because it provides compact measurements with limited hardware complexity, but the image must still support recovery of the target rotation and translation. Spacecraft differ from many terrestrial pose-estimation targets: large smooth panels, thin structural ele-ments, repeated or symmetric parts, hard shadows, and high-contrast backgrounds often appear together. As a result, the visual evidence available from a single RGB image can be weak, unevenly distributed, or partially occluded. Learning-based RGB pose estimators have made dense object-specific geometry usable in monocular settings. Geometry-guided direct regression is particularly relevant here 
+
+> †
+
+Corresponding author: Yang Liu (e-mail: liuyanghit@hit.edu.cn). *This work was supported by the Natural Science Foundation of Heilongjiang Province for Excellent Young Scholars (Grant No. YQ2024E018). All authors are with the State Key Laboratory of Robotics and Systems, Harbin Institute of Technology, Harbin 150001, Heilongjiang, China. 
+
+because it retains dense intermediate predictions while avoid-ing an external PnP solver at test time. GDR-Net follows this route: it predicts geometric representations from the RoI image and feeds them to Patch-PnP for final pose regression [1]. For spacecraft imagery, two limitations remain. Dense coordinate and mask prediction must draw on both the coarse spacecraft layout and small boundary cues, yet illumination changes and weak texture can suppress the latter. Patch-PnP also aggregates geometric evidence after spatial encoding, where distant but related regions, such as the main body and extended panels, may not interact sufficiently through local convolutions alone. GAP-GDRNet keeps the GDR-Net input-output setting and changes the internal representation path. Before dense pre-diction, attention-based feature refinement (AFR) combines a global grouped coordinate attention branch with a median-enhanced local feature branch. The former emphasizes long-range structure; the latter preserves boundary, contour, and weak-texture responses. Inside Patch-PnP, patch-level geo-metric self-attention (PGSA) relates downsampled geometric tokens before the final regression layers. These changes target feature formation and patch-level geometric aggregation, while inference still uses only the monocular RGB image, camera intrinsics, and target RoI.  
+
+> arXiv:2607.02360v1 [cs.CV] 2 Jul 2026 2IEEE SENSORS JOURNAL, VOL. XX, NO. XX, XXXX 2026
+
+The required dense supervision is obtained through aBlender-based rendering and annotation process, since real spacecraft images with accurate 6D pose and pixel-level geometry are scarce. The resulting dataset contains 50,000 ren-dered images of one target spacecraft model, with variations in pose, illumination, background, and non-target occlusion. Training, validation, and test images are split by combinations of scene factors rather than by a purely image-level random shuffle. This single-target synthetic spacecraft dataset is the main evaluation setting. T-LESS and LM-O from the BOP benchmark are used only as supplementary public datasets to check whether the same modules improve the reproduced GDR-Net baseline on textureless and occluded non-spacecraft objects [2]. The article makes four contributions:  
+
+> •
+
+A monocular RGB-based spacecraft pose-sensing frame-work, GAP-GDRNet, is built on the GDR-Net geometry-guided regression pipeline.  
+
+> •
+
+AFR is introduced before dense geometric prediction to strengthen global spacecraft structure and local contour cues under weak texture and structural anisotropy.  
+
+> •
+
+PGSA is incorporated into Patch-PnP to aggregate patch-level geometric evidence before rotation and translation regression.  
+
+> •
+
+Experiments on the single-target synthetic spacecraft dataset provide controlled comparisons with the repro-duced GDR-Net baseline; T-LESS and LM-O are used as supplementary non-spacecraft tests for the same module design. 
+
+II. R ELATED WORK 
+
+A. Monocular RGB-Based 6D Object Pose Estimation 
+
+Monocular 6D object pose estimation seeks the 3D rotation and translation of a target object from a single RGB im-age. Learning-based methods typically regress pose directly, estimate 2D keypoints, or predict dense correspondences. PoseCNN combines object segmentation and pose predic-tion in cluttered scenes [3]. Single Shot Pose and PVNet rely on 2D keypoints or voting-based localization [4], [5]. Coordinate- and correspondence-based approaches, including CDPN, Pix2Pose, and DPOD, predict dense geometric repre-sentations before recovering the pose [6]–[8]. Their common thread is that RGB appearance is converted into an interme-diate geometric form before the final pose estimate. Robustness under weak texture, symmetry, and occlusion has been addressed in several later systems. EPOS explicitly handles object symmetries [9]; ZebraPose and SurfEmb en-code surface information in different forms [10], [11]; PFA uses perspective-flow aggregation for data-limited pose esti-mation [12]. GDR-Net is closest to the present work because it predicts dense geometric representations and regresses the pose with Patch-PnP in a fully learned pipeline [1]. Later geometry-guided variants further support the use of dense intermediate geometry in RGB-based pose estimation [13]. GAP-GDRNet keeps this paradigm but modifies feature re-finement and patch-level relation modeling for weakly textured spacecraft targets. 
+
+B. Spacecraft Pose Estimation and Synthetic Data 
+
+Non-cooperative spacecraft pose estimation has been stud-ied for rendezvous, proximity operation, and on-orbit servic-ing. The visual target may include smooth panels, thin ap-pendages, specular or shadowed regions, and large viewpoint changes, so both geometry and appearance variation matter. Neural-network-based pose estimation has been explored for non-cooperative rendezvous [14]. SPEED+ provides spacecraft images across a domain gap [15], and SPNv2 studies multi-task learning and online refinement under domain shift [16]. These studies motivate spacecraft-specific pose estimators that do not treat the target as a generic textured object. Accurate 6D pose labels and pixel-level geometry are difficult to obtain for real spacecraft images, which makes synthetic rendering a practical source of supervision. Domain randomization and image translation have been used to reduce simulation-to-real gaps in robotic perception [17]–[19]. Here, rendering is used more narrowly: it supplies target masks, visible-region masks, dense model-coordinate maps, camera intrinsics, and 6D pose labels needed by the GDR-Net-style training objective. No real captured spacecraft images are used, and the paper therefore does not claim sim-to-real spacecraft performance. 
+
+C. Feature Attention and Geometry-Guided Pose Regression 
+
+Attention modules are often used to reshape feature re-sponses before prediction. SE and ECA recalibrate channels [20], [21]; CBAM, Coordinate Attention, and related spatial-channel modules combine regional emphasis with channel interaction [22]–[25]. Non-local operations provide a way to model long-range dependencies [26], and ConvNeXt offers a modern convolutional backbone [27]. For spacecraft pose sensing, attitude ambiguity is tied to global structure, while dense coordinates depend on local contours and weak-texture regions. AFR is designed around this split by refining global and local features before the geometric heads. Final pose recovery is commonly formulated from 2D–3D correspondences with PnP solvers such as EPnP, often paired with RANSAC [28], [29]. GDR-Net instead uses Patch-PnP to regress pose from dense geometric predictions and RoI coordinate encoding [1]. Once pose recovery is learned in this form, the aggregation of patch-level geometric evidence becomes part of the model design. PGSA addresses that step by relating patch features before regression, while the rotation output follows the continuous 6D representation [30]. 
+
+III. M ETHOD 
+
+GAP-GDRNet addresses monocular RGB-based 6D pose sensing for a cropped spacecraft target. Given an RGB image, camera intrinsic matrix K, and a target bounding box, the target RoI is resized and used as the network input. The estimated pose is ˆT = [ ˆR | ˆt] in the camera coordinate system, with ˆR ∈ SO (3) and ˆt ∈ R3. The framework follows GDR-Net [1]: dense geometric representations are predicted from the RoI image, and Patch-PnP regresses the final pose. GAP-GDRNet keeps this input-output definition and changes AUTHOR et al. : GAP-GDRNET FOR MONOCULAR VISUAL POSE SENSING 3
+
+Fig. 1. Examples of synthetic spacecraft images with viewpoint, illumination, background, scale, and occlusion variations. C
+
+GGCA 
+
+MECS 
+
+> Fusion  Block
+
+C
+
+> Zoomed -In Roi
+> Training:GT
+> Testing:Detector
+
+R
+
+t
+
+> 6d
+> SITE
+
+R
+
+t
+
+> 6d
+> SITE
+> FC 1024
+> FC 256
+
+... 
+
+... 
+
+... 
+
+...     
+
+> PGSA -PatchPnP Geometry -aware Feature Refinement Module Dense Geometric
+> Prediction
+> Residual
+> PGSA Module
+> ConvNeXt Backbone AFR Module
+
+Mvis 
+
+MSRA 
+
+M2D -3D 
+
+> 3× 256× 256
+> 3× 64× 64
+> 1× 64× 64
+> Concatenation
+
+CConv/2 -GN -ReLU Conv Block Up -Sample DeConv Conv -BN -ReLU CConv/2 -GN -ReLU Conv Block Up -Sample DeConv Conv -BN -ReLU Concatenation CConv/2 -GN -ReLU Conv Block Up -Sample DeConv Conv -BN -ReLU 
+
+C
+
+GGCA 
+
+MECS 
+
+> Fusion  Block
+
+C
+
+> Zoomed -In Roi
+> Training:GT
+> Testing:Detector
+
+R
+
+t
+
+> 6d
+> SITE
+> FC 1024
+> FC 256
+
+... 
+
+...     
+
+> PGSA -PatchPnP Geometry -aware Feature Refinement Module Dense Geometric
+> Prediction
+> Residual
+> PGSA Module
+> ConvNeXt Backbone AFR Module
+
+Mvis 
+
+MSRA 
+
+M2D -3D 
+
+> 3× 256× 256
+> 3× 64× 64
+> 1× 64× 64
+> Concatenation
+
+CConv/2 -GN -ReLU Conv Block Up -Sample DeConv Conv -BN -ReLU 
+
+C
+
+GGCA 
+
+MECS 
+
+> Fusion  Block
+
+C
+
+> Zoomed -In Roi
+> Training:GT
+> Testing:Detector
+
+R
+
+t
+
+> 6d
+> SITE
+> FC 1024
+> FC 256
+
+... 
+
+...     
+
+> PGSA -PatchPnP Geometry -aware Feature Refinement Module Dense Geometric
+> Prediction
+> Residual
+> PGSA Module
+> ConvNeXt Backbone AFR Module
+
+Mvis 
+
+MSRA 
+
+M2D -3D 
+
+> 3× 256× 256
+> 3× 64× 64
+> 1× 64× 64
+> Concatenation
+
+CConv/2 -GN -ReLU Conv Block Up -Sample DeConv Conv -BN -ReLU 
+
+Fig. 2. Overall architecture of GAP-GDRNet. The pipeline includes RoI input, ConvNeXt feature extraction, AFR feature enhancement, dense geometric prediction, and PGSA-enhanced Patch-PnP pose regression. 
+
+two internal stages, namely feature refinement before dense geometric prediction and patch-level relation modeling inside Patch-PnP. Synthetic annotations provide training supervision for dense geometry, but depth, masks, dense coordinates, and ground-truth pose are not network inputs at inference. The synthetic data process is therefore introduced first, followed by the network architecture and the two modules. 
+
+A. Spacecraft Synthetic Data Generation and Annotation 
+
+Dense geometric supervision is needed for GDR-Net-style training, whereas real spacecraft images with accurate pose and pixel-level geometry are difficult to collect at scale. A Blender-based renderer is therefore built from a spacecraft CAD model. The CAD model is normalized to a fixed object coordinate frame and scale before rendering. Each sample stores the RGB image, camera intrinsics, target box, target-object mask, visible-region mask, dense model-coordinate map, and 6D pose label. Component-level masks are neither generated nor used. Scene variation is introduced by sampling the camera view-point, target distance, relative pose, illumination direction and intensity, background image, and non-target occluding objects. Fig. 1 shows representative samples. The rendered scenes include viewpoint and scale changes, strong and weak illumi-nation, local shadows, star-field and Earth-like backgrounds, background clutter, and partial occlusion by other objects. The associated rendering metadata are retained for the robustness analysis in Section IV. For each rendered image, the renderer records the camera intrinsics, depth buffer, and target pose T∗ = [ R∗ | t∗] relative to the camera. The depth buffer is used only offline to create supervision. For a visible target pixel p = ( u, v ) with depth 
+
+z(p), let ¯p = [ u, v, 1] ⊤. Back-projection gives the camera-frame point 
+
+xc(p) = z(p)K−1 ¯p. (1) The corresponding object-frame coordinate is 
+
+C∗(p) = R∗⊤  xc(p) − t∗. (2) These coordinates supervise the predicted 2D–3D correspon-dence map M2D-3D. The visible-region mask removes self-occluded, externally occluded, back-facing, and unprojected surfaces from dense coordinate supervision. 
+
+B. Overall Architecture of GAP-GDRNet 
+
+Fig. 2 summarizes the full pipeline. GDR-Net provides the geometry-guided regression backbone [1]. Relative to this 4 IEEE SENSORS JOURNAL, VOL. XX, NO. XX, XXXX 2026 Input dc FFdc F
+
+H
+
+W
+
+C
+
+Input dc F
+
+H
+
+W
+
+C
+
+> ...
+
+H
+
+W
+
+H
+
+W
+
+G
+
+C
+
+G
+
+C
+
+G
+
+C
+
+G
+
+C
+
+G
+
+1 W
+
+C
+
+G
+
+C
+
+G
+
+1 W
+
+C
+
+G
+
+C
+
+G
+
+H
+
+1
+
+C
+
+G
+
+C
+
+G
+
+H
+
+1
+
+> H context
+> W context
+> H context
+> W context
+
+Output ggca FFggca F
+
+H
+
+W
+
+C
+
+Output ggca F
+
+H
+
+W
+
+C
+
+> H Avg
+> Pool
+> H Max
+> Pool
+> W Avg
+> Pool
+> W Max
+> Pool
+> Conv 1× 1
+> GELU
+> Conv 1× 1
+> BN
+
+Shared Cross -Dimension 
+
+Interaction 
+
+> Conv 1× 1
+> GELU
+> Conv 1× 1
+> BN
+
+Shared Cross -Dimension 
+
+Interaction 
+
+H
+
+1
+
+C
+
+G
+
+C
+
+G
+
+1 W
+
+C
+
+G
+
+C
+
+G
+
+C
+
+G
+
+C
+
+G
+
+[B,256,64,64] 
+
+Input dc F
+
+H
+
+W
+
+C
+
+> ...
+
+H
+
+W
+
+H
+
+W
+
+G
+
+C
+
+G
+
+C
+
+G
+
+1 W
+
+C
+
+G
+
+1 W
+
+C
+
+G
+
+H
+
+1
+
+C
+
+G
+
+H
+
+1
+
+> H context
+> W context
+
+Output ggca F
+
+H
+
+W
+
+C
+
+> H Avg
+> Pool
+> H Max
+> Pool
+> W Avg
+> Pool
+> W Max
+> Pool
+> Conv 1× 1
+> GELU
+> Conv 1× 1
+> BN
+
+Shared Cross -Dimension 
+
+Interaction 
+
+H
+
+1
+
+C
+
+G
+
+1 W
+
+C
+
+G
+
+C
+
+G
+
+[B,256,64,64] 
+
+Fig. 3. Structure of the GGCA global grouped coordinate attention branch. The branch uses channel grouping, horizontal and vertical directional pooling, and cross-dimensional interaction to generate directional attention for enhancing long-range spatial dependencies. Input dc FFdc F
+
+> Avg Pool  Max Pool Median Pool
+> Shared
+> MLP
+> Shared
+> MLP
+> Shared
+> MLP
+> Spatial  Attention
+
+Channel -wise 
+
+Attention 
+
+Refined Channel 
+
+Feature 
+
+Output mecs FFmecs F
+
+## Channel Attention 
+
+> Conv 1× 1
+> GELU
+
+[B,256,64,64] 
+
+> [B,256,64,64]
+> [B,256,1,1]
+
+Input dc F
+
+> Avg Pool  Max Pool Median Pool
+> Shared
+> MLP
+> Shared
+> MLP
+> Shared
+> MLP
+> Spatial  Attention
+
+Channel -wise 
+
+Attention 
+
+Refined Channel 
+
+Feature 
+
+Output mecs F
+
+## Channel Attention 
+
+> Conv 1× 1
+> GELU
+
+[B,256,64,64] 
+
+> [B,256,64,64]
+> [B,256,1,1]
+
+Fig. 4. Structure of the MECS median-enhanced local feature branch. The branch uses max, median, and average pooling to generate channel-wise attention, and then applies spatial attention to obtain the final MECS output. 
+
+baseline, AFR is placed before the dense geometric heads, and PGSA is placed in Patch-PnP before the final regression layers. The target region is cropped from the input image and resized to a 3 × 256 × 256 RoI. Depending on the experiment, the box comes from annotation or from an external detector; the RoI camera intrinsics are adjusted after cropping and resizing. A ConvNeXt backbone and decoder produce the feature map refined by AFR: 
+
+Fafr = fAFR 
+
+ fdec (fbackbone (Iroi )) . (3) The geometric heads predict the 2D–3D correspondence map, visible-region mask, and surface-region representation: 
+
+(M2D-3D, Mvis , MSRA ) = Π geo (Fafr ). (4) The geometric outputs are concatenated with the RoI coordi-nate encoding to form the Patch-PnP input: 
+
+Xpnp = Φ (Concat[ M2D-3D, Mvis , MSRA ], Uroi ) . (5) The PGSA-enhanced Patch-PnP head then regresses the rota-tion representation and the scale-invariant translation estima-tion (SITE) representation: 
+
+( ˆR6d, ˆtSITE ) = Π PGSA pnp (Xpnp ). (6) The 6D rotation representation ˆR6d is orthogonalized into ˆR
+
+[30]. The SITE output is converted to ˆt using the centroid-depth parameterization of GDR-Net, giving the final pose ˆT =[ ˆR | ˆt].
+
+C. AFR Module for Global-Local Feature Enhancement 
+
+AFR is inserted between the decoder output and the dense geometric heads. Its input is the decoded feature used for model-coordinate prediction, visible-region masking, and surface-region representation. The purpose is to strengthen the geometric evidence available before pixel-level prediction, especially the global layout of the spacecraft and the local cues around boundaries or weakly textured regions. 
+
+A. Overall structure. AFR contains two parallel branches: GGCA for long-range structural context and MECS for lo-cal boundary, contour, and weak-texture responses. For the decoded feature Fdc ∈ RB×C×H×W , the branches produce 
+
+Fggca = G(Fdc ) and Fmecs = M(Fdc ). The two outputs are concatenated and projected: 
+
+Ffuse = ffuse 
+
+ Concat[ Fggca , Fmecs ]. (7) Residual scaling gives the refined output: 
+
+Fafr = Fdc + γafr Ffuse . (8) AUTHOR et al. : GAP-GDRNET FOR MONOCULAR VISUAL POSE SENSING 5PnP Feature 
+
+[B,69,64,64] [B,128,8,8] 
+
+Patch 
+
+Feature 
+
+> Linear
+> Projection
+> 64× 128
+
+Positional 
+
+Embedding 
+
+Flatten Spatial 
+
+> Q
+
+Enhanced 
+
+Patch Feature  
+
+> K
+> V64× 128
+> LayerNorm
+> QKV Linear
+
+Multi -Head 
+
+Self -Attention                     
+
+> 64× 32
+> 64× 32
+> 64× 32
+> 64× 32
+> 64× 128
+> 64× 128
+> 64× 128
+> Q :Softmax 11
+> 1
+> 32
+> T
+> Q K V
+> 
+> 
+> 1
+> Q :Softmax 3
+> Q :Softmax 4
+> Q :Softmax 2
+> Q :Softmax 211
+> 1
+> 32
+> T
+> Q K V
+> 
+> 
+> 11
+> 1
+> 32
+> T
+> Q K V
+> 
+> 
+> 11
+> 1
+> 32
+> T
+> Q K V
+> 
+> 
+> 
+> QKV Linear
+
+Multi -Head 
+
+Self -Attention                     
+
+> 64× 32
+> 64× 32
+> 64× 32
+> 64× 32
+> 64× 128
+> 64× 128
+> 64× 128
+> Q :Softmax 11
+> 1
+> 32
+> T
+> Q K V
+> 
+> 
+> 1
+> Q :Softmax 3
+> Q :Softmax 4
+> Q :Softmax 211
+> 1
+> 32
+> T
+> Q K V
+> 
+> 
+> 11
+> 1
+> 32
+> T
+> Q K V
+> 
+> 
+> 11
+> 1
+> 32
+> T
+> Q K V
+> 
+> 
+> 
+> LayerNorm
+> QKV Linear
+
+Multi -Head 
+
+Self -Attention                     
+
+> 64× 32
+> 64× 32
+> 64× 32
+> 64× 32
+> 64× 128
+> 64× 128
+> 64× 128
+> Q :Softmax 11
+> 1
+> 32
+> T
+> Q K V
+> 
+> 
+> 1
+> Q :Softmax 3
+> Q :Softmax 4
+> Q :Softmax 211
+> 1
+> 32
+> T
+> Q K V
+> 
+> 
+> 11
+> 1
+> 32
+> T
+> Q K V
+> 
+> 
+> 11
+> 1
+> 32
+> T
+> Q K V
+> 
+> 
+> 
+
+[B,128,8,8] 
+
+> Q
+> K
+> V
+> Reshape
+> 64× 128
+
+PnP Feature 
+
+[B,69,64,64] [B,128,8,8] 
+
+Patch 
+
+Feature 
+
+> Linear
+> Projection
+> 64× 128
+
+Positional 
+
+Embedding 
+
+Flatten Spatial 
+
+> Q
+
+Enhanced 
+
+Patch Feature  
+
+> K
+> V64× 128
+> LayerNorm
+> QKV Linear
+
+Multi -Head 
+
+Self -Attention                     
+
+> 64× 32
+> 64× 32
+> 64× 32
+> 64× 32
+> 64× 128
+> 64× 128
+> 64× 128
+> Q :Softmax 11
+> 1
+> 32
+> T
+> Q K V
+> 
+> 
+> 1
+> Q :Softmax 3
+> Q :Softmax 4
+> Q :Softmax 211
+> 1
+> 32
+> T
+> Q K V
+> 
+> 
+> 11
+> 1
+> 32
+> T
+> Q K V
+> 
+> 
+> 11
+> 1
+> 32
+> T
+> Q K V
+> 
+> 
+> 
+
+[B,128,8,8] 
+
+> Q
+> K
+> V
+> Reshape
+> 64× 128
+
+Fig. 5. Structure of the PGSA module. PGSA takes the PnP feature as input, applies three stride-2 convolutions to obtain the patch feature, performs position encoding, multi-head self-attention, and residual enhancement on flattened geometric tokens, and outputs the enhanced patch feature. The subsequent two fully connected layers with 1024 and 256 units follow the baseline Patch-PnP regression head. 
+
+Here, Concat[ ·, ·] denotes channel-wise concatenation, G(·)
+
+and M(·) are the GGCA and MECS transformations, and ffuse 
+
+contains two 1 × 1 convolution layers with GELU activation. The residual scale γafr is initialized to 0. Both input and output have size B×256 ×64 ×64 , so the refined feature is compatible with the original geometric heads. 
+
+B. GGCA branch. GGCA targets global geometric cues in weak-texture spacecraft images. As shown in Fig. 3, it follows coordinate attention in preserving positional information [23], but splits the channels into groups so that different groups can emphasize different directional responses. For the g-th feature group Fg
+
+> dc
+
+, horizontal and vertical average/max pooling descriptors pass through a shared 1 × 1 projection block to generate Agh and Agw. Average pooling describes the overall structural distribution, whereas max pooling retains salient contours and corner-like activations. The group-wise refinement is 
+
+˜Fg
+
+> ggca
+
+(h, w ) = Fg
+
+> dc
+
+(h, w ) ⊙ Agh(h) ⊙ Agw(w). (9) 
+
+Fggca = Concat 
+
+h ˜F1ggca , ˜F2ggca , . . . , ˜FG
+
+> ggca
+
+i
+
+. (10) Thus, GGCA introduces directional long-range context for the target major axis, outer contour, and cross-region geometry without applying full global self-attention. The implementation uses G = 8 channel groups and a reduction ratio of 4. 
+
+C. MECS branch. MECS focuses on local geometric cues that are easily weakened by illumination changes, reflections, and low surface texture. As shown in Fig. 4, the decoded feature is first projected by a 1 × 1 convolution with GELU activation. Median-enhanced channel attention and spatial attention are then applied in sequence. The channel stage selects locally useful feature channels, and the spatial stage emphasizes boundaries, contours, and compact structural regions. Given the projected feature X, let P denote the three channel-pooling operators in Fig. 4. The channel attention map aggregates their pooled descriptors: 
+
+Ac = X
+
+> ρ∈P
+
+ψ(ρ(X)) . (11) 
+
+Xc = Ac ⊙ X. (12) where ψ(·) is a shared MLP with reduction ratio 4. The average descriptor represents the overall response level, the max descriptor keeps strong local activations, and the me-dian descriptor reduces outlier responses caused by noise or strong reflection. After channel refinement, spatial attention highlights local boundary and contour regions. A depth-wise 
+
+5 × 5 convolution first forms the base spatial feature, and directional depth-wise convolution branches then extract multi-scale spatial responses with k ∈ { 7, 11 , 21 }:
+
+B = Conv 5×5(Xc). (13) 
+
+Sk = DWConv k×1
+
+ DWConv 1×k(B), k ∈ { 7, 11 , 21 }.
+
+(14) 
+
+S = X
+
+> k∈{ 7,11 ,21 }
+
+Sk. (15) 
+
+Fmecs = σ f1×1(S) ⊙ Xc. (16) MECS therefore combines robust channel selection with spatial localization. The median-enhanced channel attention suppresses abnormal local responses, and the spatial atten-tion strengthens boundary and weak-texture regions used by visible-region and dense-coordinate prediction. Together, GGCA and MECS provide complementary global and local refinement, while residual scaling keeps AFR near an identity mapping at the start of training. 
+
+D. PGSA Module for Patch-Level Geometric Relation Modeling 
+
+PGSA is added to the Patch-PnP head after the dense geometric predictions have been assembled into Xpnp and before the final fully connected regressors. It models relations among downsampled geometric regions while leaving the final rotation and translation regression form unchanged. As shown in Fig. 5, the module receives Xpnp ∈ RB×Cpnp ×64 ×64 from (5). PGSA contains local patch encoding, token-wise geometric self-attention, and residual feature restoration. Three 3 × 3
+
+stride-2 convolution blocks with group normalization (GN) and ReLU reduce the spatial resolution from 64 × 64 to 8 × 8
+
+and produce a 128-channel patch feature: 
+
+Z = fs2conv (Xpnp ). (17) 6 IEEE SENSORS JOURNAL, VOL. XX, NO. XX, XXXX 2026 
+
+The patch feature is flattened as Z0 = Flatten sp (Z). After adding a learnable position encoding P, LayerNorm and linear query-key-value (QKV) projection produce {Qi, Ki, Vi}Hi=1 .For the i-th head, 
+
+Oi = Softmax 
+
+ QiKTi
+
+√d
+
+
+
+Vi, i = 1 , . . . , H. (18) where H = 4 and d = 32 . The multi-head output is concatenated and projected back to the token dimension: 
+
+Zatt = fproj 
+
+ Concat[ O1, . . . , OH ]. (19) The attention feature is fused with the original patch tokens through a residual path: 
+
+˜Z0 = Z0 + γpgsa Zatt . (20) The scale γpgsa is initialized to 0, so PGSA starts close to an identity mapping. The fused tokens are reshaped into an enhanced patch feature and passed to the original Patch-PnP regression head, whose two fully connected layers have 1024 and 256 units. Convolutional encoding mainly propagates local neighborhood information, but spacecraft pose often depends on separated regions such as the main-body contour, the major-axis direction, solar-panel edges, and high-curvature parts. Applying attention only to the 8 × 8 patch tokens lets PGSA model these cross-region dependencies without using self-attention on the full-resolution dense feature map. 
+
+IV. E XPERIMENTS 
+
+The experiments cover the training setup, controlled com-parisons, and ablations. The self-built single-target spacecraft dataset is the primary benchmark, where pose accuracy and pose-network runtime are evaluated under a common detector and test script. T-LESS and LM-O are used as public, non-spacecraft checks for textureless and occluded objects. The ablations then separate the effects of backbone replacement, AFR, PGSA, computation cost, and scene factors such as illu-mination, shadow, occlusion, background, and target distance. 
+
+A. Experimental Setup 
+
+The primary evaluation uses the Blender-based spacecraft synthetic dataset from Section III-A. It is built from one spacecraft CAD model for object-specific monocular 6D pose sensing and contains 50,000 RGB images at 640 × 480 
+
+resolution. The training, validation, and test sets follow a 70%/10%/20% split. Instead of a purely image-level random split, samples are partitioned by combinations of target pose, illumination, background, and non-target occluder, so the held-out test set contains scene configurations not used for training. Each sample includes camera intrinsics, the 6D pose label, target box, target-object mask, visible-region mask, and dense model-coordinate map. Component-level masks are not used, and the depth buffer is used only during offline annotation generation. T-LESS and LM-O [2] serve only as supplementary module-level evaluations on textureless and occluded non-spacecraft objects. They are not used to claim spacecraft-domain gener-alization or sim-to-real spacecraft performance. For all experiments conducted in this article, the pose network receives a target RoI cropped from the monocular RGB image and resized to 256 × 256 . The detector is trained on the corresponding training split and then fixed. Its boxes are generated once for each dataset and reused by all reproduced methods and ablation variants, including GDR-Net and GAP-GDRNet. This keeps detection-stage variation outside the pose-network comparison. Detector runtime is excluded from the reported latency and FPS. The implementation uses PyTorch and an NVIDIA GeForce RTX 4090 GPU. Models are trained with Ranger, i.e., RAdam with Lookahead, using an initial learning rate of 2 × 10 −4,batch size 24, weight decay 0.05, and 300 epochs. Train-ing augmentation includes random brightness and contrast perturbation, background replacement, and scale perturbation. Occlusion is mainly provided by non-target objects already present in the rendered synthetic scenes. The main module settings are fixed across all relevant experiments. AFR uses eight GGCA channel groups and a reduction ratio of 4 in both GGCA and MECS. GGCA and MECS are fused by channel concatenation followed by two 
+
+1 × 1 convolution layers with GELU activation, and γafr is initialized to 0. In PGSA, three stride-2 convolution blocks with GN and ReLU encode the Patch-PnP feature. Self-attention is applied on an 8 × 8 token grid with four heads, a 128-dimensional QKV projection, 32 channels per head, and 
+
+γpgsa initialized to 0. The loss terms are 
+
+Sloss = {coord , mask , region , pm , cent , z }. (21) The total objective is 
+
+L = X
+
+> s∈S loss
+
+λsLs. (22) where Lcoord , Lmask , Lregion , Lpm , Lcent , and Lz are the dense coordinate, mask, region, point-matching, center-offset, and depth losses. Their weights λcoord , λmask , λregion , λpm ,
+
+λcent , and λz are set to 1.0, 1.0, 1.1, 1.0, 1.0, and 1.0. For the self-built spacecraft dataset and ablations, the reported metrics are rotation error, translation error, and ADD@0.02 m. After CAD normalization, the 0.02 m ADD threshold is approximately 10% of the target model diameter, so it is used as a strict tolerance for this single-target bench-mark. For T-LESS and LM-O, BOP Average Recall (AR) is reported under the BOP protocol. Pose-network efficiency is measured by latency and FPS with batch size 1 after the RoI is obtained. In the main comparison and module ablation tables, bold and underline denote the best and second-best results. In the public benchmark table, highlighting is only a within-column visual aid because published rows and reproduced rows do not share identical detectors or training protocols. In the factor-wise robustness table, only the best result in each row is highlighted. 
+
+B. Comparative Experiments 
+
+The comparison is split by purpose. The self-built spacecraft dataset provides the controlled setting: the compared methods use the same detector outputs, input resolution, hardware, AUTHOR et al. : GAP-GDRNET FOR MONOCULAR VISUAL POSE SENSING 7ZebraPose MRC -Net GDR -Net Ours Input ZebraPose MRC -Net GDR -Net Ours Input                                                                             
+
+> Fig. 6. Qualitative pose-projection comparison on the self-built spacecraft dataset. The columns show the input image and the projected pose results of ZebraPose, MRC-Net, GDR-Net, and GAP-GDRNet under different illumination, background, viewpoint, and occlusion conditions. TABLE I OVERALL PERFORMANCE AND POSE -NETWORK INFERENCE EFFICIENCY COMPARISON ON THE SELF -BUILT SPACECRAFT DATASET .
+> Method eR(deg) ↓eT(m) ↓ADD@0.02 m (%) ↑Latency / ms ↓FPS ↑
+> ZebraPose [10] 2.74 0.0223 92.74 110.0 9.09 MRC-Net [31] 2.43 0.0209 93.54 68.5 14.60 SurfEmb [11] 2.89 0.0237 92.81 1121.0 0.89 GDR-Net [1] 3.12 0.0243 91.28 22.0 45.45
+> GAP-GDRNet (Ours) 1.96 0.0165 95.16 27.8 35.97
+> TABLE II COMPARISON WITH RGB-BASED METHODS ON T-LESS AND LM-O
+> USING THE BOP A VERAGE RECALL METRIC .
+> Method Single Model T-LESS AR (%) ↑LM-O AR (%) ↑
+> CDPNv2 [6] ×40.7 62.4 EPOS [9] ✓46.7 54.7 DPODv2 [32] ×63.6 58.4 CosyPose [33] ×64.0 63.3 ZebraPose [10] ×72.3 72.1
+> SurfEmb [11] ✓74.7 65.6 GDR-Net [1] ×70.8 67.2 GAP-GDRNet (Ours) ×77.6 70.3
+
+and evaluation script, and both accuracy and pose-network runtime are reported. T-LESS and LM-O provide public BOP references for non-spacecraft objects. On these two datasets, the controlled comparison is the reproduced GDR-Net base-line versus GAP-GDRNet; published RGB-based methods are included only as contextual references under BOP AR. 
+
+1) Overall Performance on the Self-Built Spacecraft Dataset: 
+
+On the self-built spacecraft dataset, the comparison includes ZebraPose, MRC-Net, SurfEmb, the reproduced GDR-Net baseline, and GAP-GDRNet. ZebraPose and SurfEmb use surface encoding or embedding for RGB pose estimation [10], [11]. MRC-Net performs direct RGB-based pose regression with multi-scale residual correlation [31]. Table I reports rotation error, translation error, ADD@0.02 m, and per-image pose-network runtime under the same input resolution and hardware. Table I shows that GAP-GDRNet gives the lowest pose er-rors and the highest ADD@0.02 m on the self-built spacecraft dataset. Relative to GDR-Net, the rotation error decreases from 
+
+3.12 ◦ to 1.96 ◦, the translation error from 0.0243 m to 0.0165 m, and ADD@0.02 m increases from 91.28% to 95.16%. Compared with MRC-Net, the second-best method in pose accuracy, the gains are 0.47 ◦ in rotation error, 0.0044 m in translation error, and 1.62 percentage points in ADD@0.02 m. The added modules increase latency over the reproduced GDR-Net baseline, but GAP-GDRNet still runs at 35.97 FPS and is faster than MRC-Net, ZebraPose, and SurfEmb in this setting. Fig. 6 gives qualitative pose-projection examples under difficult appearance conditions. 
+
+2) Supplementary Experiments on T-LESS and LM-O: T-LESS mainly stresses textureless or weakly textured industrial objects, and LM-O stresses occlusion with incomplete visible target regions. These datasets test whether the same mod-ules improve the reproduced GDR-Net baseline outside the spacecraft setting. No spacecraft-specific prior is introduced. Table II shows gains of 6.8 percentage points on T-LESS and 3.1 percentage points on LM-O over reproduced GDR-Net. These results support controlled baseline improvement on textureless and occluded non-spacecraft objects; they are 8 IEEE SENSORS JOURNAL, VOL. XX, NO. XX, XXXX 2026 Input Baseline AFR Input Baseline AFR 
+
+Fig. 7. Feature-response visualization for the AFR variant on representative spacecraft images. The heat maps are obtained from the channel-wise 
+
+ℓ2 norm of the feature map before dense geometric prediction and are min–max normalized for each image. Baseline denotes the corresponding model without AFR, and AFR denotes the same setting with the AFR module enabled. TABLE III MODULE COMBINATION ABLATION RESULTS ON THE SELF -BUILT SPACECRAFT SYNTHETIC DATASET . E ACH RESULT IS THE AVERAGE OF THREE RUNS .
+
+Variant Backbone GGCA MECS PGSA eR ↓ / deg eT ↓ / m ADD@0.02 m (%) ↑
+
+GDR-Net ResNet-34 – – – 3.12 0.0243 91.28 Backbone-control variant ConvNeXt – – – 2.91 0.0230 92.04 + GGCA ConvNeXt ✓ – – 2.54 0.0225 92.86 + MECS ConvNeXt – ✓ – 2.73 0.0202 93.21 + PGSA ConvNeXt – – ✓ 2.57 0.0229 93.08 + AFR (GGCA + MECS) ConvNeXt ✓ ✓ – 2.21 0.0187 94.37 GAP-GDRNet (full) ConvNeXt ✓ ✓ ✓ 1.96 0.0165 95.16 
+
+not used to rank the method against all published RGB-based systems. 
+
+C. Ablation Studies 
+
+1) Module Combination Analysis: Ablations are run on the self-built spacecraft dataset to separate backbone replacement, AFR, and PGSA. Each variant is trained and evaluated three times, and the table reports the average. The three random seeds, training schedule, detector outputs, and evaluation script are shared across variants; no row is selected from a best single run. The baseline is GDR-Net with ResNet-34. The backbone-control variant replaces ResNet-34 with ConvNeXt while disabling GGCA, MECS, and PGSA. Other variants add GGCA, MECS, PGSA, AFR, or the full module set on the same ConvNeXt backbone. The backbone-control row reduces the rotation error from 
+
+3.12 ◦ to 2.91 ◦ and raises ADD@0.02 m from 91.28% to 92.04%, isolating the effect of replacing ResNet-34 with Con-vNeXt. Under the same ConvNeXt backbone, GGCA reduces the rotation error to 2.54 ◦, MECS gives the lowest translation error among the single-branch variants, and PGSA raises ADD@0.02 m to 93.08%. Combining GGCA and MECS AUTHOR et al. : GAP-GDRNET FOR MONOCULAR VISUAL POSE SENSING 9
+
+as AFR gives 2.21 ◦, 0.0187 m, and 94.37% ADD@0.02 m, which indicates a positive joint effect between the two feature branches. The full GAP-GDRNet obtains the best row in the table: 1.96 ◦, 0.0165 m, and 95.16%. Adding PGSA on top of AFR increases ADD@0.02 m by 0.79 percentage points, suggesting that patch-level geometric relation modeling remains useful after feature refinement. Fig. 7 inspects the feature response before dense geometric prediction. Without AFR, responses are more scattered and sometimes activate background or occluding regions. With AFR, stronger responses appear on the target body and visible structural boundaries. This visual trend is consistent with the GGCA, MECS, and AFR gains in Table III. PGSA is not visualized through this feature map because it acts later, inside Patch-PnP; its effect is reflected by the PGSA and full-model rows. 
+
+2) Complexity Analysis: Table IV reports the computational cost of representative variants. The ConvNeXt control model is larger than GDR-Net but still reaches 41.15 FPS. Relative to this control, AFR adds 0.45M parameters and 1.06G FLOPs, and PGSA adds 0.07M parameters and 0.07G FLOPs. The full model has 47.75M parameters and 14.99G FLOPs; its latency rises from 24.3 ms to 27.8 ms compared with the ConvNeXt control. The final pose-network speed is 35.97 FPS in this setting.                             
+
+> TABLE IV COMPLEXITY ANALYSIS OF REPRESENTATIVE VARIANTS ON THE SELF -
+> BUILT SPACECRAFT DATASET . P OSE -NETWORK LATENCY AND FPS
+> ARE MEASURED WITH BATCH SIZE 1ON THE SAME GPU.
+> Variant Params (M) FLOPs (G) Lat. / ms FPS GDR-Net 35.05 11.42 22.0 45.45
+> ConvNeXt control 47.22 13.86 24.3 41.15 + AFR 47.67 14.92 27.0 37.04 + PGSA 47.29 13.93 24.8 40.32 GAP-GDRNet 47.75 14.99 27.8 35.97
+
+3) Factor-Wise Robustness Analysis: The robustness anal-ysis asks whether the ablation gains remain under specific sensing conditions. The held-out spacecraft test set is grouped by rendering metadata and visibility statistics. Groups within one factor are mutually exclusive, but a test image also belongs to one group under the other factors; rows from different factors should therefore not be summed. Each group is evaluated with 500 test images sampled without replacement using a fixed random seed, and all reported groups have at least 500 eligible images. The trained weights are fixed, no model is retrained for any group, and the values are averaged over the same three runs used in the ablation study. Detector outputs, input resolution, and evaluation script are unchanged. Illumination groups use the predefined weak, normal, and strong rendering levels rather than post-hoc quantiles. Shadow is a separate binary metadata label because a shadowed image can still have weak, normal, or strong global illumination. Occlusion is measured by 
+
+rocc = 1 − |Ωvis ||Ωfull | , (23) where Ωvis is the visible target region and Ωfull is the full projected target-object mask before external occlusion. The groups are none ( rocc = 0), slight ( 0 < rocc ≤ 0.2), moderate ( 0.2 < rocc ≤ 0.4), and heavy ( rocc > 0.4). Background labels come from the renderer. The distance groups are determined by rendered camera-target distance d
+
+and divided into near, middle, and far ranges by the lower, middle, and upper thirds of the held-out test-set distance range. Table V reports ADD@0.02 m for GDR-Net, ConvNeXt control, +AFR, +PGSA, and GAP-GDRNet, abbreviated as GDR, Ctrl., AFR, PGSA, and Ours. GAP-GDRNet has the highest ADD@0.02 m in every group in Table V. The margins over GDR-Net are larger in difficult cases: weak illumination (+4.48 percentage points), shadow (+4.30), heavy occlusion (+4.99), cluttered back-grounds (+4.50), and far distance (+4.58). Easier groups still improve, but by smaller margins, such as no occlusion (+2.60) and clean backgrounds (+2.81). This pattern matches the de-sign motivation: AFR contributes larger standalone gains than PGSA in most difficult groups, particularly under occlusion and background interference, while PGSA consistently im-proves the ConvNeXt control and adds 0.61–1.03 percentage points when combined with AFR in the full model.                                                                                                                 
+
+> TABLE V FACTOR -WISE ADD@0.02 M(%) ROBUSTNESS ANALYSIS ON THE HELD -OUT SPACECRAFT TEST SET .EACH GROUP IS EVALUATED WITH 500 TEST IMAGES . GDR, C TRL ., AFR, PGSA, AND OURS DENOTE GDR-N ET , C ONV NEXT CONTROL , +AFR, +PGSA,
+> AND GAP-GDRN ET ,RESPECTIVELY .
+> Factor Group GDR Ctrl. AFR PGSA Ours Illumination Weak 89.62 90.38 93.16 91.84 94.10
+> Normal 92.41 93.03 95.18 93.94 95.88
+> Strong 91.18 92.26 94.32 93.31 95.34
+> Shadow No 92.36 93.02 95.07 93.88 95.82
+> Yes 90.21 91.08 93.68 92.27 94.51
+> Occlusion None 94.18 94.74 96.12 95.23 96.78
+> Slight 92.33 93.06 95.08 93.72 95.92
+> Moderate 90.48 91.31 93.82 92.41 94.83
+> Heavy 88.12 89.05 92.46 90.96 93.11
+> Background Clean 93.86 94.24 96.01 95.02 96.67
+> Complex 91.41 92.31 94.71 93.41 95.63
+> Earth 90.92 91.68 93.95 92.93 94.91
+> Cluttered 88.93 89.93 92.81 90.96 93.43
+> Distance Near 92.72 93.30 95.41 94.17 96.02
+> Middle 91.85 92.41 94.88 93.45 95.61
+> Far 89.27 90.41 92.82 91.62 93.85
+
+V. C ONCLUSION 
+
+This article introduced GAP-GDRNet for monocular RGB-based pose sensing on a single-target synthetic spacecraft dataset. The framework keeps the geometry-guided regression pipeline of GDR-Net and modifies two stages. AFR refines features before dense geometric prediction by combining long-range structural cues from GGCA with local contour and weak-texture responses from MECS. PGSA is inserted into Patch-PnP to relate patch-level geometric features before final pose regression. At inference time, the method uses only the 10 IEEE SENSORS JOURNAL, VOL. XX, NO. XX, XXXX 2026 
+
+RGB image, camera intrinsics, and target RoI; depth, masks, and ground-truth geometric annotations are not required as inputs. On the self-built spacecraft dataset, GAP-GDRNet reaches a rotation error of 1.96 ◦, a translation error of 0.0165 m, and 95.16% ADD@0.02 m. Compared with reproduced GDR-Net, ADD@0.02 m improves by 3.88 percentage points while the pose network runs at 35.97 FPS. T-LESS and LM-O provide additional controlled gains over the reproduced baseline on textureless and occluded non-spacecraft objects. The study remains limited to one spacecraft CAD model, synthetic-only spacecraft imagery, and object-specific training. Future work should test a broader set of spacecraft geometries, introduce real or higher-fidelity space imagery, and extend the framework to multi-target pose sensing. 
+
+REFERENCES 
+
+[1] G. Wang, F. Manhardt, F. Tombari, and X. Ji, “GDR-Net: Geometry-guided direct regression network for monocular 6D object pose estima-tion,” in Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , 2021, pp. 16 611–16 621. [2] T. Hodan, F. Michel, E. Brachmann, W. Kehl, A. G. Buch, D. Kraft, B. Drost, J. Vidal, S. Ihrke, X. Zabulis, C. Sahin, F. Manhardt, F. Tombari, T.-K. Kim, J. Matas, and C. Rother, “BOP: Benchmark for 6D object pose estimation,” in Proceedings of the European Conference on Computer Vision , 2018, pp. 19–34. [3] Y. Xiang, T. Schmidt, V. Narayanan, and D. Fox, “PoseCNN: Aconvolutional neural network for 6D object pose estimation in cluttered scenes,” in Proceedings of Robotics: Science and Systems , 2018. [4] B. Tekin, S. N. Sinha, and P. Fua, “Real-time seamless single shot 6D object pose prediction,” in Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition , 2018, pp. 292–301. [5] S. Peng, Y. Liu, Q. Huang, X. Zhou, and H. Bao, “PVNet: Pixel-wise voting network for 6DoF pose estimation,” in Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition ,2019, pp. 4561–4570. [6] Z. Li, G. Wang, and X. Ji, “CDPN: Coordinates-based disentangled pose network for real-time RGB-based 6-DoF object pose estimation,” in Proceedings of the IEEE/CVF International Conference on Computer Vision , 2019, pp. 7678–7687. [7] K. Park, T. Patten, and M. Vincze, “Pix2Pose: Pixel-wise coordinate regression of objects for 6D pose estimation,” in Proceedings of the IEEE/CVF International Conference on Computer Vision , 2019, pp. 7668–7677. [8] S. Zakharov, I. Shugurov, and S. Ilic, “DPOD: 6D pose object detector and refiner,” in Proceedings of the IEEE/CVF International Conference on Computer Vision , 2019, pp. 1941–1950. [9] T. Hodan, D. Barath, and J. Matas, “EPOS: Estimating 6D pose of objects with symmetries,” in Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , 2020, pp. 11 703–11 712. [10] Y. Su, M. Saleh, T. Fetzer, J. Rambach, N. Navab, B. Busam, D. Stricker, and F. Tombari, “ZebraPose: Coarse to fine surface encoding for 6DoF object pose estimation,” in Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , 2022, pp. 6728–6738. [11] R. L. Haugaard and A. G. Buch, “SurfEmb: Dense and continuous correspondence distributions for object pose estimation with learnt surface embeddings,” in Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , 2022. [12] Y. Hu, P. Fua, and M. Salzmann, “Perspective flow aggregation for data-limited 6D object pose estimation,” in Proceedings of the European Conference on Computer Vision , 2022, pp. 89–106. [13] X. Liu, R. Zhang, C. Zhang, G. Wang, J. Tang, Z. Li, and X. Ji, “GDRNPP: A geometry-guided and fully learning-based object pose estimator,” IEEE Transactions on Pattern Analysis and Machine Intelli-gence , vol. 47, no. 7, pp. 5742–5759, Jul. 2025. [14] S. Sharma and S. D’Amico, “Pose estimation for non-cooperative rendezvous using neural networks,” 2019, aAS 19-350. [15] T. H. Park, M. M¨ artens, G. Lecuyer, D. Izzo, and S. D’Amico, “SPEED+: Next-generation dataset for spacecraft pose estimation across domain gap,” in Proceedings of the IEEE Aerospace Conference , 2022. [16] T. H. Park and S. D’Amico, “Robust multi-task learning and online refinement for spacecraft pose estimation across domain gap,” Advances in Space Research , 2023. [17] J. Tobin, R. Fong, A. Ray, J. Schneider, W. Zaremba, and P. Abbeel, “Domain randomization for transferring deep neural networks from sim-ulation to the real world,” in Proceedings of the IEEE/RSJ International Conference on Intelligent Robots and Systems , 2017, pp. 23–30. [18] A. Shrivastava, T. Pfister, O. Tuzel, J. Susskind, W. Wang, and R. Webb, “Learning from simulated and unsupervised images through adversarial training,” in Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition , 2017, pp. 2107–2116. [19] J.-Y. Zhu, T. Park, P. Isola, and A. A. Efros, “Unpaired image-to-image translation using cycle-consistent adversarial networks,” in Proceedings of the IEEE International Conference on Computer Vision , 2017, pp. 2223–2232. [20] J. Hu, L. Shen, and G. Sun, “Squeeze-and-excitation networks,” in 
+
+Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , 2018, pp. 7132–7141. [21] Q. Wang, B. Wu, P. Zhu, P. Li, W. Zuo, and Q. Hu, “ECA-Net: Efficient channel attention for deep convolutional neural networks,” in 
+
+Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , 2020, pp. 11 531–11 539. [22] S. Woo, J. Park, J.-Y. Lee, and I. S. Kweon, “CBAM: Convolutional block attention module,” in Proceedings of the European Conference on Computer Vision , 2018, pp. 3–19. [23] Q. Hou, D. Zhou, and J. Feng, “Coordinate attention for efficient mobile network design,” in Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , 2021, pp. 13 713–13 722. [24] A. G. Roy, N. Navab, and C. Wachinger, “Concurrent spatial and channel squeeze & excitation in fully convolutional networks,” in Proceedings of Medical Image Computing and Computer Assisted Intervention , 2018, pp. 421–429. [25] D. Misra, T. Nalamada, A. U. Arasanipalai, and Q. Hou, “Rotate to attend: Convolutional triplet attention module,” in Proceedings of the IEEE/CVF Winter Conference on Applications of Computer Vision ,2021, pp. 3139–3148. [26] X. Wang, R. Girshick, A. Gupta, and K. He, “Non-local neural net-works,” in Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition , 2018, pp. 7794–7803. [27] Z. Liu, H. Mao, C.-Y. Wu, C. Feichtenhofer, T. Darrell, and S. Xie, “A ConvNet for the 2020s,” in Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , 2022, pp. 11 976–11 986. [28] V. Lepetit, F. Moreno-Noguer, and P. Fua, “EPnP: An accurate O(n) solution to the PnP problem,” International Journal of Computer Vision ,vol. 81, no. 2, pp. 155–166, 2009. [29] M. A. Fischler and R. C. Bolles, “Random sample consensus: Aparadigm for model fitting with applications to image analysis and automated cartography,” Communications of the ACM , vol. 24, no. 6, pp. 381–395, 1981. [30] Y. Zhou, C. Barnes, J. Lu, J. Yang, and H. Li, “On the continuity of rotation representations in neural networks,” in Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition ,2019, pp. 5745–5753. [31] Q. Li, C. Rennie, B. Rister, B. Williams, G. D. Hager, and C. Zhang, “MRC-Net: 6-DoF pose estimation with multiscale residual correlation,” in Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition , 2024. [32] I. Shugurov, S. Zakharov, and S. Ilic, “DPODv2: Dense correspondence-based 6DoF pose estimation,” IEEE Transactions on Pattern Analysis and Machine Intelligence , 2022. [33] Y. Labb´ e, J. Carpentier, M. Aubry, and J. Sivic, “CosyPose: Consistent multi-view multi-object 6D pose estimation,” in Proceedings of the European Conference on Computer Vision , 2020. AUTHOR et al. : GAP-GDRNET FOR MONOCULAR VISUAL POSE SENSING 11 
+
+Yonglong Zhang Yonglong Zhang received his Bachelor’s degree in Mechatronic Engineering from Harbin Institute of Technology in 2024. He is currently pursuing the master’s degree with the School of Mechatronics Engineering, Harbin Institute of Technology. His research interests include robot pose estimation and robotic arm manipulation. 
+
+Yang Liu Yang Liu was born in Handan, Hebei, China in 1990. He received the B.S., M.S. and Ph.D. degrees from the Harbin Institute of Tech-nology, Harbin, in 2013, 2015 and 2020, re-spectively. Currently, he is an associate profes-sor at Harbin Institute of Technology and works as the deputy secretary of the Youth League Committee. His research interests include space robotics, humanoid robot and computer vision. He has published 35 scientific papers, 16 in-vention patent and 2 textbooks. He has been selected for the Youth Talent Support Program and honored with titles including Heilongjiang Province Outstanding Youth.

@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-07-07 <!--dpr-date:20260707-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/07/2607.02360v1-gap-gdrnet-geometry-aware-monocular-visual-pose-sensing-on-a-single-target-synthetic-spacecraft-dataset" data-sidebar-item="{&quot;title&quot;: &quot;GAP-GDRNet: Geometry-Aware Monocular Visual Pose Sensing on a Single-Target Synthetic Spacecraft Dataset&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2607.02360v1-gap-gdrnet-geometry-aware-monocular-visual-pose-sensing-on-a-single-target-synthetic-spacecraft-dataset&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;sat-asm-prec&quot;}], &quot;evidence&quot;: &quot;航天器6D位姿估计可支撑卫星组件精密对准&quot;}">GAP-GDRNet: Geometry-Aware Monocular Visual Pose Sensing on a Single-Target Synthetic Spacecraft Dataset</a>
   * 2026-07-06 <!--dpr-date:20260706-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/06/2606.31727v1-focal-plate-prototyping-for-modular-focal-planes-of-stage-5-instruments-for-ground-based-telescopes" data-sidebar-item="{&quot;title&quot;: &quot;Focal Plate Prototyping for Modular Focal Planes of Stage-5 Instruments For Ground-Based Telescopes&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2606.31727v1-focal-plate-prototyping-for-modular-focal-planes-of-stage-5-instruments-for-ground-based-telescopes&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;sat-asm-prec&quot;}], &quot;evidence&quot;: &quot;焦板原型研制需满足严格倾斜和焦点公差以实现光学元件精密对准&quot;}">Focal Plate Prototyping for Modular Focal Planes of Stage-5 Instruments For Ground-Based Telescopes</a>

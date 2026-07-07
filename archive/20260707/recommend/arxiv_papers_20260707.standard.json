@@ -1,0 +1,58 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-07T22:20:13.181432+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 0,
+    "deep_cap": 8,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 13,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2607.02360v1",
+      "source": "arxiv",
+      "title": "GAP-GDRNet: Geometry-Aware Monocular Visual Pose Sensing on a Single-Target Synthetic Spacecraft Dataset",
+      "abstract": "Monocular relative pose sensing is a central perception problem in non-cooperative rendezvous and on-orbit servicing. In spacecraft images, however, weak surface texture, thin appendages, illumination changes, and partial occlusion often leave only sparse and unstable geometric evidence. This article presents GAP-GDRNet, a geometry-aware attention-enhanced framework for monocular RGB-based 6D pose sensing. The method follows the geometry-guided direct regression paradigm of GDR-Net and modifies two points in the pipeline: an attention-based feature refinement (AFR) module is placed before dense geometric prediction, and a patch-level geometric self-attention (PGSA) module is inserted into Patch-PnP. AFR reinforces global spacecraft structure together with local weak-texture cues; PGSA then relates downsampled geometric patches before final pose regression. A Blender-based annotation process supplies target masks, visible-region masks, dense model-coordinate maps, camera intrinsics, and 6D pose labels for supervised training.",
+      "authors": [
+        "Yonglong Zhang",
+        "Yang Liu"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI"
+      ],
+      "published": "2026-07-02T16:02:24+00:00",
+      "link": "https://arxiv.org/pdf/2607.02360v1",
+      "tags": [
+        "keyword:TF-SAR",
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:TF-SAR",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "6D pose estimation for spacecraft can enable precision alignment of satellite components",
+      "llm_evidence_cn": "航天器6D位姿估计可支撑卫星组件精密对准",
+      "llm_evidence": "航天器6D位姿估计可支撑卫星组件精密对准",
+      "canonical_evidence": "航天器6D位姿估计可支撑卫星组件精密对准",
+      "llm_tldr_en": "Proposes a geometry-aware visual pose sensing framework for spacecraft that could improve alignment accuracy in satellite assembly",
+      "llm_tldr_cn": "针对航天器非合作交会对接与在轨服务中单目相对位姿感知面临的弱纹理、薄附件、光照变化和遮挡等挑战，本文提出GAP-GDRNet，一种几何感知注意力增强框架，用于从单目RGB图像进行6D位姿估计。该方法在GDR-Net基础上引入注意力特征细化模块和面片级几何自注意力模块，强化全局和局部几何特征。实验结果表明，该框架在合成航天器数据集上有效提升位姿估计精度，为精密装配中的对准提供潜在技术支撑。",
+      "llm_tldr": "针对航天器非合作交会对接与在轨服务中单目相对位姿感知面临的弱纹理、薄附件、光照变化和遮挡等挑战，本文提出GAP-GDRNet，一种几何感知注意力增强框架，用于从单目RGB图像进行6D位姿估计。该方法在GDR-Net基础上引入注意力特征细化模块和面片级几何自注意力模块，强化全局和局部几何特征。实验结果表明，该框架在合成航天器数据集上有效提升位姿估计精度，为精密装配中的对准提供潜在技术支撑。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "precision alignment of satellite components on ground",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
