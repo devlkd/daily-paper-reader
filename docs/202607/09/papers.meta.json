@@ -1,0 +1,24 @@
+{
+  "label": "2026-07-09",
+  "date": "2026-07-09",
+  "generated_at": "2026-07-09T22:06:46",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202607/09/2607.04352v1-last-meter-precision-navigation-for-uavs-a-diffusion-refined-aerial-visual-servoing-approach",
+      "section": "quick",
+      "title_en": "Last-Meter Precision Navigation for UAVs: A Diffusion-Refined Aerial Visual Servoing Approach",
+      "authors": "Yaxuan Li, Jiarui Zeng, Shaofei Huang, Zhedong Zheng",
+      "date": "2026-07-05",
+      "pdf": "https://arxiv.org/pdf/2607.04352v1",
+      "score": "6.0",
+      "evidence": "视觉伺服实现最后米级精准导航",
+      "tldr": "无人机最后10米单目视觉导航面临尺度模糊与旋转不连续挑战，现有方法在大视角变化下泛化差。本文提出DreamNav，粗阶段通过三角函数参数化稳健预测姿态，精炼阶段利用扩散模型进行视觉想象，选择最优轨迹。在480万图像对PairUAV基准上，DreamNav超越视觉伺服与基础模型基线，实现高精度和零样本迁移，为无人机精准自主导航提供新方案。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "In this work, we study the last-meter precision navigation for UAVs, e.g., autonomously reaching a target within the final 10 meters using monocular vision. This task is challenging due to scale ambiguity, rotation discontinuities, and the need for fine-grained spatial reasoning. Existing methods often fail under large viewpoint changes or lack generalization to unseen environments. To this end, we propose DreamNav, a coarse-to-fine diffusion-refined aerial visual servoing framework. In the first coarse-estimation stage, a robust regression policy employs a trigonometric parameterization to predict rotation by jointly modeling sine and cosine components, effectively mitigating optimization instabilities caused by angular periodicity. Given this coarse estimate, the second diffusion-refined stage utilizes a pre-trained world model to simulate future visual observations for candidate actions, selecting the trajectory that minimizes visual discrepancy with the target through a process of visual imagination. To support rigorous evaluation, we contribute PairUAV, a large-scale benchmark comprising 4.8 million image pairs across 72 scenes, curated from the University-1652 dataset. Extensive experiments show DreamNav outperforms strong visual servoing and foundation model baselines in accuracy and generalization, with zero-shot transfer to unseen scenes.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

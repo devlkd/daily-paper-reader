@@ -1,0 +1,58 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-09T22:05:39.175845+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 0,
+    "deep_cap": 8,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 13,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2607.04352v1",
+      "source": "arxiv",
+      "title": "Last-Meter Precision Navigation for UAVs: A Diffusion-Refined Aerial Visual Servoing Approach",
+      "abstract": "In this work, we study the last-meter precision navigation for UAVs, e.g., autonomously reaching a target within the final 10 meters using monocular vision. This task is challenging due to scale ambiguity, rotation discontinuities, and the need for fine-grained spatial reasoning. Existing methods often fail under large viewpoint changes or lack generalization to unseen environments. To this end, we propose DreamNav, a coarse-to-fine diffusion-refined aerial visual servoing framework. In the first coarse-estimation stage, a robust regression policy employs a trigonometric parameterization to predict rotation by jointly modeling sine and cosine components, effectively mitigating optimization instabilities caused by angular periodicity. Given this coarse estimate, the second diffusion-refined stage utilizes a pre-trained world model to simulate future visual observations for candidate actions, selecting the trajectory that minimizes visual discrepancy with the target through a process of visual imagination. To support rigorous evaluation, we contribute PairUAV, a large-scale benchmark comprising 4.8 million image pairs across 72 scenes, curated from the University-1652 dataset. Extensive experiments show DreamNav outperforms strong visual servoing and foundation model baselines in accuracy and generalization, with zero-shot transfer to unseen scenes.",
+      "authors": [
+        "Yaxuan Li",
+        "Jiarui Zeng",
+        "Shaofei Huang",
+        "Zhedong Zheng"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-07-05T15:16:44+00:00",
+      "link": "https://arxiv.org/pdf/2607.04352v1",
+      "tags": [
+        "keyword:TF-SAR",
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "last-meter precision navigation using visual servoing",
+      "llm_evidence_cn": "视觉伺服实现最后米级精准导航",
+      "llm_evidence": "视觉伺服实现最后米级精准导航",
+      "canonical_evidence": "视觉伺服实现最后米级精准导航",
+      "llm_tldr_en": "DreamNav proposes a coarse-to-fine diffusion-refined visual servoing for UAV last-meter precision navigation, using trigonometric rotation parameterization and diffusion for translation, outperforming existing methods.",
+      "llm_tldr_cn": "针对无人机最后米级精准导航难题，本文提出DreamNav框架，采用两阶段粗到细扩散优化视觉伺服。第一阶段通过三角函数联合建模正弦与余弦分量实现鲁棒旋转估计，第二阶段利用扩散模型精细化平移预测，克服尺度模糊与旋转不连续性。实验表明该方法在多种场景和未知环境中均能准确到达目标，优于现有方法。该工作为基于单目视觉的无人机自主精准操作提供了可泛化的解决方案。",
+      "llm_tldr": "针对无人机最后米级精准导航难题，本文提出DreamNav框架，采用两阶段粗到细扩散优化视觉伺服。第一阶段通过三角函数联合建模正弦与余弦分量实现鲁棒旋转估计，第二阶段利用扩散模型精细化平移预测，克服尺度模糊与旋转不连续性。实验表明该方法在多种场景和未知环境中均能准确到达目标，优于现有方法。该工作为基于单目视觉的无人机自主精准操作提供了可泛化的解决方案。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "precision control in satellite assembly process",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

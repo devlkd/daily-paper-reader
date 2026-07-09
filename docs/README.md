@@ -6,26 +6,26 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-07
-- 运行时间：2026-07-07 22:21:03 UTC
+- 最新运行日期：2026-07-09
+- 运行时间：2026-07-09 22:06:37 UTC
 - 运行状态：成功
 - 本次总论文数：1
 - 精读区：0
 - 速读区：1
 
 ### 今日简报（AI）
-今日重点速读了一篇航天器视觉位姿感知论文，探索如何用几何感知网络提升单目合成数据上的定位精度。  
-该工作强调结合几何先验与深度学习，在单一目标合成数据集上实现稳健的6D位姿估计。  
-普通读者若对太空AI感兴趣，不妨关注“合成数据训练”与“几何信息融合”这两个关键突破口。
-- 详情：[/202607/07/README](/202607/07/README)
+今日速读无人机末端精准导航新研究，尝试用扩散模型优化视觉伺服完成最后米级定位。  
+核心看点是该方法将扩散模型用于航拍视觉伺服，有望提升复杂场景下的落点精度。  
+若你对无人机自主降落或视觉导航感兴趣，可快速浏览其流程图与实验，不必深读细节。
+- 详情：[/202607/09/README](/202607/09/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [GAP-GDRNet: Geometry-Aware Monocular Visual Pose Sensing on a Single-Target Synthetic Spacecraft Dataset](/202607/07/2607.02360v1-gap-gdrnet-geometry-aware-monocular-visual-pose-sensing-on-a-single-target-synthetic-spacecraft-dataset)  
-   标签：评分：7.0/10、query:sat-asm-prec
-   evidence：航天器6D位姿估计可支撑卫星组件精密对准
+1. [Last-Meter Precision Navigation for UAVs: A Diffusion-Refined Aerial Visual Servoing Approach](/202607/09/2607.04352v1-last-meter-precision-navigation-for-uavs-a-diffusion-refined-aerial-visual-servoing-approach)  
+   标签：评分：6.0/10、query:sat-asm-prec
+   evidence：视觉伺服实现最后米级精准导航
 
 
 <div class="dpr-home-promo-card">

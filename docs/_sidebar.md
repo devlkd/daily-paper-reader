@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-07-09 <!--dpr-date:20260709-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/09/2607.04352v1-last-meter-precision-navigation-for-uavs-a-diffusion-refined-aerial-visual-servoing-approach" data-sidebar-item="{&quot;title&quot;: &quot;Last-Meter Precision Navigation for UAVs: A Diffusion-Refined Aerial Visual Servoing Approach&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2607.04352v1-last-meter-precision-navigation-for-uavs-a-diffusion-refined-aerial-visual-servoing-approach&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;sat-asm-prec&quot;}], &quot;evidence&quot;: &quot;视觉伺服实现最后米级精准导航&quot;}">Last-Meter Precision Navigation for UAVs: A Diffusion-Refined Aerial Visual Servoing Approach</a>
   * 2026-07-07 <!--dpr-date:20260707-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/07/2607.02360v1-gap-gdrnet-geometry-aware-monocular-visual-pose-sensing-on-a-single-target-synthetic-spacecraft-dataset" data-sidebar-item="{&quot;title&quot;: &quot;GAP-GDRNet: Geometry-Aware Monocular Visual Pose Sensing on a Single-Target Synthetic Spacecraft Dataset&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2607.02360v1-gap-gdrnet-geometry-aware-monocular-visual-pose-sensing-on-a-single-target-synthetic-spacecraft-dataset&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;sat-asm-prec&quot;}], &quot;evidence&quot;: &quot;航天器6D位姿估计可支撑卫星组件精密对准&quot;}">GAP-GDRNet: Geometry-Aware Monocular Visual Pose Sensing on a Single-Target Synthetic Spacecraft Dataset</a>
