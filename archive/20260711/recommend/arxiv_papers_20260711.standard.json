@@ -1,0 +1,58 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-11T21:33:17.493857+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 0,
+    "deep_cap": 8,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 13,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2607.08309v1",
+      "source": "arxiv",
+      "title": "Design, Modeling, and Validation of Curvature-Based Shape-Aware Flexible Phased Arrays",
+      "abstract": "Knowledge of the shape of deformed, mechanically flexible phased arrays plays an important role in the ability to maintain their beam pattern. This work presents the design, modeling, and experimental validation of such arrays with integrated curvature-based shape sensing. We analyze, over a large set of representative deformed shapes, the sensor density required for effective deformation sensing under measurement noise; develop and experimentally validate a physical model relating measured strain to local board curvature; and demonstrate an end-to-end design of a shape-aware, 6-GHz, eight-element array in conformed and free-hanging scenarios, achieving an average reconstruction accuracy of ~6% while recovering beam-steering performance at radii of curvature below 3.6 cm. The system utilizes a low-cost, eight-channel, 360$^{\\circ}$ digitally controlled phase-shifter platform useful for a wide range of smart-antenna experiments. The shape is recovered from low-rate surface measurements, independently of RF conditions and without feedback, making the approach a general sensing modality applicable beyond the beam correction demonstrated here.",
+      "authors": [
+        "Yair Dashevsky",
+        "Alon Elgarat",
+        "Matan Gal-Katziri"
+      ],
+      "primary_category": "physics.app-ph",
+      "categories": [
+        "physics.app-ph"
+      ],
+      "published": "2026-07-09T09:48:55+00:00",
+      "link": "https://arxiv.org/pdf/2607.08309v1",
+      "tags": [
+        "keyword:TF-SAR",
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:TF-SAR",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Flexible phased arrays with shape sensing for beam pattern maintenance",
+      "llm_evidence_cn": "柔性相控阵集成曲率传感以在变形下保持波束方向图",
+      "llm_evidence": "柔性相控阵集成曲率传感以在变形下保持波束方向图",
+      "canonical_evidence": "柔性相控阵集成曲率传感以在变形下保持波束方向图",
+      "llm_tldr_en": "This paper presents a shape-aware flexible phased array design with integrated curvature sensing, achieving ~6% reconstruction accuracy and recovering beam-steering in deformed scenarios, enabling resilient flexible arrays.",
+      "llm_tldr_cn": "针对柔性相控阵变形后难以保持波束方向图的问题，本文提出一种集成曲率传感的形状感知设计方法。通过建立应变与局部曲率的物理模型，并在6 GHz八单元阵列上进行实验验证，实现了约6%的平均重建精度，恢复了波束控制功能。该方法为柔性天线阵列在空间可展开结构等复杂形状场景中的应用提供了关键技术支撑。",
+      "llm_tldr": "针对柔性相控阵变形后难以保持波束方向图的问题，本文提出一种集成曲率传感的形状感知设计方法。通过建立应变与局部曲率的物理模型，并在6 GHz八单元阵列上进行实验验证，实现了约6%的平均重建精度，恢复了波束控制功能。该方法为柔性天线阵列在空间可展开结构等复杂形状场景中的应用提供了关键技术支撑。",
+      "llm_tags": [
+        "query:tf-sar"
+      ],
+      "matched_query_tag": "query:tf-sar",
+      "matched_query_text": "flexible antenna array for spaceborne SAR",
+      "matched_requirement_id": "req-20",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "label": "2026-07-11",
+  "date": "2026-07-11",
+  "generated_at": "2026-07-11T21:34:31",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202607/11/2607.08309v1-design-modeling-and-validation-of-curvature-based-shape-aware-flexible-phased-arrays",
+      "section": "quick",
+      "title_en": "Design, Modeling, and Validation of Curvature-Based Shape-Aware Flexible Phased Arrays",
+      "authors": "Yair Dashevsky, Alon Elgarat, Matan Gal-Katziri",
+      "date": "2026-07-09",
+      "pdf": "https://arxiv.org/pdf/2607.08309v1",
+      "score": "7.0",
+      "evidence": "柔性相控阵集成曲率传感以在变形下保持波束方向图",
+      "tldr": "柔性相控阵变形后需形状感知维持波束，本文提出集成曲率传感的形状感知方案。分析典型变形下传感器密度需求，构建应变-局部曲率物理模型，实现6 GHz八单元阵列在弯曲与悬挂场景的形状恢复与波束校正。重建精度约6%，恢复曲率半径低至3.6 cm的波束转向，方法通用且无需射频反馈。",
+      "tags": "query:tf-sar",
+      "abstract_en": "Knowledge of the shape of deformed, mechanically flexible phased arrays plays an important role in the ability to maintain their beam pattern. This work presents the design, modeling, and experimental validation of such arrays with integrated curvature-based shape sensing. We analyze, over a large set of representative deformed shapes, the sensor density required for effective deformation sensing under measurement noise; develop and experimentally validate a physical model relating measured strain to local board curvature; and demonstrate an end-to-end design of a shape-aware, 6-GHz, eight-element array in conformed and free-hanging scenarios, achieving an average reconstruction accuracy of ~6% while recovering beam-steering performance at radii of curvature below 3.6 cm. The system utilizes a low-cost, eight-channel, 360$^{\\circ}$ digitally controlled phase-shifter platform useful for a wide range of smart-antenna experiments. The shape is recovered from low-rate surface measurements, independently of RF conditions and without feedback, making the approach a general sensing modality applicable beyond the beam correction demonstrated here.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
