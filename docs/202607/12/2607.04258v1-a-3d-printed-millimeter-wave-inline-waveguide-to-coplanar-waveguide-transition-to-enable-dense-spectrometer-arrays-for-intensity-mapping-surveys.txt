@@ -1,0 +1,785 @@
+Title: A 3D-Printed Millimeter-Wave Inline Waveguide-to-Coplanar-Waveguide Transition to Enable Dense Spectrometer Arrays for Intensity Mapping Surveys
+
+URL Source: https://arxiv.org/pdf/2607.04258v1
+
+Published Time: Tue, 07 Jul 2026 03:02:26 GMT
+
+Number of Pages: 14
+
+Markdown Content:
+> Research Article 1
+
+# A 3D-Printed Millimeter-Wave Inline Waveguide-to-Coplanar-Waveguide Transition to Enable Dense Spectrometer Arrays for Intensity Mapping Surveys 
+
+# AUSTIN STOVER 1,2,* , J ULIANG LI3,4 , P ETER SHARPE 5,6 , M ORGANA IACOCCA 2,3 , A UDREY SCOTT 1,2 ,JESSICA ZEBROWSKI 2,3,7 , AND JEFF MCMAHON 1,2,3,7,8,9 
+
+> 1
+
+Dept. of Physics, University of Chicago, 5801 S Ellis Ave, Chicago, IL 60637, USA 
+
+> 2
+
+Kavli Institute for Cosmological Physics, University of Chicago, 5640 South Ellis Avenue, Chicago, IL 60637, USA 
+
+> 3
+
+Dept. of Astrophysics, University of Chicago, 5801 S Ellis Ave, Chicago, IL 60637, USA 
+
+> 4
+
+Argonne National Laboratory, 9700 S Cass Ave, Lemont, IL 60439, USA 
+
+> 5
+
+Dept. of Aeronautics and Astronautics, Massachusetts Institute of Technology, 77 Massachusetts Ave., Cambridge, MA 02142, USA 
+
+> 6
+
+NVIDIA Corporation, 2788 San Tomas Expy, Santa Clara, CA 95051, USA 
+
+> 7
+
+Fermi National Accelerator Laboratory, Fermilab P.O. Box 500, Batavia, IL 60510, USA 
+
+> 8
+
+Enrico Fermi Institute, University of Chicago, 933 E. 56th St., Chicago, IL 60637, USA 
+
+> 9
+
+NSF-Simons AI Institute for the Sky, 875 N. Michigan Ave., Suite 3500, Chicago, IL 60611, USA 
+
+> *
+
+Corresponding author: stovera@uchicago.edu Compiled July 7, 2026 
+
+We present a 3D-printed millimeter-wave, octave-bandwidth, in-line waveguide-to-coplanar-waveguide transition designed to enable focal planes with dense arrays of on-chip spectrometers. These arrays will enable compelling surveys of the large-scale structure of the universe through millimeter-wave intensity mapping. The transition consists of a four-step ridge-waveguide transformer that couples light from a rectangular waveguide onto a coplanar waveguide via an electrical connection made with indium bump bonds. We develop a tolerance-aware optimization approach to identify high-performance transition geometries that are robust to manufacturing variations; the same formulation can be applied to other tolerance-sensitive design problems. We also describe the implementation of a custom apparatus and procedure for bump-bonding a silicon chip to a metallized 3D-printed component. We detail the fabrication of the coplanar waveguide chip and three-dimensional waveguide structure, simulations and metrology of a test device, and room temperature reflectance measurements of this device. The room temperature metrology and reflection measurements are consistent with a model that predicts a coupling efficiency of 
+
+∼95 % at cryogenic temperatures in the 85–170 GHz frequency range. 
+
+1. INTRODUCTION 
+
+Measurements of the distribution of matter on cosmological scales are key to understanding the formation, composition, and physics of our universe. Spectroscopic galaxy surveys have placed tight constraints on dark energy, the sum of neu-trino masses, and primordial non-Gaussianity by building high-precision maps of the large scale structure (LSS) over the redshift range 0 ≲ z ≲ 3 [ 1]. Millimeter-wave line intensity mapping (LIM) surveys have the potential to complement and expand on these measurements in higher, relatively unexplored redshifts, efficiently probing the LSS over large scales and providing access to more information about the Universe [2]. LIM spectroscopically measures the integrated emission from spectral lines in galaxies and the intergalactic medium, includ-ing the carbon monoxide J → J − 1 and ionized carbon fine structure emission lines at millimeter wavelengths, enabling the tomographic reconstruction of large scale structure at higher redshifts (2 ≲ z ≲ 10). LIM surveys represent a powerful new approach to precision cosmology, but aggregate line emission is faint, making sensitivity a central challenge. Research in LIM spectrometers is therefore focused on maxi- 
+
+> arXiv:2607.04258v1 [astro-ph.IM] 5 Jul 2026 Research Article 2
+
+Feedhorn 
+
+Orthomode Transducer 
+
+Inline WG–CPW Transition 
+
+10 mm pitch 
+
+MKID Filterbank Spectrometers 
+
+Readout with SMP Connectors 
+
+18.9 cm 
+
+Spectrometer Card  
+
+> Fig. 1.
+
+A HIgh-density Vertical Integrated Spectrometers (HI-VIS) integral field unit (left) for mm-wave line intensity mapping and a single feedhorn (right) with the orthomode transducer made transparent and the waveguide cap removed. Each feedhorn couples incident light to an orthomode transducer, which separates the two polarization states and routes each one to an in-line waveguide to coplanar waveguide transition as described in this paper. This transition couples the optical power onto on-chip spectrometers that lie parallel to the incident light, allowing the spectrometers associated with a single feedhorn to fit within its footprint. The transition therefore enables dense packing of spectrometers within a focal plane. mizing sensitivity. A key approach is to push to higher densities of detectors within a fixed focal-plane area. Several current and planned LIM experiments, such as the South Pole Telescope Shi-rokoff Line Intensity Mapper [ 3] and the Terahertz Integral Field Unit with Universal Nanotechnology [ 4 ], use on-chip spectrome-ters that perform simultaneous readout of hundreds of frequency channels organized into multiple spectrometers within a mono-lithic focal plane. These spectrometer arrays are compact and can provide higher instantaneous sensitivity per unit focal plane area than other integral field unit (IFU) implementations [ 5– 7 ]. However, a substantial fraction of the focal plane area of these arrays is devoted to the spectrometers, which are large com-pared to each optical coupling element. An order-of-magnitude improvement in focal plane packing density may be obtained by arranging each spectrometer to fit within the footprint of its optical coupling element. This paper demonstrates a key technology needed to realize this goal: an in-line waveguide to coplanar waveguide (WG–CPW) transition. With this transition, the on-chip spectrometer can be rotated perpendicular to the focal plane, such that incident light approaches the edge of the spectrometer chip. Light entering a feedhorn antenna is then coupled in-line from a WG onto a spectrometer that fits within its feedhorn’s footprint. Figure 1 shows a preliminary concept for a densely packed spectrometer array for mm-wave intensity mapping enabled by the in-line transition presented in this paper. This design packs 384 spectrometers into an 18.9 mm diameter hexagonal focal plane, demonstrating that an order of magnitude improvement in packing density is possible with this approach. Each optical coupling element consists of a feed-horn [ 8, 9] which couples light from the telescope optics through a circular waveguide to an orthomode transducer (OMT). The OMT [ 10 , 11 ] separates the two incident linear polarization states and outputs each polar-ization through a rectangular waveguide to an in-line WG–CPW transition as described in this paper. The WG–CPW transition then couples the signal onto a feedline for microwave kinetic in-ductance detectors on a filterbank spectrometer-on-a-chip, with readout through wire bonds to SMP connectors [ 12 , 13 ]. This architecture, which we call the HIgh-density Vertical Integrated Spectrometers (HI-VIS) IFU, provides a path to realize cameras containing thousands of spectrometers on modern telescopes like the Fred Young Submillimeter Telescope, Simons Obser-vatory (SO) telescopes, or the South Pole Telescope. Such in-struments would provide the mapping speed needed to survey large cosmological volumes and achieve the scientific potential of mm-wave line intensity mapping [2]. Section 2 presents the design of the WG–CPW transition and describes its implementation in a test device. Section 3 describes the optimization and tolerancing methodology to choose a nom-inal design point for this transition, and section 4 details the fabrication of the three-dimensional and on-chip components of the transition. Section 5 describes the interconnection of these components through bump bonding and the development of a custom bump-bonder that can perform this function. Finally, section 6 reports reflectivity measurements of the test device and compares these measurements to simulations to characterize device performance. The sources of loss are accounted for, both in the measurement environment and extrapolated to cryogenic temperatures, and this combination of measurement and model-ing is used to estimate the transmission of a transition fabricated for cryogenic applications. Section 7 concludes. Research Article 3
+
+2. DESIGN 
+
+The in-line WG–CPW transition is designed to provide an octave bandwidth: 85 – 170 GHz . The waveguide side of the transformer is adapted from the in-line waveguide-to-coaxial transition pre-sented by Cano and Mediavilla [ 14 ], retaining a stepped-ridge impedance transformer and electrically small coupling gap be-fore the backshort. In the present design, the waveguide is scaled for higher frequencies and the coaxial output is replaced by a CPW, requiring a new planar output geometry, reoptimization of the waveguide structure, and a different interconnect. The transition has two main components: a 3D waveguide with the stepped ridge transformer (the waveguide structure) and a 2D CPW fabricated on a chip (the CPW chip). Polarized light enters the transition through the rectangular waveguide as a transverse electric TE 10 mode and ascends the 4-step ridge waveguide impedance transformer (fig. 2). This step structure both matches the impedance of the waveguide to that of the CPW and is optimized such that reflected modes in the transi-tion destructively interfere. A benefit of using a ridge waveguide is that it has frequency cutoffs that allow for extended single-mode performance, enabling wide bandwidth. The steps also reshape the propagating field to concentrate power at the ridge, matching more closely the field configuration of the CPW and its dominant mode. An electrically small gap between the back of the last step and the backshort acts as a controlled reactance that transforms the waveguide TE mode to the quasi-transverse electromagnetic CPW mode [ 14 ]. This gap must be small to en-sure that it suppresses any additional unwanted resonant modes that would reduce the passband width. A cantilevered silicon probe carrying the CPW on the chip extends into the waveguide from beyond the backshort. It protrudes from a rectangular aper-ture in the backshort which extends to the top of the waveguide for assembly, but is small enough that radiation at the relevant frequencies cannot leak out (either as a propagating mode or via tunneling). The conductor trace on this probe is galvanically connected to the top step with indium bump bonds, and each ground trace is likewise connected to the backshort. Indium is chosen for the interconnect since it remains ductile even at temperatures approaching absolute zero and can be deposited as a thick film [ 15 ]. A trough extrudes opposite the WG struc-ture from the backshort underneath the CPW conductor trace to accommodate the portion of the CPW mode that propagates in the air. One important design modification required by moving from the coaxial probe in [ 14 ] to a CPW is that the CPW ground traces must protrude beyond the backshort and into the waveguide a certain distance x11 (fig. 2). This ground extension is key to ensuring good performance of the transition; lossless simula-tions show that a ground trace extension of optimal length can decrease reflected power by around an order of magnitude with respect to the same transition without a ground trace extension. 
+
+> Test Device
+
+The test device consists of two back-to-back WG–CPW transi-tions connected by a CPW of length 2.6 mm end-to-end. The two transitions comprise a monolithic three-dimensional WG structure bump-bonded to a die with a single CPW as shown in the inset of fig. 2. A planar metal cap is added to close each waveguide in the transition; this cap is connected to a standard waveguide flange for connections to millimeter-wave test equip-ment (fig. 8). A channel underneath the CPW conducting trace in between 
+
+> 100 μm
+
+Indium Bumps x11 
+
+Die Alignment Marks 
+
+x8
+
+x7
+
+x6
+
+x5
+
+x10 
+
+x4
+
+x3
+
+x2
+
+x1
+
+Light from OMT 
+
+x9 
+
+> Fig. 2.
+
+Diagram of the transition, including the coplanar waveguide chip as viewed from the handle side, with detail of the cantilever and a render of the overall back-to-back transi-tion test device inset. The waveguide cap is omitted for clarity. Note that the detail of the cantilever shows bump bonds and traces deposited onto the device side (the underside) of the cantilever. Dark blue denotes indium bumps on the underside, gold denotes traces on the underside, and light blue denotes silicon. The underlying waveguide structure is yellow. Dimen-sions are given in table 1. the back-to-back transitions permits the propagation of a trans-mission line mode. Two 745 μm -wide raised features, known as bosses, flank both sides of this CPW channel (as seen in fig. 4); these bosses are bump bonded to the CPW ground traces with large bond arrays (the upper right image in fig. 6). The bond ar-rays mechanically join the waveguide transition structure to the chip as well as create an air-bridge across the CPW ground traces which suppresses odd modes. The purpose of these bosses is to limit any small warping of the 3D-printed back-to-back transi-tion from affecting the relative orientation of the die. Deviations in the flatness of the back-to-back transition are additionally accounted for by depositing indium both onto the die and onto the back-to-back transition: a combined target thickness before bonding of ∼20 μm of indium between the die and waveguide transition structure provide the allowance necessary to ensure a reliable bond; the bond is performed with a goal of ∼50 % compression. During the design, it was envisioned that this test device could facilitate both reflection measurements and transmission measurements. After fabrication, it was realized that losses in the silicon device layer were large enough that transmission is exceedingly small. Dielectric losses alone (eqs. (3) and (4)) are estimated at ≳30 dB . Losses associated with the gold conductive traces make this substantially higher. High-quality transmission measurements would require a cryogenic testing environment and a new die fabricated on a high-resistivity (float-zone) silicon substrate with superconducting niobium conductors. This is beyond the scope of the present work. 
+
+> Implementation with Microstrip
+
+The design presented here is based on a CPW but implemen-tation with a microstrip is possible and advantageous in some circumstances. We present one such design in section B. Research Article 4
+
+x1
+
+x2
+
+Feasible 
+
+Points 
+
+Infeasible 
+
+Points 
+
+Convex 
+
+Hull 
+
+Point 
+
+Design 
+
+Uncertainty 
+
+Box-Set 
+
+Fig. 3. Illustration of the robust optimization proce-dure (eq. (2)) for a toy cost function f (x1, x2). The proce-dure identifies a point design x⋆ (black marker) for fabrica-tion which maximizes the volume of the uncertainty box-set 
+
+B(x, ∆x) (black boundary). The uncertainty box-set represents a fabrication tolerance around the point design and lies within the set of feasible designs F : designs that satisfy a desired per-formance constraint f (x1, x2) ≤ f0 (blue markers). Designs that do not satisfy the feasibility constraint are marked in red. The performance level set—the boundary of the set of feasi-ble designs around arg min f (x1, x2)—is approximated by the convex hull of feasible points (blue polygon) as sampled by a Bayesian optimizer. 
+
+3. OPTIMIZATION AND TOLERANCING 
+
+Optimization of the transition geometry was carried out using a novel formulation to both achieve good transmission across the passband and to minimize the sensitivity of the final design to manufacturing tolerances. Simulations of candidate designs were performed using a third-party mesh-based electromagnetic solver 1 to analyze their performance. However, each black-box simulation is computationally expensive, limiting the ability to explore the 11-dimensional design space (fig. 2) [ 16 , 17 ]. In addition, cost functions (eq. (1)) characterizing insertion loss in this design space were found to be highly nonconvex (i.e. many local optima), so manual tuning combined with a gradient de-scent method is similarly inefficient. We therefore use Bayesian optimization [ 18 , 19 ] to efficiently sample the design space and perform the optimization in an automated manner. Bayesian optimization models the cost function as a Gaussian process, a model which may be evaluated relatively cheaply and often compared to the electromagnetic simulation. This model is used to select the most promising candidate for the next evaluation, updating its posterior belief after evaluation to select the next candidate, so it is able to explore a large, highly nonconvex space relatively quickly. 
+
+Approach 
+
+Typically, waveguide transition design optimization is per-formed without taking into account manufacturing tolerances in the optimization methodology, but the performance of this mm-wave transition was found to be highly sensitive to deviations in the geometry on the order of ∼10 μm , which is around or below the tolerances of several of the waveguide structure fabrication techniques that were considered [ 20 , 21 ]. Thus, considering 
+
+> 1Ansys HFSS 2022 R2 (Ansys, Inc., Canonsburg, PA, USA).
+
+uncertainty in the optimization process allows us to identify a design that not only exceeds a target performance threshold at its nominal design point but also exceeds this threshold for any design within manufacturing tolerances. We quantify the performance of a candidate design x ∈ X 
+
+(with parameters x1, x2, · · · , xN ), where X ⊆ RN is the search domain, with a goal-based scalar performance cost function 
+
+f (x) = max 
+
+
+
+Lνi (x) − Lgoal , 0 
+
+ 
+
+> 2
+
+(1) 
+
+where the frequency-dependent loss is 
+
+Lνi (x) = 20 log 10 |S11 (νi; x)|
+
+and || r|| p =
+
+ 1 
+
+> Nν
+
+∑νi r2
+
+> νi
+
+1/ p
+
+is the Lp norm on the residuals r.
+
+Lνi (x) measures the reflected power |S11 |2 in decibels across the sampled frequencies νi.2 For the WG–CPW transition, Lgoal is the desired reflected power level, in decibels, across the pass-band. We use p = 2 for a balance between penalty and flexibility in the loss function. Directly minimizing f (x) (naïve optimization) identifies a ge-ometry with low reflected power, but it does not determine how performance declines under manufacturing deviations. When the minimum xmin = arg min f (x) lies in a narrow or anisotropic valley, dimensional errors can move the fabricated transition to a nearby geometry with substantially higher reflection. We there-fore use f (x) not as the optimization objective function but as a local performance criterion. Instead, we approach the problem with a set-based optimiza-tion formulation similar to the minimax approach: instead of finding the single best design, we find the largest axis-aligned box B ⊆ X in the N-dimensional parameter space such that 
+
+B(x, ∆x) = 
+
+> N
+
+# ∏
+
+> i=1
+
+[xi − ∆xi, xi + ∆xi ] , ∆x ∈ RN
+
+> ≥0
+
+where the cost function values f (x) ∈ R of even the worst designs contained by that box lie within some desired perfor-mance threshold f (x) ≤ f0. This box represents an uncertainty set: the set of designs that would be compliant with a typical per-dimension manufacturing tolerance specification. In other words, for some measure of the box size Φ(∆x), we solve maximize  
+
+> x,∆x
+
+Φ(∆x)
+
+subject to f (y) ≤ f0 ∀y ∈ B (x, ∆x)
+
+(2) 
+
+to determine the largest possible design tolerances that still guar-antee the desired performance. Φ(∆x) represents the objective function for this robust optimization formulation, whose opti-mal point design, (x⋆, ∆x⋆), is equivalent to a manufacturing specification for a nominal design and tolerance: x⋆ 
+
+> i
+
+± ∆x⋆ 
+
+> i
+
+.
+
+Implementation 
+
+To implement eq. (2) we use a two-step optimization proce-dure as illustrated in fig. 3. In the first step, we identify the optimization constraint and domain. We determine a target performance threshold f0 and aim to find the corresponding               
+
+> 2If loss is not negligible, as in simulations with lossy materials or where power may be radiated away, the power lost during transmission, 1 − | S21 (νi;x)|2, may be used in place of |S11 (νi;x)|2. In this paper we optimize a WG–CPW transition with approximately lossless materials and include losses only after identifying optima in order to model the test device. The WG to microstrip transition in section B, on the other hand, was optimized using 1 − | S21 (νi;x)|2as the loss. Research Article 5
+
+feasible set F = {x | f (x) ≤ f0} in parameter space. To do this, we developed a script that automates execution of the third-party electromagnetic solver in order to integrate it into our custom simulation algorithm. With this script, we implement Bayesian optimization using domain reduction [ 22 ] to minimize 
+
+f (x). Then we use Bayesian optimization to efficiently sample the designs near the feasibility boundary surrounding xmin .To implement this boundary sampling, we aim to determine the feasibility boundary around xmin . We transform the problem into the optimization of a sigmoid curve within some smaller domain Z ⊂ X which covers xmin and where we also expect the boundary to lie: minimize  
+
+> z∈Z
+
+tanh f (z) − f0
+
+s
+
+where s is a domain scaling factor that here we set to unity. The sigmoid curve translates the feasibility region into a smooth, differentiable “basin”. We perform the optimization with a Bayesian approach using a lower confidence bound (LCB) acqui-sition function aLCB (x; β) = μ(x) − βσ (x) with a large trade-off parameter β = 100, where μ(x) and σ(x) are the mean and marginal standard deviation functions of f (x), respec-tively [ 23 , 24 ]. The acquisition function determines where the next evaluation occurs in the problem space—it gives the ex-pected loss for the Gaussian random process associated with the evaluation of f at x. A relatively heavily weighted μ(x) pri-oritizes exploitation whereas weighting σ(x) prioritizes explo-ration, so by setting β ≫ 1, the optimizer prioritizes exploration near regions where the variance σ2(x) of f (x) is high—that is, on the feasibility boundary where the sigmoid curve produces the most variance. The subset of the sampled designs within F is then used to construct a convex hull, the smallest convex set (or polyhedron) that encloses this subset. This convex hull approximates the performance level set {x | f (x) = f0} and can be mathematically represented as a polytope of the form Ax ≤ b, where A ∈
+
+RM×N . Here, M is the number of facets of the convex hull and 
+
+N is the number of dimensions in the design space, with M ≫ N
+
+typically. In the second step, we aim to maximize Φ(∆x) = V(B), the volume of the axis-aligned box B contained within this convex hull, according to the constraint and feasible set identified in the first step. Specifically, this forms a robust optimization problem where the variables are the box’s center coordinates and side lengths: (x, ∆x). In general, this yields a box with 2 N vertices, all of which must be contained within the convex hull. Each vertex therefore produces M linear inequality constraints, resulting in a total of 2 N × M linear constraints. Because of this unfavorable scaling, this formulation quickly becomes intractable even with specialized linear optimization methods. We therefore introduce a new reformulation that significantly simplifies the problem by exploiting the fact that, for each hull facet, we can use the facet’s normal vector to pre-compute which of the 2 N box vertices will be the first to violate the constraint when the box is expanded. This allows us to eliminate the need to check all 2 N box vertices for each facet, reducing the number of total linear constraints to simply M and restoring tractability. This reformulation allows us to solve the robust optimization problem in seconds on a laptop by making use of the AeroSandbox optimization framework [ 16 ] with the interior-point solver [25]. The objective function Φ maximizes the volume of the box uncertainty set Φ(∆x) = V(B) = 2N ∏Ni=1 ∆xi. This can be con-veniently expressed as a linear function of design variables if the underlying box-side-length variables are log-transformed, corre-sponding to a cost function that penalizes the relative tolerance of each dimension equally. Without loss of generality, this objec-tive function could be modified to include a linear reweighting of log-transformed dimensions to emphasize that achieving a given relative tolerance level may correspond to different costs for certain dimensions. The choice to formulate the problem via a convex level set brings significant advantages during the subsequent optimiza-tion step, namely that (a) highly efficient convex optimization methods can be used, and (b) any converged solution is provably globally optimal (with respect to the convex-relaxed problem). However, this relaxation process can introduce modeling error if the true performance level set is nonconvex, as illustrated in fig. 3. For design problems with smooth performance functions, a Taylor-series argument can be made to suggest that, even in such cases, this error tends to be small for small box-sets. This seems to be true for the WG–CPW transition design described in this work: of the 351 points sampled with the Bayesian LCB ap-proach for the feasibility boundary determination problem, 107 of those points are outside F (i.e. have a performance worse than the threshold), but none of those points outside F lie inside the convex hull of the 244 sampled points within F . However, this is not guaranteed, so estimating the degree of level-set noncon-vexity (if any) may be warranted when applying this procedure to other applications. The final design (x⋆, ∆x⋆) for the transition fabricated in this work was determined assuming a waveguide bulk resistivity of 2.6 × 10 −6 Ω cm and a loss tangent of 1.5 × 10 −5 in the CPW dielectric. We used a loss goal of Lgoal = −30 dB for the naïve optimization and a lower Lgoal = −20 dB for the tolerancing operation. We tried several values of f0 until we found that an acceptable performance threshold of f0 = −12 dB gave a toler-ance similar to that of our chosen 3D-printing manufacturing process. The optimized parameters for this design x⋆ 
+
+> i
+
+are speci-fied in table 1 in section A; other design parameters were held fixed during optimization. A box B with identical side-lengths (for simplicity) was used to calculate the required tolerance on 
+
+x⋆ 
+
+> i
+
+, which was determined to be 
+
+∆x⋆ = ∆x⋆ 
+
+> i
+
+= 7.9 μm, i = 1, . . . , N
+
+where N = 11. This tolerance also happens to keep the sim-ulated transmitted power above 95% over an octave band-width for 95% of randomly sampled transitions within toler-ance [12, 13]. 
+
+4. FABRICATION 
+
+Two major components comprise this WG–CPW transition: A three-dimensional waveguide transition structure and a die con-taining the CPW with extruded cantilevers electrically bonded to the waveguide transition structure. The electrical interfaces between these components are made with indium bump bonds. Indium is deposited both as pads on the waveguide transition and bumps on the die, with the thickness of this deposition chosen to enable interconnection while accounting for the toler-ance of the waveguide structure, a compression of ∼50% during bonding, and tolerance of misalignment. Research Article 6
+
+> 1 mm
+
+50 (μm) 
+
+35 
+
+25 
+
+15 
+
+4
+
+8
+
+−50 (μm) 
+
+−35 
+
+−25 
+
+−15 
+
+−4
+
+−8Bosses 
+
+CPW Channel 
+
+Fig. 4. Confocal micrograph of a typical 3D-printed waveg-uide transition structure, including surface deviations from the nominal design. Model and measured surface alignment is performed with respect to the step structure. Features with surfaces marked in green ( ±4 μm ) must be within the feature size tolerance of ±∆x⋆ ≈ 8 μm . However, surface deviations 
+
+±8 μm or more may still be within tolerance. Note that sur-faces further from the surface alignment features have worse deviations. This illustrates the difficulties of bump bonding across large 3D-printed surfaces. 
+
+Waveguide Transition Structure 
+
+The waveguide transition structure was fabricated by a com-mercial vendor 3 through additive manufacturing with alumina ceramic and then made conductive through a metallization pro-cess. Photographs of this structure are shown in fig. 5. In detail, the waveguide structure was fabricated by pro-jection micro-stereolithography [ 26 ]. A photosensitive resin containing a slurry of 500 nm alumina particles was selectively hardened layer-by-layer by ultraviolet light, then subjected to a debinding and sintering process that leaves behind only alumina ceramic. This alumina substrate was then metallized following a proce-dure developed at NIST for silicon platelet feed-horn arrays [ 27 ]. The process starts with an in-situ sputter etch followed by DC magnetron sputtering a 200 nm thin film of titanium to promote adhesion; this process was performed by a commercial ven-dor. 4 Then a 1 μm copper layer is sputtered to make the surface conductive, and a 5 μm gold layer is electroplated to realize a high-conductivity surface impervious to oxidation–this was performed by a separate vendor. 5
+
+To perform bump bonding, indium pads are thermally evapo-rated onto the WG transition. The target thickness of these pads is 10 μm to provide sufficient allowance for bonding and com-pression; they were measured to be 9– 15 μm thick by confocal microscopy. The indium is deposited in three regions where the bump bond connections are made. First, it is deposited onto the top step of the stepped impedance transformer structure to make the CPW conductor trace connection. It is also deposited onto the lower surface of the rectangular aperture in the backshort, on either side of the CPW trough, to make the CPW ground plane connection, as well as onto the bosses straddling the length of the CPW trough, for bonding with the CPW ground traces to create the air-bridge that connects the CPW grounds. The in-
+
+> 3BMF Precision, Inc., (Maynard, MA, USA).
+> 4LGA Thin Films, Inc., (Santa Clara, CA, USA).
+> 5Custom Microwave, Inc., Vitesse Systems (Longmont, CO, USA).
+
+CPW Chip 
+
+WG Transition Structure 
+
+CPW Probe 
+
+Bump bonds 
+
+> 1 mm
+> 100 μm
+
+Fig. 5. Photograph of a completed waveguide to coplanar waveguide transition with detail of the coplanar waveguide probe. The bump bonds which electrically connect the copla-nar waveguide conductor trace to the top step of the waveg-uide transition step structure are visible in the detail. The discoloration around the coplanar waveguide probe on the waveguide transition structure was caused by heating from thermal deposition of the indium. It does not impact the resis-tivity. dium deposition is controlled with a 3D-printed titanium hard mask that fits over the part for the deposition process. This mask is fabricated from titanium using direct metal laser sintering, making it thermally and mechanically robust and reusable. The hard mask includes a drafted sleeve that locates the waveguide component to within ±50 μm in either direction beneath the mask apertures when the component is placed into the mask. This tolerance is sufficient because on the waveguide transition structure, only pads must be deposited, not individual bumps. For evaporation of indium during thermal deposition, a low-mass tungsten boat was used to hold the indium. Ceramic crucibles, which have a lower thermal conductivity, were found to radiate too much heat onto the sample, since they require a higher temperature from the heating source to achieve the same evaporation rate as a tungsten boat. Multiple depositions alternated with cooling periods were performed to keep tem-peratures lower and refill the crucible in order to achieve the desired indium thickness. The sample holder was also actively water-cooled. Still, the surface of the WG transition heated significantly—this is evident from the discoloration around the deposition area (fig. 5)—since the alumina body of the transition is an insulator, and the thin metallization does not conduct heat substantially. The discoloration appears to be superficial; it does not impact the surface resistivity. Use of a semiconductor device analyzer and probe station showed that both pristine and discol-ored surfaces have ohmic I-V curves with the same resistances at the same probe spacings. Research Article 7
+
+> 250 μm
+
+IR Image During Bonding 
+
+CPW Probe 
+
+WG Transition structure, top step 
+
+> 250 μm
+> 40 μm
+> 500 μm
+
+CPW die 
+
+CPW Probe 
+
+Bump bonds for mechanical interface 
+
+Fig. 6. Optical micrograph of coplanar waveguide chip (top right) as viewed from the device side, with details of scanning electron microscope images of the indium bumps (top left, bot-tom left) and a composite image of the die during alignment as viewed from the handle side through the short-wavelength infrared microscope during bonding (bottom right). The trans-parency of crystalline silicon to infrared wavelengths allows the traces deposited on the device side to be seen from the han-dle side, enabling alignment between device-side alignment marks and physical features on the waveguide transition struc-ture below. 
+
+Die Fabrication 
+
+The die carries a CPW with conductors made of a gold thin-film on the 15 μm thick device layer of a diced silicon-on-insulator (SOI) wafer. Bump bonds are deposited onto the gold to fa-cilitate electrical interconnections to the waveguide transition structure. The input and output interconnects lie along two op-posing 150 μm wide by 401 μm long and 15 μm thick cantilevers. The cantilever is made by first etching away the device layer around the cantilever planform before flipping the wafer around and etching away the handle and oxide layers of the SOI under-neath and around the cantilever. The die and bump bonds are shown in fig. 6. We now describe the process used to fabricate this structure. The fabrication of the CPW chip entailed the following steps: 1. A lift-off process was used to pattern the CPW conductor and ground traces onto the device side of the SOI wafer. The SOI comprises a 15 um device layer, 0.5 um buried ox-ide layer, and 300 um handle layer. Before each lithography step, the wafer is cleaned using sonication in acetone and isopropyl alcohol baths, a deionized (DI) water rinse, and a spin dry. A negative photoresist is spun onto the wafer, followed by exposure with a maskless aligner, develop-ment, and a downstream oxygen descum. A 15 nm titanium seed layer and 200 nm gold layer are then deposited with electron-beam physical vapor deposition. Afterwards, the wafer is left in n-methyl-2-pyrrolidone at 80 °C overnight to complete the lift-off. 2. The alignment markers are then transferred from the device layer to the handle layer for the later thru-handle etch. A quick ( 5 cycles ) deep silicon etch (DSE) into the back of the wafer is performed using a positive photoresist that is pat-terned with the maskless aligner using backside alignment. 3. Indium is deposited with thermal evaporation into bumps over the CPW traces using the same evaporation process as that of the indium deposition on the waveguide transition structure. A 20 μm AZ P4620 positive photoresist 6 mask is created using a double-spin process 7 to form square bump bonds 21.5 × 21.5 μm in area and with a target thickness of 10 μm (and measured by confocal microscopy to be 10 –13 μm tall). Again, thermal deposition is performed with active water cooling. The higher thermal conductivity of the silicon SOI (as compared to the alumina waveguide structure) allows its surface temperature to be kept well below the melting point of the photoresist. Lift-off is per-formed with the deposited indium facing downwards for a good release; the wafer is clamped to a teflon tripod to keep it from touching the bottom of the beaker. When lift-off was attempted with the deposited indium facing up, the indium redeposited onto the wafer surface, adhering to it and preventing successful lift-off. 4. A DSE is then performed on the device side of the SOI wafer to form the CPW probe, using the same 20 μm AZ P4620 positive photoresist double-spin process for the mask. A slower spin acceleration of 50 rpm s −1 is used to ensure the integrity of the bump bonds. 5. The device side of the wafer is adhered onto a carrier wafer in order to etch the handle side, in a process informed by the work of Tang et al. [ 28 ]. A solution of ethylene glycol-phthalic anhydride resin (“mounting wax”) 8 and propylene glycol monomethyl ether acetate (PGMEA) with a 1.5:1 mass ratio is prepared to form the adhesive. To dissolve the resin, it is cut into pieces approximately 3 mm in size before being submerged in the PGMEA and sonicated at 40 kHz on medium power in an 80 °C bath for about 1 h . A carrier wafer is then roughened by a fluorine reactive ion etch (RIE) to enhance adhesion; without this step, the resin coating beaded up on the silicon surface. The RIE is per-formed with a high bias power of 500 W and a lower radio frequency power of 100 W in order to physically sputter the surface. The resin solution is then spun onto the carrier wafer at 800 rpm , which is placed into a vacuum oven—this step is repeated until a resin thickness of 37 μm is achieved (enough to account for the device thickness and bump bond heights), which requires three spins and vacuum bakes. The device side of the SOI is then aligned with the carrier wafer and pressed into the wax with a 1.87 kg weight before being placed in an 11 Torr vacuum at 110 °C for 30 min. 6. A backside DSE is performed, this time on the handle side of the SOI wafer, to undercut the CPW probe and form the bulk of the CPW die. A 27 μm thick AZ 40XT positive photoresist 9 mask is used, with an 85 °C post-development                
+
+> 6AZ P4620 Positive Thick Photoresist (Merck KGaA, Darmstadt, Germany).
+> 7The double-spin process is as follows: (i) Spin at 2500 rpm at 500 rpm for 45 s ; (ii) Bake at 110 °C on a hot plate for 2 min ; (iii) Let cool 30 s ; (iv) Repeat the spin.; (v) Bake at 115 °C on a hot plate for 3 min ; (vi) 20 s at 100 thou ; and (vii) Let rehydrate for 30 min before exposure.
+> 8PELCO Quickstick 135 Temporary Mounting Wax, (Ted Pella, Inc., Redding, CA, USA).
+> 9AZ 40XT-11D Chemically Amplified Thick Photoresist (Merck KGaA, Darm-stadt, Germany). Research Article 8
+
+hard bake 10 to increase the selectivity of the DSE. A low heat exchanger temperature of 12 °C is used to ensure high aspect ratio and selectivity, and every 300 cycles , a 15 min wait period is included to allow the wafer to cool back down, again ensuring high selectivity even with the poor thermal conduction through the mounting wax. 7. Finally, the oxide layer exposed by the backside etch is re-moved by 25 min of moderate agitation in buffered oxide etch. After dicing, the dies are released from the carrier wafer by sonication in acetone on medium-low power at 72 kHz for 4 min , which dissolves the mounting wax. Son-ication at a lower 40 kHz frequency was attempted, but during this step, even at the lowest power available, the CPW probe cantilevers consistently broke off the die—the higher frequencies did not damage the cantilevers. The dies are oriented vertically during this step to allow the carrier layer to slide off without damaging the cantilevers, and they are removed from the acetone 30 s afterwards in order to fully dissolve any residual mounting wax. 
+
+5. ASSEMBLY 
+
+The waveguide transition structure and die are assembled using a combination of flip-chip bonding for electrical interconnections and epoxy for mechanical strength. The transition is completed by mounting it into a custom-machined aluminum part that includes a standard waveguide flange, in order to provide an interface to test equipment, as well as a metal cap which is used to seal the top of the waveguide (fig. 8). 
+
+Bump Bonding 
+
+Conventional flip-chip bonders often use autocollimators to ensure die coplanarity between the two substrates; however, these instruments require both dies to have optically flat surfaces with larger areas than is available with the waveguide transition structure. Ensuring coplanarity between the relatively small and textured surface of the 3D-printed waveguide transition substrate and the die requires a different approach. To this end, we built a custom flip-chip bonder (fig. 7). This bonder includes a motorized 3-axis stage which holds 3 micro-scopes: a wide depth-of-field telecentric microscope for overall alignment, a shallow depth-of-field microscope to perform pre-cision vertical measurements for pitch and tilt alignment, and a short-wavelength infrared (SWIR) microscope to permit fine translational and rotational alignment. Since monocrystalline silicon is transparent to SWIR light, such a microscope can view alignment markings on the underside of a silicon chip from the top and even view through the silicon to detect reflective fea-tures underneath, which makes fine alignments with alignment markings on the far surface of the silicon chip possible. The flip-chip bonder also has a six degrees of freedom (DOF) stage stack controlled by Vernier micrometers: a lower stage controls rotation, pitch, and roll, and an upper stage controls translation. A spring-loaded dual-pantograph platform sits on top of the upper stage. Its purpose it to provide linear deforma-tion along the bonding axis while remaining stiff in other DOFs in order to provide a controlled force during bonding. The plat-form was modified from a dual pantograph "lab jack" to make it free running, with a compression spring installed between              
+
+> 10 The hard bake is performed with programmable lift pins and the following lengths of time at each pin height: (i) 30 s at 500 thou ; (ii) 20 s at 100 thou ; (iii) 20 s at 25 thou ; (iv) 300 s directly on the hot plate, with a vacuum; (v) 200 s at 25 thou ;(vi) 20 s at 100 thou; and (vii) 20 s at 100 thou.
+> Wide DOF microscope for coarse alignment
+> Narrow DOF microscope for tilt alignment
+> Transparent reticle with PVA glue holds die
+> Load cell readout for bonding force measurement
+> SWIR microscope for fine alignment through silicon die
+> 6 DOF stage stack with vacuum chuck holds WG transition structure
+> SWIR ring light on adjustable bracket
+> Spring-loaded dual pantograph platform for controlled bonding force
+> Motorized 3-axis stage for position measurement
+
+Fig. 7. Photograph of the custom flip-chip bonder. Conven-tional flip-chip bonders often use autocollimators to align a device chip to a flat, optically smooth substrate; this approach is infeasible for bonding a chip to a 3D-printed substrate. In-stead, a narrow degrees of freedom (DOF) microscope is used to measure the vertical distance between the chip and sub-strate with a motorized 3-axis stage for pitch and tilt align-ment, and a short-wavelength infrared (SWIR) microscope is used to see through the silicon chip to alignment markers on the other side to perform the final translational and rotational alignment. adjustable set screws on the top and bottom platform, to pre-load the platform as necessary, and a 3D-printed sleeve to guide the spring along part of its length. A load cell fastened to the top of this platform is used for bond force readout. A vacuum chuck affixed to the load cell holds the 3D-printed waveguide substrate during bonding. A platform with a large central aperture is rigidly held above the stage stack. A removable custom machined chuck with a smaller aperture fits into the center of the platform and holds a glass slide or reticle beneath it mechanically with specimen clips. The die is affixed to the slide using water soluble polyvinyl acetate (PVA) glue 11 in a solution of DI water with a 1:1 mass ratio, in order to achieve the desired viscosity. Higher viscosities were found to cause the die to set at an angle unsuitable for bonding. We achieve pitch/tilt alignment by using the motorized 3-axis stage to measure the vertical positions of the substrate and die at which they come into focus under the shallow depth of field ( ±1.6 μm) microscope objective. The substrate and die are aligned when they are found to be equidistant at several dis-tant points on their surfaces. The lower stage in the stage stack controls rotation, pitch, and roll via manual micrometer adjust-ment. A semi-automated program was developed that assists in performing the pitch-tilt measurement–it moves the motorized stage automatically to the next measurement location once a measurement has been made, and calculates the pitch and roll micrometer adjustments needed to parallelize the substrate and die. The program also computes variances given the microscope depth of field or multiple measurements to further decrease er- 
+
+> 11 Elmer’s Washable Liquid School Glue (Elmer’s Products, Inc., Westerville, OH, USA) Research Article 9
+
+VNA Mixer Head 
+
+WR6–WR10 WG Transition 
+
+WR10–WR8 WG Transition 
+
+Device Under Test 
+
+WG Flange WG–CPW Transition 
+
+25 mm  
+
+> Fig. 8.
+
+Image of the measurement setup for the upper band (110 – 170 GHz ), including the vector network analyzer (VNA) mixer head, waveguide transitions, and device under test, which comprises the waveguide mounting flange with a waveguide cap, and WG–CPW transition. The lower band (75 –110 GHz ) was measured with a similar setup. Due to the high losses through the transition, the termination boundary condition is unimportant; the transition was characterized with reflectivity measurements and the loss model described in section 6. ror, and propagates these variances into an estimation of the final misalignment, with typical misalignment variances approaching 
+
+±3 μm . We found, however, that systematics such as warped surfaces can cause substantial additional misalignment and must be accounted for, which we discuss in section 6. Coarse translational and rotational alignment is performed by aligning parallel features and measuring distances between features on the substrate and those on the die, while adjusting the rotation of the lower stage and position of the upper stage. The final alignment is performed with the SWIR microscope, by aligning edge features on the substrate with imaging alignment marks lithographically deposited onto the underside of the die. Just before bonding, an optically transparent epoxy is applied to the substrate to ensure mechanical robustness of the bond to handling. The bonding is performed by raising the lower stage until a bonding force of ∼7 kgf/mm 2 of bond area is achieved. After the epoxy cures, the vacuum is deactivated and the ad-justable stage is lowered. The slide, substrate, and die are then submerged in DI water with gentle agitation until the die and substrate separate from the slide and the residual PVA glue is fully dissolved. 
+
+> Assembly of the Test Device
+
+The test device is completed by closing each waveguide with a planar metal cap. The cap is custom-machined out of aluminum and extrudes from a UG-387/U waveguide flange with a rect-angular aperture about the width and height of the transition structure in the center. The waveguide end of the transition structure fits into this aperture, which also locates it. Each cap is mechanically affixed to the test device using a pair of bolts that passes through the cap and the WG test structure. During assem-bly the test device is aligned so that the flange face is coplanar to the face at the waveguide end of the transition structure. The final step is to mount the WG flanges onto the assembly. The completed test structure is shown in fig. 8. 
+
+6. MEASUREMENTS 
+
+A vector network analyzer (VNA) was used to characterize the room-temperature performance of a transition using a Short-Open-Load calibration. A different VNA was used for the lower ( 75 – 110 GHz ) and upper ( 110 – 170 GHz ) frequency ranges, which appears in the measurements as a difference in relative noise amplitude (orange dots in fig. 9). We note that the con-verter for the upper frequency range was damaged, which ex-plains its anomalously high noise. The resulting data are shown in fig. 9. These data show less than 10% of reflected power across the full octave target band at room temperature. These data are compared to simulations of the reflected power at 300 K and simulations of the reflected and transmitted power at 1 K . The room temperature simulated reflection shows rea-sonable agreement at the 5% level with warm reflection mea-surements. The inferred transmission indicates around 95% coupling efficiency at cryogenic temperatures and a half power bandwidth ratio of 2.3. Such a bandwidth is comparable to that of the waveguide-to-microstrip OMTs on the pixels of the Atacama Cosmology Telescope, SO, and other experiments [ 29 ]. The waveguide transition that was measured has two defects. First, it has a chipped region in the top left corner of the aperture in the backshort wall, as viewed from the waveguide opening, of approximately triangular shape and 377 μm in length by 234 μm in height (see fig. 12 in section C). This chip was the result of a poor release from the indium deposition hard mask due to insufficient allowance in the hard mask design—future iterations of the hard mask increase this allowance. The chipped area of the backshort widens the aperture; although the dimensions of the new widened backshort aperture still have a waveguide cutoff higher than the highest frequencies in the target passband, some radiative leakage due to tunneling still occurs. Simulations show that this changes the reflected power over the pass-band by up to 2.5%, thus we include the chipped backshort in the warm simulations shown in fig. 9. Since we expect to cure this defect in future iterations, we choose to exclude it from the cold simulations. Second, the CPW probe on the measured transition has a lat-eral offset of 26 μm to the left when viewed from the waveguide opening, such that only one of the CPW ground traces connects to the backshort. This offset was caused by imperfect pitch align-ment of the die around the transmission line axis greater than the height of the bump bonds, causing a lateral shift when pressure was applied during bonding. This offset could be alleviated by a change in the pitch alignment methodology. Before bonding, substrate heights are measured beyond the lateral edges of the die (since the die blocks the substrate underneath it), then the die heights are measured, and the differences compared to perform the pitch alignment. However, the surface of the 3D-printed substrate is affected by warping due to the sintering process, which causes an apparent vertical deviation the further away from the transmission line axis which can cause misalignment. Instead, we can use the translation stage to move the die away from the desired measurement location before a substrate height measurement, and then translate it back, in order to perform distance measurements between adjacent locations on the sub-strate and the die. This entails making measurements on the substrate bosses, where warping remains negligible, as seen in fig. 4. This solution was only determined after the completion of the measurement, since the defect only occurred intermittently during development. Simulations show that this lateral offset causes deviations in Research Article 10 
+
+60 80 100 120 140 160 180 
+
+Frequency [GHz] 
+
+0.0 
+
+0.2 
+
+0.4 
+
+0.6 
+
+0.8 
+
+1.0 
+
+> Relative Power
+> 95%
+
+Transmission 
+
+Reflection 
+
+Target passband 
+
+> Simulated, 1 K
+> Measured, 300 K
+> Simulated, 300 K
+> Simulated, 1 K
+
+Fig. 9. Comparison between measured and simulated reflected power for the transition at room temperature. Simulations of the reflected and transmitted power at cryogenic temperatures are included. The measurements from 75 – 110 GHz and 110 –170 GHz were taken with two separate vector network analyzers (VNAs). the reflected power below the no-offset case by 1– 3 dB above 140 GHz in the lossy, room-temperature case. This misalignment was therefore included in calculating the simulated room tem-perature reflection. Future cryogenic transitions must ensure that the indium bonds on both CPW grounds connect to the back-short, since simulations show that having both interconnections is required to maintain the 95% transmission when other losses are low. This imposes a constraint on the lateral offset of less than 18 μm . However, if both CPW grounds connect to the back-short, simulations show negligible performance improvement with smaller lateral offsets. Several bonds were made without these defects, such as that shown in fig. 5, but these bonds were made with dies that did not have the high quality CPW conductor trace needed for mea-surement. 
+
+Simulation and Characterization 
+
+The simulations in fig. 9 include conductive and dielectric losses and account for the roughness of the metallized gold waveguide as measured via confocal microscopy. The dielectric loss was estimated by a Drude model [ 30 ], which has been shown to be valid for n-type silicon with the measured DC resistivity around 100 GHz [ 31 ]. The silicon loss tangent is calculated as tan δ ≡ ϵ′′ 
+
+ϵ′ (3) 
+
+where 
+
+ϵ = ϵ′ + iϵ′′ = ϵ0ϵr + iϵ′′ 
+
+ϵ′′ = 1/ ρ0
+
+ω(1 + ω2τ2)
+
+and the DC resistivity ρ0 of the silicon was measured with a 4-point probe on another wafer in the same batch and determined to be (4.0 ± 0.1) Ω cm. The relaxation time τ was calculated as 
+
+τ = mc
+
+ρ0ne 2 = 6.8 × 10 −14 swhere mc = 0.26 me is the conductivity effective mass [ 31 ], e is electron charge, and n is the carrier density, which is determined from the DC resistivity [ 32 ]. Since ω2τ2∼10 −4, the relaxation time is negligible, so the imaginary component of permittivity used for the dielectric model is 
+
+ϵ′′ ≈ 1
+
+ρ0ω (4) 
+
+which gives a value of tan δ = 0.30 at 127.5 GHz . When the loss tangent was varied, this loss tangent value also provided the closest qualitative agreement between the measured and simulated reflectivity by visual inspection. The losses in the 3D-printed and metallized waveguide tran-sition due to the surface roughness (caused by the 3D-printing and metallization process) and the finite conductivity of the met-allized gold were estimated by a causal Huray loss model [ 33 ], which models the surface as a conglomeration of spheres. This choice of roughness model was motivated by the large scale of the surface roughness of the transition ( Sa = 0.5 μm and 
+
+Sq = 0.6 μm , similar to the alumina particle size) relative to its skin depth δsd = p2/ ωσμ ≈ 0.2 μm . The choice of the Huray model was also motivated by confocal microscopy mea-surements of the surface of the transition, which show a con-glomeration of spherical nodules (see fig. 13 in section D). The model coefficients—nodule radius and number of nodules per unit area—were determined from these measurements of a typ-ical patch of this surface (section D). Since the nodule radius was found to vary from 5– 15 μm but the model implemented uses only one nodule size, simulations were performed with the nodule radius swept across the measured range and the best Research Article 11  
+
+> Table 1.
+
+Waveguide to coplanar waveguide transition param-eter values. The parameters xmin  
+
+> i
+
+give the solution to naïve optimization with arg min f (x), and the parameters x⋆ 
+
+> i
+
+give the solution to the tolerance-aware optimization problem de-scribed by eq. (2). These optimized parameters are given in the left table. The other values were held constant during this op-timization (right table). W is the CPW conductor trace width, 
+
+G is the distance from the ground plane to the CPW conduc-tor trace, and H is the device layer thickness. All parameters listed below correspond to the parameters of the same name in the waveguide to microstrip transition (fig. 10). 
+
+Param. xmin  
+
+> i
+
+[μm] x⋆ 
+
+> i
+
+[μm] 
+
+x1 370 362 
+
+x2 243 248 
+
+x3 591 590 
+
+x4 871 875 
+
+x5 206 190 
+
+x6 216 220 
+
+x7 211 191 
+
+x8 84 97 
+
+x9 100 98 
+
+x10 112 102 
+
+x11 33 50 
+
+∆x — 7.9 
+
+Param. Value [μm] 
+
+a 1879 
+
+b 964 
+
+t 272 
+
+wp 150 
+
+lm 401 
+
+tb 150 
+
+wa 250 
+
+wt 100 
+
+ht 100 
+
+W 2.0 
+
+G 5.3 
+
+H 15.0 fit was chosen. This choice primarily affects the reflectivity at the waveguide low frequency cutoff of 80 GHz due to the pole in the attenuation of rectangular waveguides as a function of the wavenumber near the cutoff [ 34 ], so the reflectivity below 85 GHz was chosen as the fit criterion. The resulting simulated reflectivity, using the 7 μm nodule radius and 4.0 Ω cm dielectric resistivity, is compared to the measured reflectivity in fig. 9. This best-fit material model of the electroplated gold is then used to estimate the transmission of the transition at cryogenic temperatures ( 1– 4 K ). The total resistivity of gold at 1– 4 K as measured by [ 35 ] is multiplied by a correction factor of 3 for elec-troplating impurities, as measured by [ 36 ], to get an estimated bulk resistivity of 6.6 × 10 −8 Ω cm . This resistivity is then applied to the same causal Huray model to simulate the transition per-formance as a function of temperature. These simulations imply a 95% transmitted power in the 90 – 165 GHz band at cryogenic temperatures. 
+
+7. CONCLUSION 
+
+We have presented a millimeter-wave in-line octave-bandwidth WG–CPW transition that enables the dense packing of on-chip spectrometers into a telescope focal plane. Room-temperature testing shows less than 10% reflected power over an octave of bandwidth. These results show reasonable agreement with simulations based on the measured material properties. This model predicts a transmitted power (coupling efficiency) of around 95% from 90 – 165 GHz and above 90% across the full 
+
+x8
+
+x7
+
+x6
+
+x5
+
+x4
+
+x3
+
+x2
+
+x1
+
+x9
+
+a
+
+b
+
+x11 
+
+t
+
+wa
+
+tb
+
+wp
+
+ht
+
+wt
+
+Edge Plating Back of step structure 
+
+x10 
+
+lm 
+
+> Fig. 10.
+
+Diagram of the waveguide to microstrip transition de-sign, with detail of the microstrip port, as seen from the back side, inset. The waveguide cap is omitted. Translucent green denotes silicon, yellow represents traces or metallized sur-face, and, apart from the step structure, the metallized waveg-uide structure is transparent and colorless so that underlying details may be seen. Dimensions are given in table 2. All di-mensional parameters shown in this figure also apply to the WG–CPW transition. 85–170 GHz passband. We have developed a novel optimization approach which makes the design more robust to manufacturing tolerances by ensuring that tolerance specifications fall within regions of the design space that meet required performance thresholds. This approach provides a generalizable framework for instrument de-sign problems where the performance loss due to manufacturing deviations from the nominal design is non-negligible. We also demonstrated a new approach to creating intercon-nects between additively manufactured structures and litho-graphically fabricated dies through bump bonding. We antici-pate that this approach will have a number of uses beyond the present work. In future work we will adapt the WG–CPW transition design to a low-loss, cryogenic environment and integrate it with on-chip spectrometers in order to realize a high-density mm-wave IFU that can achieve sensitivity improvements of one or more or-ders of magnitude over existing approaches. Such an instrument could enable ambitious mm-wave LIM surveys. 
+
+APPENDICES A. TRANSITION GEOMETRY 
+
+Parameter values for the waveguide transition test device are tabulated in table 1. 
+
+B. WG-TO-MICROSTRIP TRANSITION DESIGN 
+
+The optimization and tolerancing methodology in section 3 can also be applied to the design of a waveguide-to-microstrip tran-sition with a higher frequency 100 – 200 GHz passband. The mi-Research Article 12 
+
+0.90 
+
+0.95 
+
+1.00  
+
+> Naïve optimum Tolerance-aware optimum
+> 100 random samples in region of tolerance
+
+100 125 150 175 200 
+
+Frequency [GHz] 
+
+0.0 
+
+0.2 
+
+0.4 
+
+0.6 
+
+0.8 
+
+1.0 
+
+> Relative Power Transmitted
+> Tolerance-aware optimum
+> 100 random samples in region of tolerance
+> Naïve optimum
+
+0.0 
+
+0.2 
+
+0.4 
+
+0.6 
+
+0.8 
+
+1.0 
+
+> Atmospheric Transmission
+
+Fig. 11. Plot of the relative transmitted power |S21 (ν)|2 for a waveguide to microstrip transition designed for a 100 –200 GHz passband with lossless conductors and the same low-loss dielectric material as assumed in section 3. The naïve optimum (orange, dash-dotted) was evaluated at arg min f (x)
+
+whereas the tolerance-aware optimum was evaluated at x⋆
+
+(green, solid). One hundred random samples within the un-certainty box-set B(x⋆, ∆x) simulated within the passband are shown in gray. The parameters associated with the optima, 
+
+xmin  
+
+> i
+
+, x⋆ 
+
+> i
+
+, and ∆x, are tabulated in table 2. South Pole Telescope measurements of atmospheric opacity in the Summer at a 45° angle are overlaid in blue for reference, courtesy of J. Z. crostrip transition inherits many features from its CPW tran-sition sibling, including a ground plane that extends beyond the backshort, a die fabricated from two layers of silicon with a cantilevered probe, a stepped ridge impedance transformer, and a bump-bonded interconnection. Unlike the CPW design, the microstrip ground plane lies on a different plane than the conductor trace. In order to short this ground plane to the backshort, a kind of via is needed that connects the ground plane through the microstrip probe to an exposed ground trace coplanar with the conductor trace that can be bump bonded. While the cantilevered CPW probe does not have the width or strength to support through-hole vias, the angled deposition of conductive metal onto the sides of this cantilever can create edge plating that connects the ground trace to the ground plane without the need for through holes (fig. 10). Additionally, the microstrip design requires a ground plane un-der the device layer, so SOI wafers cannot be used. Instead, a SOI flip, bond, and etch process [ 37 ] can achieve a monocrys-talline silicon device layer separated from a handle layer by a ground plane. This waveguide to microstrip transition was simulated for optimization with lossless conductors and the same low-loss silicon dielectric as was assumed in section 3. As in section 3, Bayesian optimization was used to find the naïve optimum xmin .The loss goal was set to Lgoal = −25 dB for all steps, and the acceptable loss was set to f0 = −12 dB , which gave the op-tima plotted in green (dot-dashed line) and orange (solid line) in fig. 11 configured with the parameters tabulated in table 2. For these loss goals and acceptable losses, the maximum allow-able tolerance was found to be ∆x = 6.2 μm . To illustrate the 
+
+Table 2. Waveguide to microstrip transition parameter values. The parameters xmin  
+
+> i
+
+give the solution to naïve optimization with arg min f (x), and the parameters x⋆ 
+
+> i
+
+give the solution to the tolerance-aware optimization problem described by eq. (2) (left table). The other values (right table) were held constant during this optimization, except for the parameter t, which was naïvely optimized but excluded from the full tolerance-aware optimization to reduce the computational complexity of the convex hull construction. W is the microstrip conductor trace width and H is the device layer thickness. The features associated with these parameters are illustrated in fig. 10. 
+
+Param. xmin  
+
+> i
+
+[μm] x⋆ 
+
+> i
+
+[μm] 
+
+x1 285 262 
+
+x2 262 278 
+
+x3 470 457 
+
+x4 559 563 
+
+x5 156 184 
+
+x6 230 212 
+
+x7 198 159 
+
+x8 104 105 
+
+x9 90 89 
+
+x10 103 108 
+
+x11 30 48 
+
+∆x — 6.2 
+
+Param. Value [μm] 
+
+a 1597 
+
+b 820 
+
+t 287 
+
+wp 180 
+
+lm 100 
+
+tb 164 
+
+wa 230 
+
+wt 100 
+
+ht 213 
+
+lh 325 
+
+W 25.0 
+
+H 25.0 robustness of the tolerance-aware optimum to manufacturing deviations within this tolerance, the tolerance space B(x⋆, ∆x)
+
+was randomly sampled; these one hundred random samples are also plotted over the 100 – 200 GHz passband in fig. 11 as gray (translucent black) lines. Without considering losses due to sur-face roughness or resistivity, the transition achieves around 97% to 99% power transmission over the passband for the tolerance-aware optimum and better for the naïve optimum. 98 of the 100 random samples in the uncertainty box-set have transmission better than 95% across the passband. Furthermore, the transmit-ted power of this transmission extends beyond the passband; the tolerance-aware optimum point design has a half power ratio bandwidth of 1:2.3, neglecting the narrow resonance just above 200 GHz which may be unphysical. 
+
+C. MEASURED DEVICE 
+
+Figure 12 depicts the waveguide structure for the measured device, including the chipped backshort corner defect. 
+
+D. 3D-PRINTED SURFACE CHARACTERIZATION 
+
+The WG portion of the WG–CPW transition is metallized after being 3D-printed. The resulting surface appears as a conglom-eration of spherical nodules. Figure 13 shows an optical micro-graph of a typical patch of the surface of a test device which was produced by a confocal microscope that also recorded three-dimensional measurements of the surface. Measurements across Research Article 13 
+
+377 μm 
+
+Chipped Backshort Corner 
+
+234 μm 
+
+1 mm 
+
+Fig. 12. Confocal micrograph of the waveguide structure used for the measured device. The color of the surface corresponds to its height. Note the chipped corner of the backshort, which was included in the warm simulations. We discuss the cause of and solution to this defect in section 6. this patch give a nodule radius range of 5 –15 μm with a nod-ule density estimated at 30.5 μm/nodule over a 947 μm 2 sample area in this patch. Note that the surface roughness recorded in this patch is significantly smaller than the nodule radius, with 
+
+Sa = 0.5 μm and Sq = 0.6 μm , since most of the spherical nod-ules protrude only a small amount from the surface. 
+
+BACKMATTER 
+
+Acknowledgments. 
+
+Thanks to Norman Jarosik of Princeton for transition measurements in the lower half of the frequency band. This work was primarily sup-ported by NASA grant 80NSSC22K1746. This work was supported by a NASA Space Technology Graduate Research Opportunity under NASA grant 80NSSC24K1378. This work made use of the Pritzker Nanofabrica-tion Facility of the Institute for Molecular Engineering at the University of Chicago, which receives support from the Soft and Hybrid Nanotech-nology Experimental (SHyNE) Resource (NSF ECCS-2025633), a node of the National Science Foundation’s National Nanotechnology Coordi-nated Infrastructure. Thanks to the staff of the Pritzker Nanofabrication Facility for their fabrication expertise which helped make this work pos-sible: Will Hyland, Julia Krueger, Jered Feldman, Sam Kaehler, Kendall Davis, and Peter Duda. This work made use of the shared facilities at the University of Chicago Materials Research Science and Engineering Cen-ter, supported by the National Science Foundation under award number DMR-2011854. Thanks also to Thomas Cecil of Argonne National Lab-oratory for his fabrication advice. Furthermore, this document was prepared using the resources of the Fermi National Accelerator Labora-tory (Fermilab), a U.S. Department of Energy, Office of Science, Office of High Energy Physics HEP User Facility. Fermilab is managed by Fermi Forward Discovery Group. J.Z. is also supported by the Kavli Institute for Cosmological Physics. This material is based on work supported by the National Science Foundation Graduate Research Fellowship under Grant No. 2140001. 
+
+Disclosures. The authors declare no conflicts of interest. 
+
+Fig. 13. Optical micrograph of a patch of the metallized 3D-printed surface using a 50 × magnification objective lens. Note that the surface appears to be a conglomeration of spherical nodules. Confocal microscopy measurements of a typically sized nodule using a spherical fit are shown. 
+
+REFERENCES 
+
+1. DESI Collaboration, M. Abdul-Karim, J. Aguilar et al. , “DESI DR2 Results II: Measurements of Baryon Acoustic Oscillations and Cosmo-logical Constraints,” (2025). 2. K. S. Karkare, A. M. Dizgah, G. K. Keating et al. , “Snowmass 2021 Cosmic Frontier White Paper: Cosmology with Millimeter-Wave Line Intensity Mapping,” in Proceedings of the US Community Study on the Future of Particle Physics, (arXiv, 2022). 3. K. S. Karkare, A. J. Anderson, P. S. Barry et al. , “SPT-SLIM: A Line Intensity Mapping Pathfinder for the South Pole Telescope,” J. Low Temp. Phys. 209 , 758–765 (2022). 4. M. Rybak, A. Endo, K. Karatsu et al. , “Towards THz IFUs: From DESHIMA to TIFUUN and AtLAST,” The Atacama Large Aperture Submillimeter Telescope Conference 2024 (AtLAST 2024), Mainz, Ger-many (2024). 5. M. Béthermin, A. Gkogkou, M. V. Cuyck et al. , “CONCERTO: High-fidelity simulation of millimeter line emissions of galaxies and [CII] intensity mapping,” Astron. & Astrophys. 667 , A156 (2022). 6. A. T. Crites, J. J. Bock, C. M. Bradford et al. , “The TIME-Pilot intensity mapping experiment,” in Millimeter, Submillimeter, and Far-Infrared Detectors and Instrumentation for Astronomy VII, vol. 9153 (SPIE, Montréal, Canada, 2014), pp. 613–621. 7. J. Vieira, J. Aguirre, C. M. Bradford et al. , “The Terahertz Intensity Mapper (TIM): A Next-Generation Experiment for Galaxy Evolution Studies,” in 30th International Symposium on Space THz Technology, 
+
+(National Radio Astronomy Observatory, Gothenburg, Sweden, 2019), pp. 208–215. 8. S. M. Simon, J. E. Golec, A. Ali et al. , “Feedhorn development and scalability for Simons Observatory and beyond,” in Millimeter, Submil-limeter, and Far-Infrared Detectors and Instrumentation for Astronomy IX, vol. 10708 J. Zmuidzinas and J.-R. Gao, eds. (SPIE, 2018), pp. 107084B–107084B–12. 9. S. M. Simon, J. Austermann, J. A. Beall et al. , “The design and charac-terization of wideband spline-profiled feedhorns for Advanced ACTPol,” in Millimeter, Submillimeter, and Far-Infrared Detectors and Instrumen-Research Article 14 
+
+tation for Astronomy VIII, vol. 9914 (SPIE, 2016), pp. 277–289. 10. J. Shen and D. S. Ricketts, “Compact W-Band “Swan Neck” Turnstile Junction Orthomode Transducer Implemented by 3-D Printing,” IEEE Transactions on Microw. Theory Tech. 68 , 3408–3417 (2020). 11. A. Gomez-Torrent, U. Shah, and J. Oberhammer, “Compact Silicon-Micromachined Wideband 220–330-GHz Turnstile Orthomode Trans-ducer,” IEEE Transactions on Terahertz Sci. Technol. 9, 38–46 (2019). 12. A. R. Stover, P. D. Sharpe, J. Li et al. , “The Vertical Integrated Spectrom-eter (VIS) focal plane: Orders of magnitude improvement in mm-wave Line Intensity Mapping (LIM) with an inline waveguide-to-on-chip tran-sition,” in Millimeter, Submillimeter, and Far-Infrared Detectors and Instrumentation for Astronomy XII, vol. PC13102 (SPIE, Yokohama, Japan, 2024), p. PC131020A. 13. A. R. Stover, J. Li, P. D. Sharpe et al. , “The High-density Vertical Integrated Spectrometer (HI-VIS),” 21st International Conference on Low-Temperature Detectors (LTD2025), Santa Fe, New Mexico (2025). 14. J. Cano and A. Mediavilla, “Octave bandwidth in-line rectangular waveguide-to-coaxial transition using oversized mode conversion,” Elec-tron. Lett. 53 , 1370–1371 (2017). 15. T. J. Lucas, J. P. Biesecker, W. B. Doriese et al. , “Indium Bump Process for Low-Temperature Detectors and Readout,” J. Low Temp. Phys. 209 ,293–298 (2022). 16. P. D. Sharpe, “Accelerating Practical Engineering Design Optimiza-tion with Computational Graph Transformations,” Ph.D. thesis, Mas-sachusetts Institute of Technology (2024). 17. P. D. Sharpe, “AeroSandbox: A Differentiable Framework for Aircraft Design Optimization,” Master’s thesis, Massachusetts Institute of Tech-nology (2021). 18. F. Nogueira, “Bayesian Optimization: Open source constrained global optimization tool for Python,” (2014). 19. J. R. Gardner, M. J. Kusner, Z. Xu et al. , “Bayesian optimization with inequality constraints,” in Proceedings of the 31st International Confer-ence on International Conference on Machine Learning - Volume 32, 
+
+(JMLR.org, Beijing, China, 2014), ICML’14, pp. II–937–II–945. 20. Boston Micro Fabrication, “Comparing SLA, DLP, and P μSL,” White Paper. 21. S. Kalpakjian and S. Schmid, Manufacturing Processes for Engineering Materials in SI Units (Pearson, Harlow, 2022), 6th ed. 22. N. Stander and K. Craig, “On the robustness of a simple domain reduction scheme for simulation-based optimization,” Eng. Comput. 19 ,431–450 (2002). 23. N. Srinivas, A. Krause, S. M. Kakade et al. , “Information-Theoretic Re-gret Bounds for Gaussian Process Optimization in the Bandit Setting,” IEEE Transactions on Inf. Theory 58 , 3250–3265 (2012). 24. M. J. Kochenderfer and T. A. Wheeler, Algorithms for Optimization (The MIT Press, Cambridge, Massachusetts, 2019). 25. A. Wächter and L. T. Biegler, “On the implementation of an interior-point filter line-search algorithm for large-scale nonlinear programming,” Math. Program. 106 , 25–57 (2006). 26. Q. Ge, Z. Li, Z. Wang et al. , “Projection micro stereolithography based 3D printing and its applications,” Int. J. Extrem. Manuf. 2, 022004 (2020). 27. J. P. Nibarger, J. A. Beall, D. Becker et al. , “An 84 Pixel All-Silicon Corrugated Feedhorn for CMB Measurements,” J. Low Temp. Phys. 
+
+167 , 522–527 (2012). 28. Q. Y. Tang, P. S. Barry, T. W. Cecil et al. , “Fabrication of OMT-Coupled Kinetic Inductance Detector for CMB Detection,” J. Low Temp. Phys. 
+
+199 , 362–368 (2020). 29. J. McMahon, J. Beall, D. Becker et al. , “Multi-chroic Feed-Horn Coupled TES Polarimeters,” J. Low Temp. Phys. 167 , 879–884 (2012). 30. N. W. Ashcroft and N. D. Mermin, Solid State Physics (Harcourt, Fort Worth, TX, 1976). 31. R. T. Kinasewitz and B. Senitzky, “Investigation of the complex per-mittivity of n-type silicon at millimeter wavelengths,” J. Appl. Phys. 54 ,3394–3398 (1983). 32. ASTM International, “Standard Practice for Conversion Between Resis-tivity and Dopant Density for Boron-Doped, Phosphorus-Doped, and Arsenic-Doped Silicon,” F723-88 (1990). 33. J. E. Bracken, “A Causal Huray Model for Surface Roughness,” in 
+
+DesignCon 2012: Where Chipheads Connect, vol. 4 (UBM Electronics, Santa Clara, California, 2012), pp. 2880–2914. 34. D. M. Pozar, Microwave Engineering (John Wiley & Sons, Hoboken, NJ, 2012), fourth edition ed. 35. R. A. Matula, “Electrical resistivity of copper, gold, palladium, and silver,” J. Phys. Chem. Ref. Data 8, 1147–1298 (1979). 36. T. P. Bernat, N. B. Alexander, and J. L. Kaae, “Thermal and Electrical Conductivities of Electroplated Gold,” Fusion Sci. Technol. 51 , 782–785 (2007). 37. L. A. Hess, E. M. Barrentine, A. D. Brown et al. , “Low-Loss Microstrip Transmission Line Fabricated with Improved Liftoff Process,” 18th Inter-national Workshop on Low Temperature Detectors (LTD-18) (2019).

@@ -1,0 +1,97 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-12T21:17:48.341144+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 1,
+    "deep_cap": 8,
+    "deep_selected": 1,
+    "quick_candidates": 1,
+    "quick_skim_target": 13,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2607.04258v1",
+      "source": "arxiv",
+      "title": "A 3D-Printed Millimeter-Wave Inline Waveguide-to-Coplanar-Waveguide Transition to Enable Dense Spectrometer Arrays for Intensity Mapping Surveys",
+      "abstract": "We present a 3D-printed millimeter-wave, octave-bandwidth, in-line waveguide-to-coplanar-waveguide transition designed to enable focal planes with dense arrays of on-chip spectrometers. These arrays will enable compelling surveys of the large-scale structure of the universe through millimeter-wave intensity mapping. The transition consists of a four-step ridge-waveguide transformer that couples light from a rectangular waveguide onto a coplanar waveguide via an electrical connection made with indium bump bonds. We develop a tolerance-aware optimization approach to identify high-performance transition geometries that are robust to manufacturing variations; the same formulation can be applied to other tolerance-sensitive design problems. We also describe the implementation of a custom apparatus and procedure for bump-bonding a silicon chip to a metallized 3D-printed component. We detail the fabrication of the coplanar waveguide chip and three-dimensional waveguide structure, simulations and metrology of a test device, and room temperature reflectance measurements of this device. The room temperature metrology and reflection measurements are consistent with a model that predicts a coupling efficiency of $\\mathord{\\sim} 95\\%$ at cryogenic temperatures in the 85-170 GHz frequency range.",
+      "authors": [
+        "Austin Stover",
+        "Juliang Li",
+        "Peter Sharpe",
+        "Morgana Iacocca",
+        "Audrey Scott",
+        "Jessica Zebrowski",
+        "Jeff McMahon"
+      ],
+      "primary_category": "astro-ph.IM",
+      "categories": [
+        "astro-ph.IM"
+      ],
+      "published": "2026-07-05T12:13:32+00:00",
+      "link": "https://arxiv.org/pdf/2607.04258v1",
+      "tags": [
+        "keyword:TF-SAR",
+        "keyword:sat-asm-prec",
+        "query:TF-SAR",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "tolerance-aware optimization approach for manufacturing robustness",
+      "llm_evidence_cn": "面向制造鲁棒性的容差感知优化方法",
+      "llm_evidence": "面向制造鲁棒性的容差感知优化方法",
+      "canonical_evidence": "面向制造鲁棒性的容差感知优化方法",
+      "llm_tldr_en": "The paper presents a 3D-printed mm-wave transition with a tolerance-aware optimization method to ensure performance despite manufacturing variations, enabling dense spectrometer arrays for cosmological surveys.",
+      "llm_tldr_cn": "本文解决毫米波仪器中波导到共面波导过渡结构因制造公差导致性能下降的问题。提出一种容差感知优化方法，在设计阶段考虑制造误差，通过四阶梯形波导变换器实现宽带、低损耗耦合。优化后的过渡结构在毫米波频段具有高鲁棒性，且该框架可推广至其他精密制造领域，为卫星制造中的公差控制方法提供了可转移的技术参考。",
+      "llm_tldr": "本文解决毫米波仪器中波导到共面波导过渡结构因制造公差导致性能下降的问题。提出一种容差感知优化方法，在设计阶段考虑制造误差，通过四阶梯形波导变换器实现宽带、低损耗耦合。优化后的过渡结构在毫米波频段具有高鲁棒性，且该框架可推广至其他精密制造领域，为卫星制造中的公差控制方法提供了可转移的技术参考。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "tolerance control methods in satellite manufacturing",
+      "matched_requirement_id": "req-5",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.05544v1",
+      "source": "arxiv",
+      "title": "Dynamic Evaluation of Classical and Control-Aware Optimal Trajectory Planning in Robot Manipulators",
+      "abstract": "Trajectory planning strongly influences tracking accuracy, actuator demand, and overall execution behavior in robotic manipulators. Classical planners such as cubic, quintic, and trapezoidal profiles are widely used for their simplicity and smoothness, yet they remain purely kinematic and ignore system dynamics and control effort during trajectory generation. As a result, nominally smooth trajectories can lead to inefficient nonlinear execution and increased corrective control action. This paper presents a control-aware optimal trajectory planning framework that explicitly incorporates manipulator dynamics and actuator effort within a finite-horizon formulation. A midpoint linearization strategy is introduced to improve approximation accuracy for large point-to-point motions. In contrast to prior comparisons, the proposed approach enables fair, isolated evaluation of trajectory generation effects under identical closed-loop nonlinear execution conditions. To this end, a unified evaluation framework is developed in which all planners are executed under identical nonlinear dynamics, controller structure, and actuator constraints. Simulations on a nonlinear simplified UR5 manipulator show that the proposed approach consistently reduces tracking error, corrective torque, and closed-loop execution cost compared to classical methods, achieving substantial reductions in actuator effort and execution cost across all evaluated scenarios, demonstrating that kinematic smoothness alone does not ensure dynamically efficient execution.",
+      "authors": [
+        "Bhanuka Dayawansa",
+        "Rohan Munasinghe"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-07-06T18:26:48+00:00",
+      "link": "https://arxiv.org/pdf/2607.05544v1",
+      "tags": [
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:grav-offload"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Control-aware optimal trajectory planning for robotic manipulators can improve precision control in satellite assembly processes.",
+      "llm_evidence_cn": "控制感知的机器人机械臂最优轨迹规划可提升卫星装配过程中的精度控制。",
+      "llm_evidence": "控制感知的机器人机械臂最优轨迹规划可提升卫星装配过程中的精度控制。",
+      "canonical_evidence": "控制感知的机器人机械臂最优轨迹规划可提升卫星装配过程中的精度控制。",
+      "llm_tldr_en": "The paper proposes a control-aware optimal trajectory planner that incorporates manipulator dynamics to reduce tracking error and control effort, relevant to precision assembly tasks.",
+      "llm_tldr_cn": "针对传统运动学轨迹规划忽略动力学导致执行精度不足的问题，该文提出控制感知最优轨迹规划框架，融入机械臂动力学与执行器约束，实验表明可提升跟踪精度并降低控制能耗，对卫星地面装配中的精密操作具有借鉴意义。",
+      "llm_tldr": "针对传统运动学轨迹规划忽略动力学导致执行精度不足的问题，该文提出控制感知最优轨迹规划框架，融入机械臂动力学与执行器约束，实验表明可提升跟踪精度并降低控制能耗，对卫星地面装配中的精密操作具有借鉴意义。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "precision control in satellite assembly process",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
