@@ -1,0 +1,1494 @@
+Title: Wrench-Based Bayesian Pose Estimation via Matrix–Fisher Gaussian Inference
+
+URL Source: https://arxiv.org/pdf/2607.07306v2
+
+Published Time: Mon, 13 Jul 2026 00:11:04 GMT
+
+Number of Pages: 13
+
+Markdown Content:
+> 1
+
+# Wrench-Based Bayesian Pose Estimation via Matrix–Fisher Gaussian Inference 
+
+Jianyu Chen, Lin Yang, Yibang Li, Domenico Campolo and Cyrus Mostajeran 
+
+Abstract —In this paper, a residual-safeguarded local Ma-trix Fisher–Gaussian (MFG) inference method is developed for wrench-based pose estimation on SO(3) × R3. The force/torque measurements are modeled by a quasi-static contact system in which the predicted wrench depends on the unknown object pose through an implicit equilibrium state. Since the resulting nonlinear likelihood is not globally conjugate to the coupled MFG family, a local Bayesian update is constructed by linearizing the reduced wrench residual and matching the induced Gauss– Newton posterior model to a coupled MFG distribution. It is shown that the reduced residual Jacobian has a Schur-complement form, and that the local quadratic posterior admits a closed-form MFG approximation matching the prescribed local first- and second-order posterior coefficients. The same sensitivity model yields a compensated rotational information score, which characterizes the weakest locally informative attitude direction after translational compensation. A residual-safeguarded recen-tering algorithm is further introduced to update the linearization point only through candidates that decrease the recomputed whitened wrench residual. In the tested sparse prior-mismatch regimes, the resulting estimator reduces residual merit and pose error relative to single-pass and local baseline variants, and controlled robot experiments provide a proof of concept under calibrated quasi-static conditions. 
+
+I. I NTRODUCTION 
+
+# ACCURATE pose estimation from contact-induced force and torque measurements is important in contact-rich robotic manipulation, assembly, and insertion. In industrial, medical, and confined environments, vision may be degraded by occlusion, reflection, poor illumination, or limited field of view, making haptic sensing a valuable source of infor-mation about object geometry and interaction state. Foun-dational impedance and compliance models establish that physical interaction is mechanically coupled through forces and constraints [1], [2]. Haptic feedback is likewise important when visual information is insufficient [3]. Recent quasi-static haptic manipulation work uses force-rich contact for planning, adaptation, and online pose or shape inference [4]–[6]. Nev-ertheless, estimating an unknown object pose from wrench observations alone remains difficult because the measurement map is nonlinear, configuration dependent, and shaped by contact geometry and quasi-static equilibrium. A further challenge is geometric: the pose lies on SO(3) ×
+
+R3. Classical attitude filters maintain a global attitude rep-
+
+Jianyu Chen, Yibang Li and Cyrus Mostajeran are with the School of Physical and Mathematical Sciences, Nanyang Technological University, Sin-gapore (e-mail: jianyu.chen@ntu.edu.sg; YIBANG001@e.ntu.edu.sg; cyrus-sam.mostajeran@ntu.edu.sg). Lin Yang and Domenico Campolo are with the School of Mechanical and Aerospace Engineering, Nanyang Technological University, Singapore (e-mail: YANG0752@e.ntu.edu.sg; d.campolo@ntu.edu.sg). 
+
+resentation while using local error coordinates for filtering and covariance propagation [7], [8]. Invariant and equivariant observer/filter constructions provide a related geometric route for Lie-group estimation [9], [10]. From the perspective of posterior uncertainty, directional-statistical models provide a complementary route: the Bingham distribution treats antipo-dal quaternion uncertainty, and the matrix Fisher distribution is defined intrinsically on SO(3) [11]–[13]. The Matrix Fisher-Gaussian (MFG) distribution further combines a matrix Fisher rotational marginal with a conditional Gaussian Euclidean component, thereby representing rotation–translation coupling on SO(3) × Rn [14]. Existing matrix Fisher and MFG filtering results mainly address attitude dynamics, direct attitude information, or reference-vector observations [13]–[15]. They do not directly apply to wrench-based pose inference in contact, where the observation is not a measurement of pose but the output of a contact-induced mechanical response. In this setting, the predicted wrench depends on an equilibrium configuration that is itself defined implicitly by the unknown object pose. Consequently, the likelihood has equilibrium-dependent resid-ual Jacobians, is not globally conjugate to the coupled MFG family, and may be locally weak in some rotational directions even when the translational residual is well constrained. These features raise three control-theoretic questions: how to reduce the implicit contact model to a pose sensitivity map, how to perform a structure-preserving Bayesian update on SO(3) ×R3
+
+when global conjugacy is absent, and how to diagnose when the available contact batch is intrinsically rotation-informative. This paper answers these questions through a local, model-based inference framework. First, we propose a local closed-form closure result for the posterior MFG approximation. We represent pose uncertainty by a coupled MFG distribution and model each force/torque observation through a differentiable quasi-static contact potential. Eliminating the end-effector equilibrium state yields a reduced wrench residual whose first-order sensitivity is obtained by a Schur-complement formula, which depends jointly on pose geometry, contact geometry, and the local equilibrium response. Around a nominal pose, the nonlinear likelihood is then replaced by a Gauss–Newton quadratic information model in right-perturbation coordinates. We show that this local posterior model admits a closed-form coupled MFG approximation whose parameters match the prescribed local first- and second-order posterior coefficients. Thus, the proposed update is not claimed to be globally conjugate or globally optimal; rather, it is a local second-order MFG closure for an implicit contact-generated likelihood. This construction connects quasi-static contact geometry, implicit-arXiv:2607.07306v2 [math.MG] 9 Jul 2026 2
+
+function sensitivity analysis, and matrix differential calculus [16]–[18]. Second, we design a residual-safeguarded multi-pass re-finement algorithm to implement this framework. Regarding information-limited wrench-based pose estimation, the same model also gives a compensated rotational information matrix obtained by eliminating translational perturbations through a Schur complement. Its smallest eigenvalue measures the weakest locally observable attitude direction after optimal translational compensation. This quantity serves as a local identifiability diagnostic and helps explain information-limited behavior in sparse contact batches. To improve the lineariza-tion center, we further introduce a residual-safeguarded recen-tering procedure that accepts only candidates that reduce the recomputed whitened wrench residual. The resulting guarantee is therefore a local residual-decrease safeguard for accepted steps, which is related to local rank conditions, Fisher infor-mation, and optimal experiment design [19], [20]. The main contributions are as follows: (i) We formulate wrench-based Bayesian pose estimation on SO(3) × R3 with a coupled MFG prior and a quasi-static implicit-equilibrium contact model, and derive the Schur-complement residual Jacobian of the reduced wrench map. (ii) We prove a local closed-form MFG posterior closure: under the local quadratic Gauss–Newton posterior model, the coupled MFG parameters can be chosen explicitly so that the resulting approximation matches the prescribed local first- and second-order posterior coefficients. (iii) We derive a Schur-complement rotational information matrix and use its smallest eigenvalue as a compensated attitude-informativeness score. (iv) We propose a residual-safeguarded multi-pass refinement algorithm and evaluate it on synthetic and real controlled robot force/torque data, showing residual reduction and pose refinement in the tested informative regimes. The remainder of the paper develops the model, the local information analysis, the MFG posterior closure, the safe-guarded refinement algorithm, and the synthetic and physical validation. Detailed proofs, auxiliary routines, and extended experiments are provided in the Supplementary Material. II. P ROBLEM FORMULATION AND COUPLED MFG P RIOR 
+
+This section formulates the wrench-based Bayesian pose-estimation problem on SO(3) × R3. We first fix the pose coordinates and error metrics, then define the reduced wrench observation map induced by quasi-static contact, and finally introduce the coupled Matrix Fisher–Gaussian prior and the resulting posterior objective. 
+
+A. Pose representation and local coordinates 
+
+Let the unknown object pose be XB = ( RB , p B ) ∈ G := SO(3) × R3, where RB ∈ SO(3) and pB ∈ R3. We use G
+
+as a state product space, so that rotational and translational perturbations can be represented separately while retaining the intrinsic geometry of the attitude component. Around a nominal pose ¯XB = ( ¯RB , ¯pB ), a nearby pose is written as the right perturbation 
+
+XB = ¯XB ⊕ ξ :=   ¯RB exp( ϕ∧), ¯pB + v, ξ =
+
+ϕv
+
+
+
+∈ R6.
+
+Here (·)∧ : R3 → so (3) is the hat map, (·)∨ is its inverse, and all local derivatives are taken with respect to ξ unless otherwise stated. 
+
+Definition 2.1. For two poses Xi = (Ri, p i), i = 1, 2,we use the separated pose discrepancies dSO(3) (R1, R 2) = 
+
+Log( R⊤ 
+
+> 1
+
+R2)∨ 
+
+> 2
+
+, and dR3 (p1, p 2) = ∥p2 − p1∥2. The re-ported rotation and translation errors are therefore 
+
+eR = dSO(3) (Rtrue  
+
+> B
+
+, ˆRB ), ep = ∥ptrue  
+
+> B
+
+− ˆpB ∥2. (1) The optional local product-coordinate diagnostic is 
+
+∥ξ∥2 
+
+> Q
+
+= 2 ∥ϕ∥22 + ∥v∥22, Q = diag(2 I3, I 3), (2) which is used only as a coordinate-space diagnostic. Detailed algebraic conventions for the product Lie structure are given in the supplementary material. 
+
+B. Reduced force/torque observation model 
+
+We consider a batch of K force/torque measurements col-lected under known control poses U := {XU,k }Kk=1 , X U,k ∈
+
+G. The object pose XB is fixed over the batch. The measured wrench is yk = [ τ ⊤ 
+
+> k
+
+, f ⊤ 
+
+> k
+
+]⊤ ∈ R6, k = 1 , . . . , K, where torque and force are expressed in the sensor frame and are ordered as [τ ⊤, f ⊤]⊤. All measured and predicted wrenches below are assumed to be expressed in the same local wrench coordinates; the full frame/sign convention is provided in the Supplementary Material. The contact–interaction is repre-sented by a differentiable potential W (XA, X U , X B ), where 
+
+XA ∈ G is the end-effector pose, XU ∈ G is the known control pose, and XB ∈ G is the unknown object pose. In the implementation, W is the sum of a control-compliance potential and a smooth shape-dependent contact potential; the explicit signed distance field (SDF) and stiffness construction is reported in the Supplementary Material. The main analysis only requires the following local regularity condition. 
+
+Assumption 2.1. The potential W is C2 in a neighborhood of interest. For every (XU , X B ) in this neighborhood, there exists a locally unique quasi-static equilibrium X⋆A(XU , X B )
+
+satisfying 
+
+grad XA W  X⋆A(XU , X B ), X U , X B
+
+ = 0 . (3) Moreover, the Hessian block of W with respect to XA at the equilibrium is nonsingular. Hence, by the implicit function theorem [17], X⋆A(XU , X B ) is locally C1 in (XU , X B ).
+
+Definition 2.2. The reduced potential obtained after eliminat-ing the quasi-static end-effector state is 
+
+W ⋆(XU , X B ) := W  X⋆A(XU , X B ), X U , X B
+
+. (4) The corresponding reduced predicted wrench at the k-th control pose is 
+
+byk(XB ) := −∂ξU W ⋆(XU,k , X B ) ∈ R6. (5) 3
+
+We write the reduced observation map as hk(XB ) := byk(XB ).
+
+Assumption 2.2. The wrench measurements satisfy the fol-lowing stochastic model, 
+
+yk = hk(XB ) + εk, εk ∼ N (0 , Σw), (6) where Σw ≻ 0, and the noises are conditionally independent given XB and U. Thus, the observed residual is 
+
+rk(XB ) := yk − hk(XB ). (7) The Supplementary Material gives the concrete potential, frame convention, and inner equilibrium solver used in the experiments. 
+
+C. Coupled Matrix Fisher–Gaussian prior 
+
+We place a coupled Matrix Fisher–Gaussian prior on XB =(RB , p B ). The rotational marginal is a matrix Fisher distribu-tion: R ∼ M (F ) if 
+
+p(R; F ) = 1
+
+c(F ) exp  tr( F ⊤R), R ∈ SO(3) , (8) where c(F ) is the normalizing constant. If F = U SV ⊤ is a proper singular value decomposition with U, V ∈ SO(3) 
+
+and S = diag( s1, s 2, s 3), then the mode is U V ⊤, and the singular values determine the concentration along the principal rotational axes [12], [13]. 
+
+Definition 2.3. A coupled MFG prior in precision form is specified by Θ0 = ( F0, μ 0, Λ0, Γ0), where F0 ∈ R3×3, μ0 ∈
+
+R3, Λ0 ≻ 0, and Γ0 ∈ R3×3. Its density is 
+
+p0(RB , p B ) = 
+
+pdet(Λ 0)
+
+c(F0)(2 π)3/2 exp[ −E0(RB , p B )] , (9) with 
+
+E0(RB , p B ) = − tr( F ⊤ 
+
+> 0
+
+RB ) + 12 ∥pB − μc(RB )∥2Λ0 ,μc(RB ) = μ0 + Γ 0νR.
+
+(10) Here ∥a∥2Λ0 = a⊤Λ0a, and 
+
+νR = ( QS −SQ ⊤)∨, Q = U ⊤RB V, F0 = U SV ⊤. (11) We denote XB ∼ MFG( F0, μ 0, Λ0, Γ0). This is the precision-form version of the MFG family on SO(3) × R3; the matrix 
+
+Γ0 encodes rotation–translation coupling, while Λ0 is the conditional translation precision. This notation is a precision-form specialization of the matrix Fisher-Gaussian family. In the original covariance-form defini-tion of the MFG distribution on SO(3) ×Rn, the angular–linear correlation is encoded by a matrix P ∈ Rn×3, with conditional mean μ + P ν R and conditional covariance Σc [14]. 
+
+D. Bayesian estimation problem and non-conjugacy 
+
+Under Assumption 2.2, the batch likelihood is 
+
+p(Y | XB , U) ∝ exp − 12
+
+> K
+
+X
+
+> k=1
+
+∥rk(XB )∥2Σ−1
+
+> w
+
+!
+
+, (12) where Y := {yk}Kk=1 and ∥a∥2Σ−1
+
+> w
+
+= a⊤Σ−1 
+
+> w
+
+a. The corre-sponding data energy is 
+
+Jdata (XB ) := 12
+
+> K
+
+X
+
+> k=1
+
+∥rk(XB )∥2Σ−1
+
+> w
+
+.
+
+Combining (12) with the prior (9) gives the posterior 
+
+p(XB | Y, U) = p(Y | XB , U)p0(XB )
+
+R 
+
+> G
+
+p(Y | eX, U)p0( eX) d eX . (13) The MAP estimate is equivalently 
+
+X⋆B = arg min   
+
+> XB∈G
+
+JMAP (XB ), (14) where 
+
+JMAP (XB ) = Jdata (XB ) + E0(RB , p B ).
+
+Loss of Conjugacy. Conjugacy would require the log-likelihood to be affine in the sufficient statistics of the coupled MFG family, namely the matrix-Fisher term tr( F ⊤RB ) and the quadratic conditional-Gaussian terms in pB −μ−ΓνR(RB ).The force/torque likelihood instead contains the nonlinear residual energy P 
+
+> k
+
+∥yk − hk(XB )∥2Σ−1
+
+> w
+
+, where hk(XB ) de-pends on the contact geometry and on the implicit equilibrium state X⋆A(XU,k , X B ). Consequently, the coupled MFG prior (9) is not globally conjugate to the nonlinear force/torque likelihood (12). The exact posterior in (13) is therefore gener-ally outside the coupled MFG family, motivating a structure-preserving local posterior update rule. 
+
+Scope of the estimator. The framework is local and model-based. It assumes a fixed object pose over the batch, adifferentiable known-shape contact potential, a locally unique quasi-static equilibrium with nonsingular end-effector Hessian, calibrated wrench coordinates, and conditionally independent Gaussian wrench noise. The guarantees below are therefore local: the reduced Jacobian and information matrices are defined around the current nominal pose, the MFG update matches a local quadratic posterior model, and the safeguarded refinement accepts only candidates that reduce the recomputed whitened residual. III. W RENCH SENSITIVITY AND DATA INFORMATION 
+
+This section analyzes the local information induced by the force/torque observation model in Section II. We aim to characterize how a perturbation of the unknown object pose 
+
+XB affects the implicit equilibrium state, the reduced wrench residual, and the resulting local information matrix. Unless a specific norm is indicated, ∥·∥ denotes an arbitrary but fixed norm on the local coordinate space R6. When the direct-sum Frobenius–Euclidean norm induced by the product Lie algebra is needed, we write ∥ · ∥ Q explicitly. 
+
+A. Sensitivity of the Implicit Equilibrium Map 
+
+Fix a nominal triple ( ¯XA, ¯XU , ¯XB ) ∈ G × G × G satisfying the quasi-static equilibrium condition. Let ξA, ξ U , ξ B ∈ R6 de-note local perturbations of XA, X U , X B , respectively. Around the nominal triple, define the local equilibrium operator as 
+
+Φ( ξA, ξ U , ξ B ) := ∂ξA W ( ¯XA ⊕ ξA, ¯XU ⊕ ξU , ¯XB ⊕ ξB ).4
+
+At the nominal point, Φ(0 , 0, 0) = 0 . We denote the Hessian blocks of the potential W by 
+
+Wαβ := ∂ξα ∂ξβ W ( ¯XA ⊕ ξA, ¯XU ⊕ ξU ,
+
+¯XB ⊕ ξB ) ξA=ξU =ξB =0 
+
+, (15) where α, β ∈ {A, U, B }. The block Wαβ denotes the derivative of the ξβ -gradient with respect to ξα, expressed in the stated right-perturbation coordinates at the nominal triple. This convention fixes the ordering in products such as 
+
+WU A W −1
+
+> AA
+
+WAB .
+
+Assumption 3.1. The nominal triple satisfies the local regular-ity condition in Assumption 2.1; in particular, WAA ∈ R6×6
+
+is nonsingular at the nominal equilibrium. Hence, by the implicit function theorem, the equilibrium state X⋆A(XU , X B )
+
+is locally a C1 function of (XU , X B ) [17]. 
+
+Lemma 3.1 (First-order equilibrium sensitivity) Under Assumption 3.1, the first-order variation of the implicit equi-librium state satisfies 
+
+WAA ξA + WAU ξU + WAB ξB = 0 . (16) Consequently, for fixed control input XU , i.e., ξU = 0 ,
+
+ξA = −W −1
+
+> AA
+
+WAB ξB . (17) 
+
+Proof. The result follows by taking the first-order Taylor expansion of Φ( ξA, ξ U , ξ B ) = 0 at the nominal equilibrium and solving for ξA. □
+
+B. Reduced wrench sensitivity and local Fisher information 
+
+Recalling the reduced potential (4) and the predicted control wrench (5), the residual in (7) has the special form [5] 
+
+rk(XB ) = yk − byk(XB ) = yk + ∂ξU W ⋆(XU,k , X B ).
+
+For a nominal object pose ¯XB , define the residual Jacobian by 
+
+Jk := ∂r k( ¯XB ⊕ ξB )
+
+∂ξ B ξB =0 
+
+∈ R6×6. (18) We next derive the local sensitivity of the reduced wrench residual after the quasi-static end-effector equilibrium has been eliminated. For a nominal object pose ¯XB , write 
+
+XB = ¯XB ⊕ ξB , ξB =
+
+ϕv
+
+
+
+∈ R6.
+
+For each control input XU,k , let ¯X⋆A,k := X⋆A(XU,k , ¯XB ) be the corresponding nominal equilibrium. The residual Jacobian is defined by (18). Let the stacked residual and Jacobian be 
+
+r(XB ) := 
+
+
+
+r1(XB )
+
+...
+
+rK (XB )
+
+ , J := 
+
+
+
+J1
+
+...
+
+JK
+
+ ,
+
+and let ΣK := IK ⊗ Σw. For later use, define the whitened residuals and residual merit by 
+
+˜rk(XB ) := Σ −1/2 
+
+> w
+
+rk(XB ), ˜r(XB ) := 
+
+
+
+˜r1(XB )
+
+...
+
+˜rK (XB )
+
+ , (19) and 
+
+ρ(XB ) := ∥˜r(XB )∥2 =
+
+> K
+
+X
+
+> k=1
+
+rk(XB )⊤Σ−1 
+
+> w
+
+rk(XB )
+
+!1/2
+
+.
+
+(20) 
+
+Theorem 3.1 (Reduced wrench sensitivity and local Fisher information). Suppose Assumption 2.1 holds and that, for each k = 1, . . . , K , the residual map rk : G → R6 is twice continuously differentiable in a neighborhood of ¯XB
+
+under the right-perturbation coordinate ξB . Then the following statements hold. 
+
+(i) Schur-complement residual Jacobian. For each measure-ment k, the residual Jacobian of the reduced wrench model has the form 
+
+Jk = WU B − WU A W −1
+
+> AA
+
+WAB , (21) where all Hessian blocks are evaluated at ( ¯X⋆A,k , X U,k , ¯XB ).
+
+In particular, if the potential has the separated form 
+
+W (XA, X U , X B ) = Wctrl (XA, X U ) + Wint (XA, X B ),
+
+then WU B = 0 , and Jk = −WU A W −1
+
+> AA
+
+WAB .
+
+(ii) Local Gauss–Newton Data Model. Let ¯rk := rk( ¯XB ).
+
+Then 
+
+rk( ¯XB ⊕ ξB ) = ¯ rk + JkξB + O(∥ξB ∥2). (22) Consequently, the data energy admits the local Gauss–Newton quadratic model 
+
+bJdata ( ¯XB ⊕ ξB ) = Jdata ( ¯XB ) + g⊤
+
+> data
+
+ξB + 12 ξ⊤ 
+
+> B
+
+Hdata ξB ,
+
+(23) where 
+
+gdata =
+
+> K
+
+X
+
+> k=1
+
+J⊤ 
+
+> k
+
+Σ−1 
+
+> w
+
+¯rk, Hdata =
+
+> K
+
+X
+
+> k=1
+
+J⊤ 
+
+> k
+
+Σ−1 
+
+> w
+
+Jk. (24) 
+
+(iii) Local Fisher information and first-order identifiability. 
+
+The matrix 
+
+I( ¯XB ) := Hdata = J⊤Σ−1 
+
+> K
+
+J (25) is the Fisher information matrix of the local linearized Gaus-sian wrench observation model at ¯XB . The pose perturbation 
+
+ξB is identifiable to first order at ¯XB if and only if J has full column rank, equivalently I( ¯XB ) ≻ 0. If I( ¯XB ) is rank deficient, then there exists a nonzero direction ξB̸ = 0 such that 
+
+JkξB = 0 , k = 1 , . . . , K. (26) Along such a direction, the linearized wrench likelihood has zero curvature, and the wrench data cannot penalize the corresponding perturbation to second order in the local Gauss– Newton model. 
+
+Proof. We prove the three claims in order. (i) First, by the definition of the reduced residual, 
+
+rk(XB ) = yk − byk(XB ) = yk + ∂ξU W ⋆(XU,k , X B ).
+
+Thus, Jk = ∂ξB ∂ξU W ⋆(XU,k , ¯XB ). The reduced potential is 
+
+W ⋆(XU , X B ) = W (X⋆A(XU , X B ), X U , X B ). Differentiating through the implicit equilibrium map gives 
+
+∂ξB ∂ξU W ⋆ = WU B + WU A 
+
+∂ξ A
+
+∂ξ B
+
+.5
+
+By the first-order equilibrium sensitivity Lemma 3.1, 
+
+∂ξ A
+
+∂ξ B
+
+= −W −1
+
+> AA
+
+WAB .
+
+Substituting this expression yields Jk = WU B −
+
+WU A W −1
+
+> AA
+
+WAB . If W (XA, X U , X B ) = Wctrl (XA, X U ) + 
+
+Wint (XA, X B ), then there is no direct XU -XB coupling term, so WU B = 0 . This proves (21). (ii) Second, since rk is twice continuously differentiable in the local coordinate ξB , Taylor expansion at ξB = 0 gives rk( ¯XB ⊕ ξB ) = ¯ rk + JkξB +
+
+O(∥ξB ∥2). Substituting the linearized residual ¯rk + JkξB
+
+into the weighted least-squares data energy gives 12 ∥¯rk +
+
+JkξB ∥2Σ−1
+
+> w
+
+= 12 ∥¯rk∥2Σ−1
+
+> w
+
++ ξ⊤ 
+
+> B
+
+J⊤ 
+
+> k
+
+Σ−1 
+
+> w
+
+¯rk + 12 ξ⊤ 
+
+> B
+
+J⊤ 
+
+> k
+
+Σ−1 
+
+> w
+
+JkξB .
+
+Summing over k = 1 , . . . , K yields the Gauss–Newton model (23) with the coefficients in (24). (iii) Third, the local lin-earized Gaussian observation model can be written in stacked form as r( ¯XB ⊕ ξB ) = ¯ r + Jξ B + higher-order terms , with covariance ΣK = IK ⊗ Σw. The Fisher information of this linearized Gaussian model with respect to ξB is therefore 
+
+J⊤Σ−1 
+
+> K
+
+J =
+
+> K
+
+X
+
+> k=1
+
+J⊤ 
+
+> k
+
+Σ−1 
+
+> w
+
+Jk = Hdata .
+
+Since ΣK ≻ 0, the matrix J⊤Σ−1 
+
+> K
+
+J is positive definite if and only if J has full column rank. This is precisely the first-order identifiability condition for the local linearized residual map. If I( ¯XB ) is rank deficient, then there exists ξB̸ = 0 such that 
+
+ξ⊤ 
+
+> B
+
+I( ¯XB )ξB = 0 . Using the expression for I( ¯XB ), we obtain 
+
+0 = ξ⊤ 
+
+> B
+
+J⊤Σ−1 
+
+> K
+
+Jξ B =
+
+> K
+
+X
+
+> k=1
+
+(JkξB )⊤Σ−1 
+
+> w
+
+(JkξB ).
+
+Because Σw ≻ 0, each term in the sum is nonnegative, and the sum can vanish only if JkξB = 0 , k = 1 , . . . , K. 
+
+Thus ξB is an information-null direction of the local linearized wrench model. Along this direction, the quadratic curvature of the linearized log-likelihood vanishes, so the wrench data do not penalize this perturbation to second order in the Gauss– Newton model. □
+
+Remark 3.1. The matrix Hdata is the Gauss–Newton Hessian of the local least-squares data model, not the exact Hessian of the nonlinear data energy. The exact Hessian generally satisfies 
+
+∇2 
+
+> ξ
+
+Jdata ( ¯XB ) = Hdata + Hcurv , where Hcurv consists of second-derivative terms of the residual map weighted by the current residuals. The Gauss–Newton approximation retains only Hdata , which is positive semidefinite and corresponds to the Fisher information matrix of the local linearized Gaussian observation model [21], [24], [26]. Thus Hdata coincides with the exact data Hessian only when the residual-weighted second-derivative term vanishes, or as a small-residual approx-imation near a good fit. The following result follows the standard use of Schur complements for eliminating nuisance variables in quadratic information forms [26]. In our setting, the translational pertur-bation v is treated as a compensating variable when evaluating the information available for the rotational perturbation ϕ.
+
+Theorem 3.2 (Translation-compensated rotational informa-tion score). Let the local Gauss–Newton information matrix induced by the wrench measurements at the nominal pose ¯XB
+
+be 
+
+I( ¯XB ) = J⊤Σ−1 
+
+> K
+
+J =
+
+Iϕϕ Iϕv 
+
+Ivϕ Ivv 
+
+
+
+,
+
+where the perturbation is decomposed as ξB = [ ϕ⊤, v ⊤]⊤,with ϕ, v ∈ R3. Assume that I( ¯XB ) ⪰ 0 and Ivv ≻ 0, and define Irot := Iϕϕ − Iϕv I−1 
+
+> vv
+
+Ivϕ . Then Irot ⪰ 0, and for every rotational perturbation ϕ ∈ R3,
+
+ϕ⊤Irot ϕ = min 
+
+> v∈R3
+
+ϕv
+
+⊤
+
+I( ¯XB )
+
+ϕv
+
+
+
+.
+
+The unique translational compensator attaining the minimum is v⋆(ϕ) = −I−1 
+
+> vv
+
+Ivϕ ϕ. Consequently, Irot is the effective local Fisher information for rotation after optimal translational compensation. Moreover, the scalar srot := λmin (Irot ) admits the variational characterization 
+
+srot = min  
+
+> ∥ϕ∥2=1
+
+min 
+
+> v∈R3
+
+ϕv
+
+⊤
+
+I( ¯XB )
+
+ϕv
+
+
+
+.
+
+Equivalently, for every ϕ ∈ R3,
+
+min 
+
+> v∈R3
+
+ϕv
+
+⊤
+
+I( ¯XB )
+
+ϕv
+
+
+
+≥ srot ∥ϕ∥22.
+
+If ϕmin is a unit eigenvector associated with λmin (Irot ), then 
+
+ϕmin is a least-informative rotational direction in the local linearized wrench model, and v⋆(ϕmin ) is the corresponding optimal translational compensator. 
+
+Proof. For fixed ϕ, define 
+
+qϕ(v) = 
+
+ϕv
+
+⊤
+
+I( ¯XB )
+
+ϕv
+
+
+
+.
+
+Using the block form of I( ¯XB ), we have qϕ(v) = ϕ⊤Iϕϕ ϕ +2ϕ⊤Iϕv v + v⊤Ivv v. Since Ivv ≻ 0, this quadratic function is strictly convex in v. The first-order optimality condition gives 
+
+Ivϕ ϕ + Ivv v = 0 , and hence v⋆(ϕ) = −I−1 
+
+> vv
+
+Ivϕ ϕ. Substituting 
+
+v⋆(ϕ) into qϕ(v) yields 
+
+min  
+
+> v∈R3
+
+qϕ(v) = ϕ⊤ Iϕϕ − Iϕv I−1 
+
+> vv
+
+Ivϕ 
+
+ϕ = ϕ⊤Irot ϕ. 
+
+Because I( ¯XB ) ⪰ 0, the minimum is nonnegative for all 
+
+ϕ, so Irot ⪰ 0. The characterization of srot follows from the Rayleigh–Ritz theorem applied to the symmetric positive-semidefinite matrix Irot . The lower bound follows by ho-mogeneity, and the least-informative direction is any unit eigenvector corresponding to the smallest eigenvalue. □
+
+Therefore, Irot is the effective information matrix for ro-tation after the translational perturbation has been optimally compensated. This is the standard Schur-complement identity specialized to the local wrench information matrix; the contri-bution here is its physical interpretation for rotation sensitivity under force/torque probing. The variational characterization in Theorem 3.2 implies that 
+
+ϕ⊤Irot ϕ measures the effective information associated with a rotational perturbation ϕ after the best translational compensa-tion has been applied. Therefore, the least informative rotation direction is characterized by the Rayleigh–Ritz minimum [20] of Irot . This criterion is also consistent with the E-optimality 6
+
+principle in optimal experimental design, which evaluates the weakest information direction of an information matrix [27], [28]. 
+
+Remark 3.2. The matrix Irot should be interpreted as a local diagnostic quantity. It quantifies the rotational information remaining after translation has been optimally compensated in the local linearized model. Therefore, it helps distinguish an algorithmic failure from an information-limited regime. When λmin (Irot ) is small, aggressive rotational updates are ill-conditioned, and safeguarded updates are preferable. 
+
+Remark 3.3. The Schur-complement reduction is not intrin-sically asymmetric. One could analogously define Itrans := 
+
+Ivv − I vϕ I−1 
+
+> ϕϕ
+
+Iϕv , provided that Iϕϕ ≻ 0. In the experiments considered here, however, force/torque measurements often constrain translation strongly while leaving some rotational directions weakly constrained. Therefore, we treat translation as the compensating variable and use Irot to quantify the effective rotational information. For the sparse-baseline study, the measurement budget is se-lected from a nested candidate set by monitoring the saturation of the rotational information score srot (K). The corresponding selection criterion and K-sweep results are reported in the Supplementary Material. IV. L OCAL BAYESIAN CLOSURE OF COUPLED MFG POSTERIORS 
+
+Section III derived the local information structure induced by the force/torque observations under quasi-static implicit equilibrium. In particular, the matrices Hdata and Irot char-acterize how the wrench data constrain the full pose and the rotational component, respectively. We now combine this data information with the coupled MFG prior introduced in Section II to obtain a structure-preserving local posterior update. Since the nonlinear wrench likelihood is not globally conjugate to the coupled MFG prior, the update is constructed by matching a local quadratic posterior model back to the coupled MFG family. 
+
+A. Local Quadratic Posterior Model 
+
+Let the MAP objective admit a decomposition as 
+
+JMAP (XB ) = Jdata (XB ) + E0(XB ), (27) where Jdata is the force/torque data energy and E0 is the negative log-prior energy induced by the coupled MFG prior. Fix a nominal pose ¯XB ∈ G, and write XB = ¯XB ⊕
+
+ξB , ξB = [ ϕ⊤, v ⊤]⊤ ∈ R6.
+
+Assumption 4.1. The prior energy E0( ¯XB ⊕ξB ) is three times continuously differentiable in a neighborhood of ξB = 0 . We use an exact first-order coefficient gprior and a symmetric local prior information matrix Hprior to form the quadratic prior model 
+
+bE0( ¯XB ⊕ ξB ) := E0( ¯XB ) + g⊤
+
+> prior
+
+ξB + 12 ξ⊤ 
+
+> B
+
+Hprior ξB .
+
+(28) When Hprior is the exact Hessian of E0 at the nominal pose, this model is the second-order Taylor expansion up to O(∥ξB ∥3). When the Gauss–Newton prior information in Proposition 4.2 is used, (28) denotes the retained local quadratic prior model rather than the exact Hessian expansion. 
+
+Proposition 4.1. Under the local Gauss–Newton data model in Theorem 3.1(ii) and the local quadratic prior model in Assumption 4.1, the MAP objective is approximated by the local Gauss–Newton posterior information model 
+
+bJMAP ( ¯XB ⊕ ξB ) = JMAP ( ¯XB ) + g⊤
+
+> post
+
+ξB + 12 ξ⊤ 
+
+> B
+
+Hpost ξB ,
+
+(29) where gpost := gdata + gprior , and Hpost := Hdata + Hprior .
+
+Here Hpost is a local posterior information matrix for the chosen quadratic model. If Hprior is exact, the approximation error comes from the Gauss–Newton data model. If the prior matrix in Proposition 4.2 is used, then Hpost combines the Gauss–Newton data information with the Gauss–Newton prior information; in neither case is it claimed to be the exact Hessian of the nonlinear posterior objective in general. Moreover, if Hpost ≻ 0, minimizing (29) gives the local MAP perturbation ξ⋆ 
+
+> MAP
+
+= −H−1post gpost . The corresponding updated pose is X+ 
+
+> B
+
+= ¯XB ⊕ ξ⋆
+
+> MAP
+
+. Equivalently, the local posterior in tangent coordinates has the Gaussian approxima-tion 
+
+p(ξ | Y, U) ≈ N  −H−1post gpost , H −1post 
+
+ . (30) Equation (30) provides a local Gaussian description of the posterior in tangent coordinates. 
+
+B. Tangent-Space Information Form of the Coupled MFG Prior 
+
+We now instantiate the abstract prior in (9) for the coupled MFG prior. Let Θ0 = (F0, μ 0, Λ0, Γ0) denote the prior parameters, and let the prior energy be 
+
+E0(RB , p B ) = − tr( F ⊤ 
+
+> 0
+
+RB )+ 12 ∥pB −(μ0 +Γ 0νR)∥2Λ0 , (31) where ∥x∥2Λ0 := x⊤Λ0x, F0 = U SV ⊤, and νR ≡ νRB := (QS − SQ ⊤)∨, Q := U ⊤RB V. Fix a nominal pose ¯XB =( ¯RB , ¯pB ), and define 
+
+¯Q := U ⊤ ¯RB V, ¯ν := ( ¯QS − S ¯Q⊤)∨, (32) and ¯e := ¯ pB − (μ0 + Γ 0 ¯ν). Let 
+
+Jν := ∂ν R( ¯RB exp( bϕ)) 
+
+∂ϕ ϕ=0 
+
+∈ R3×3 (33) denote the Jacobian of νRB with respect to the rotational perturbation ϕ. Its explicit expression under the proper SVD convention is derived in the Supplementary Material. 
+
+Proposition 4.2 (Prior gradient and Gauss–Newton prior information). Under the right perturbation XB = ¯XB ⊕
+
+ξB , ξB = [ϕ⊤, v ⊤]⊤, the exact first-order term of the coupled MFG prior energy (31) is 
+
+gprior =
+
+gprior ,ϕ 
+
+gprior ,v
+
+
+
+, (34) 7
+
+with 
+
+gprior ,v = Λ 0 ¯e, (35) 
+
+gprior ,ϕ = −( ¯R⊤ 
+
+> B
+
+F0 − F ⊤ 
+
+> 0
+
+¯RB )∨ − J⊤ 
+
+> ν
+
+Γ⊤ 
+
+> 0
+
+Λ0 ¯e. (36) For the second-order term used in the local posterior matching and in Assumption 4.1, we use the following Gauss–Newton tangent-space prior information matrix: 
+
+Hprior =
+
+Hprior ,ϕϕ Hprior ,ϕv 
+
+Hprior ,vϕ Hprior ,vv 
+
+
+
+, (37) where 
+
+Hprior ,vv = Λ 0, (38) 
+
+Hprior ,ϕ v = −J⊤ 
+
+> ν
+
+Γ⊤ 
+
+> 0
+
+Λ0, (39) 
+
+Hprior ,vϕ = ( Hprior ,ϕ v)⊤, (40) 
+
+Hprior ,ϕϕ ≈ HMF  
+
+> ϕϕ
+
++ J⊤ 
+
+> ν
+
+Γ⊤ 
+
+> 0
+
+Λ0Γ0Jν . (41) 
+
+Proof. The first-order result follows by differentiating the prior energy (31) under the right perturbation RB = ¯RB exp( bϕ),
+
+pB = ¯pB + v, and using the first-order expansion νR =¯ν + Jν ϕ + O(∥ϕ∥2). The stated information matrix is ob-tained by substituting this first-order model into the quadratic conditional-Gaussian term and retaining the exact matrix-Fisher rotational curvature. The omitted terms are precisely the residual-weighted second derivatives of νR. □
+
+Remark 4.1 Here HMF  
+
+> ϕϕ
+
+is the exact local curvature contribu-tion of the matrix-Fisher term − tr( F ⊤ 
+
+> 0
+
+RB ). The translational block and the rotation–translation cross block are exact at this order under the linearization of νR. The approximation in Hprior ,ϕϕ neglects the residual-weighted second-derivative terms of νR, namely terms proportional to ¯e⊤Λ0Γ0 ∂2
+
+> ϕϕ
+
+νR.Thus Hprior should be read as the Gauss–Newton prior infor-mation used for posterior matching, not as the exact Hessian of the coupled prior energy in general. 
+
+C. Structure-Preserving MFG Posterior Update 
+
+The local Gaussian approximation in (30) provides the pos-terior mean and covariance in tangent coordinates. However, it does not by itself define a distribution on SO(3) × R3 with the coupled MFG structure. The closure below is a local construction. It is used when the translational information block is positive definite, the compensated rotational curvature is positive semidefinite, the posterior rotational chart is nonsingular, and the linearization remains within the chosen right-perturbation neighborhood. If these checks fail in implementation, we regularize the problematic block rather than treating the closed form as valid: Hvv is damped as Hvv + λv I, the symmetric part of the rotational Schur complement is projected onto the positive-semidefinite cone with a small eigenvalue floor, an ill-conditioned Jν, post is replaced by the frozen nominal chart Jν ,and the outer refinement may fall back to a damped tangent-space residual-descent candidate for that iteration. First of all, we define the following quantities. Let Fpost =
+
+Upost Spost V ⊤ 
+
+> post
+
+be a proper singular value decomposition, with Upost , V post ∈ SO(3) and Spost = diag( s1, s 2, s 3)
+
+following the proper SVD convention used for the matrix Fisher parameter. Using this posterior matrix Fisher parameter, 
+
+¯νpost := νR( ¯RB ; Fpost ) =   ¯Qpost Spost − Spost ¯Q⊤
+
+> post
+
+∨ , and 
+
+¯Qpost := U ⊤ 
+
+> post
+
+¯RB Vpost , then let 
+
+Jν, post := ∂∂ϕ νR
+
+  ¯RB exp( ϕ∧); Fpost 
+
+
+
+> ϕ=0
+
+. (42) When the closure conditions stated below hold, we seek a coupled matrix Fisher–Gaussian parameterization Θpost =(Fpost , μ post , Λpost , Γpost ) , whose local energy expansion at 
+
+¯XB matches (43) through the prescribed first- and second-order information terms. We now state the Closed–Form Local Closure Rule for a coupled MFG distribution. 
+
+Theorem 4.3 (Closed-Form Self-Consistent Coupled MFG Update Rule). Let the local quadratic posterior model at the nominal pose ¯XB = ( ¯RB , ¯pB ) be 
+
+bJMAP ( ¯XB ⊕ ξ) = bJMAP ( ¯XB ) + g⊤ξ + 12 ξ⊤Hξ, (43) Assume that Hvv ≻ 0. Define the Schur-complement rota-tional quantities 
+
+Λpost := Hvv ,apost := gϕ − Hϕv H−1 
+
+> vv
+
+gv ,Mpost := Hϕϕ − Hϕv H−1 
+
+> vv
+
+Hvϕ ,Cpost := 12 tr( Mpost )I3 − Mpost .
+
+(44) Further assume that Mpost ⪰ 0, that the posterior rotational-coordinate Jacobian Jν, post at ¯RB is nonsingular, and that the local chart is valid for the posterior mode perturbation. Here, Mpost is the effective rotational curvature obtained after locally eliminating the translational increment v, whereas 
+
+Cpost is the unique symmetric matrix Fisher embedding sat-isfying tr( Cpost )I3 − Cpost = Mpost . Then the matrix Fisher parameter associated with the remaining rotational gradient and curvature is given explicitly by 
+
+Fpost = ¯RB
+
+
+
+Cpost − 12 [apost ]×
+
+
+
+. (45) The remaining coupled-Gaussian parameters are 
+
+Γpost = −H−1 
+
+> vv
+
+Hvϕ J−1
+
+> ν, post
+
+,μpost = ¯ pB − H−1 
+
+> vv
+
+gv − Γpost ¯νpost . (46) 
+
+Proof sketch. First locally eliminate the translational in-crement v from the quadratic model (43); completing the square gives the effective rotational gradient apost and cur-vature Mpost in (44), while the translational precision is 
+
+Λpost = Hvv . The local expansion of the matrix Fisher term around ¯RB has rotational gradient and curvature deter-mined by Fpost = ¯RB (Cpost − [apost ]×/2) , and the identity 
+
+tr( Cpost )I3 − Cpost = Mpost matches the Schur-complement curvature. Finally, matching the cross block and the translation first-order condition in the conditional Gaussian term gives 
+
+Γpost and μpost in (46). The detailed coefficient comparison is provided in the Supplementary Material. □8
+
+Remark 4.2 In particular, Λpost matches the local translational precision, Γpost matches the local rotation–translation cross-information, μpost satisfies the local translational first-order condition, and Fpost matches the residual rotational gradient and curvature after translational compensation. Equations (44), (45), and (46) provide a closed–form update rule for Θpost =(Fpost , μ post , Λpost , Γpost ). The update is self-consistent be-cause Fpost is constructed first, thereby fixing the posterior rotational chart (¯ νpost , J ν, post ), after which (Γ post , μ post ) are obtained explicitly. We present a local second-order accuracy of this closed-form estimate in the Supplementary Material. 
+
+Frozen-chart implementation used in the algorithms. The self-consistent closure above fixes the MFG parameterization locally. The reported implementation uses its frozen-chart specialization: during one posterior reconstruction, the rota-tional coordinate chart (¯ ν, J ν ) induced by the incoming MFG parameter and the nominal pose is held fixed. Thus Fpost and 
+
+Λpost are still constructed from (44)–(45), while the coupling and translation parameters are reconstructed as 
+
+Γfrz post = −H−1 
+
+> vv
+
+Hvϕ J−1 
+
+> ν
+
+,μfrz post = ¯ pB − H−1 
+
+> vv
+
+gv − Γfrz post ¯ν. (47) This is the single-pass MFG update used by Algorithms 1 and 2. The supplementary material gives the expanded formulas, the self-consistent/frozen-chart comparison, and the chart-drift diagnostic. V. S AFEGUARDED MFG P OSTERIOR REFINEMENT 
+
+The preceding sections provide the ingredients for an im-plementable Bayesian pose-estimation framework. Each single pass constructs the frozen-chart MFG posterior in (47) around the current nominal pose. A single local update may be insufficient when the nominal pose is far from the high-likelihood region, because the equilibrium state, the wrench Jacobian, and the local information matrix all depend on the current pose. The outer refinement therefore recenters the local model through residual-checked pose candidates while retaining the original prior for the measurement batch. 
+
+A. Single-Pass Closed-Form Update 
+
+Algorithm 1 implements this frozen-chart single-pass up-date. The self-consistent construction remains the local closure principle, while the frozen-chart form is the computational rule used in the reported experiments. 
+
+B. Safeguarded Outer Refinement Policy 
+
+A single local update may be insufficient when the nom-inal pose is far from the high-likelihood region, because the equilibrium state, the wrench Jacobian, and the local information matrix all depend on the current pose. We first measure the accepted change of the linearization center by 
+
+δ(t) 
+
+> R
+
+:= dSO(3) 
+
+ ¯R(t) 
+
+> B
+
+, ¯R(t+1) 
+
+> B
+
+
+
+, δ (t) 
+
+> p
+
+:= ¯p(t+1)  
+
+> B
+
+− ¯p(t) 
+
+> B2
+
+. The refinement terminates when both pose changes and the residual improvement become sufficiently small. 
+
+Algorithm 1 Single-Pass Closed-Form Coupled MFG Poste-rior Update 
+
+Require: Prior parameters Θprior ; nominal pose ¯XB ; control batch U = {XU,k }Kk=1 ; measurement batch Y = {yk}Kk=1 ;noise covariance Σw; equilibrium warm starts X (0)  
+
+> A
+
+.
+
+Ensure: Posterior parameters Θpost ; equilibrium batch X ⋆A;residual merit ρ; rotational information score srot ; data gradient gdata ; data curvature Hdata . 
+
+> 1:
+
+Compute the local prior gradient and curvature gprior and 
+
+Hprior at ¯XB from Θprior . 
+
+> 2:
+
+Initialize gdata ← 0, Hdata ← 0. 
+
+> 3:
+
+for k = 1 , . . . , K do  
+
+> 4:
+
+Solve the implicit equilibrium state by a damped New-ton iteration: X⋆A,k ← X⋆A(XU,k , ¯XB ). 
+
+> 5:
+
+Evaluate the residual rk( ¯XB ), ˆyk( ¯XB ), and Jk. 
+
+> 6:
+
+Accumulate the data gradient and data curvature gdata ,
+
+Hdata . 
+
+> 7:
+
+end for  
+
+> 8:
+
+Form the local posterior information pair g and H using Proposition 4.1.  
+
+> 9:
+
+Construct the frozen-chart coupled MFG posterior param-eters Θpost . 
+
+> 10:
+
+Compute the scalar whitened residual merit using (20): 
+
+ρ ← ρ( ¯XB ) 
+
+> 11:
+
+Partition Hdata and compute Irot , set srot := λmin (Irot ). 
+
+> 12:
+
+return (Θ post , X ⋆A, ρ, s rot , g data , H data ).The main refinement procedure is summarized in Algo-rithm 2. It is a fixed-prior recentered posterior update : each outer pass recomputes a local posterior from the same initial prior Θ(0) , while changing only the linearization center ¯X(t) 
+
+> B
+
+.This is intentional and avoids repeatedly counting the same measurement batch as if it were new data. The expanded outer loop and the detailed candidate-pool, branch-search, and fallback routines are given in the Supplementary Ma-terial. In the main algorithm, a branch-pool routine tests the full, translation-only, and rotation-only posterior-induced candidates using the same recomputed residual merit. If no posterior-induced branch is accepted, a damped residual-descent fallback is invoked. Here, SP (Θ , ¯XB , X (0)  
+
+> A
+
+) denotes the single-pass update in Algorithm 1 with fixed (U, Y, Σw).For compactness, define D := ( U, Y, Σw) and 
+
+S(t) := 
+
+
+
+Θ(t)post , X ⋆, (t) 
+
+> A
+
+, ρ t, s (t)rot , g (t)data , H (t)data 
+
+
+
+.
+
+In Algorithm 2, R ECOVER POSE returns the joint mode of the coupled MFG posterior. Specifically, if F (t)post = UtStV ⊤
+
+> t
+
+is a proper singular value decomposition, then RECOVER POSE (Θ (t)post ) = ( R(t)mode , p (t)mode ) = ( UtV ⊤ 
+
+> t
+
+, μ (t)post ).
+
+This is consistent with the MFG definition because the matrix Fisher marginal has mode UtV ⊤ 
+
+> t
+
+, and the rotational coordinate satisfies 
+
+νF (t)post 
+
+(UtV ⊤ 
+
+> t
+
+) = 0 ,
+
+so the conditional Gaussian mode at the rotational mode is 
+
+μ(t)post . Unless stated otherwise, the pose-error tables for Algo-9
+
+Algorithm 2 Residual-Safeguarded Recentered Local MFG Estimator                                                                                                                  
+
+> Require: Initial nominal pose ¯X(0)
+> B; fixed prior Θ(0) ; data D= ( U, Y, Σw);equilibrium warm starts X(0)
+> A; candidate and stopping tolerances; maxi-mum outer iteration number Tmax .
+> Ensure: Refined pose X⋆Band posterior Θ⋆.1: S(0) ←SP (Θ (0) ,¯X(0)
+> B,X(0)
+> A).2: Initialize (X⋆B,Θ⋆, ρ ⋆)←( ¯X(0)
+> B,Θ(0) post , ρ 0).3: for t= 0 , . . . , T max −1do
+> 4: Bt←BRANCHES ( ¯X(t)
+> B,RECOVER POSE (Θ (t)post ), s (t)rot ).5: Ct←CAND ( ¯X(t)
+> B,S(t),Bt,D); retain only candidates with ρ≤
+> ρt−εacc .6: if Ct=∅then
+> 7: Ct←FALLBACK ( ¯X(t)
+> B,S(t),D).8: end if
+> 9: if Ct=∅then
+> 10: return (X⋆B,Θ⋆).11: end if
+> 12: Select ( ¯X(t+1)
+> B, cand ,X⋆A, cand , ρ cand )←arg min (XB,X⋆A,ρ )∈C tρ.13: S(t+1) ←SP (Θ (0) ,¯X(t+1)
+> B, cand ,X⋆A, cand ),and ¯X(t+1)
+> B←
+> ¯X(t+1)
+> B, cand .14: Update (X⋆B,Θ⋆, ρ ⋆)if ρt+1 < ρ ⋆.15: if STOP ( ¯X(t)
+> B,¯X(t+1)
+> B, ρ t, ρ t+1 )then
+> 16: break .17: end if
+> 18: end for
+> 19: return (X⋆B,Θ⋆).
+
+rithm 2 use the returned refined pose X⋆B , namely the best ac-cepted recentering state selected by the residual merit in Algo-rithm 2. Posterior modes recovered by R ECOVER POSE (Θ (t)post )
+
+are used to form candidate branches and to visualize posterior migration, but the tabulated errors are evaluated at the accepted recentering estimate. For a branch endpoint XB,b , R ELAX ( ¯XB , X B,b , α ) denotes interpolation in the same right-perturbation chart: if XB,b =¯XB ⊕ ξb, then RELAX ( ¯XB , X B,b , α ) := ¯XB ⊕ (αξ b), α ∈ [0 , 1] .
+
+The routine E VAL RES (XB , U, Y, Σw, X warm  
+
+> A
+
+) solves the im-plicit equilibrium for all measurements using X warm  
+
+> A
+
+as warm starts, evaluates the residuals rk(XB ), and returns the updated equilibrium batch together with the scalar merit ρ(XB ) in (20). The external refinement process evaluates multiple candidate pose updates generated from the posterior distribution of the local MFG. 
+
+C. Residual Safeguard and Information-Conditioned Behavior 
+
+The outer refinement accepts a candidate only when it reduces the whitened residual merit. This gives the following monotonicity property for the accepted sequence. 
+
+Lemma 5.1 (Accepted residual monotonicity). Let ρ(XB ) be the scalar whitened residual merit defined in (20). Assume that 
+
+εacc ≥ 0, that each candidate residual is recomputed with the same batch (U, Y, Σw) used to define ρ, and that Algorithm 2 accepts a candidate X(t+1)  
+
+> B
+
+only if ρ(X(t+1)  
+
+> B
+
+) ≤ ρ(X(t) 
+
+> B
+
+) −
+
+εacc . Then every accepted outer iteration satisfies 
+
+ρ(X(t+1)  
+
+> B
+
+) ≤ ρ(X(t) 
+
+> B
+
+) − εacc . (48) In particular, if εacc = 0 , the accepted residual sequence is nonincreasing. If εacc > 0, the number Nacc of strict accepted updates is finite and satisfies 
+
+Nacc ≤ ρ(X(0)  
+
+> B
+
+)
+
+εacc 
+
+. (49) 
+
+Proof. The decrease inequality (48) follows directly from the acceptance rule. If εacc = 0 , this immediately implies that the accepted residual sequence is nonincreasing. If εacc > 0, then after Nacc accepted updates, 
+
+ρ(X(Nacc ) 
+
+> B
+
+) ≤ ρ(X(0)  
+
+> B
+
+) − Nacc εacc .
+
+Since ρ(XB ) ≥ 0 for all XB , we obtain Nacc εacc ≤ ρ(X(0)  
+
+> B
+
+),
+
+which gives (49). □
+
+This lemma only certifies monotonicity of the accepted residual merit. It does not imply monotone decrease of the full local MAP objective, nor does it guarantee monotone decrease of the ground-truth pose error, which is unavailable to the estimator. Under an additional smoothness assump-tion, the fallback direction provides a local descent mech-anism for the squared residual merit ψ(XB ) = 12 ρ(XB )2:if gdata = ∇ψ( ¯XB )̸ = 0, Hdata ⪰ 0, and λfb > 0,then g⊤
+
+> data
+
+−(Hdata + λfb I)−1gdata 
+
+ < 0. Thus a sufficiently small right-perturbation step along the fallback direction de-creases ψ. The discrete candidate set must still contain a sufficiently small accepted step for this continuous descent statement to become an algorithmic step. The safeguard ensures that no accepted posterior-induced pose update increases the whitened force/torque residual, while the diagnostic srot = λmin (Irot ) identifies iterations in which rotation is weakly constrained by the current measurement batch. The score srot = λmin (Irot ) admits a direct sensitivity interpretation. By the Schur-complement characterization in Theorem 3.2, for any rotational perturbation ϕ ∈ R3,
+
+min 
+
+> v∈R3
+
+ϕv
+
+⊤
+
+Hdata 
+
+ϕv
+
+
+
+= ϕ⊤Irot ϕ. (50) Combining this identity with Theorem 3.1 yields ϕ⊤Irot ϕ ≥
+
+srot ∥ϕ∥2.
+
+Hence, srot provides a uniform lower bound on the translation-compensated local wrench sensitivity over all rota-tional perturbation directions. Equivalently, it quantifies how weakly the current force/torque batch can respond, in the worst rotational direction, after optimal translational compensation. Small srot therefore indicates a weakly informative rotational regime, in which aggressive rotation updates are unreliable and should be accepted only through explicit residual reduction. VI. E XPERIMENTAL EVALUATION 
+
+The experiments are organized around residual-safeguarded local MFG inference for information-limited wrench-based pose estimation. The supplementary material gives the full simulation settings, measurement-number selection, nested K-sweeps, noise-sensitivity tests, and single-pass ablations. 1 The     
+
+> 1Code and generated data supporting the synthetic experiments and baseline comparisons are available at https://github.com/CeceliaChen96/Geometric-Bayesian-Framework-with-Force-measurement-Data-on-Pose-Estimation. The physical experiment videos are available at the external links reported in the repository. 10
+
+main text focuses on three points that evaluate the estimator in the regimes used in this paper: prior-mismatch behavior under sparse informative measurements, comparison against local geometric/Bayesian baselines, and a controlled physical force/torque proof of concept. The sparse operating point selected by the information criterion is Keff = 10 ; Khigh = 20 
+
+is retained in the supplement as a higher-information reference. 
+
+A. Synthetic Prior-Mismatch Stress Test 
+
+The Gaussian noise-level and noise-model mismatch tests are reported in the Supplementary Material. Here we focus on a prior-mismatch setting where the estimator is initialized with a larger pose error and an overconfident MFG prior. The object geometry, contact patch, stiffness parameters, ground-truth pose, measurement model, and sparse measurement budget are kept the same as in the baseline synthetic setting reported in the Supplementary Material, with Keff = 10 .
+
+1) Setup: The initial nominal pose is generated by scaling the baseline perturbation: ¯X(0)  
+
+> B
+
+(β) = Xtrue  
+
+> B
+
+⊕(βϕ base , βv base ),
+
+where ϕbase = Log( Rz (−6◦)Ry (4 ◦)Rx(2 ◦)) ∨ , vbase =(−0.005 , 0.0035 , −0.004) ⊤ m. The prior confidence is scaled independently by κ0 = cκκbase 0 , Λ0 = cΛΛbase 0 , with 
+
+κbase 0 = 60 , Λbase 0 = diag(6000 , 6000 , 6000) . We test 
+
+(β, c κ, c Λ) ∈ {(2 , 2, 2) }. The regime represents a falsely confident prior, in which the initial pose error is enlarged while both the rotational concentration and translational precision are also increased. 
+
+2) Results: The false-confidence case provides a stringent stress test for the proposed refinement mechanism, because the estimator is initialized with a relatively large pose perturbation while the prior concentration and precision are simultaneously increased. As summarized in Table I, the single-pass update is affected by this misleading prior confidence, whereas the safeguarded multi-pass refinement reduces the reported resid-ual and pose-error metrics for the five tested noise seeds. Relative to Algorithm 1, Algorithm 2 reduces the rotation error, translation error, and residual merit by 15 .93 ± 5.04% ,
+
+96 .95 ±0.44% , and 62 .09 ±2.89% , respectively, while increas-ing the rotational information score by a factor of 30 .52 ±3.30 .Relative to the enlarged initial perturbation, the accepted refinement also reduces the initial rotation and translation errors by 6.56 ±3.29% and 92 .61 ±1.12% , respectively. These results suggest that the accepted recentering steps can improve the local likelihood fit in this sparse false-confidence setting, even when the initial pose is poor and the prior is falsely overconfident. 
+
+3) Representative refinement dynamics : In Figure 1, panels (a)–(c) show that the blue curves correspond to the accepted nominal poses X(t)
+
+> B, nom
+
+, while the purple curves show the posterior-mode estimates bX(t) 
+
+> B, post
+
+recovered after locally re-applying the closed-form MFG update at each accepted nom-inal state. Panels (d)–(f) illustrate how the refreshed Matrix Fisher posterior is displaced on SO(3) as the nominal pose is iteratively recentered. The inset views magnify the central migration region, where the stepwise posterior-mode trajectory is compressed in the full-scale plots. This provides a representative geometric view of the safe-guarded refinement mechanism in the false-confidence setting. The accepted nominal poses are gradually recentered, and in this run the locally recovered posterior modes move toward smaller pose error rather than undergoing an abrupt correc-tion. The rotational marginal contours further show that this migration is anisotropic: the posterior geometry is reshaped according to the measurement-induced information available in each rotational direction. 
+
+B. Baseline Comparison Under Multi-Pass Refinement 
+
+Before moving to physical validation, we compare the proposed safeguarded MFG refinement with three local pose-estimation baselines under the sparse false-confidence proto-col of Experiment 2. The baselines are chosen to represent standard local estimation alternatives and one ablation of the proposed coupled posterior structure. B1 is a damped Lie-Gauss–Newton/Levenberg–Marquardt MAP estimator in the right-perturbation coordinates of SO(3) × R3 [22]–[24]. B2 is a tangent-space Gaussian/Laplace update using the local quadratic posterior model at the current nominal pose [25]. B3 is a decoupled local Gaussian ablation in which the rotation– translation cross-information blocks are set to zero before the local quadratic update is solved. Thus, B3 tests whether the coupled MFG posterior structure is useful beyond a block-diagonal local approximation. All methods use the same K = 10 sparse-baseline mea-surement batch, the same five noise seeds, and the same false-confidence initialization (β, c κ, c Λ) = (2 , 2, 2) . To compare re-finement mechanisms rather than single-step behavior, B1–B3 are also run in a multi-pass form: each outer step recomputes the local information at the current nominal pose, generates a method-specific local candidate, tests relaxed step lengths 
+
+α ∈ { 1, 0.5, 0.25 , 0.1}, and accepts an update only when the recomputed whitened residual merit decreases. The maximum outer budget is Tmax = 20 , matching Algorithm 2. If no tested candidate reduces the residual merit, the corresponding baseline terminates before the budget is exhausted. The com-plementary single-pass comparison between Algorithm 1 and one-update B1–B3 baselines is reported in the supplementary experimental results. Table II reports the multi-pass comparison. The local base-lines reduce translation error and residual merit relative to the common initial pose, but their mean rotation error increases in this prior-mismatch setting. The decoupled B3 variant obtains the lowest residual among the three baselines, but it also has the largest rotation-error increase, indicating that residual decrease alone does not guarantee a well-coupled pose correc-tion. The proposed safeguarded MFG refinement is the only method in this comparison that reduces both mean rotation and mean translation error, although it is computationally more ex-pensive. The appropriate conclusion is therefore an empirical accuracy advantage of the coupled MFG refinement in this sparse false-confidence protocol, not a runtime advantage or a global dominance claim. 11 
+
+TABLE I: False-confidence case under sparse-baseline measurements. All entries are sample means ± sample standard deviations over five random seeds. 
+
+Case (β, c κ, c Λ) ↓ Rotation error ¯eR (rad) ↓ Translation error ¯ep (×10 −3 m) ↓ Residual merit ¯ρ ↑ Rotational score ¯srot 
+
+Alg. 1 Alg. 2 ∆¯ eR (%) Alg. 1 Alg. 2 ∆¯ ep (%) Alg. 1 Alg. 2 ∆¯ ρ (%) Alg. 1 Alg. 2 Gain False confidence (2 , 2, 2) 2.928 ×10 −1
+
+±7.70 ×10 −3
+
+2.459 ×10 −1
+
+±8.66 ×10 −3
+
+15 .93% 
+
+±5.04% 35 .365 
+
+±1.59 
+
+1.078 
+
+±0.164 96 .95% 
+
+±0.44% 17 .890 
+
+±0.711 
+
+6.778 
+
+±0.510 62 .09% 
+
+±2.89% 0.299 
+
+±0.000 
+
+9.124 
+
+±0.985 30 .52 
+
+±3.30 
+
+Note: Bold entries indicate the lower-error or higher-score value. This setting uses K = 10 , β = 2 .0, cκ = 2 .0, and cΛ = 2 .0. The initial-pose errors are 
+
+eR = 2 .6312 ×10 −1 rad and ep = 14 .595 ×10 −3 m. The improvement column ∆¯ eR uses 100( xAlg1 − xAlg2 )/x Alg1 . All entries are sample means and standard deviations over five independent noise seeds with the same measurement design. Relative to the initial pose, Algorithm 2 reduces the rotation and translation errors by 6.56 ± 3.29 % and 92 .61 ± 1.12 %, respectively. Algorithm 2 used Tmax = 20 and converges for all five seeds. 0 2 4 6 8 10 12 14 16 18 20                                            
+
+> Accepted posterior-update index
+> 8
+> 10
+> 12
+> 14
+> 16
+> 18
+> Residual merit  ρ
+> (a) Residual fit and rotational information
+> Residual merit ρsrot
+> 0246810 12 14 16 18 20
+> Accepted posterior-update index
+> 0.24
+> 0.26
+> 0.28
+> 0.30
+> Rotation error (rad)
+> (b) Rotational error evolution
+> e(t)
+> R, nom
+> e(t)
+> R, post
+> 0246810 12 14 16 18 20
+> Accepted posterior-update index
+> 0
+> 10
+> 20
+> 30
+> 40
+> 50
+> 60
+> Translation error  (×10 −3 )
+> (c) Translational error evolution
+> e(t)
+> p, nom
+> e(t)
+> p, post
+> -15 015
+> Local tangent offset Δθ1(deg)
+> -15
+> 0
+> 15
+> Local tangent offset  Δθ2 (deg)
+> (d) Local marginal of Re 1
+> -15 015
+> Local tangent offset Δθ1(deg)
+> (e) Local marginal of Re 2
+> -15 015
+> Local tangent offset Δθ1(deg)
+> (f) Local marginal of Re 3
+> 0
+> 2
+> 4
+> 6
+> 8
+> 10
+> srot  = λmin (rot )
+> -2 03
+> -5
+> -2
+> 1
+> -4 -1 2
+> -5
+> -2
+> 1
+> -2 14
+> -3
+> 0
+> 3
+
+Refinement dynamics and geometric migration of rotational marginals 
+
+> initial contour
+> intermediate contour
+> final contour
+> posterior-mode trajectory
+> initial reference center
+> initial mode
+> intermediate mode
+> final mode
+
+Fig. 1: Representative refinement dynamics and rotational-marginal migration for the seed-44 false-confidence case under sparse-baseline measurements, with (β, c κ, c Λ) = (2 , 2, 2) . Panels (a)–(c) show the residual decrease and pose-error evolution along the safeguarded multi-pass refinement. Panels (d)–(f) visualize the associated rotational-marginal contour migration for 
+
+Re 1, Re 2, and Re 3, respectively, in two-dimensional local tangent charts. 
+
+C. Real-World Validation 
+
+The physical experiment is a controlled proof of concept under the same known-shape, quasi-static, calibrated-wrench assumptions used by the model. A Kinova Gen3 manipula-tor with an ATI Mini-40 force/torque sensor probes a 3D-printed box-like object under Cartesian impedance control 
+
+(KR, K p) = (8 I3, 600 I3). The object geometry is represented by the same smooth superquadric signed field used by the estimator, and the commanded poses and wrench signs follow the conventions of Section II-B. The ground-truth pose is obtained from CAD geometry and manual fixture measurements, so millimeter-scale translation errors should be interpreted relative to calibration uncertainty. Starting from e(0) 
+
+R = 7 .21 ◦ and e(0) 
+
+p = 8 .77 mm , the robot col-lects quasi-static contact wrench measurements on the probed faces of the tilted box. To evaluate the effect of contact-face coverage, we vary the number of probed faces. The three tested settings use three, four, and six probed faces, corresponding to K = 6 , K = 8 , and K = 12 wrench measurements, respectively. Algorithm 2 then refines the nominal object pose under each setting. In the tilted-box case, the converged errors are eR = 5.362 ◦ and ep = 8.875 mm for three probed faces, eR = 5 .011 ◦ and ep = 3 .131 mm for four probed faces, and eR = 3 .746 ◦ and ep = 3 .465 mm for six probed faces. These numbers should be read as controlled proof of concept errors rather than ground truth guarantees. The main text visualizes the tilted-box case in Fig. 2; the horizontal-case visualization and the detailed assumption checklist are reported in the Supplementary Material. In the tilted case, the rotational marginals qualitatively contract from the broad initial prior to measurement-informed posterior clusters as the number of probed faces increases. As 12 
+
+TABLE II: Multi-pass baseline comparison under the sparse false-confidence protocol. All methods start from the same initial pose, with eR = 2 .631 ×10 −1 rad , ep = 14 .595 mm , and ρ = 15 .357 ± 0.434 . Positive ∆eR and ∆ep indicate reductions relative to this common initial pose. Entries are sample means ± sample standard deviations over five noise seeds.                                                                                                                 
+
+> Method ↓eR(rad) ∆eR(%) ↓ep(mm) ∆ep(%) ↓ρIter. Acc. Time (s) B1 Lie-GN/LM 0.322 ±0.039 −22 .4±14 .98.11 ±2.13 44 .4±14 .612 .02 ±2.48 5.0±1.94.0±1.951 .23 ±20 .01
+> B2 Tangent Gaussian/Laplace 0.311 ±0.023 −18 .2±8.88.56 ±1.50 41 .4±10 .312 .75 ±1.94 4.8±0.43.8±0.448 .99 ±4.92
+> B3 Decoupled Gaussian 0.395 ±0.043 −50 .2±16 .36.65 ±0.90 54 .4±6.210 .64 ±1.46 5.4±1.84.4±1.860 .08 ±23 .72
+> Proposed Alg. 2 0.246 ±0.009 6.6±3.21.08 ±0.16 92 .6±1.16.78 ±0.51 20 .0±0.020 .0±0.0687 .29 ±33 .35
+> Note: “Iter.” denotes the number of outer recentering iterations evaluated, and “Acc.” denotes the number of accepted residual-safeguarded updates. B1–B3 terminate early when no tested candidate further decreases the recomputed whitened residual merit.
+
+shown in Fig. 2, the three-face setting provides only limited information and does not reliably resolve the full pose; in particular, the translation error remains comparable to the initial error. With four probed faces, the translation estimate improves substantially, but the rotational marginals still exhibit a directional ambiguity, indicating that the available wrench data remain only partially informative for attitude. The six face setting gives the most consistent posterior contraction: the rotational samples are more tightly aligned with the ground-truth directions, and the full pose posterior shrinks toward a compact region near the measured object pose. These results demonstrate feasibility with real wrench data while showing that broad contact-face coverage, not only the total number of measurements, is important for posterior concentration and final pose accuracy. VII. C ONCLUSION AND FUTURE WORK 
+
+This paper proposes residual-safeguarded local MFG in-ference for information-limited wrench-based pose estimation on SO(3) × R3. By eliminating the quasi-static end-effector equilibrium, we derived a Schur-complement residual Jaco-bian and a rotational information score after translational compensation. Matching the resulting local quadratic like-lihood model to a coupled Matrix Fisher–Gaussian family yields a structure-preserving posterior approximation, while residual-safeguarded recentering accepts only pose updates that reduce the recomputed whitened wrench residual. This connects wrench-based contact mechanics, local identifiability diagnostics, and geometric Bayesian inference in a form that differs from tangent-space Gaussian filters and from existing Matrix Fisher/MFG updates for direct attitude or reference-vector measurements. The method remains local and model-dependent. It as-sumes known object geometry, quasi-static contact, calibrated force/torque sensing, and sufficiently informative probing. The residual safeguard certifies accepted residual decrease, not global optimality or monotone pose-error decrease. Future work should integrate active contact selection, account for shape, friction, and compliance uncertainty, and establish sharper links between information scores, residual decrease, and pose-error guarantees. For further study, this framework may provide a local theoretical basis for control-oriented probing design. The rota-tional Schur-complement information score links a candidate contact action to the local attitude information it can generate, thereby turning the pose-estimation problem into a measure-ment design problem on SO(3) × R3. Rather than merely increasing the number of contacts, future probing policies could select shape-aware actions that excite rotationally infor-mative wrench responses while avoiding locally redundant or infeasible contacts. This motivates active sensing methods that optimize feasible and safe contact configurations by jointly balancing rotational information, translation accuracy, contact constraints, and robot motion limits, under visually unavailable measurement information. ACKNOWLEDGMENT 
+
+This research is supported by the National Research Foun-dation, Singapore, under its NRF Fellowship Programme Award No.: NRF-NRFF18-2026-0010. REFERENCES 
+
+REFERENCES [1] N. Hogan, “Impedance control: An approach to manipulation: Part I— Theory,” J. Dyn. Syst., Meas., Control , vol. 107, no. 1, pp. 1–7, Mar. 1985, doi: 10.1115/1.3140702. [2] M. T. Mason, “Compliance and force control for computer controlled manipulators,” IEEE Trans. Syst., Man, Cybern. , vol. SMC-11, no. 6, pp. 418–432, Jun. 1981. [3] A. M. Okamura, “Haptic feedback in robot-assisted minimally invasive surgery,” Curr. Opin. Urol. , vol. 19, no. 1, pp. 102–107, Jan. 2009, doi: 10.1097/MOU.0b013e32831a478c. [4] L. Yang, S. H. Turlapati, C. Lv, and D. Campolo, “Planning for quasi-static manipulation tasks via an intrinsic haptic metric: A book insertion case study,” IEEE Robot. Autom. Lett. , vol. 10, no. 6, pp. 6111–6118, Jun. 2025, doi: 10.1109/LRA.2025.3564707. [5] L. Yang, A. Dutta, Y. Ji, Y. Zhou, S. Shan, L. Chen, E. Burdet, and D. Campolo, “Adaptive manipulation potential and haptic estimation for tool-mediated interaction,” arXiv preprint arXiv:2603.10352 , 2026. [6] Z. Lu, L. Yang, S. H. Turlapati, and D. Campolo, “Haptic Sorter: A unified planning framework for online shape estimation and real-time pose inference,” arXiv preprint arXiv:2605.31352 , 2026. [7] J. L. Crassidis, F. L. Markley, and Y. Cheng, “Survey of nonlinear attitude estimation methods,” J. Guid., Control, Dyn. , vol. 30, no. 1, pp. 12–28, Jan. 2007, doi: 10.2514/1.22452. [8] F. L. Markley, “Attitude error representations for Kalman filtering,” J. Guid., Control, Dyn. , vol. 26, no. 2, pp. 311–317, Mar.–Apr. 2003, doi: 10.2514/2.5048. [9] A. Barrau and S. Bonnabel, “The invariant extended Kalman filter as a stable observer,” IEEE Trans. Autom. Control , vol. 62, no. 4, pp. 1797– 1812, Apr. 2017. [10] P. van Goor, T. Hamel, and R. Mahony, “Equivariant Filter (EqF),” IEEE Transactions on Automatic Control , vol. 68, no. 6, pp. 3501–3512, 2023. [11] C. Bingham, “An antipodally symmetric distribution on the sphere,” Ann. Statist. , vol. 2, no. 6, pp. 1201–1225, Nov. 1974. [12] C. G. Khatri and K. V. Mardia, “The von Mises–Fisher matrix distri-bution in orientation statistics,” J. Roy. Stat. Soc. B , vol. 39, no. 1, pp. 95–106, 1977. 13 
+
+Fig. 2: Real-world tilted-box posterior visualization under increasing contact-face coverage. The top row shows the initial prior. The second, third, and fourth rows show refined posteriors obtained using two observations per face with three, four, and six probed faces, respectively. Columns 1–3 show the rotational marginals of Re 1, Re 2, and Re 3 on S2, and column 4 shows the pose marginal. Blue points are samples, red triangles mark the ground-truth axes, and gray cuboids are sampled from the corresponding MFG parameters. Increasing the number of probed faces improves posterior concentration and reduces the spread of the full pose samples. 
+
+[13] T. Lee, “Bayesian attitude estimation with the matrix Fisher distribution on SO(3),” IEEE Trans. Autom. Control , vol. 63, no. 10, pp. 3377–3392, Oct. 2018, doi: 10.1109/TAC.2018.2797162. [14] W. Wang and T. Lee, “Matrix Fisher-Gaussian distribution on SO(3) ×
+
+Rn for Bayesian attitude estimation,” IEEE Trans. Autom. Control , vol. 67, no. 5, pp. 2175–2191, May 2022, doi: 10.1109/TAC.2021.3073323. [15] S. Wang, H. Gui, and R. Zhong, “Attitude estimation via ma-trix Fisher distributions on SO(3) using non-unit vector measure-ments,” Automatica , vol. 179, Art. no. 112444, Sep. 2025, doi: 10.1016/j.automatica.2025.112444. [16] D. Campolo and F. Cardin, “A geometric framework for quasi-static manipulation of a network of elastically connected rigid bod-ies,” Appl. Math. Model. , vol. 143, Art. no. 116003, Jul. 2025, doi: 10.1016/j.apm.2025.116003. [17] S. G. Krantz and H. R. Parks, The Implicit Function Theorem: History, Theory, and Applications . New York, NY, USA: Birkh¨ auser, 2013. [18] J. R. Magnus and H. Neudecker, Matrix Differential Calculus with Applications in Statistics and Econometrics , 3rd ed. Hoboken, NJ, USA: Wiley, 2019. [19] L. Ljung, System Identification: Theory for the User , 2nd ed. Upper Saddle River, NJ, USA: Prentice Hall, 1999. [20] F. Pukelsheim, Optimal Design of Experiments . Philadelphia, PA, USA: SIAM, 2006. [21] C. Jauffret, “Observability and Fisher information matrix in nonlinear regression,” IEEE Trans. Aerosp. Electron. Syst. , vol. 43, no. 2, pp. 756– 759, Apr. 2007. [22] K. Levenberg, “A method for the solution of certain non-linear problems in least squares,” Quarterly of Applied Mathematics , vol. 2, no. 2, pp. 164–168, 1944. [23] D. W. Marquardt, “An algorithm for least-squares estimation of nonlinear parameters,” SIAM Journal on Applied Mathematics , vol. 11, no. 2, pp. 431–441, Jun. 1963. [24] J. Nocedal and S. J. Wright, Numerical Optimization , 2nd ed. New York, NY, USA: Springer, 2006. [25] L. Tierney and J. B. Kadane, “Accurate approximations for posterior moments and marginal densities,” Journal of the American Statistical Association , vol. 81, no. 393, pp. 82–86, Mar. 1986. [26] S. M. Kay, Fundamentals of Statistical Signal Processing, Volume I: Estimation Theory . Englewood Cliffs, NJ, USA: Prentice-Hall, 1993. [27] A. C. Atkinson, A. N. Donev, and R. D. Tobias, Optimum Experimental Designs, with SAS . Oxford, U.K.: Oxford Univ. Press, 2007. [28] R. A. Horn and C. R. Johnson, Matrix Analysis , 2nd ed. Cambridge, U.K.: Cambridge Univ. Press, 2013.
