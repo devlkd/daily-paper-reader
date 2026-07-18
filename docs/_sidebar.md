@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-07-18 <!--dpr-date:20260718-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/18/2607.10172v1-on-the-efficiency-of-lora-fine-tuning-for-vision-language-action-models-in-industrial-robotic-manipulation" data-sidebar-item="{&quot;title&quot;: &quot;On the Efficiency of LoRA Fine-Tuning for Vision-Language-Action Models in Industrial Robotic Manipulation&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2607.10172v1-on-the-efficiency-of-lora-fine-tuning-for-vision-language-action-models-in-industrial-robotic-manipulation&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;sat-asm-prec&quot;}], &quot;evidence&quot;: &quot;在机器人操作器精密装配任务上对VLA模型进行LoRA微调&quot;}">On the Efficiency of LoRA Fine-Tuning for Vision-Language-Action Models in Industrial Robotic Manipulation</a>
   * 2026-07-13 <!--dpr-date:20260713-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/13/2607.07306v2-wrench-based-bayesian-pose-estimation-via-matrix--fisher-gaussian-inference" data-sidebar-item="{&quot;title&quot;: &quot;Wrench-Based Bayesian Pose Estimation via Matrix--Fisher Gaussian Inference&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2607.07306v2-wrench-based-bayesian-pose-estimation-via-matrix--fisher-gaussian-inference&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;sat-asm-prec&quot;}], &quot;evidence&quot;: &quot;基于力/力矩的贝叶斯位姿估计用于机器人对准任务&quot;}">Wrench-Based Bayesian Pose Estimation via Matrix--Fisher Gaussian Inference</a>

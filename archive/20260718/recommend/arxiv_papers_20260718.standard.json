@@ -1,0 +1,57 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-18T21:34:01.801500+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 0,
+    "deep_cap": 8,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 13,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2607.10172v1",
+      "source": "arxiv",
+      "title": "On the Efficiency of LoRA Fine-Tuning for Vision-Language-Action Models in Industrial Robotic Manipulation",
+      "abstract": "Deploying billion-parameter Vision-Language-Action (VLA) models on industrial hardware requires fine-tuning to bridge the embodiment gap. Full Fine-Tuning (FFT) provides maximal plasticity but requires data centre-grade GPUs. We present a systematic study of Low-Rank Adaptation (LoRA) for $π_0$, a flow-matching VLA, evaluated on four precision assembly tasks with a UR5e robotic manipulator. Across a sweep of LoRA ranks (r=8 to 256), allocation strategies, and component-freezing ablations, we find no statistically significant advantage of FFT over certain LoRA configurations. Performance saturates at r=32, and uniform allocation across the Vision-Language-Model (VLM) backbone and action expert proves sufficient. Freezing the VLM or restricting the vision encoder to LoRA significantly degrades performance, indicating that embodiment adaptation requires both semantic and visual plasticity. These results suggest that LoRA at r=32 with full vision encoder fine-tuning is a practical approach, reducing static peak VRAM from 36.2 to 10.8 GiB (parameters and optimizer states, activation memory excluded) without detectable performance loss.",
+      "authors": [
+        "Finn Ferchau",
+        "Daniel Pommer",
+        "Cristian Axenie"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.LG"
+      ],
+      "published": "2026-07-11T07:30:25+00:00",
+      "link": "https://arxiv.org/pdf/2607.10172v1",
+      "tags": [
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "LoRA fine-tuning for VLA models on precision assembly tasks with robotic manipulator",
+      "llm_evidence_cn": "在机器人操作器精密装配任务上对VLA模型进行LoRA微调",
+      "llm_evidence": "在机器人操作器精密装配任务上对VLA模型进行LoRA微调",
+      "canonical_evidence": "在机器人操作器精密装配任务上对VLA模型进行LoRA微调",
+      "llm_tldr_en": "This paper studies LoRA fine-tuning for a VLA model on industrial precision assembly tasks, finding that LoRA matches full fine-tuning performance at low ranks, enabling efficient deployment on edge GPUs.",
+      "llm_tldr_cn": "大型视觉-语言-动作(VLA)模型在工业精密装配任务中需微调以适应具体环境，但全量微调计算成本高，严重限制了在边缘设备上的高效部署。本文系统评估了低秩适配(LoRA)方法在UR5e机器人操作臂上的四个精密装配任务中的性能，通过扫描秩值、分配策略和组件冻结消融实验，发现秩32时性能饱和，且与全量微调无统计显著差异，均匀分配至视觉语言模型骨干和动作专家的策略已足够。这一发现表明LoRA能有效替代全量微调，大幅降低VLA模型部署的算力要求，为在工业边缘GPU上实现高精度机器人装配提供了可行路径。",
+      "llm_tldr": "大型视觉-语言-动作(VLA)模型在工业精密装配任务中需微调以适应具体环境，但全量微调计算成本高，严重限制了在边缘设备上的高效部署。本文系统评估了低秩适配(LoRA)方法在UR5e机器人操作臂上的四个精密装配任务中的性能，通过扫描秩值、分配策略和组件冻结消融实验，发现秩32时性能饱和，且与全量微调无统计显著差异，均匀分配至视觉语言模型骨干和动作专家的策略已足够。这一发现表明LoRA能有效替代全量微调，大幅降低VLA模型部署的算力要求，为在工业边缘GPU上实现高精度机器人装配提供了可行路径。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "precision control in satellite assembly process",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}

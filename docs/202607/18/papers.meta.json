@@ -1,0 +1,24 @@
+{
+  "label": "2026-07-18",
+  "date": "2026-07-18",
+  "generated_at": "2026-07-18T21:36:09",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202607/18/2607.10172v1-on-the-efficiency-of-lora-fine-tuning-for-vision-language-action-models-in-industrial-robotic-manipulation",
+      "section": "quick",
+      "title_en": "On the Efficiency of LoRA Fine-Tuning for Vision-Language-Action Models in Industrial Robotic Manipulation",
+      "authors": "Finn Ferchau, Daniel Pommer, Cristian Axenie",
+      "date": "2026-07-11",
+      "pdf": "https://arxiv.org/pdf/2607.10172v1",
+      "score": "7.0",
+      "evidence": "在机器人操作器精密装配任务上对VLA模型进行LoRA微调",
+      "tldr": "工业机器人需要适应不同任务，部署亿级参数VLA模型时，全微调虽塑性高但需数据中心级GPU，资源受限的工业硬件难以承受。本研究以流匹配VLA模型π0为对象，系统探索LoRA微调策略，涵盖不同秩、分配方式和组件冻结，在UR5e机器人上完成精密装配实验。冻结VLM或仅对视觉编码器应用LoRA会严重损害性能，揭示具身适应依赖视觉和语义双重可塑性。结果表明，秩32的LoRA与全微调性能无显著差异，显存占用从36.2 GiB降至10.8 GiB（静态峰值VRAM降幅70%），验证了LoRA在复杂工业操作中的高效性。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "Deploying billion-parameter Vision-Language-Action (VLA) models on industrial hardware requires fine-tuning to bridge the embodiment gap. Full Fine-Tuning (FFT) provides maximal plasticity but requires data centre-grade GPUs. We present a systematic study of Low-Rank Adaptation (LoRA) for $π_0$, a flow-matching VLA, evaluated on four precision assembly tasks with a UR5e robotic manipulator. Across a sweep of LoRA ranks (r=8 to 256), allocation strategies, and component-freezing ablations, we find no statistically significant advantage of FFT over certain LoRA configurations. Performance saturates at r=32, and uniform allocation across the Vision-Language-Model (VLM) backbone and action expert proves sufficient. Freezing the VLM or restricting the vision encoder to LoRA significantly degrades performance, indicating that embodiment adaptation requires both semantic and visual plasticity. These results suggest that LoRA at r=32 with full vision encoder fine-tuning is a practical approach, reducing static peak VRAM from 36.2 to 10.8 GiB (parameters and optimizer states, activation memory excluded) without detectable performance loss.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
