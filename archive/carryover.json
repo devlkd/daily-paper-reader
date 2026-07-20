@@ -1,20 +1,20 @@
 {
-  "generated_at": "2026-07-19T21:21:43.880914+00:00",
-  "updated_date": "20260719",
+  "generated_at": "2026-07-20T21:34:20.354143+00:00",
+  "updated_date": "20260720",
   "carryover_days": 9,
   "tag_states": {
     "sat-asm-prec": {
-      "updated_date": "20260719",
+      "updated_date": "20260720",
       "carryover_days": 9,
       "items": []
     },
     "grav-offload": {
-      "updated_date": "20260719",
+      "updated_date": "20260720",
       "carryover_days": 9,
       "items": []
     },
     "TF-SAR": {
-      "updated_date": "20260719",
+      "updated_date": "20260720",
       "carryover_days": 9,
       "items": []
     }

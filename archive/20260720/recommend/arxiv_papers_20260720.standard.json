@@ -1,0 +1,106 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-20T21:34:20.353460+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 0,
+    "deep_cap": 8,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 13,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2607.13358v1",
+      "source": "arxiv",
+      "title": "Linear motion (R-FLEX) for minature 6.2 mm pitch optical fiber position robots with polar (R-theta) kinematics",
+      "abstract": "R-FLEX is a compact, low-part-count flexure-based radial positioning mechanism designed for the next generation of massively parallel fiber-fed spectroscopic telescope instruments. Current instruments such as the Dark Energy Spectroscopic Instrument (DESI) employ 5,000 robotic fiber positioners at 10.4 mm pitch, whereas future surveys require 2.5-3x higher packing density, necessitating new positioning technologies. The R-FLEX mechanism converts small rotations at the flexure base into large, nearly tilt-free radial motion at the fiber tip, achieving naturally low-backlash linear motion within a compact 5.8 mm diameter package. Coupled with a rotating theta-stage, this enables overlapping circular patrol areas at 6.2 mm pitch, as envisioned for projects like Spec-S5. Development proceeded through parametric modeling and optimization, finite element analysis, fabrication, and prototype testing. Prototype units characterized by optical centroiding achieved a corrected radial accuracy consistently better than 4 um RMS over a 3.9 mm travel range, with maximum fiber tilt 0.092 deg, defocus 42 um over the required range, and durability over more than 400,000 targets per robot across operating and survival temperature extremes. Preliminary Spec-S5 accuracy, defocus, and fiber tilt requirements are specified for the complete R-theta robot, and these radial-stage results exceed those requirements, leaving margin for the companion theta-stage. A parametric optimization pipeline makes R-FLEX a versatile, mass-producible platform that can be re-optimized for precision-positioning applications beyond Spec-S5. This offers the precision, compactness, and reliability needed to collect hundreds of millions of spectra for new studies of the large-scale structure of the universe.",
+      "authors": [
+        "Nicholas R. Wenner",
+        "Joseph H. Silber",
+        "Michael S. Schubnell",
+        "David J. Schlegel",
+        "Robert W. Besuner",
+        "William V. Shourt",
+        "Andrew P. Hope"
+      ],
+      "primary_category": "astro-ph.IM",
+      "categories": [
+        "astro-ph.IM"
+      ],
+      "published": "2026-07-15T00:48:56+00:00",
+      "link": "https://arxiv.org/pdf/2607.13358v1",
+      "tags": [
+        "keyword:TF-SAR",
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:TF-SAR",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "precision flexure mechanism for low-backlash linear motion",
+      "llm_evidence_cn": "低回差直线运动的精密柔性机构",
+      "llm_evidence": "低回差直线运动的精密柔性机构",
+      "canonical_evidence": "低回差直线运动的精密柔性机构",
+      "llm_tldr_en": "Presents a flexure-based linear motion mechanism achieving low-backlash positioning, enabling high-density fiber placement; its precision control is transferable to satellite assembly alignment.",
+      "llm_tldr_cn": "该文提出一种基于柔性铰链的径向定位机构R-FLEX，通过将基座小角度旋转转换为大行程、近无倾斜直线运动，在紧凑封装内实现低回差精密定位，用于光纤光谱仪的高密度部署。该方法可迁移至卫星装配中的精密对准任务。",
+      "llm_tldr": "该文提出一种基于柔性铰链的径向定位机构R-FLEX，通过将基座小角度旋转转换为大行程、近无倾斜直线运动，在紧凑封装内实现低回差精密定位，用于光纤光谱仪的高密度部署。该方法可迁移至卫星装配中的精密对准任务。",
+      "llm_tags": [
+        "query:sat-asm-prec:composite"
+      ],
+      "matched_query_tag": "query:sat-asm-prec:composite",
+      "matched_query_text": "Papers central to 卫星地面装配精度, especially work that connects or combines: ground satellite assembly precision techniques; satellite ground assembly accuracy requirements; precision control in satellite assembly process; precision alignment of satellite components on ground; tolerance control methods in satellite manufacturing; dimensional metrology for satellite assembly accuracy; improving satellite ground assembly precision through advanced metrology; alignment and integration techniques for high precision satellite assembly; tolerance analysis and control in satellite ground assembly processes.",
+      "matched_requirement_id": "req-composite-sat-asm-prec",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.15910v1",
+      "source": "arxiv",
+      "title": "Precision positioning in free-space optical communication systems via PID control tuned by RL",
+      "abstract": "Accurate positioning of optical components is essential for maintaining beam alignment in free-space optical (FSO) communication systems. This work investigates reinforcement-learning-assisted tuning of cascaded position and velocity PID controllers for an optical deflector that moves the end of an optical fiber in the focal plane of an optical system. A Deep Deterministic Policy Gradient (DDPG) agent adjusts six PID coefficients through interaction with a physical experimental stand. The stand supports target-coordinate updates of up to $12$ kHz, while the agent and the controlled device are located approximately $200$ km apart and exchange data over UDP. After $5000$ training sessions, two fixed coefficient sets are selected and compared with a manually tuned baseline. For a pseudo-random target trajectory, the best RL-tuned set reduces the range of the radial positioning error from $119$ to $82$, corresponding to a $31\\%$ reduction, and decreases its standard deviation from $15$ to $12$. For a constant zero target, the RL-tuned sets do not improve the radial error range. The results demonstrate the potential of DDPG for experimental PID tuning in dynamic positioning tasks and indicate the need for multi-regime optimization to achieve consistent performance under different operating conditions.",
+      "authors": [
+        "K. Prikhodko",
+        "S. Kuznetsov",
+        "S. Vorobey",
+        "A. Katanskiy",
+        "V. Balakirev",
+        "A. Reutov"
+      ],
+      "primary_category": "physics.ins-det",
+      "categories": [
+        "physics.ins-det"
+      ],
+      "published": "2026-07-17T12:37:37+00:00",
+      "link": "https://arxiv.org/pdf/2607.15910v1",
+      "tags": [
+        "keyword:TF-SAR",
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:TF-SAR",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Precision positioning and alignment of optical components using RL-tuned PID control",
+      "llm_evidence_cn": "使用RL调谐PID控制实现光学元件的精密定位与对准",
+      "llm_evidence": "使用RL调谐PID控制实现光学元件的精密定位与对准",
+      "canonical_evidence": "使用RL调谐PID控制实现光学元件的精密定位与对准",
+      "llm_tldr_en": "RL-assisted tuning of cascaded PID controllers for precise optical component positioning in FSO; DDPG agent adjusts six coefficients remotely, achieving high-precision alignment after 5000 training sessions; method transferable to satellite assembly alignment.",
+      "llm_tldr_cn": "针对自由空间光通信中光学元件的精密定位需求，提出利用深度确定性策略梯度（DDPG）智能体调谐级联位置和速度PID控制器的方法。通过远程UDP数据交换，在5000次训练后获得两组固定系数集，实现高精度对准。该方法为精密定位控制提供了自适应解决方案，可迁移应用于卫星地面装配中的精密校准任务。",
+      "llm_tldr": "针对自由空间光通信中光学元件的精密定位需求，提出利用深度确定性策略梯度（DDPG）智能体调谐级联位置和速度PID控制器的方法。通过远程UDP数据交换，在5000次训练后获得两组固定系数集，实现高精度对准。该方法为精密定位控制提供了自适应解决方案，可迁移应用于卫星地面装配中的精密校准任务。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "precision alignment of satellite components on ground",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

@@ -1,0 +1,271 @@
+Title: Precision positioning in free-space optical communication systems via PID control tuned by RL
+
+URL Source: https://arxiv.org/pdf/2607.15910v1
+
+Published Time: Mon, 20 Jul 2026 00:53:22 GMT
+
+Number of Pages: 6
+
+Markdown Content:
+# Precision positioning in free-space optical communication systems via PID control tuned by RL 
+
+K. Prikhodko, 1 S. Kuznetsov, 1 S. Vorobey, 2 A. Katanskiy, 2 V. Balakirev, 2 and A. Reutov 2, a) 
+
+> 1)
+
+JSC Mostcom, 390000 Russia, Ryazan 
+
+> 2)
+
+LLC Science Trends, 119331 Moscow, Russia 
+
+(*Electronic mail: ar@rootml.com) (Dated: 20 July 2026) 
+
+Accurate positioning of optical components is essential for maintaining beam alignment in free-space optical (FSO) communication systems. This work investigates reinforcement-learning-assisted tuning of cascaded position and velocity PID controllers for an optical deflector that moves the end of an optical fiber in the focal plane of an optical system. A Deep Deterministic Policy Gradient (DDPG) agent adjusts six PID coefficients through interaction with a physical experimental stand. The stand supports target-coordinate updates of up to 12 kHz, while the agent and the controlled device are located approximately 200 km apart and exchange data over UDP. After 5000 training sessions, two fixed coefficient sets are selected and compared with a manually tuned baseline. For a pseudo-random target trajectory, the best RL-tuned set reduces the range of the radial positioning error from 119 to 82, corresponding to a 31% reduction, and decreases its standard deviation from 15 to 12. For a constant zero target, the RL-tuned sets do not improve the radial error range. The results demonstrate the potential of DDPG for experimental PID tuning in dynamic positioning tasks and indicate the need for multi-regime optimization to achieve consistent performance under different operating conditions. 
+
+I. INTRODUCTION 
+
+Free-space optical (FSO) communication systems require accurate alignment of transmitting and receiving optical com-ponents. Small beam displacements in the focal plane may re-duce coupling into the receiving fiber and degrade the reliabil-ity of the communication link. Precision positioning devices are therefore an important part of FSO terminals, particularly when mechanical vibrations, platform motion, or other time-dependent disturbances must be compensated. In this work, positioning is performed by an optical deflector (OD) that moves the end of an optical fiber in the focal plane of the re-ceiving optical system 1. The device accepts target-coordinate sequences at frequencies of up to 12 kHz and must reproduce them with a small tracking error. Proportional-integral-derivative (PID) control remains widely used in industrial motion and process-control appli-cations because of its simple structure, low computational cost and interpretability 2,3 . However, control quality depends strongly on the selected proportional, integral, and derivative coefficients. Manual procedures such as the Ziegler-Nichols method 4 provide useful initial settings, but additional exper-imental adjustment may be required in systems affected by nonlinearities, communication delays, measurement noise, or actuator constraints. This motivates automated tuning procedures that can learn directly from data collected on the controlled device. Reinforcement learning (RL) provides a framework for learning control decisions through interaction with an envi-ronment and has been applied to a broad range of control prob-lems, including autonomous driving 5,6 and energy systems 7,8 .Nevertheless, replacing a classical controller with an end-to-end neural policy is not always justified, since conven-tional methods remain competitive and often provide more 
+
+> a) Also at Moscow Center for Advanced Studies, Moscow, Russia
+
+predictable behavior 9. A practical alternative is a hybrid ap-proach in which RL does not replace the PID controller but assists in selecting or adapting its coefficients. The combined DDPG-PID approach was designed and ap-plied to the inverse pendulum task 10 : in this article au-thors provided comparative analysis of only-PID, only-DDPG and DDPG-PID control schemes. Further, authors was investigated 11 morphing aircaft strategy based on the rein-forcement learning and there was used on of the actor-critic model similar to DDPG, the Soft Actor Critic (SAC) model. Authors verified safety and feasibility of deployment and compared their scheme with genetic algorithm and PPO 12 
+
+strategy. The new approach with episodic tuning framework and self-preserving method was introduced in the article 13 .Here authors provided combination of Deterministic Policy Gradient method with PID control strategy for optimization of a modeled system described by second-order plus dead-time process. Another hybrid DDPG-PID approach was applied 14 
+
+for simulated robotic platform and a real-time mobile robot. These results suggest that RL can act as a data-driven tun-ing layer around a conventional feedback controller. At the same time, the effectiveness of such methods depends on the physical plant, the reward definition, safety constraints and the difference between simulated and real operating conditions. The present study examines RL-assisted PID tuning for a high-frequency optical positioning device on a physical ex-perimental stand. The OD is controlled by cascaded posi-tion and velocity PID loops, and the RL action contains six coefficients, {Pp, Ip, Dp, Pv, Iv, Dv}, applied to the controllers of both coordinate axes. We use the Deep Deterministic Policy Gradient (DDPG) algorithm because the tuning prob-lem has a continuous action space and because this class of actor–critic methods has previously been used for PID pa-rameter optimization 10,13–16 . The agent interacts directly with the physical OD rather than with a numerical plant model. The environment is located in Ryazan, while the agent runs in Moscow, approximately 200 km away; target coordinates, measured positions and controller coefficients are exchanged arXiv:2607.15910v1 [physics.ins-det] 17 Jul 2026 2over UDP communication protocol. This distributed configu-ration introduces communication delays and occasional con-nection failures in addition to the dynamics of the OD. The goal is to use RL as an experimental search procedure for improved fixed PID coefficients, rather than to replace the existing controller with a neural policy. The DDPG agent is trained for 5000 communication sessions, after which two candidate coefficient sets are selected from the recorded his-tory. They are compared with a manually tuned baseline while holding the fiber end at the constant target {0, 0} and while tracking a pseudo-random sequence matched to the frequency response of the OD. For the dynamic trajectory the best RL-tuned set reduces the range of the radial positioning error by 31%, from 119 to 82, and its standard deviation from 15 to 12. For the constant target, the radial range changes from 13 to 14, so no improvement is observed. The results therefore demonstrate a benefit for the tested dynamic regime, but not a universal improvement across operating conditions. This work is structured as follows: • A description of the reinforcement learning model is in-troduced in Section II. • Section III provides information on the experimental setup and the tuning of PID controllers. • We provide test results of precise positioning with found and manually obtained PID coefficients in Sec-tion IV. • Finally, in Section V we briefly summarize our paper and conclude with a discussion of future research.  
+
+> II. REINFORCEMENT LEARNING MODEL
+
+Reinforcement learning is formulated as a sequential inter-action between an agent and an environment. At each decision step t, the agent operates in some environment and this envi-ronment is described by state st . The agent strives to perform an action at that is beneficial to him, receiving feedback on the performed action in the form of a numerical reward rt . Even-tually, the executed action and the internal dynamics of the environment change the state to a new one st‘. By repeatedly interacting with the environment, the agent learns a control policy that maximizes the expected cumulative reward rather than the reward obtained at an individual step. The agent’s decision-making process can described as a Markov (or semi-Markov 17 ) process. We choose semi-Markov approach via various instabilities in communication channel between two distributed points (the environment and the agent) and high-frequency of operating mode of OD, which is a main part of environment experimental setup. Con-trol policy is formally defined a value that indicates what ac-tion at the agent needs to perform under a given state st of environment. To build a policy, Q-value adjusted by the Bell-man equation can be used: 
+
+Q(at , st ) = rt + γ max 
+
+> at′
+
+[Q(at′ , st′ )] , (1) where γ is the discount factor (a parameter of the reinforce-ment learning model, γ ∈ (0, 1)). This recurrent formula al-lows to recalculate the Q-value in the presence of new data from the agent’s experience {st , at , rt , st′ }. The policy can be constructed in different ways: for example, an action at is se-lected in which the Q-value Q(at , st ) reaches a maximum at a given state st . The Bellman equation ensures that the policy thus constructed converges to the optimal one, i.e. accumu-lated reward ∑ γt′
+
+rt′ is maximized for each executed action at
+
+in state st during decision process. For our problem – the fine-tuning of PID controllers of OD – we choose the algorithm of deep deterministic gradient pol-icy (DDPG) 15,16 . This algorithm provides continuous con-trol, which allows using a wide range of practical and classi-cal control problems, in particular, the task of PID coefficient manipulation 10,13,14 . There are other types of RL models suit-able for continuous control (PPO 12 , TRPO 18 , SAC 19 ). We choose DDPG because of simpler structure, bigger history of industrial usage and competitive benchmark results 20,21 . The implementation of the DDPG model largely repeats the ap-proaches already incorporated in the DQN (Deep Q-learning Network) algorithm, which is tested in wide range of discrete control tasks 22 . In the software development level DDPG dif-fers from DQN implementations by several conceptually sim-ple changes: there is realization of two neural networks, the "actor", a policy neural network that calculates the optimal action at for a given state st , and the "critic", a Q-value esti-mation neural network, that specifies a metric for the “actor” training. For the PID coefficient control problem we define state st ,action at , and reward rt :• State . This is a set of values of the current position (xpos ,i and ypos ,i) and the target position ( xtarget ,i and 
+
+ytarget ,i) of OD. One state is formed from a sequence of 362 points {xpos ,i, ypos ,i, xtarget ,i, ytarget ,i}. This num-ber of points is chose due to limits of packets size of the chosen in our experiment communication protocol UDP. • Action . The action at is defined as the change in the PID controller coefficients along the coordinates 
+
+{Pp, Ip, Dp} and the PID controller coefficients along the speeds {Pv, Iv, Dv} . The same set of coefficients is transmitted to a pair of PID controllers along the Y axis as along the X axis - in total, the action is described by six numbers at = {Pp, Ip, Dp Pv Iv, Dv}. It is impor-tant to note, that whole control scheme have two PID controlers: two along the coordinates (axis X and axis 
+
+Y respectively) and two along the speeds (along axis X
+
+and along axis Y respectively). Overall we have 2-PID control units for every axis. In oue setup We imply the same sets of coefficients at both for this 2-PID control units. • Reward . The reward is defined as the sum of N = 362 distance values between the current positions and the target positions: 
+
+r = krN
+
+# ∑
+
+> i=1
+
+q
+
+(xpos ,i − xtarget ,i)2 + ( ypos ,i − ytarget ,i)2, (2) where kr is a normalization coefficient. 
+
+ε-greedy exploration . Our model implements the ε-greedy exploration strategy as follows: a random term of order 3
+
+ε · at is added to each action at . During the training process the value ε is discounted to a near-zero value ε f (this value is chosen as ε f = 0.0001). This solution allows the agent, at the beginning of training, to explore the action space A (any 
+
+at ∈ A) and obtain the more varied states st‘, receiving more diverse reinforcement rt .
+
+Training process . The ADAM optimizer 23 are used for training. The “critic” neural network of the DDPG algorithm is trained via the Bellman formula (1). For “critic” training, one generally uses data recorded in the memory of the agent in following form: reward rt , states st , st′ and the correspond-ing executed actions at and at′ . Training the neural network “actor” occurs on state st data using the metric specified by the “critic” neural network. The training tuple {st , at , rt , st′ }
+
+is collected in the process of decision making by the neural network “actor” which execute actions at performed in states 
+
+st . Our DDPG model in the choice of hyperparameters and activation layers for critic and actor networks follows the pa-per by T. P. Lillicrap, et al. 16 and this choice was tested for various continious control tasks 21 and was implemented for RL-PID control frameworks 13,14 . The actor and critic net-works are designed as multilayer perceptrons with two hid-den layers of sizes 80 for first hidden layer and 60 for second hidden layer. The parameter of the ε-greedy exploration strat-egy is discounted from εi = 0.3 to ε f = 0.001 with decrement 1/1000 during every transition between states st → st′ . 
+
+> III. EXPERIMENTAL SETUP AND PID TUNING
+
+The training process and testing of the system are explained in this section. The system consist of experimental stand lo-cated in Ryazan (Russia, 200 km from Moscow) and the agent in Moscow connected with the stand.  
+
+> A. Stand
+
+The structure of the experimental stand for optimizing the coefficients of PID OD consisting of an Agent, an Environ-ment Manager (EM) and an Object of Influence (OI) is pre-sented in Fig. 1. 
+
+> FIG. 1. Scheme of the experimental stand for optimization of PID controllers of OD.
+
+The presented stand are worked in accordance with the fol-lowing algorithm: 1. Environment Manager (EM) is permanently in listen-ing on the specified port through which communication with the Agent is carried out via the Internet. 
+
+> FIG. 2. Scheme of an optical deflector. 1 is a permanent magnet, 2 is an drive board of optical fiber end, 3 is a permanent magnet, 4 is a traverses, 5 is a control board.
+
+2. The Agent network module sends a data packet con-sisting of a control segment {Pp, Ip, Dp Pv Iv, Dv} and coordinate values (xtarget ,i, ytarget ,i) to the agreed IP ad-dress/port to the EM address. 3. The EM receives the packet, checks it for compliance with the format in accordance with the control mode byte, changes the PID coefficients of the OI automatic control system, sets the frequency for specifying coor-dinates and transmits a set of new (xtarget ,i, ytarget ,i) co-ordinates to OI. 4. OI performs the specified movement, synchronously recording position sensor data and sends an array of measured positions (xpos ,i, ypos ,i) to the EM. 5. EM generates a response packet to the Agent, contain-ing the control signal {Pp, Ip, Dp Pv Iv, Dv} previously received from it and an array of measured coordinates 
+
+(xpos ,i, ypos ,i) and sends it to the Agent. 6. The agent receives the response packet and goes into the mode of processing the received information until the next contact initiation. The object of influence in this stand is an optical deflector. This device allows to operate with rapid movements of the received optical beam in the focal plane by precision moving the end of the receiving optical fiber 1.A scheme of an optical deflector is shown In Fig. 2. The drive board of optical fiber end (OFE - 2) is placed in the magnetic field formed by permanent magnets 1 and 3, which is fixed at the base of the deflector on a fixed printed circuit board by four flexible metal rods (traverses). Through the tra-verses 4 electric current flows to the electromagnetic coils of 4the X and Y axes of the movable board 2. The interaction of the coil current of the board 2 with the magnetic field of permanent magnets 1 leads to the movement of the board 2 in the plane of the base. Flexible-rigid control 5 provides current control to the coils of the moving board 2 and also includes a position feedback system. The deflector control system allows to feed it arrays of coordinates of a target position positions 
+
+(xtarget ,i, ytarget ,i) of the OFE and read the measured positions positions (xpos ,i, ypos ,i) of the OFE. The size of thus arrays is up to 65535 points with a coordinate setting frequency of up to 12 kHz. The agent’s interaction with the environment occurs dur-ing request-response sessions through the exchange of data in UDP packets over the Internet. The interaction is initiated by the agent and the environment’s port in a listening state and responds to the agent’s requests. The agent sends a packet of 1498 bytes to the agreed IP address and port. The size of the UDP packet was determined in accordance with the max-imum transmission unit (MTU) to achieve more effective in-teraction. The protocol is symmetric: the agent sends 362 target pairs to the environment and expects 362 pairs of posi-tion values in response. The differences between targets and positions are errors, which are used to determine the accuracy of the control system. The UDP packet structure is shown in the Table I. 
+
+Byte address Length Description Possible values 0 1 Control Byte 0 – baseline settings, 1 – position PID control, 2 – velocity PID control, 3 – position and velocity PID control. 1 48 12th PID Float number coefficients 49 1 Frequency Integer 50 1448 xpos ,i, ypos ,i Integers TABLE I. The structure of UDP packet. Control byte represents four control modes (no control from RL agent, position PID coefficients change, velocity PID coefficients change, both position PID coeffi-cients and velocity PID coefficients change). Frequency are chosen rounded to the hundred. xpos ,i, ypos ,i represent 362 pairs of position (or target) values. 
+
+B. Training on the stand and description of the tests 
+
+During training the agent transmits to the stand an action values at = {Pp, Ip, Dp, Pv, Iv, Dv}, i.e. new PID coefficients, each communication session. Also from the agent side, we transmit 362 pairs of target values xtarget ,i, ytarget ,i}N=362  
+
+> i=1
+
+. In response, the environment transmits 362 pairs of position val-ues {xpos ,i, ypos ,i}N=362  
+
+> i=1
+
+. Eventually, the agent gets a new state 
+
+st‘ = {xpos ,i, ypos ,i, xtarget ,i, ytarget ,i}N=362  
+
+> i=1
+
+, i.e. 1448 target and current position values on both axes for 362 steps. The values for the target position are also specified in the form: 
+
+ytarget (ti) = U(ti) + P(ti), (3) where U(x) is a step periodic function, P(x) is a pseudo-random sequence (PRS) 0 1000 2000 3000 4000 5000 
+
+> Steps of training
+> −10 1
+> −10 0
+> Normalized reward
+
+FIG. 3. Reward rt for 5000 communication sessions. Reward values are presented on a logarithmic scale. The pale blue line represents the raw reward data, the bright blue line represents the reward averaged over 30 values. The spikes of reward value mostly represents the self-preserving penalty, which occurs if error exceeds reward value obtained for baseline PID control. Another reason of such behaviour is connection failures: the information about environment state are not received to agent and penalty equal self-preserving penalty ap-plied as whole reward for agent. 
+
+corresponding to the frequency response of the OD. For this PRS a random vector was generated in polar coordinates (its length and angle, both parameters had a uniform distribution). The resulting vector was decomposed into x and y coordi-nates; along each axis the coordinate entered a low-frequency filter, the frequency response of which was identical to the fre-quency response of the OD. After the filter, the resulting array of coordinates was scaled so that the speed did not exceed the maximum for which the deflector was designed. If there was no excess, then the array was not scaled. In total, the agent is trained on 5000 sessions before the lasting increase of the reward function. The ε-greedy explo-ration strategy stops after the first 1000 communication ses-sions. The reward metrics of the training is shown in Fig. 3. The entire history of the training process is saved. We deter-mine the optimal coefficients from the received training data. The optimality of the action is estimated by the maximum val-ues of the reward rt . For PID coefficients, two optimal sets 
+
+aopt ,1 and aopt ,2 is selected (see Table II). 
+
+Pp Ip Dp Pv Iv Dv
+
+aopt ,1 4.602 0.08649 12.29 3.238 0.0004861 14.34 
+
+aopt ,2 4.676 0.08508 12.95 3.119 0.0004785 15.32 TABLE II. Found sets of coefficients aopt ,1 and aopt ,2 for PID con-trollers {Pp, Ip, Dp} along coordinates and PID controllers along speed {Pv, Iv, Dv}.
+
+We test our experimental stand with the baseline coeffi-cients abaseline and the estimated optimal coefficients aopt ,1 and 
+
+aopt ,2. PRS corresponding to the frequency response of the OD is selected as sequence of target values, and tests is also carried out for constant target values {0.0}.For all measures the following numerical values are determined: • value ∆Xi = xpos ,i − xtarget ,i;• value ∆Yi = ypos ,i − ytarget ,i;5• value ∆Ri = p(xpos ,i − xtarget ,i)2 + ( xpos ,i − xtarget ,i)2.For each test numerical characteristics (standard deviation σ
+
+and range of values D) are calculated for these experimentally measured value ∆Xi, ∆Yi, ∆Ri. 
+
+> IV. TEST RESULTS
+
+The tests provide a comparison of the OD operation with the baseline set of coefficients and with those obtained from the training results aopt ,1 and aopt ,2. The values of the man-ually tuned baseline coefficients abaseline are presented in the Table III.                  
+
+> PpIpDpPvIvDv
+> abaseline 40.07 20 30.0004 20 TABLE III. Baseline set of coefficients abaseline for PID controllers
+> {Pp,Ip,Dp}along coordinates and PID controllers along speed
+> {Pv,Iv,Dv}.
+
+We analyze the deviations of the measured position from the specified one when the OFE is held at the point (0, 0),as well as when a PRS is applied to it. In the test, the PRS is the sequence of coordinates with a size in 65535 points, the frequency of target value change is set at level 12 kHz. During testing we measure the values of standard deviation σ
+
+and range D for each coordinate axes X, Y and for distance R
+
+and this averaged measured results are given in the Table IV. As shown in the Table IV, for the case of zero-position target values, the new sets of coefficients increase the ranges DR by approximately 7.7% compared with the basic set. For PRS, DR decreases by 31% and 13.4% for aopt ,1 and 
+
+aopt ,2, respectively. The proposed sets of coefficients differ from the baseline in terms of variance of range DR: the stand operation with aopt ,1 and PRS has a reduction of this metric by half, aopt ,2 increases it by 2.25 times. Thus, for this measure-ments the aopt ,1 set can be considered the more optimal than baseline set abaseline . 
+
+> V. SUMMARY
+
+In this work, we investigated the application of reinforce-ment learning to the experimental tuning of cascaded position and velocity PID controllers used in a precision optical posi-tioning system. A DDPG agent was employed to search in a                                              
+
+> Test PID σX/DXσY/DYσR/DRVariance of DR
+> Target {0,0}abaseline 2.3 / 23 2.4 / 23 1.8 / 13 1.1
+> aopt ,13.3 / 27 2.3 / 29 2.2 / 14 1
+> aopt ,22.9 / 25 2.6 / 25 2.1 / 14 5.7 Target P(x)abaseline 21 / 212 22 / 212 15 / 119 88
+> aopt ,117 / 153 18 / 159 12 / 82 41
+> aopt ,218 / 172 19 / 175 12 / 103 198 TABLE IV. Table of standard deviation σand range of values Dfor sets abaseline ,aopt ,1and aopt ,2and target selection by PRS P(x)or stable zero value {0,0}.
+
+continuous six-dimensional space of PID coefficients through direct interaction with a physical experimental stand. In con-trast to approaches based exclusively on numerical simula-tion, the proposed training procedure included the dynamics of the real controlled device, measurement noise, communi-cation delays and occasional failures of the distributed com-munication channel. The reinforcement learning agent was used as a parameter-tuning mechanism rather than as a direct replacement for the conventional feedback controller. After 5000 communication sessions, two candidate sets of PID coefficients, aopt ,1 and aopt ,2, were selected from the recorded training history and compared with the manually tuned baseline set abaseline . The comparison was performed for two operating regimes: maintaining a constant target po-sition and tracking a pseudo-random target sequence corre-sponding to the frequency response of the controlled device. For the pseudo-random sequence, the coefficient set aopt ,1 re-duced the range of the radial positioning error DR from 119 to 82, which corresponds to a reduction of approximately 31%. The standard deviation of the radial error was also reduced from 15 to 12. The second candidate set, aopt ,2, produced a smaller reduction of the radial error range, from 119 to 103. For the constant target position, however, neither of the RL-tuned coefficient sets improved the radial error range relative to the baseline. This result indicates that the coefficients ob-tained by optimizing performance for a dynamic target tra-jectory are not necessarily optimal for a stationary operating regime. Therefore, the presented experiments demonstrate the feasibility of DDPG-assisted PID tuning for the considered dynamic positioning task, but they do not establish a universal improvement under all operating conditions. The results also emphasize the importance of selecting a training trajectory and reward function that adequately represent the expected operating regimes of the control system. Further research should consider PID tuning from a wider range of initial coefficient values, including training “from scratch” without manually selected parameters close to the baseline solution. The reward function may also be extended to account simultaneously for tracking accuracy, stationary-position accuracy, oscillations, control effort and transitions between different operating regimes. Additional experiments are required to evaluate the repeatability of the obtained coef-ficient sets under variations in external disturbances, mechan-ical stress, communication latency, and hardware character-istics. A further direction is the development of constrained adaptive tuning, in which PID coefficients are updated dur-ing operation while remaining within predefined safe ranges. Such an approach may allow the controller to compensate for gradual changes in the system dynamics while preserving the interpretability and reliability of the underlying PID control structure. 
+
+> DATA AVAILABILITY STATEMENT
+
+The data that support the findings of this study are available from the corresponding author upon reasonable request.    
+
+> 1A. A. Boev, M. Y. Kernosov, S. N. Kuznetsov, A. A. Parshin, S. Y. Polyakov, and S. E. Shirobakin, in Trudy XXIX Mezhdunarodnoj Kon-ferencii «Lazerno-informacionnye tekhnologii» [Proceedings of the XXIX International Conference «Laser Information Technologies»] (2021).
+
+6
+
+> 2
+
+R. Borase, D. Maghade, S. Sondkar, and S. Pawar, International Journal of Dynamics and Control 9 (2021), 10.1007/s40435-020-00665-4. 
+
+> 3
+
+M. A. Johnson and M. H. Moradi, PID control (Springer, 2005). 
+
+> 4
+
+J. G. Ziegler and N. B. Nichols, Transactions of the American society of mechanical engineers 64 , 759 (1942). 
+
+> 5
+
+A. E. Sallab et al. , Electronic Imaging 29 , 70–76 (2017). 
+
+> 6
+
+B. R. Kiran et al. , “Deep reinforcement learning for autonomous driving: A survey,” (2021), arXiv:2002.00444 [cs.LG]. 
+
+> 7
+
+T. Wei, Y. Wang, and Q. Zhu, in Proceedings of the 54th Annual Design Automation Conference 2017 , DAC ’17 (Association for Computing Ma-chinery, New York, NY, USA, 2017). 
+
+> 8
+
+E. Mocanu et al. , IEEE Transactions on Smart Grid 10 , 3698 (2019). 
+
+> 9
+
+E. Bøhn, E. M. Coates, S. Moe, and T. A. Johansen, “Deep reinforcement learning attitude control of fixed-wing uavs using proximal policy optimiza-tion,” (2019). 
+
+> 10
+
+Y. Qin, W. Zhang, J. Shi, and L. Jinglong (2018) pp. 1–6. 
+
+> 11
+
+R. Ming, X. Liu, Y. Li, Y. Yin, and W. Zhang, Applied Intelligence (2023), 10.1007/s10489-023-04876-y. 
+
+> 12
+
+J. Schulman, F. Wolski, P. Dhariwal, A. Radford, and O. Klimov, “Proximal policy optimization algorithms,” (2017), arXiv:1707.06347 [cs.LG]. 
+
+> 13
+
+A. I. Lakhani, M. A. Chowdhury, and Q. Lu, “Stability-preserving auto-matic tuning of pid control with reinforcement learning,” (2021). 
+
+> 14
+
+I. Carlucho, M. De Paula, and G. G. Acosta, ISA Transactions 102 , 280 (2020). 
+
+> 15
+
+Silver et al. , 31st International Conference on Machine Learning, ICML 2014 1 (2014). 
+
+> 16
+
+T. P. Lillicrap et al. , “Continuous control with deep reinforcement learning,” (2019), arXiv:1509.02971 [cs.LG]. 
+
+> 17
+
+R. S. Sutton, D. Precup, and S. Singh, Artificial intelligence 112 , 181 (1999). 
+
+> 18
+
+J. Schulman et al. , “Trust region policy optimization,” (2017), arXiv:1502.05477 [cs.LG]. 
+
+> 19
+
+T. Haarnoja, A. Zhou, P. Abbeel, and S. Levine, in Proceedings of the 35th International Conference on Machine Learning , Proceedings of Machine Learning Research, Vol. 80, edited by J. Dy and A. Krause (PMLR, 2018) pp. 1861–1870. 
+
+> 20
+
+R. Nian, J. Liu, and B. Huang, Computers & Chemical Engineering 139 ,106886 (2020). 
+
+> 21
+
+P. Henderson, R. Islam, P. Bachman, J. Pineau, D. Precup, and D. Meger (AAAI Press, 2018). 
+
+> 22
+
+V. Mnih et al. , Nature 518 , 529 (2015). 
+
+> 23
+
+D. P. Kingma and J. Ba, “Adam: A method for stochastic optimization,” (2017).

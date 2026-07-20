@@ -1,0 +1,39 @@
+{
+  "label": "2026-07-20",
+  "date": "2026-07-20",
+  "generated_at": "2026-07-20T21:36:28",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202607/20/2607.13358v1-linear-motion-r-flex-for-minature-62-mm-pitch-optical-fiber-position-robots-with-polar-r-theta-kinematics",
+      "section": "quick",
+      "title_en": "Linear motion (R-FLEX) for minature 6.2 mm pitch optical fiber position robots with polar (R-theta) kinematics",
+      "authors": "Nicholas R. Wenner, Joseph H. Silber, Michael S. Schubnell, David J. Schlegel, Robert W. Besuner, William V. Shourt, Andrew P. Hope",
+      "date": "2026-07-15",
+      "pdf": "https://arxiv.org/pdf/2607.13358v1",
+      "score": "7.0",
+      "evidence": "低回差直线运动的精密柔性机构",
+      "tldr": "未来大规模光谱巡天（如Spec-S5）要求光纤定位机器人间距从10.4 mm缩小至6.2 mm，密度提升2.5–3倍。为此开发R-FLEX柔性基径向机构，直径5.8 mm，将微小转角转换为大行程低背隙线性运动，配合theta台实现极坐标定位。样机在3.9 mm行程内径向精度<4 μm RMS，倾斜0.092°，离焦42 μm，寿命超40万次，全面超越Spec-S5需求。参数优化管线使R-FLEX可大规模生产，为收集数亿光谱、揭示宇宙结构提供核心定位技术。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "R-FLEX is a compact, low-part-count flexure-based radial positioning mechanism designed for the next generation of massively parallel fiber-fed spectroscopic telescope instruments. Current instruments such as the Dark Energy Spectroscopic Instrument (DESI) employ 5,000 robotic fiber positioners at 10.4 mm pitch, whereas future surveys require 2.5-3x higher packing density, necessitating new positioning technologies. The R-FLEX mechanism converts small rotations at the flexure base into large, nearly tilt-free radial motion at the fiber tip, achieving naturally low-backlash linear motion within a compact 5.8 mm diameter package. Coupled with a rotating theta-stage, this enables overlapping circular patrol areas at 6.2 mm pitch, as envisioned for projects like Spec-S5. Development proceeded through parametric modeling and optimization, finite element analysis, fabrication, and prototype testing. Prototype units characterized by optical centroiding achieved a corrected radial accuracy consistently better than 4 um RMS over a 3.9 mm travel range, with maximum fiber tilt 0.092 deg, defocus 42 um over the required range, and durability over more than 400,000 targets per robot across operating and survival temperature extremes. Preliminary Spec-S5 accuracy, defocus, and fiber tilt requirements are specified for the complete R-theta robot, and these radial-stage results exceed those requirements, leaving margin for the companion theta-stage. A parametric optimization pipeline makes R-FLEX a versatile, mass-producible platform that can be re-optimized for precision-positioning applications beyond Spec-S5. This offers the precision, compactness, and reliability needed to collect hundreds of millions of spectra for new studies of the large-scale structure of the universe.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/20/2607.15910v1-precision-positioning-in-free-space-optical-communication-systems-via-pid-control-tuned-by-rl",
+      "section": "quick",
+      "title_en": "Precision positioning in free-space optical communication systems via PID control tuned by RL",
+      "authors": "K. Prikhodko, S. Kuznetsov, S. Vorobey, A. Katanskiy, V. Balakirev, A. Reutov",
+      "date": "2026-07-17",
+      "pdf": "https://arxiv.org/pdf/2607.15910v1",
+      "score": "6.0",
+      "evidence": "使用RL调谐PID控制实现光学元件的精密定位与对准",
+      "tldr": "在FSO系统中，精确控制光纤末端位置以维持光束对准至关重要，但传统PID控制器因环境变化难以保持高性能。为此，提出基于深度确定性策略梯度(DDPG)的强化学习自动调谐方法，远程调整光学偏转器的级联位置/速度PID控制器六个系数。实际实验中，代理与相距200公里外的物理台通过UDP通信，针对伪随机目标轨迹，最佳RL系数将径向定位误差范围从119减小至82，标准差从15降至12。结果体现了DDPG在动态定位中的有效性，但恒定目标下未见提升，表明需发展多状态优化策略以保障全工况性能。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "Accurate positioning of optical components is essential for maintaining beam alignment in free-space optical (FSO) communication systems. This work investigates reinforcement-learning-assisted tuning of cascaded position and velocity PID controllers for an optical deflector that moves the end of an optical fiber in the focal plane of an optical system. A Deep Deterministic Policy Gradient (DDPG) agent adjusts six PID coefficients through interaction with a physical experimental stand. The stand supports target-coordinate updates of up to $12$ kHz, while the agent and the controlled device are located approximately $200$ km apart and exchange data over UDP. After $5000$ training sessions, two fixed coefficient sets are selected and compared with a manually tuned baseline. For a pseudo-random target trajectory, the best RL-tuned set reduces the range of the radial positioning error from $119$ to $82$, corresponding to a $31\\%$ reduction, and decreases its standard deviation from $15$ to $12$. For a constant zero target, the RL-tuned sets do not improve the radial error range. The results demonstrate the potential of DDPG for experimental PID tuning in dynamic positioning tasks and indicate the need for multi-regime optimization to achieve consistent performance under different operating conditions.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
