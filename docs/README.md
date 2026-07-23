@@ -6,29 +6,34 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-20
-- 运行时间：2026-07-20 21:36:20 UTC
+- 最新运行日期：2026-07-23
+- 运行时间：2026-07-23 21:51:31 UTC
 - 运行状态：成功
-- 本次总论文数：2
-- 精读区：0
+- 本次总论文数：4
+- 精读区：2
 - 速读区：2
 
 ### 今日简报（AI）
-今日速读两篇机器人精密定位论文，探索微小光纤与自由空间光通信的控制新思路。  
-亮点在于结合极坐标运动学的小型化设计，以及用强化学习调优PID控制器以提升精度。  
-建议关注将微型运动机构与智能控制算法跨界结合的趋势，这对精密仪器和通信装备很有启发。
-- 详情：[/202607/20/README](/202607/20/README)
+今日精读两篇8.0分论文，关注狭窄空间装配的运动规划与激光雷达外参标定，同时速读了深度估计与双臂装配优化内容。  
+最值得关注的方向是流形约束下的紧密装配路径生成，以及旋转平台对静态线扫描激光雷达的两阶段外参标定方法。  
+建议读者优先理解装配任务中约束空间的建模方式，再结合实际传感配置验证标定精度。
+- 详情：[/202607/23/README](/202607/23/README)
 
 ### 精读区论文标签
-- 本次无精读推荐。
+1. [Manifold-Guided Motion Planning for Tight Assemblies](/202607/23/2607.17898v1-manifold-guided-motion-planning-for-tight-assemblies)  
+   标签：评分：8.0/10、query:sat-asm-prec
+   evidence：利用临界流形引导的紧公差刚性体装配运动规划
+2. [Two-Stage Extrinsic Calibration of a Static Line-Scanning Lidar with a Rotary Platform](/202607/23/2607.18578v1-two-stage-extrinsic-calibration-of-a-static-line-scanning-lidar-with-a-rotary-platform)  
+   标签：评分：8.0/10、query:sat-asm-prec
+   evidence：旋转平台上对线扫描激光雷达进行标定以实现精密三维扫描，支持卫星装配中的尺寸计量
 
 ### 速读区论文标签
-1. [Linear motion (R-FLEX) for minature 6.2 mm pitch optical fiber position robots with polar (R-theta) kinematics](/202607/20/2607.13358v1-linear-motion-r-flex-for-minature-62-mm-pitch-optical-fiber-position-robots-with-polar-r-theta-kinematics)  
+1. [DROID-ANCHOR: Odometry-Anchored Recurrent Metric Depth Estimation](/202607/23/2607.17058v1-droid-anchor-odometry-anchored-recurrent-metric-depth-estimation)  
    标签：评分：7.0/10、query:sat-asm-prec
-   evidence：低回差直线运动的精密柔性机构
-2. [Precision positioning in free-space optical communication systems via PID control tuned by RL](/202607/20/2607.15910v1-precision-positioning-in-free-space-optical-communication-systems-via-pid-control-tuned-by-rl)  
-   标签：评分：6.0/10、query:sat-asm-prec
-   evidence：使用RL调谐PID控制实现光学元件的精密定位与对准
+   evidence：精确度量深度估计可支持装配尺寸计量
+2. [Leveraging Two Robotic Arms for Tight Assembly Performance Gains](/202607/23/2607.17876v1-leveraging-two-robotic-arms-for-tight-assembly-performance-gains)  
+   标签：评分：7.0/10、query:sat-asm-prec
+   evidence：双臂紧密装配框架提升轨迹精度与效率
 
 
 <div class="dpr-home-promo-card">

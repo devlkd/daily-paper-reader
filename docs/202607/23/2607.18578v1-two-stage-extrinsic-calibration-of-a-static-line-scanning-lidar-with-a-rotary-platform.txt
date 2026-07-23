@@ -1,0 +1,351 @@
+Title: Two-Stage Extrinsic Calibration of a Static Line-Scanning Lidar with a Rotary Platform
+
+URL Source: https://arxiv.org/pdf/2607.18578v1
+
+Published Time: Wed, 22 Jul 2026 00:24:36 GMT
+
+Number of Pages: 8
+
+Markdown Content:
+# Two-Stage Extrinsic Calibration of a Static Line-Scanning Lidar with a Rotary Platform 
+
+Vikram Shree, Hike Danakian, Long Nguyen, Rajanish Gokidi, Patrick Nercessian 
+
+Abstract — A line-scanning lidar yields range and azimuth values in a fixed plane. To perceive surrounding objects in 3D, there must be relative motion between the lidar plane and the object. Thus, using a rotating base-platform is promising for industrial applications where objects need to be scanned or inspected precisely, and is the main focus of this work. In the rotary platform setup, a 3D point cloud of an object can be constructed if the axis of rotation and the precise motion about that axis are known. However, this setup gives rise to the following problem: how can the axis of rotation of the platform be accurately identified with respect to the lidar coordinate system? It is referred to as the calibration problem in the robotics community. Any inaccuracy in this transformation directly affects the quality of the reconstructed point cloud, leading to misrepresentation of the object of interest. In this work, we explore automated approaches to statically and dynamically estimate the transformation of a rotary platform’s axis of rotation with respect to a static line-scanning lidar. The proposed algorithms have been validated on real-world datasets obtained from a custom made rotary platform and an FMCW lidar, and their convergence characteristics are studied for various initial conditions. 
+
+I. I NTRODUCTION 
+
+In recent years, the field of robotics has benefited tre-mendously from advances in 3D perception systems, such as time-of-flight (ToF), stereo vision, structured light, and lidar [1]. Although there are trade-offs to each of these sensing technologies, lidar has shown promise due to its low latency, superior range precision, low light performance, and wider range of operation spanning from a few microns to several kilometers [2]. Consequently, the past decade has seen a surge in lidar usage for robotics, 3D scanning, machine inspection, defect detection, ADAS applications, topography, geoscience, and atmospheric studies [3], [4]. 2D lidar systems commonly employ electromechanical scanning mechanisms to extend the dimensionality of their measurements (e.g., Sweep, Terabee, and Rpilidar [5]), en-abling deployment across a wide range of indoor and outdoor robotic applications. For object scanning and 3D model reconstruction, however, a common approach is to place the object on a rotating turntable while a static lidar performs planar scans [6]. Generating an accurate 3D point cloud from these 2D scans requires precise knowledge of the coordinate transformation between the lidar frame and the axis of rotation. Consequently, the quality of the recon-structed point cloud depends directly on this transformation.          
+
+> The authors are with SiLC Technologies, Monrovia CA, USA. Email:
+
+{vikram, hike, nguyenl, gokidi, patrick }
+
+@silc.com . The manuscript has been accepted to the 2026 IEEE/RSJ International Conference on Intelligent Robots and Systems (IROS). 
+
+Estimating these extrinsic parameters, commonly referred to as calibration, is the primary focus of this work. Given its direct impact on point cloud accuracy, the calibration problem has been extensively studied. Prior work has largely focused on the automatic estimation of extrinsic parameters for multi-beam spinning lidar systems [7], [8], motivated by their widespread use in autonomous driving. These approaches typically require no dedicated calibration target and instead exploit the presence of multiple planar surfaces observed during a full rotational sweep of the environment. Similarly, other methods leverage measurement redundancy inherent in a complete lidar rotation to formulate cost functions for pose estimation [9]–[11]. However, these techniques are not directly applicable to the calibration of a static lidar observing a rotary platform. In this setting, the rotating platform presents only a single planar surface with limited geometric features, rendering such approaches ineffective. To address this, some research-ers have proposed semi-automatic calibration methods that rely on specific target geometries to estimate the extrinsic parameters of a static lidar with respect to a turntable [12], [13]. Nevertheless, these methods typically depend on precise operator intervention, making them prone to human error, or assume a predefined orientation between the lidar and the rotary platform [6], which limits their generalizability to arbitrary sensor configurations. In this work, we propose an automatic two-stage pipeline for estimating the extrinsic parameters of a static lidar with respect to a rotating platform, without imposing any assumptions on the lidar pose. The first stage performs static calibration to obtain an initial estimate of the transformation parameters. These estimates are subsequently refined through a nonlinear optimization-based dynamic calibration proced-ure. The key contributions of this paper are: 1) A geometry-driven static initial calibration algorithm that computes an estimate of the lidar-to-rotation-axis transformation using target shape constraints. 2) Two optimization objectives for dynamic refinement: (i) a distortion-minimization cost function that penal-izes geometric inconsistencies in the reconstructed 3D point cloud, and (ii) a periodicity-based cost function that exploits measurement redundancy over a full ro-tation of the platform. We analyze the applicability of each objective to different target geometries and provide a comparative evaluation of their performance. 3) The design and fabrication of a rotary platform for controlled real-world experimentation, along with ex-tensive Monte Carlo simulations to evaluate robustness arXiv:2607.18578v1 [cs.RO] 20 Jul 2026 under varying lidar poses and initialization conditions. II. R ELATED WORK 
+
+Calibration between a line-scanning sensor and a rotation axis arises in two dual configurations: actuated 2D lidars, where the sensor is rotated to acquire 3D data, and turntable systems, where a static sensor observes a rotating object. For the former, plane-based extrinsic calibration has been studied extensively: Kang and Doh [14] first recovered the full 6-DOF transformation from a single plane by decoupling the estimation of rotation from translation, and subsequent formulations construct separate cost functions for the rota-tional and translational parameters [15]. These methods rely on the sensor sweeping large environmental planes across many rotation angles — constraints unavailable in our dual configuration, where the environment is static in the lidar frame and only the platform, a single plane with limited geometric features, undergoes motion. A second family of methods dispenses with dedicated targets by exploiting measurement redundancy: any struc-ture is observed twice during a full rotation, and residual misalignment between the redundant observations exposes calibration error. Yamao et al. [11] minimize this discrepancy for a rotating 2D scanner in unprepared environments, while Alismail and Browning [9] and Claer et al. [10] formalize the periodicity as an optimization objective for spinning lidars. Our periodicity-constrained fine-tuning is directly motivated by these works, with two key differences: the platform rotates while the lidar is stationary, and the rotating scene is a featureless disk rather than a structured 3D environment. We therefore introduce a dedicated target geometry that restores multi-directional geometric constraints while remaining vis-ible across both half-scans. Closest to our physical configuration is the calibra-tion of turntable-based 3D scanning systems. Camera- and structured-light-based approaches estimate the turntable axis by registering overlapping views of a reference tool across rotation increments, typically via ICP-style alignment [13], or tool-free by registering scans of the natural scene [16]. Both fundamentally exploit overlap between consecutive 2D or 3D fields of view, which does not exist for a line-scanning lidar that acquires only a one-dimensional profile per instant. For 2D laser scanners paired with turntables, Wang et al. [6] assume a predefined orientation between the laser plane and the rotation axis, while Schmidt et al. [12] require DOE laser assistance and precise operator intervention; both assumptions limit applicability to arbitrary sensor poses. Since the objectives arising in this setting remain highly nonlinear and initialization-sensitive, we adopt a two-stage strategy: a geometry-driven static initialization that places the estimate within the basin of attraction of the global optimum, followed by dynamic nonlinear refinement based on shape or periodicity constraints. III. P ROBLEM FORMULATION 
+
+Fig. 1 shows two axes systems: the line-scanner ( L) and the rotating platform ( P ), where the platform is assumed  
+
+> Fig. 1: Lidar and rotary platform coordinate system. The z-axis for both: lidar, and the platform, is into the plane of the paper.
+
+to be rotating about the XP axis. Both are static in the global frame of reference. The calibration problem can be represented as a 6-DOF estimation problem, where the vari-ables to be identified are translation of frame-P {tx, t y , t z }
+
+and the orientation of frame-P , represented by Euler angles 
+
+{rx, r y , r z }, with respect to frame-L. These parameters are denoted by H. Since the disk is free to rotate along its axis, we can freely choose rx without any loss of generality, reducing its degrees-of-freedom to 5. IV. A LGORITHMS 
+
+The estimation of calibration parameters constitutes anonlinear optimization problem. To address this, we adopt a two-stage calibration strategy. The first stage performs a coarse initialization to obtain an approximate estimate of the extrinsic parameters {tx, t y , t z , r y , r z }. These initial estimates are subsequently refined in a second stage through nonlinear optimization to minimize a cost function. The details of both stages are presented in the following sections. 
+
+A. Initial Calibration 
+
+To simplify the initial calibration problem, we make the following assumption. 
+
+Assumption 1: The roll angle of frame-P w.r.t frame-L is negligible, i.e. ry ≈ 0.
+
+Assumption 1 allows us to use a simple geometric shape to assess the remaining calibration parameters {tx, t y , t z , r z }.Fig. 2a shows a CAD model for the shape of the calibration target that we use for calibration. During initial calibration, the target is kept statically on top of the rotary platform such that it faces the lidar and its midpoint B, depicted in Fig. 2b, aligns with the center of the platform. The lidar’s scanning plane intersects the target’s edges, say at A′, B′, and C′.Identifying these points in the line-scan data allows us to estimate the extrinsic parameters. An overview of the algorithm is shown in Algorithm 1. It involves two key steps: azimuth-bin smoothing and contigu-ous line detection. The line-scanner data stream is a sequence of range-azimuth data, denoted by {pi} ≡ {{ ρi, α i}} . In the former step, the line-scan data is converted into discrete azimuth bins with a median filter to reject outliers. In the latter step, line detection is used to get a set of consecutive lines {lk}. The geometry of the CAD model is used to identify candidate lines on the target {lA′B′ , lB′C′ }, allowing us to estimate the parameters {tx, t y , t z , r z }.(a) CAD model.           
+
+> (b) Target orientation and lidar’s plane of incidence.
+> Fig. 2: Initial calibration target. A,B, and Cdenote the center of the respective edges of the target, and constitute a hypothetical plane of incidence when lidar’s scanning plane intersects the rotary axis. The dashed line denotes the actual intersection of lidar’s plane of incidence with the edges of the target. Bmust align with the center of the rotary platform.
+
+1) Estimating rz , tx, and ty : Given the lidar data on the target shown in Fig. 2b, the pitch angle rz can be computed based on the geometry of line lA′B′ . The polar coordinates of points A′ and B′ are denoted as pA′ (ρA′ , α A′ )
+
+and pB′ (ρB′ , α B′ ), respectively. Then, 
+
+rz = − arctan 
+
+ ρB′ sin αB′ − ρA′ sin αA′
+
+ρB′ cos αB′ − ρA′ cos αA′
+
+
+
+. (1) The center of the platform is equivalent to the coordinates of B′ in lidar’s frame of reference L i.e. 
+
+tx = ρB′ sin αB′ , and ty = ρB′ cos αB′ . (2) For readability, the CAD model thickness is omitted from the equation but must be accounted for when determining the translation and rotation parameters. 
+
+2) Estimating tz : The asymmetric back wall of the target allows estimating translation parameter tz based on the observed height of lB′C′ . Assuming that hshort , h mid , h tall 
+
+represent the vertical short-edge, mid-edge and tall-edge, of the target, and w denotes the width of the target, we get, 
+
+tz = w(|lB′C′ | − hmid )
+
+htall − hshort 
+
+(3) Thus, a longer edge |lB′C′ | compared to hmid implies a positive value for tz , and vice versa. Note that Assumption 1may introduce errors in estimating the parameters; however, the goal of initial calibration is to primarily provide a reliable initial guess for the fine-tuning algorithm, which would then further refine the estimate. 
+
+Algorithm 1 Overview of initial calibration algorithm 
+
+Require: Raw lidar data {pi} and target dimensions  
+
+> 1:
+
+{p′ 
+
+> j
+
+} = AzimuthBinSmoothing( {pi}) 
+
+> 2:
+
+{lk} = FindContigousLines( {p′ 
+
+> j
+
+}) 
+
+> 3:
+
+{lA′B′ , lB′C′ } = IdentifyCandidateLines( {lk}) 
+
+> 4:
+
+{tx, t y , t z , r z } = EstimateExtrinsics( {lA′B′ , lB′C′ })
+
+return {tx, t y , t z , r z }
+
+B. Fine-tuning Calibration 
+
+The goal is to further refine the estimates for the calibra-tion parameters that the initial calibration algorithm yields. The initial calibration algorithm, due to its reliance on a static target placement, is prone to errors. For example, the target may not be placed properly on the rotary platform during the process or there can be minor misalignment between the platform’s vertical axis and the actual rotational axis. To compensate for these sources of error, we explore two dynamic fine-tuning algorithms, both based on the principle of cost function minimization. 
+
+1) Shape-constrained fine-tuning: On a dynamic rotary platform, the point cloud reconstruction for an object is a function of the choice of calibration parameters H. Fig. 3 shows point clouds for a cube, given two different calibration parameters. We find that as we approach the true calibration parameters, the shape and dimension of the point cloud starts to resemble a cube. In the shape-constrained approach, we leverage the deviation of the point cloud from its true shape to quantify the error in the calibration parameters. The goal is to create a cost function whose optimization would yield an estimate of the calibration parameters H.Starting with an approximate H, we can obtain a point cloud for a cube of edge length s. To quantify the deviation from its cubic shape, we propose a composite cost function consisting of two terms C1 and C2. While C1 penalizes for deviation in the point cloud from the standard cubic shape, on the other hand, C2 penalizes any deviation from the true 
+
+dimensions of the cube. To create this cost function, we first fit a minimum volume cuboid to the point cloud. A face of the fitted cuboid is denoted by (ci, ˆni), where ci is the coordinate of the center of the face and ˆni denotes the inward unit-normal to that face. Given the point cloud set {xk}, we formulate the following cost function: 
+
+H∗ = arg min 
+
+> H
+
+ C1 + C2
+
+, where 
+
+C1 = 1
+
+N
+
+> N
+
+X
+
+> k=1
+
+g(xk, c1, ˆn1, · · · ; H), C2 =
+
+> 3
+
+X
+
+> i=1
+
+∥si − s∥2.
+
+(4) The first term in Eq. (4), denoted by function g(·), iden-tifies the signed distance of a point in the point cloud from the closest face of the cuboid. The second term measures the deviation of edge length from the true size of the cube. Algorithm 2 outlines the procedure for constructing the shape-constrained cost function. Given the calibration para-meters H, the raw lidar points are first transformed into the rotary platform frame, as symbolized by TransformLToP(). A threshold-based segmentation step then classifies the points into three categories: cube, disk, and outliers. An oriented bounding box is subsequently fitted to the points identified as belonging to the cube, and the cost function is formulated according to Eq. (4). The inclusion of segmentation, bounding-box fitting, and signed-distance computations renders the resulting objective highly nonlinear and non-convex. Consequently, parameter refinement is performed using nonlinear least-squares op-timization methods, such as the Trust-Region Reflective al-gorithm or the Levenberg–Marquardt algorithm. These iterat-ive methods minimize the objective by locally approximating the cost landscape and are therefore sensitive to initialization. (a) Point cloud obtained from the best estimate of parameters H∗.
+
+(b) Point cloud obtained from a slightly perturbed parameters H′.
+
+Fig. 3: Different point clouds obtained for a 10 cm cube, in a rotary platform setup, with different extrinsic calibration parameters. 
+
+Algorithm 2 Overview of cost function creation for shape-constrained fine-tuning algorithm 
+
+Require: Raw lidar data {pi}, encoder data {ϕi}, cube dimension s, and calibration parameters H
+
+1: {xi} = TransformLToP( {pi}, {ϕi}, H(0) )
+
+2: {X disk , X cube , X outliers } = SegmentCube( {xi})
+
+3: {(ci, ˆni)}, {s1, s 2, s 3} = OrientedBoundingBox( X cube )
+
+4: {dk} = SignedDistFromFace( X cube , {(ci, ˆni)})
+
+5: C1 = 1
+
+|{ dk }| 
+
+P
+
+k d2
+
+k
+
+6: C2 = P3
+
+j=1 || sj − s|| 2
+
+return C1 + C2
+
+2) Periodicity-constrained fine-tuning: The periodicity in the data was first used in [9] for calibrating a spinning lidar system. In contrast, we have a spinning platform, while the lidar is stationary. Nonetheless, the periodicity argument stays valid and any point on the rotary platform crosses the lidar’s plane of incidence twice when it completes one full rotation. Fig. 4 shows the regions of the platform being scanned during different rotational configurations and highlights that they start to overlap after half-rotation of the platform. Motivated by the ideas in [9], we exploit this periodicity for refining the calibration parameters H. Given an encoder angle ϕ, we have a set of raw registered points 
+
+X (ϕ) from the lidar. A full rotation of the platform is divided into two half-scans i.e. 
+
+X = {X (ϕ)|0 ≤ ϕ < π }, and (5) 
+
+X ′ = {X (ϕ)|π ≤ ϕ < 2π}. (6) A physical location on the platform should have a corres-ponding point in each set X and X ′. This periodicity property forms the basis of our objective function, which quantifies the geometric discrepancy between the two sets. Accordingly, the calibration parameters are estimated by solving 
+
+H∗ = arg min 
+
+H f (X , X ′; H), (7) where f (·) measures the dissimilarity between the corres-ponding points in the two half-scans. Algorithm 3 provides an explicit formulation of this ob-jective. The procedure consists of four principal steps: (i) transforming raw points from the static lidar frame-L to the static platform frame-P , (ii) propagating the points from frame-P to the dynamic platform frame-D ({X D , X ′
+
+D }), (iii) establishing correspondences between XD and X ′
+
+D , and (iv) 
+
+Fig. 4: Top-view of the lidar and rotary platform at different configurations, starting with 0◦, 90 ◦, 180 ◦, and 270 ◦. The dots depict the portion of the platform being scanned by upper section of the lidar beam, and slanted lines depict the portion of the plate scanned by the lower portion of the beam. They start to overlap after 180 ◦ rotation of the platform. 80.00mm 61.23mm 160.00mm 70.00mm 50.00mm      
+
+> AABB2211DO NOT SCALE DRAWING asymmetrical calibration target w holes SHEET 1 OF 1 UNLESS OTHERWISE SPECIFIED: SCALE: 1:5 WEIGHT: REV DWG. NO.
+> A
+> SIZE TITLE: NAME DATE COMMENTS: Q.A. MFG APPR. ENG APPR. CHECKED DRAWN FINISH MATERIAL INTERPRET GEOMETRIC TOLERANCING PER: DIMENSIONS ARE IN INCHES TOLERANCES: FRACTIONAL ANGULAR: MACH BEND TWO PLACE DECIMAL THREE PLACE DECIMAL APPLICATION USED ON NEXT ASSY
+> PROPRIETARY AND CONFIDENTIAL
+> THE INFORMATION CONTAINED IN THIS DRAWING IS THE SOLE PROPERTY OF <INSERT COMPANY NAME HERE>. ANY REPRODUCTION IN PART OR AS A WHOLE WITHOUT THE WRITTEN PERMISSION OF <INSERT COMPANY NAME HERE> IS PROHIBITED.
+
+Fig. 5: Heptagonal target used in periodicity-constrained fine-tuning. 
+
+estimating surface normals for the matched points. The dis-similarity metric is defined using the point-to-plane distance, which has been shown to provide superior performance in 3D reconstruction and registration tasks [17]. Unlike spinning lidar systems, which observe rich envir-onmental structure during rotation, a rotary platform without a dedicated calibration target presents only a single planar surface. This configuration does not provide sufficient geo-metric constraints to solve the 5-DOF calibration problem. To address this limitation, we design a calibration target that introduces geometric variation along multiple directions while ensuring consistent visibility by the lidar across both half-scans. The latter requirement is particularly important during the design phase, as arbitrary shapes (e.g. a cube) offer limited shared surface visibility, typically only the top face, between the two half-scans, thereby weakening cor-respondence constraints. Accordingly, we employ a concave heptagonal target, shown in Fig. 5, which is mounted on the rotary platform during calibration. It is important to note that this geometry is not unique; alternative target shapes may be used, provided they satisfy the criteria of multi-directional geometric constraints and mutual visibility across half-scans. 
+
+Algorithm 3 Overview of periodicity-constrained calibration fine-tuning algorithm 
+
+Require: X , X ′, and H(0) 
+
+1: while not converged do 
+
+2: {X D , X ′
+
+D } = ApplyCalibration( X , X ′, H(k))
+
+3: {xi, x′
+
+i} = FindNeighbors( XD , X ′
+
+D ; H(k))
+
+4: {ˆni, wi } = ComputeWeightedNormals( XD ; H(k))
+
+5: H(k+1) = arg min H{P
+
+k wi|| ˆni.(xi − x′
+
+i)|| 2}
+
+6: end while V. I MPLEMENTATION DETAILS 
+
+In this section, we detail the key components of the calibration algorithms. 
+
+A. Initial Calibration 
+
+During initial calibration, we smooth the data across multiple lidar scans falling onto the target, typically 100, to ensure that outliers are removed from the scan. The AzimuthBinSmoothing() function in Algorithm 1 divides the azimuth into fixed 0.02 degree bins and the median range is evaluated for each bin. We use Principal Component Analysis (PCA) to identify the lines in the smoothed scan data in the function FindContigousLines(). IdentifyCandidateLines() leverages calibration target dimensions to filter contiguous line segments that intersect at a 90 ◦ angle and satisfy dimensions of the CAD model. Finally, EstimateExtrinsics() relies on Eqs. (1), (2), and (3) to deliver an estimate for the translation parameters and Euler rotation angle. 
+
+B. Shape-constrained fine-tuning 
+
+In Algorithm 2, to isolate the subset of points correspond-ing to the cube, denoted by X cube , we apply a threshold-based segmentation along the x-axis of the rotary platform frame-P . To reduce misclassification of platform points as cube points, a conservative margin of 1 cm is introduced. While this strategy may exclude a small portion of valid cube points, it ensures that the rotating platform surface is not inadvertently incorporated into X cube . More advanced segmentation strategies, such as normal-based filtering, could alternatively be employed to remove the rotating disk with higher geometric fidelity. Outliers are rejected using a radius-based filtering cri-terion, whereby points with fewer than eight neighbors within a 1 mm radius are discarded. A minimum-volume oriented bounding box is then fitted to X cube using the implementation provided in Open3D. For nonlinear optimiz-ation, we utilize SciPy’s Trust-Region Reflective algorithm. The search space is constrained to ±2 cm for translation and ±2◦ for rotational degrees-of-freedom around the initial calibration estimate. The termination tolerances are set to 
+
+xTol = 10 −12 , fTol = 10 −10 , with a maximum of 100 function evaluations. 
+
+C. Periodicity-constrained fine-tuning 
+
+In the periodicity-constrained fine-tuning, we use a KD-tree data structure to speed up computation of nearest neigh-bors with a maximum distance threshold of 20 cm. To ensure robustness, we enforce a bijective correspondence i.e. xi and 
+
+x′ 
+
+> i
+
+are mutual neighbors of each other. In ComputeWeighted-Normals(), the nearest 50 points are chosen to compute the normal direction and the weight is based upon the eigenvalues of the covariance matrix, i.e. wi = 2( λ2−λ3) 
+
+> λ1+λ2+λ3
+
+,where λ1 ≥ λ2 ≥ λ3. Consequently, wi → 1.0 for planar surfaces. Since the points lying on the rotary platform have only a minor contribution to the optimization process, we remove them, making the cost function more receptive to errors in the calibration parameters.   
+
+> (a) Iteration-1. (b) Iteration-3. (c) Iteration-10.
+> Fig. 6: Number of matched points on the face of the target at differ-ent iterations of the periodicity-constrained fine-tuning algorithm.
+
+The periodicity-based formulation estimates the orienta-tion and position of the rotation axis but leaves one degree-of-freedom unobservable along the axis direction. Specific-ally, a translation of the rotary frame-P about its axis of rotation does not alter the periodicity cost defined in Eq. (7). Consequently, the objective function is invariant to shifts along this direction, resulting in a one-dimensional family of equivalent solutions. In our parameterization, this invariance manifests as a coupled ambiguity between tx and 
+
+ty . To remove this gauge freedom and ensure a well-posed optimization problem, we fix ty to the initial calibration value, and treat tx as the remaining optimization variable. This reduces the number of free parameters from five to four. For numerical optimization, we employ the Trust-Region Reflective algorithm from the SciPy library. The search space is constrained to ±2 cm for translation and ±2◦ for rotation about each degree of freedom. The termination tolerances are set to xTol = 10 −12 , fTol = 10 −10 , with a maximum of 10 function evaluations per inner optimization and up to 15 iterations in Algorithm 3. Figure 6 illustrates the evolution of the number of matched points between X and X ′ across successive iterations on the target. The monotonic increase in correspondences indicates progressive improvement in the calibration estimate. VI. E XPERIMENTS AND RESULTS 
+
+This section presents a qualitative and quantitative over-view of the experiments conducted for assessing the validity of the calibration algorithms. 
+
+A. Hardware Setup 
+
+We built a turntable setup with a 58.5 cm diameter circular metallic plate being rotated by a Clearpath-MCVC DC servo motor, with a maximum speed rating of 1130 rpm and peak torque of 9.9 N-m. To accurately capture the rotation, a Lika Electronic incremental (quadrature) rotary encoder is coaxially mounted with a resolution of 1024 ppr. The object on the turntable is scanned by a tripod-mounted Eyeonic Trace laser line scanner, which is an FMCW lidar from SiLC 1. It is rated at 1 mm precision and has 72 ◦
+
+FOV, delivering about 1 million points per second. The full mechanical setup is shown in Fig. 7. 
+
+B. Data 
+
+We collected nine datasets from the rotary platform at varying lidar pitch orientations and ranges, summarized in Table I. These configurations reflect practical object-scanning             
+
+> 1https://www.silc.com/eyeonic-trace/ Fig. 7: Rotary platform and tripod mounted lidar setup. TABLE I: Approximate range and pitch angle for datasets.
+> Range and Pitch angle 1.00 m 1.25 m 1.50 m 30 ◦D1D2D3
+> 45 ◦D4D5D6
+> 60 ◦D7D8D9
+
+setups, where the lidar is mounted in close proximity to ob-tain good resolution on the object of interest while respecting the minimum-range specification of the device. 
+
+C. Metrics 
+
+In practical settings, the true calibration parameters are not directly observable without specialized, expensive equip-ment, so we instead rely on indirect measures of quality. Our first metric is the dimensioning accuracy of a standard 10 cm cube. Because calibration errors manifest as geometric distortions in the point cloud, the deviation between the estimated and true side length of the cube provides a mean-ingful measure of calibration accuracy. To faithfully capture these distortions, we deliberately avoid any smoothing of the point cloud prior to estimating the cube dimensions. The output of the fine-tuning algorithms depends on the initial calibration provided to them. We therefore evaluate their precision across a range of initial conditions. Higher precision i.e., smaller variation in the resulting calibration for different initializations, indicates reduced sensitivity to initialization and is a desirable property of the fine-tuning. 
+
+D. Results 1) Initial Calibration: We quantify the error in estimating edge length of a 10 cm cube, i.e. e = max i
+
+ ˆsi − s,where s denotes the true edge length, and ˆsi denotes es-timated length of ith edge. Table II denotes the median error 
+
+obtained during initial calibration across the nine datasets. The positive median error reflects the fact that we use the unsmoothed point cloud to construct an enclosing bounding box, which biases the estimate toward a larger box. Applying a smoothing method such as a moving average or Gaussian kernel smoother could substantially reduce this error, but that is not the focus of this work. Using the initial calibration alone, we obtain a median percentage error of 5.1%. 
+
+2) Fine-tuning Calibration: For the first set of experi-ments, we initialize the fine-tuning algorithm with initial calibration results. The extrinsic parameters thus obtained are used to estimate the edge length of a 10 cm cube and the median error is reported in Table II. We observe that both fine-tuning methods systematically reduce the median         
+
+> TABLE II: Median error in estimating dimension of 10 cm cube using various calibration algorithms across the nine datasets from Table I. Best value are denoted in bold .
+> Edge estimate error (mm) Initial calibration 5.1 Shape-constrained fine-tuning 3.2 Periodicity-constrained fine-tuning 2.7
+
+error , however, the periodicity-constrained fine-tuning out-shines the shape-constrained fine-tuning, yielding a median percentage error of 2.7%. In the second set of experiments, we evaluate the robust-ness of the fine-tuning algorithm to initialization. To this end, we define two perturbation sets: set-A, with translation limits of ±100 mm and rotation limits of ±1◦, and set-B,with translation limits of ±200 mm and rotation limits of 
+
+±2◦. From each set, we sample 50 uniformly distributed perturbations and add them to the parameters obtained from the initial calibration, using the result as the initialization for the fine-tuning algorithm. These bounds are chosen to reflect the anticipated error of the initial calibration and are consistent with our experience in practical data collection scenarios. Note that, during sampling, the value of ty is fixed. Fig. 8a and 8b show the deviation of converged value of tx
+
+from the mean for the two fine-tuning algorithms for trans-lation in x-axis. Under the sampled initial conditions from set-A, the periodicity-constrained algorithm achieves sub-millimeter variation, whereas the shape-constrained approach can exhibit deviation up to 12 mm, excluding the outliers. When the range of initial perturbation is doubled (set-B), the periodicity-constrained algorithm maintains variation in 
+
+tx upto 1 mm for the majority of trials, with only a few outliers exceeding this threshold. A similar trend is observed for the z-axis, as shown in Fig. 8c and 8d. Fig 8e, 8f, 8g and 8h, show a comparison for rotational deviation along y-axis and z-axis, respectively. The shape-constrained algorithm exhibits higher dispersion, as indicated by a much larger interquartile range and longer whiskers. In contrast, the periodicity-constrained algorithm shows a more tightly concentrated central distribution. Especially, if the initial error is within the limits of set-A, then the outliers are significantly reduced and are of smaller magnitude. Fig. 9 illustrates the error in estimating the edge length of a 10 cm cube. Table III reports the median error for the different calibration methods. Compared to using the initial calibration alone, both fine-tuning algorithms reduce the median error, with the periodicity-constrained method achieving roughly a twofold improvement. Moreover, for initial perturbations sampled from set-A and set-
+
+B, the periodicity-constrained algorithm exhibits an order-of-magnitude lower variation in the estimates than the shape-constrained approach, as shown in Fig. 9, showing a higher tolerance to initial calibration errors. (a) tx variation for set-A. (b) tx variation for set-B.               
+
+> (c) tzvariation for set-A.(d) tzvariation for set-B.
+> (e) ryvariation for set-A.(f) ryvariation for set-B.
+> (g) rzvariation for set-A.(h) rzvariation for set-B.
+
+Fig. 8: Deviation of translational and rotational values from their 
+
+mean estimate, obtained by feeding initial calibration results to the fine-tuning algorithms, with 50 sampled perturbations from set-A
+
+and set-B (N = 450 points).      
+
+> (a) Cube edge error for set-A.(b) Cube edge error for set-B.
+
+Fig. 9: Cube dimensioning error obtained by feeding initial cal-ibration results to the fine-tuning algorithms, with 50 sampled perturbations from set-A and set-B (N = 450 points). 
+
+E. Discussion 
+
+The differences in convergence characteristics of the two fine-tuning algorithms motivated a closer investigation into the cost functions used in the two approaches. Based on a randomly selected dataset D6 from our set of collected sequences, we show the cost value as a function of the translation and the rotation parameters in Fig. 10. The axes represent deviation from the converged value in the respective fine-tuning approaches. The translation cost landscape for both algorithms appears relatively smooth, with a clearly identifiable minimum in the local vicinity. Still, the elliptical shape of the contour lines 
+
+TABLE III: Median error in estimating 10 cm cube dimensions using calibration algorithms across nine datasets from Table I and sampled initial conditions. Best values are denoted in bold .         
+
+> Edge estimate Error (mm) set-Aset-B
+> Initial calibration 5.1 5.1 Shape-constrained fine-tuning 3.0 4.0 Periodicity-constrained fine-tuning 2.7 2.8
+> (a) SC cost for translation. (b) PC cost for translation.
+> (c) SC cost for rotation. (d) PC cost for rotation.
+
+Fig. 10: Cost landscape for fine-tuning obtained by varying trans-lation and rotation values for a randomly selected dataset D6.
+
+in the periodicity-constrained fine-tuning, shown in Fig. 10b, is more desirable for a nonlinear optimizer, compared to the lines in the shape-constrained fine-tuning, shown in Fig. 10a. The differences, however, in the rotational cost landscape are pronounced in Fig 10c and 10d. The cost for the shape-constrained algorithm is noticeably more irregular, with local undulations which can cause the optimizer to become trapped in a local minimum. This explains the significant dispersion in rotational values observed in Fig. 8e, 8f, 8g, and 8h. In contrast, the periodicity-constrained algorithm’s cost function has gentler gradients and a clear minimum. We observed that the cost for periodicity-constrained algorithm is more sensitive to rz than to ry , which explains the smaller spread in the post fine-tuning rz values in Fig. 8g, and 8h. To qualitatively compare the initial calibration with the fine-tuned result, we scanned several objects, and their point clouds are shown in Figs. 11, 12, and 13. For the pyramid in Fig. 11, the initially calibrated point cloud exhibits multiple peaks, which are removed after fine-tuning. In Fig. 12, the initial calibration leads to misaligned points on one of the faces of the prism, whereas the fine-tuned point cloud ap-pears smooth. Finally, in Fig. 13, we observe corner bleeding in the initially calibrated point cloud that is substantially reduced after fine-tuning. Together, these qualitative results highlight the benefits of the proposed two-stage calibration. The cube dimensioning results reported in Table III are conservative, as they are based on a naive minimum-volume oriented bounding box fitted directly to the raw point cloud. In practical dimensioning applications, smoothing is applied prior to polyhedral fitting to reduce measurement variance. Applying a moving least squares filter to the cube point cloud (a) IC. (b) PC. (c) Zoomed IC. (d) Zoomed PC. 
+
+Fig. 11: Pyramid (15 cm ×15 cm ×15 cm) visualization with initial calibration (IC) and periodicity-constrained (PC) fine-tuning. 
+
+(a) IC. (b) PC. (c) Zoomed IC. (d) Zoomed PC. 
+
+Fig. 12: Prism (15 cm edge × 22.5 cm depth) visualization with initial calibration (IC) and periodicity-constrained (PC) fine-tuning. 
+
+(a) IC. (b) PC. (c) Zoomed IC. (d) Zoomed PC. 
+
+Fig. 13: Cube (10 cm) visualization with initial calibration (IC) and periodicity-constrained (PC) fine-tuning. 
+
+reduced the median dimensioning error to 0.3 mm (0.3%) for the nine datasets, representing an order-of-magnitude improvement over the calibrated but unsmoothed data. In terms of computation, the initial calibration algorithm requires approximately 10 seconds. On the other hand, both shape-constrained and periodicity-constrained fine-tuning re-quire up to 2 minutes to converge to the calibration paramet-ers on an Intel i7 16-core (2.5 GHz) system. VII. C ONCLUSION 
+
+In this work, we presented a two-stage calibration frame-work for estimating the extrinsic transformation between a line-scanning lidar and a rotating platform. The proposed approach combines a geometry-driven static initialization procedure with dynamic fine-tuning strategies that leverage structured target observations. The static stage provides a computationally efficient means of obtaining a reliable initial estimate, while the dynamic stage refines the parameters through constrained nonlinear optimization. Although the static initialization requires limited human intervention, the subsequent dynamic refinement stage compensates for these approximations through automated nonlinear optimization. We investigated two fine-tuning strategies: shape-constrained and periodicity-constrained formulations both designed to exploit geometric structure in the acquired data. Experimental evaluations under varying initial condi-tions demonstrate that the periodicity-constrained approach exhibits robustness to significant initial calibration errors. This behavior is further supported by analysis of its cost landscape, which reveals a comparatively well-defined basin of convergence. These findings highlight the effectiveness of periodicity-driven constraints for rotary-platform calibration and suggest that dynamic redundancy can be systematically exploited to improve estimation stability. Future work will focus on characterizing the basin of convergence of the periodicity-based formulation and invest-igating whether the static initial calibration stage can be eliminated altogether. Additional research directions include reformulating the shape-constrained objective to improve smoothness and optimizer performance, potentially through an outer-loop iterative scheme, and studying the influence of platform rotation speed on calibration accuracy. ACKNOWLEDGMENT The authors thank Dharma Hariharan Babu and Pete Chayapirad of SiLC Technologies’ mechanical team for their support in building the rotary platform. REFERENCES [1] N. O’Mahony, S. Campbell, L. Krpalkova, D. Riordan, J. Walsh, A. Murphy, and C. Ryan, “Computer vision for 3d perception: A re-view,” in Proceedings of SAI Intelligent Systems Conference . Springer, 2018, pp. 788–804. [2] B. Behroozpour, P. A. M. Sandborn, M. C. Wu, and B. E. Boser, “Lidar system architectures and circuits,” IEEE Communications Magazine ,vol. 55, no. 10, pp. 135–142, 2017. [3] R. Roriz, J. Cabral, and T. Gomes, “Automotive lidar technology: A survey,” IEEE Transactions on Intelligent Transportation Systems ,vol. 23, no. 7, pp. 6282–6297, 2021. [4] O. Poenicke, M. Groneberg, D. Sopauschke, K. Richter, and N. Treuheit, “Industrial application use cases of lidar sensors bey-ond autonomous driving,” in International Conference on Innovative Intelligent Industrial Production and Logistics . Springer, 2023, pp. 250–269. [5] T. Raj, F. H. Hashim, A. B. Huddin, M. F. Ibrahim, and A. Hussain, “A survey on lidar scanning mechanisms,” Electronics , vol. 9, no. 5, 2020. [6] S. Wang, Z. Qiao, and J. Huang, “A calibration method of external parameters of 2D laser in rotary 3D scanning,” Optoelectronics Letters ,vol. 18, no. 12, pp. 730–736, 2022. [7] M. Sheehan, A. Harrison, and P. Newman, “Self-calibration for a 3d laser,” The International Journal of Robotics Research , vol. 31, no. 5, pp. 675–687, 2012. [8] J. Levinson and S. Thrun, “Unsupervised calibration for multi-beam lasers,” in Experimental Robotics: The 12th International Symposium on Experimental Robotics . Springer, 2014, pp. 179–193. [9] H. Alismail and B. Browning, “Automatic calibration of spinning actuated lidar internal parameters,” Journal of Field Robotics , vol. 32, no. 5, pp. 723–747, 2015. [10] M. Claer, A. Ferrein, and S. Schiffer, “Calibration of a rotating or revolving platform with a lidar sensor,” Applied Sciences , vol. 9, no. 11, p. 2238, 2019. [11] S. Yamao, H. Hidaka, S. Odashima, S. Jiang, and Y. Murase, “Calib-ration of a rotating 2d lrf in unprepared environments by minimizing redundant measurement errors,” in 2017 IEEE International Confer-ence on Advanced Intelligent Mechatronics (AIM) , 2017, pp. 172–177. [12] E. Schmidt, P. Ruppert, and D. Henrich, “DOE laser-assisted turntable calibration and workpiece registration,” in MHI Colloquium . Springer, 2022, pp. 253–264. [13] K. Zhu, L. Gong, D. Gu, and C. Liu, “An analytic calibration method for turntable-based 3d scanning system,” in 2019 IEEE/ASME International Conference on Advanced Intelligent Mechatronics (AIM) ,2019, pp. 495–500. [14] J. Kang and N. L. Doh, “Full-DOF calibration of a rotating 2-D LIDAR with a simple plane measurement,” IEEE Transactions on Robotics , vol. 32, no. 5, pp. 1245–1263, 2016. [15] Z. Gao, J. Huang, X. Yang, and P. An, “Calibration of rotating 2d lidar based on simple plane measurement,” Sensor Review , vol. 39, no. 2, pp. 190–198, 2019. [16] X. Pang, R. W. Lau, Z. Song, Y. Li, and S. He, “A tool-free calibration method for turntable-based 3d scanning systems,” IEEE Computer Graphics and Applications , vol. 36, no. 1, pp. 52–61, 2016. [17] A. Segal, D. Haehnel, and S. Thrun, “Generalized-ICP,” in Robotics: Science and Systems , 2009.

@@ -1,0 +1,69 @@
+{
+  "label": "2026-07-23",
+  "date": "2026-07-23",
+  "generated_at": "2026-07-23T21:51:40",
+  "count": 4,
+  "papers": [
+    {
+      "paper_id": "202607/23/2607.17898v1-manifold-guided-motion-planning-for-tight-assemblies",
+      "section": "deep",
+      "title_en": "Manifold-Guided Motion Planning for Tight Assemblies",
+      "authors": "Dror Livnat, Michael M. Bilevich, Michal Kleinbort, Dan Halperin",
+      "date": "2026-07-20",
+      "pdf": "https://arxiv.org/pdf/2607.17898v1",
+      "score": "8.0",
+      "evidence": "利用临界流形引导的紧公差刚性体装配运动规划",
+      "tldr": "紧密装配中的运动规划因零间隙接触约束而面临巨大挑战，可行路径常需通过极窄的临界构型。为此，本文提出临界流形引导的RRT算法（CMG-RRT），通过构型空间分层细分自适应将采样偏向接触流形邻域，有效提升探索效率。实验在旋转装配基准上实现了100%的成功率，并首次自动求解Elk解谜难题。该方法兼具概率完备性与实用性，为高约束装配任务的自动规划开辟了新途径。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "Motion planning for rigid-body assembly poses a fundamental challenge in robotics due to tight geometric constraints. In such scenarios, feasible motions often require passing through (near-)zero clearance configurations in which the parts are tightly constrained by contact. In this work, we introduce Critical-Manifold Guided RRT (CMG-RRT), a sampling-based planner designed specifically for tight assembly problems. Our key observation is that in tight assemblies, valid solution paths lie on or near a critical manifold: the subset of configuration space consisting of poses with at least one contact point between parts. CMG-RRT guides exploration by adaptively biasing sampling toward neighborhoods of the critical manifold using a hierarchical subdivision of the configuration space. We prove that CMG-RRT is probabilistically complete under standard clearance assumptions. Empirical evaluation on challenging rotational assembly benchmarks demonstrates a 100% success rate across all tested instances, including, to the best of our knowledge, the first fully automatic solution of the Elk disentanglement puzzle. Our open source software is available through our project page: https://www.cgl.cs.tau.ac.il/projects/tight-assembly-planning.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/23/2607.18578v1-two-stage-extrinsic-calibration-of-a-static-line-scanning-lidar-with-a-rotary-platform",
+      "section": "deep",
+      "title_en": "Two-Stage Extrinsic Calibration of a Static Line-Scanning Lidar with a Rotary Platform",
+      "authors": "Vikram Shree, Hike Danakian, Long Nguyen, Rajanish Gokidi, Patrick Nercessian",
+      "date": "2026-07-20",
+      "pdf": "https://arxiv.org/pdf/2607.18578v1",
+      "score": "8.0",
+      "evidence": "旋转平台上对线扫描激光雷达进行标定以实现精密三维扫描，支持卫星装配中的尺寸计量",
+      "tldr": "线扫描激光雷达需结合旋转平台实现3D扫描，但旋转轴标定精度直接影响点云重建质量。本文提出两阶段外参标定方法，分别通过静态与动态阶段估计旋转轴相对激光雷达的变换参数。在自制平台与FMCW激光雷达数据上验证，算法在多种初始条件下均能稳定收敛，实现了高精度标定。该方法为工业精密检测与三维重建提供了可靠的自动标定方案。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "A line-scanning lidar yields range and azimuth values in a fixed plane. To perceive surrounding objects in 3D, there must be relative motion between the lidar plane and the object. Thus, using a rotating base-platform is promising for industrial applications where objects need to be scanned or inspected precisely, and is the main focus of this work. In the rotary platform setup, a 3D point cloud of an object can be constructed if the axis of rotation and the precise motion about that axis are known. However, this setup gives rise to the following problem: how can the axis of rotation of the platform be accurately identified with respect to the lidar coordinate system? It is referred to as the calibration problem in the robotics community. Any inaccuracy in this transformation directly affects the quality of the reconstructed point cloud, leading to misrepresentation of the object of interest. In this work, we explore automated approaches to statically and dynamically estimate the transformation of a rotary platform's axis of rotation with respect to a static line-scanning lidar. The proposed algorithms have been validated on real-world datasets obtained from a custom made rotary platform and an FMCW lidar, and their convergence characteristics are studied for various initial conditions.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/23/2607.17058v1-droid-anchor-odometry-anchored-recurrent-metric-depth-estimation",
+      "section": "quick",
+      "title_en": "DROID-ANCHOR: Odometry-Anchored Recurrent Metric Depth Estimation",
+      "authors": "Yuxuan Chen, Brook Du",
+      "date": "2026-07-19",
+      "pdf": "https://arxiv.org/pdf/2607.17058v1",
+      "score": "7.0",
+      "evidence": "精确度量深度估计可支持装配尺寸计量",
+      "tldr": "单目深度估计因尺度模糊难以直接用于机器人导航，现有视觉SLAM系统尽管鲁棒但缺乏度量信息。提出Metric-DROID，将本体里程计作为几何锚点，通过LSTM算子编码高频里程计序列，并利用不确定性感知后端自适应平衡视觉重投影与度量平移残差，从而在迭代优化中消除尺度漂移。针对轮式滑移和传感器噪声，该框架通过学习时变度量不确定性来动态权衡，有效缓解了里程计误差的影响。该方法仅需选择性残差微调即可实现零样本度量深度估计，为自主导航提供了精确且鲁棒的感知基础。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "Precise metric depth estimation is fundamental for autonomous robot navigation, yet monocular systems inherently suffer from scale ambiguity and scale drift. While recent recurrent flow-based SLAM systems have demonstrated state-of-the-art robustness, they remain scale-ambiguous. In this paper, we propose Metric-DROID, an end-to-end recurrent architecture that anchors visual SLAM to physical reality by integrating proprioceptive odometry. Our framework introduces the following innovations: (1) A LSTM Update Operator that encodes high-frequency odometry sequences into spatial feature maps, providing a persistent metric bias for iterative refinement. (2) An Uncertainty-Aware Metric Backend ($BA_{odom}$) that treats odometry as a geometric anchor with learned heteroscedastic covariance. By regressing a time-varying metric uncertainty $Σ_{o}$, our system intelligently balances visual re-projection and metric translation residuals, effectively mitigating the impact of wheel-slip and sensor noise. (3) We further propose a selective residual fine-tuning strategy to preserve pre-trained geometric priors while enabling zero-shot metric alignment.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/23/2607.17876v1-leveraging-two-robotic-arms-for-tight-assembly-performance-gains",
+      "section": "quick",
+      "title_en": "Leveraging Two Robotic Arms for Tight Assembly Performance Gains",
+      "authors": "Dror Livnat, Yuval Lavi, Michael M. Bilevich, Dan Halperin",
+      "date": "2026-07-20",
+      "pdf": "https://arxiv.org/pdf/2607.17876v1",
+      "score": "7.0",
+      "evidence": "双臂紧密装配框架提升轨迹精度与效率",
+      "tldr": "在紧凑装配任务中，单臂系统存在效率低和轨迹质量不高等问题。本文提出双机械臂协同装配的端到端框架，利用零件CAD模型直接规划操作。实验表明，双臂协调可将执行时间缩短50%以上，轨迹质量更优，并能快速确定机器人布局。该框架为高精度装配提供了理论与实践的全面增益。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "We provide a novel end-to-end framework for the execution of an assembly operation by two robotic arms, given the digital CAD models of the parts and their desired relative placement in their assembled state. We analyze and demonstrate the advantages of using two robotic arms simultaneously in tight assembly operations, compared to single-arm systems. Our method is implemented in both simulation and using physical robots. It provides theoretical guarantees on execution time and trajectory accuracy, supported by empirical evidence. In particular, we show that coordinated movement of two arms reduces average execution time by more than 50% compared to using a single arm only, produces higher-quality trajectories, and accelerates the search for valid robot placements. Furthermore, we establish bounds on the required dimensions of the robotic cell. Our open source software together with real-life video demonstrations are available in our project page.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
