@@ -1,0 +1,24 @@
+{
+  "label": "2026-07-26",
+  "date": "2026-07-26",
+  "generated_at": "2026-07-26T21:28:10",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202607/26/2607.19045v1-industrial-application-of-a-multi-disciplinary-design-optimization-with-uncertainties-to-a-pair-of-telecommunication-satellites",
+      "section": "quick",
+      "title_en": "Industrial Application of a Multi-Disciplinary Design Optimization with Uncertainties to a Pair of Telecommunication Satellites",
+      "authors": "Olivier Sapin, Loïc Cousin, Nicolas Roussouly, Anne Gazaix, François Gallard, Matthias De Lozzo, Xavier Fosse, Nicolas Sarda, Gaspard Berthelin",
+      "date": "2026-07-21",
+      "pdf": "https://arxiv.org/pdf/2607.19045v1",
+      "score": "6.0",
+      "evidence": "考虑不确定性的卫星多学科设计优化，与制造公差控制相关。",
+      "tldr": "卫星设计中，常用添加安全裕度的方法来保证方案对不确定性的鲁棒性，但这往往以牺牲性能为代价。本研究针对一对堆叠发射的通信卫星工业案例，应用考虑不确定性的多学科设计优化技术（包括敏感性分析和基于可靠性的设计优化），将不确定性直接纳入设计问题。结果显示，相较于预定义安全裕度，该方法在保持高概率约束可行的同时，使性能损失显著降低66%。该框架可扩展至任意数量的卫星，证明了不确定性量化在工业卫星设计中能有效平衡鲁棒性与性能，具有重要应用价值。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "In satellite design, it is common practice to add safety margins to the constraints to achieve conservative solutions that are robust to uncertainties. This robustness often comes at the expense of performance and it may be more appropriate to include uncertainties in the definition of the design problem. This work addresses such a challenge by applying techniques of multidisciplinary design optimization under uncertainty to an industrial use case. The latter is a pair of telecommunication satellites launched together in a stacked configuration. Each satellite is a strongly coupled multidisciplinary system while the two satellites are not coupled at all. This use case can be extended to an arbitrary number of satellites. By considering uncertainty quantification techniques such as sensitivity analysis and reliability-based design optimization, this study demonstrates that accounting for uncertainties in the design problem results in a 66% reduction in performance loss compared to the adding of a predefined safety margins, while guaranteeing the feasibility of constraints with high probability.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

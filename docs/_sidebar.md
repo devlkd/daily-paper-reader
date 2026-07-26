@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-07-26 <!--dpr-date:20260726-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/26/2607.19045v1-industrial-application-of-a-multi-disciplinary-design-optimization-with-uncertainties-to-a-pair-of-telecommunication-satellites" data-sidebar-item="{&quot;title&quot;: &quot;Industrial Application of a Multi-Disciplinary Design Optimization with Uncertainties to a Pair of Telecommunication Satellites&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2607.19045v1-industrial-application-of-a-multi-disciplinary-design-optimization-with-uncertainties-to-a-pair-of-telecommunication-satellites&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;sat-asm-prec&quot;}], &quot;evidence&quot;: &quot;考虑不确定性的卫星多学科设计优化，与制造公差控制相关。&quot;}">Industrial Application of a Multi-Disciplinary Design Optimization with Uncertainties to a Pair of Telecommunication Satellites</a>
   * 2026-07-23 <!--dpr-date:20260723-->
     * 精读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202607/23/2607.17898v1-manifold-guided-motion-planning-for-tight-assemblies" data-sidebar-item="{&quot;title&quot;: &quot;Manifold-Guided Motion Planning for Tight Assemblies&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2607.17898v1-manifold-guided-motion-planning-for-tight-assemblies&quot;, &quot;score&quot;: &quot;8.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;sat-asm-prec&quot;}], &quot;evidence&quot;: &quot;利用临界流形引导的紧公差刚性体装配运动规划&quot;}">Manifold-Guided Motion Planning for Tight Assemblies</a>

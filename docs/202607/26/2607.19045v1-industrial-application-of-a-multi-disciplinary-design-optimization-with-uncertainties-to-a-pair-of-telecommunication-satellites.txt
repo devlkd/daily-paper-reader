@@ -1,0 +1,455 @@
+Title: Industrial Application of a Multi-Disciplinary Design Optimization with Uncertainties to a Pair of Telecommunication Satellites
+
+URL Source: https://arxiv.org/pdf/2607.19045v1
+
+Published Time: Wed, 22 Jul 2026 01:12:52 GMT
+
+Number of Pages: 13
+
+Markdown Content:
+# Industrial Application of Multidisciplinary Design Optimization with Uncertainties to a Pair of Telecommunication Satellites 
+
+O. Sapin ∗
+
+IRT Saint Exupéry, Toulouse, France 
+
+L. Cousin †
+
+IRT Saint Exupéry, Toulouse, France 
+
+N. Roussouly ‡
+
+IRT Saint Exupéry, Toulouse, France 
+
+A. Gazaix §
+
+IRT Saint Exupéry, Toulouse, France 
+
+F. Gallard ¶
+
+IRT Saint Exupéry, Toulouse, France 
+
+M. De Lozzo ‖
+
+IRT Saint Exupéry, Toulouse, France 
+
+X. Fosse ∗∗ 
+
+Airbus Defence and Space, Toulouse, France 
+
+N. Sarda †† 
+
+Airbus Defence and Space, Toulouse, France 
+
+G. Berthelin ‡‡ 
+
+Airbus Defence and Space, Toulouse, France 
+
+In satellite design, it is common practice to add safety margins to the constraints to achieve conservative solutions that are robust to uncertainties. This robustness often comes at the expense of performance and it may be more appropriate to include uncertainties in the definition of the design problem. This work addresses such a challenge by applying techniques of multidisciplinary design optimization under uncertainty to an industrial use case. The latter is a pair of telecommunication satellites launched together in a stacked configuration. Each satellite is a strongly coupled multidisciplinary system while the two satellites are not coupled at all. This use case can be extended to an arbitrary number of satellites. By considering uncertainty quantification techniques such as sensitivity analysis and reliability-based design optimization, this study demonstrates that accounting for uncertainties in the design problem results in a 66% reduction in performance loss compared to the adding of a predefined safety margins, while guaranteeing the feasibility of constraints with high probability. 
+
+> ∗
+
+Research Engineer, Methods and Tools for the Development of Complex Systems, olivier.sapin@irt-saintexupery.com 
+
+> †
+
+Research Engineer, Methods and Tools for the Development of Complex Systems, loic.cousin@irt-saintexupery.com 
+
+> ‡
+
+Research Engineer, Methods and Tools for the Development of Complex Systems, nicolas.roussouly@irt-saintexupery.com 
+
+> §
+
+Head of the MDO Competence Center, Methods and Tools for the Development of Complex Systems, anne.gazaix@irt-saintexupery.com 
+
+> ¶
+
+Research Engineer, Methods and Tools for the Development of Complex Systems, françois.gallard@irt-saintexupery.com 
+
+> ‖
+
+Research Engineer, Methods and Tools for the Development of Complex Systems, matthias.delozzo@irt-saintexupery.com 
+
+> ∗∗
+
+End to end mission performance engineer, Space systems chief engineering, xavier.fosse@airbus.com 
+
+> ††
+
+System Architecture Multi-Disciplinary Analysis and Optimization Expert, MBSE Design and Standards, nicolas.sarda@airbus.com 
+
+> ‡‡
+
+Modeling and Simulation Architect, MBSE Design and Standards, gaspard.berthelin@airbus.com 
+
+1arXiv:2607.19045v1 [math.OC] 21 Jul 2026 I. Introduction 
+
+A. Context 
+
+Multidisciplinary Design Optimization (MDO) [ 1] has yet to reach its full potential in industrial applications, despite its promise. The space domain, in particular, has been slow to adopt MDO, and more work is needed to make it more accessible and widely used. However, some progress has been made, with initiatives such as those undertaken at Airbus Defence and Space aiming to promote the use of MDO. Uncertainties also pose a significant challenge in the context of MDO. Effective quantification and management (UQ&M) of uncertainties are crucial, as uncertainties can have a major impact on the performance and feasibility of a design solution. Developing new methodologies and tools that can efficiently handle uncertainties will be essential to fully leverage the benefits of MDO and ensure its reliable application in various fields, including the space domain. This paper aims to address these challenges by applying techniques of multidisciplinary design analysis and optimization (MDAO) under uncertainties (UMDAO) [ 2] to the design of telecommunication satellites. Section I.B presents this design problem at a high level, while Section II gives a detailed presentation of the MDO problems involved, 
+
+i.e. objective, constraints, design variables, uncertainties and disciplines. From a technological point of view, Section I.C presents the notion of reliability-based MDO (RMDO) which is a suitable alternative to the use of safety margins. Then, Section III describes the methodology to set up this RMDO approach and compare it with traditional approaches. Section IV applies this methodology and shows that the RMDO approach leads to a more efficient solution than the use of safety margins. Finally, Section V gives conclusions and prospects for this work. 
+
+B. Satellite design problem 
+
+The proposed engineering problem is the optimization of the orbital maneuver lifetime of a pair of geostationary satellites which are launched together, as in Figure 1. 
+
+Fig. 1 Illustration of a dual launch of geostationary satellites sharing the same launch vehicle. © Copyright Airbus Defence and Space SAS 2021-2025 
+
+The geostationary orbit (GEO) offers a unique vantage point allowing a satellite to be fixed relative to the Earth, providing a persistent view of the same ground target. It is typically used by communication satellites for broadcasting services. This orbit, however, is subject to small gravitational disturbances: the luni-solar attraction tends to move the satellite out of the equator plane, and the Earth non-spherical potential tends to move the satellite away from its operational longitude. These disturbances have to be compensated by regular station-keeping maneuvers, requiring a 2dedicated propulsion system and its associated propellant. The orbital maneuver lifetime is the time a satellite can spend on its operational position given its available propellant for station-keeping. It is a very sensitive parameter, which directly drives the mission revenues, and its optimization is thus of utmost importance. Propellant is also required for the other phases: 
+
+• the Electric Orbit Raising phase (EOR), starting from the launcher separation in the injection orbit to the geostationary orbit (GEO orbit). This phase spreads out from a few days to few months, depending on the strategy used to reach the GEO. 
+
+• the de-orbiting of the satellite at the end of its life. For GEO satellites, the strategy consists in sending the satellite into a graveyard orbit, at a specific higher altitude. The computation of orbital maneuver lifetime shall also take into account diverse uncertainties (launcher performance, transfer and station-keeping delta-V, mass and CoM estimations, thruster performance...) so that the specified value for this critical parameter is reliable with a high confidence. 
+
+C. Reliability-based multidisciplinary design optimization 
+
+Solving an MDO problem requires an MDO formulation, a.k.a. architecture [ 1]. The latter consists in an optimiza-tion problem to be solved, including an objective function, constraints and design variables, together with a process organization that describes the execution sequence of disciplines and processes and the data exchange between these elements. When uncertain variables affect disciplines, coupling variables, constraints and objective function become uncertain. In other words, for each value of these uncertain variables, the solution of the optimization problem differs and studying the impact of the uncertainty sources on the solution is a matter of interest. Furthermore, current industrial practices often manage uncertainties by generic safety margins, using a combination of worst-case approaches, which may result in over-conservative design solutions. Reliability-Based Design Optimization (RBDO) [ 3 ] then becomes an essential subject in order to provide more efficient and cost-effective solutions by explicitly accounting for uncertainty in the optimization problem, rather than relying on overly conservative safety margins. Combining MDO formulation framework with RBDO leads to the context of RBMDO where dedicated methods have to be proposed to address the interdisciplinary couplings problem compared to classical RBDO. In this paper, this UMDO approach is based on the Multi-Disciplinary Feasible (MDF) formulation [ 1 ]. Since the estimation of statistics by Monte Carlo (MC) sampling drastically increases the computational cost, it is rather proposed here to approximate the objective and constraints by Polynomial Chaos Expansion (PCE) surrogate models [ 4 ] and estimate the statistics of these surrogates by intensive MC sampling. 
+
+## II. The study case 
+
+A. Disciplines 
+
+The study case focuses on the global propulsion system of two stacked GEO satellites. Several engineering disciplines are involved in the computation of the propellant budget and lifetime: 
+
+• Launch vehicle performance: the injection orbit is dependent on the satellite mass, or in our case, of the stacked satellites. A higher launch mass means a lower energy orbit, typically with a lower apogee altitude, or a higher inclination relative to GEO, requiring a more costly transfer for the satellite, in terms of propellant and duration. 
+
+• Mission analysis: 
+
+– Transfer strategy: the satellite performs maneuvers to reach GEO, consuming part of the available propellant. For an electric propulsion satellite, lower propellant consumption can be traded against higher transfer duration by applying a variable thrust strategy. This thrust strategy is defined by the relative electric orbit raising extension (noted below as 𝑒𝑜𝑟 _𝑒𝑥𝑡𝑒𝑛𝑠𝑖𝑜𝑛 ). The higher this variable, the lower the consumption and 3the higher the duration of EOR. 
+
+– Station-keeping: the satellite performs regular maneuvers to maintain its operational position, but also occasional maneuvers for re-positioning and finally disposal on a graveyard orbit. 
+
+• Mass & centring: according to the propellant mass remaining in the tank after transfer, the Centre of Mass (CoM) variable position has an impact on the thrust direction of the robotic arms hosting the electric propulsion thrusters, which point to the CoM during station-keeping, thus changing the geometrical efficiency of the maneuvers, thus the station-keeping propellant consumption. 
+
+• Power budget: the satellite electric power is provided by its deployable solar arrays, which cells tend to degrade, notably during transfer when going through radiation belts. The transfer duration and trajectory has a significant impact on the power budget, which degrades the electric thruster performance. 
+
+• Electric thruster performance: the available thrust is dependent on the available power, but also on the propellant throughput experienced by individual thrusters due to aging effects. The couplings between those disciplines makes this problem a classical MDAO use-case. The fact that 2 satellites or more are launched together, with potentially different characteristics such as dry mass and lifetime, adds another level of couplings. 
+
+B. MDO without uncertainty 
+
+The optimization problem, described in Equation (1) , aims to maximize the lifetime of the first satellite, which is both an objective and a design variable. Other design variables are also considered, such as: 
+
+• the initial wet mass of the two satellites ( 𝑖𝑛𝑖𝑡𝑖𝑎𝑙 _𝑤𝑒𝑡 _𝑚𝑎𝑠𝑠 0 and 𝑖𝑛𝑖𝑡𝑖𝑎𝑙 _𝑤𝑒𝑡 _𝑚𝑎𝑠𝑠 1), 
+
+• the maximum accepted relative extension of electric orbit raising duration ( 𝑒𝑜𝑟 _𝑒𝑥𝑡𝑒𝑛𝑠𝑖𝑜𝑛 0 and 𝑒𝑜𝑟 _𝑒𝑥𝑡𝑒𝑛𝑠𝑖𝑜𝑛 1), The design is constrained by: 
+
+• the launched mass, 
+
+• the electric orbit raising duration for the two satellites, 
+
+• the electric propellant consumption of the two satellites, 
+
+• and the dry mass of each satellite. The lifetime of the second satellite is considered fixed for the study. By convention, user data are noted 𝐷 𝑠𝑜𝑚𝑒 _𝑑𝑎𝑡 𝑎 ,and come from specific configuration files. 
+
+max 
+
+> 𝑖𝑛𝑖𝑡𝑖𝑎𝑙 _𝑤𝑒𝑡 _𝑚𝑎𝑠𝑠 0
+> 𝑖𝑛𝑖𝑡𝑖𝑎𝑙 _𝑤𝑒𝑡 _𝑚𝑎𝑠𝑠 1
+> 𝑒𝑜𝑟 _𝑒𝑥𝑡𝑒𝑛𝑠𝑖𝑜𝑛 0
+> 𝑒𝑜𝑟 _𝑒𝑥𝑡𝑒𝑛𝑠𝑖𝑜𝑛 1
+> 𝑙𝑖 𝑓 𝑒𝑡𝑖𝑚𝑒 0
+
+𝑙𝑖 𝑓 𝑒𝑡𝑖𝑚𝑒 0
+
+s.t. ∀𝑖 ∈ { 0, 1}, 𝑑𝑟 𝑦 _𝑚𝑎𝑠𝑠 𝑖 = 𝐷 𝑑𝑟 𝑦 _𝑚𝑎𝑠𝑠,𝑖 
+
+∀𝑖 ∈ { 0, 1}, 𝑒𝑜𝑟 _𝑑𝑢𝑟𝑎𝑡𝑖𝑜𝑛 𝑖 ≤ 𝐷 𝑚𝑎𝑥 _𝑒𝑜𝑟 _𝑑𝑢𝑟 𝑎𝑡𝑖𝑜𝑛,𝑖 
+
+∀𝑖 ∈ { 0, 1}, 𝑒𝑙𝑒𝑐 _𝑝𝑟𝑜 𝑝𝑒𝑙𝑙𝑎𝑛𝑡 𝑖 ≤ 𝐷 𝑒𝑙𝑒𝑐 _ 𝑝𝑟 𝑜 𝑝𝑒𝑙𝑙𝑎𝑛𝑡 _𝑚𝑎𝑥 _𝑙𝑜𝑎𝑑𝑖𝑛𝑔,𝑖 
+
+𝑚𝑎𝑠𝑠 _𝑙𝑎𝑢𝑛𝑐ℎ𝑒𝑑 ≤ 𝐷 𝑚𝑎𝑥 _𝑚𝑎𝑠𝑠 _𝑙𝑎𝑢𝑛𝑐ℎ𝑒𝑑 
+
+(1) Figure 2 represents the N2 diagram of the disciplines considered for the two-satellites configuration. We observe that the disciplines associated with a satellite include strong couplings, while the satellites are not coupled to each other but to the launch discipline. Although this study on the two-satellites configuration, the implementation allows automatic extension to any number 𝑛 of satellites, as shown in the generalized Equation (2). 4Fig. 2 N2 diagram representing all the disciplines and their couplings for a two-satellite configuration. 
+
+max   
+
+> ∀𝑖 ∈ { 0,...,𝑛 −1}𝑖𝑛𝑖𝑡𝑖𝑎𝑙 _𝑤𝑒𝑡 _𝑚𝑎𝑠𝑠 𝑖
+> ∀𝑖 ∈ { 0,...,𝑛 −1}𝑒𝑜𝑟 _𝑒𝑥𝑡𝑒𝑛𝑠𝑖𝑜𝑛 𝑖
+> 𝑙𝑖 𝑓 𝑒𝑡𝑖𝑚𝑒 0
+
+𝑙𝑖 𝑓 𝑒𝑡𝑖𝑚𝑒 0
+
+s.t. ∀𝑖 ∈ { 0, ..., 𝑛 − 1}, 𝑑𝑟 𝑦 _𝑚𝑎𝑠𝑠 𝑖 = 𝐷 𝑑𝑟 𝑦 _𝑚𝑎𝑠𝑠,𝑖 
+
+∀𝑖 ∈ { 0, ..., 𝑛 − 1}, 𝑒𝑜𝑟 _𝑑𝑢𝑟𝑎𝑡𝑖𝑜𝑛 𝑖 ≤ 𝐷 𝑚𝑎𝑥 _𝑒𝑜𝑟 _𝑑𝑢𝑟 𝑎𝑡𝑖𝑜𝑛,𝑖 
+
+∀𝑖 ∈ { 0, ..., 𝑛 − 1}, 𝑒𝑙𝑒𝑐 _𝑝𝑟𝑜 𝑝𝑒𝑙𝑙𝑎𝑛𝑡 𝑖 ≤ 𝐷 𝑒𝑙𝑒𝑐 _ 𝑝𝑟 𝑜 𝑝𝑒𝑙𝑙𝑎𝑛𝑡 _𝑚𝑎𝑥 _𝑙𝑜𝑎𝑑𝑖𝑛𝑔,𝑖 
+
+𝑚𝑎𝑠𝑠 _𝑙𝑎𝑢𝑛𝑐ℎ𝑒𝑑 ≤ 𝐷 𝑚𝑎𝑥 _𝑚𝑎𝑠𝑠 _𝑙𝑎𝑢𝑛𝑐ℎ𝑒𝑑 
+
+(2) 
+
+C. MDO with uncertainties 
+
+The definition of the sources of uncertainty is one of the key steps to assess a reliable solution. In this study, for each satellite, the sources of uncertainty in the system are modeled by nine normally distributed random variables (one design variable and eight parameters) with specified means and standard deviations: 
+
+• the initial wet mass weighing, 
+
+• the electric propellant initial loading, 
+
+• the electric propellant gauging accuracy at end of life, 
+
+• the specific impulse (ISP) dispersion in Electric Orbit Raising (EOR), 
+
+• the ISP dispersion in Station-Keeping, repositioning and re-orbiting, 
+
+• the efficiency dispersion in EOR, 
+
+• the efficiency dispersion in Station-Keeping, repositioning and re-orbiting, 
+
+• the delta-V (required total change in velocity) dispersion in EOR, 
+
+• the delta-V dispersion in Station-Keeping, repositioning and re-orbiting. For the two-satellites configuration presented herein, a total of 18 uncertain variables were accordingly included in our model. In the uncertain approach, the constraints of Equation (1) are considered to ensure that the probability of failure remains below a certain limit. This limit, denoted for simplification reasons in the following as 𝜀 , can be different for every constraint. This leads to the formulation of Equation (3). 5max 
+
+> 𝑖𝑛𝑖𝑡𝑖𝑎𝑙 _𝑤𝑒𝑡 _𝑚𝑎𝑠𝑠 0
+> 𝑖𝑛𝑖𝑡𝑖𝑎𝑙 _𝑤𝑒𝑡 _𝑚𝑎𝑠𝑠 1
+> 𝑒𝑜𝑟 _𝑒𝑥𝑡𝑒𝑛𝑠𝑖𝑜𝑛 0
+> 𝑒𝑜𝑟 _𝑒𝑥𝑡𝑒𝑛𝑠𝑖𝑜𝑛 1
+> 𝑙𝑖 𝑓 𝑒𝑡𝑖𝑚𝑒 0
+
+𝑙𝑖 𝑓 𝑒𝑡𝑖𝑚𝑒 0
+
+s.t. ∀𝑖 ∈ { 0, 1}, E[𝑑𝑟 𝑦 _𝑚𝑎𝑠𝑠 𝑖 ] = 𝐷 𝑑𝑟 𝑦 _𝑚𝑎𝑠𝑠,𝑖 
+
+∀𝑖 ∈ { 0, 1}, P[𝑒𝑜𝑟 _𝑑𝑢𝑟𝑎𝑡𝑖𝑜𝑛 𝑖 ≥ 𝐷 𝑚𝑎𝑥 _𝑒𝑜𝑟 _𝑑𝑢𝑟 𝑎𝑡𝑖𝑜𝑛,𝑖 ] ≤ 𝜀 
+
+∀𝑖 ∈ { 0, 1}, P[𝑒𝑙𝑒𝑐 _𝑝𝑟𝑜 𝑝𝑒𝑙𝑙𝑎𝑛𝑡 𝑖 ≥ 𝐷 𝑒𝑙𝑒𝑐 _ 𝑝𝑟 𝑜 𝑝𝑒𝑙𝑙𝑎𝑛𝑡 _𝑚𝑎𝑥 _𝑙𝑜𝑎𝑑𝑖𝑛𝑔,𝑖 ] ≤ 𝜀 
+
+P[𝑚𝑎𝑠𝑠 _𝑙𝑎𝑢𝑛𝑐ℎ𝑒𝑑 ≥ 𝐷 𝑚𝑎𝑥 _𝑚𝑎𝑠𝑠 _𝑙𝑎𝑢𝑛𝑐ℎ𝑒𝑑 ] ≤ 𝜀 
+
+(3) Since the objective is treated as a design variable, it remains deterministic, whereas the constraints are subject to uncertainties. Consequently, the resulting optimization problem is a pure RBDO problem, consisting of minimizing a deterministic objective while ensuring that the probabilities of violating the constraints are small enough. 
+
+## III. Methodology 
+
+The whole study is implemented with the open source GEMSEO ∗ [5 ][ 6] library, developed at IRT Saint Exupéry. The disciplines involved in the process are originally implemented in Scilab and are directly wrapped into GEMSEO through dedicated features. 
+
+A. MDO without uncertainty 
+
+A first optimization and convergence analysis without uncertainty is performed in order to compute a deterministic reference point from which the reliability analysis is carried out by adding uncertainties. We adopted the MDF formulation, where the coupling of strongly coupled disciplines is made consistent through a Multidisciplinary Design Analysis (MDA) at each iteration of the optimization process. To perform the MDA, we utilized the MDAChain tool available in GEMSEO, which implements an advanced graph-based algorithm that examines the coupling graph and automatically identifies the strongly coupled disciplines. This enables the decomposition of the full multidisciplinary system into weakly coupled multidisciplinary subsystems, composed of strongly coupled disciplines, that should be easier to solve. In our specific case, the problem featured two strong couplings (one for each satellite), which we resolved using the nonlinear solver based on the fixed-point Jacobi method. The optimization problem was solved using the COBYLA (Constrained Optimization BY Linear Approximations) algorithm from the NLopt library †, which is well-suited for derivative-free optimization with nonlinear constraints, including both inequalities and equalities. 
+
+B. Sensitivity analysis 
+
+Sensitivity analysis (SA) [ 7 ] is the study of how the model output variations can be explained by the different sources of uncertainty. The design of complex systems often requires reliability assessments that involve a large number of uncertainties and low probability of failure estimations. Estimating such rare event probabilities with crude MC sampling is computationally expensive, but the estimates are unbiased. From this sampling, the SA can help to identify and filter out uncertain variables that have a low impact on variables of interest, reducing the complexity of UMDO problems. In this study, the SA is performed by computing the total order Sobol’ indices [ 8]. For each input and output of the model, this sensitivity index measures the full part of the variance explained by the input. They have been estimated with the Saltelli method [ 9 ] implemented in OpenTURNS ‡ [ 10 ], which is wrapped in GEMSEO. To estimate these indices, a specific experimental design is needed, which involves generating two separate and independent samples. The number of evaluation required depends on the number of input variables. In our case, the estimation required 
+
+1000 × ( 18 + 2) = 20000 evaluations of the multidisciplinary system, where 18 is the dimension of the uncertain space.   
+
+> ∗GEMSEO (Generic Engine for Multidisciplinary Scenarios, Exploration and Optimization): https://gemseo.org .
+> †NLopt: https://nlopt.readthedocs.io/en/latest/NLopt_Algorithms .
+> ‡(https://openturns.github.io/openturns/latest/user_manual/_generated/openturns.SobolIndicesAlgorithm.html )
+
+6C. Surrogate model using polynomial chaos expansions 
+
+By leveraging surrogate model, also referred to as metamodel, UMDO problems can be tackled more efficiently as such a model can be evaluated for free. This approach allows the estimation of statistical moments, such as means and variances, as well as reliability measures, such as failure probabilities, to any desired precision by applying intensive MC sampling to the surrogate model. A particularly effective surrogate modeling approach for uncertainty quantification and propagation is the PCE. The PCE of the output of interest 𝑌 can be written as its truncated decomposition on an orthonormal polynomial basis: 
+
+𝑌 ≈ 𝑐 0 +
+
+> 𝑘
+
+∑︁ 
+
+> 𝑖 =1
+
+𝑐 𝑖 𝜙 𝑖 (𝑋 )
+
+with 𝑋 = (𝑋 1, . . . , 𝑋 𝑑 ), and where 𝜙 𝑖 (𝑋 ) = Î𝑑 𝑗 =1 𝜓 𝜏 𝑗 (𝑖 ), 𝑗 (𝑋 𝑗 ) is a polynomial of degree 𝑝 𝑖 = Í𝑑 𝑗 =1 𝜏 𝑗 (𝑖 ) and 𝜏 𝑗 is an enumerating function mapping from N to N.The choice of the basis functions  𝜓 𝑖, 𝑗 
+
+  
+
+> 𝑖, 𝑗 ≥0
+
+depends on the input probability distributions. For Gaussian random variables, as it is the case here, Hermite polynomials are recommended. The coefficients  𝑐 𝑖 
+
+ 
+
+> 𝑖 ≥0
+
+can be determined by regression or quadrature. Here, we used a least-squares regression with a sparse strategy. We used the OpenTURNS’ PCE algorithm §, wrapped in GEMSEO, to generate the PCE, and OpenTURNS’ DOE algorithm optimal LHS ¶, which is a Latin hypercube sampling (LHS) technique enhanced by simulated annealing. This global optimization technique starts from an initial LHS and improves it to maximize its discrepancy and so to get a better space-filling LHS. 
+
+D. Reliability analysis 
+
+A reliability analysis was conducted to estimate the means, variances, and probabilities of constraint violation at the reference point, namely the optimum of the MDO problem. As explained above, PCEs were employed to alleviate the computational cost. They were constructed using a sample size of 40, which was selected to ensure its accuracy, and their quality was evaluated through cross-validation, resulting in an R2 score greater than 0.99 for each constraint. The PCEs were built with a maximum degree of 2 and a limited number of terms (up to 30). Subsequently, the statistical estimates were obtained using 10 000 MC samples of the PCEs. In a second step, generic margins were introduced on the thresholds of the active constraints to improve the reliability. A new MDO was performed for each value of these margins, and a reliability analysis was conducted at these new reference points at the optimum. 
+
+E. Reliablility based multidisciplinary design optimization 
+
+The UMDO problem was set up and solved using the GEMSEO-UMDO plugin ‖[ 6 ] using the strategy to generate PCE for all output quantities over the uncertain space at each iteration of the optimization loop and to use MC sampling to estimate the statistics, as shown in Figure 3. We utilized the same setup to construct the PCEs at each optimization loop as the one that was employed for the reliability analysis, specifically a sample size of 40, a maximum degree of 2, and a limited number of terms (up to 30). Their quality were monitored at each loop by logging the R2 score, thereby detecting any potential poor approximation. Additionally, statistical estimates were obtained using 10 000 MC simulations at each iteration of the optimization loop. 
+
+## IV. Results 
+
+A. MDO without uncertainty 
+
+Table 1 presents the value of the objective and constraints at the optimum of the MDO problem described by Equation (1) . The units of constraints and their threshold values are deliberately not indicated in this document for  
+
+> §(https://openturns.github.io/openturns/latest/user_manual/_generated/openturns.FunctionalChaosAlgorithm. html )
+> ¶(https://openturns.github.io/openturns/latest/user_manual/_generated/openturns.OptimalLHSExperiment.html )
+> ‖gemseo-umdo: https://gemseo.gitlab.io/dev/gemseo-umdo .
+
+7Fig. 3 The RBMDO process. 
+
+confidentiality reasons. We can see that this solution is feasible with two active constraints, namely 𝑒𝑜𝑟 _𝑑𝑢𝑟𝑎𝑡𝑖𝑜𝑛 0 and 
+
+𝑒𝑙𝑒𝑐 _𝑝𝑟𝑜 𝑝𝑒𝑙𝑙𝑎𝑛𝑡 0.Figure 4 shows the evolution of the objective during optimization. In our case, GEMSEO tries to minimize 
+
+−𝑙𝑖 𝑓 𝑒𝑡𝑖𝑚𝑒 0. Therefore, for each iteration shown on the x-axis, the corresponding negative objective value is plotted. The objective value starts to converge after 70 iterations. Figure 5 shows the evolution of the constraints during optimization. For each iteration shown on the x-axis, constraints are computed and the difference between their value and their threshold is plotted. On the left graph, at a given iteration, if an inequality constraint is plotted in red, the system is not compliant with regards to it; therefore, this constraint is said to be violated. If the color plotted is green, the system satisfies the requirements, and the constraint is inactive; it is not constraining the system, so it has no influence on the system size. The white color appears once constraints are equal or close to zero, it means that the constraint is active: if they are white at the optimum, they are sizing the system. Changing their threshold would change the system size. The same explanation can be given for the right hand graph dealing with equality constraints. Violations of these constraints are indicated by red or blue colors, depending on whether the constraint value exceeds or falls below its threshold. In contrast, if an equality constraint is satisfied, it is represented in white. 
+
+B. Sensitivity analysis 
+
+A Sobol’ analysis was performed from the deterministic solution. The total order Sobol’ indices are given in Table 2. the redder the box, the greater the impact of the variable indicated in the column on the output indicated in the row. The blue cells highlight the different uncertain parameters for which the cumulative total order Sobol’ index do not overpass 10% . In other words, we point out the six variables that have a low impact on the constraints. We investigated the impact of removing these variables on the solution of the UMDO problem. However, our results showed that eliminating these variables did not enable us to reduce the sample size required for constructing the PCE while maintaining the same level of accuracy, and it did not significantly decrease the computation time needed to build the PCE. Consequently, we retained all the 18 variables in the RBMDO problem. 8Output variable Optimal value 
+
+𝑙𝑖 𝑓 𝑒𝑡𝑖𝑚𝑒 0 (𝑦𝑒𝑎𝑟 ) 20.43 
+
+𝑑𝑟 𝑦 _𝑚𝑎𝑠𝑠 0 − 𝐷 𝑑𝑟 𝑦 _𝑚𝑎𝑠𝑠, 0 −3 × 10 −7
+
+𝑑𝑟 𝑦 _𝑚𝑎𝑠𝑠 1 − 𝐷 𝑑𝑟 𝑦 _𝑚𝑎𝑠𝑠, 1 −5 × 10 −3
+
+𝑒𝑜𝑟 _𝑑𝑢𝑟𝑎𝑡𝑖𝑜𝑛 0 − 𝐷 𝑚𝑎𝑥 _𝑒𝑜𝑟 _𝑑𝑢𝑟 𝑎𝑡𝑖𝑜𝑛, 0 4 × 10 −7
+
+𝑒𝑜𝑟 _𝑑𝑢𝑟𝑎𝑡𝑖𝑜𝑛 1 − 𝐷 𝑚𝑎𝑥 _𝑒𝑜𝑟 _𝑑𝑢𝑟 𝑎𝑡𝑖𝑜𝑛, 1 −144 
+
+𝑒𝑙𝑒𝑐 _𝑝𝑟𝑜 𝑝𝑒𝑙𝑙𝑎𝑛𝑡 0 − 𝐷 𝑒𝑙𝑒𝑐 _ 𝑝𝑟 𝑜 𝑝𝑒𝑙𝑙𝑎𝑛𝑡 _𝑚𝑎𝑥 _𝑙𝑜𝑎𝑑𝑖𝑛𝑔, 0 2 × 10 −7
+
+𝑒𝑙𝑒𝑐 _𝑝𝑟𝑜 𝑝𝑒𝑙𝑙𝑎𝑛𝑡 1 − 𝐷 𝑒𝑙𝑒𝑐 _ 𝑝𝑟 𝑜 𝑝𝑒𝑙𝑙𝑎𝑛𝑡 _𝑚𝑎𝑥 _𝑙𝑜𝑎𝑑𝑖𝑛𝑔, 1 −100 
+
+𝑚𝑎𝑠𝑠 _𝑙𝑎𝑢𝑛𝑐ℎ𝑒𝑑 − 𝐷 𝑚𝑎𝑥 _𝑚𝑎𝑠𝑠 _𝑙𝑎𝑢𝑛𝑐ℎ𝑒𝑑 −4246 
+
+Table 1 Optimal solution of the MDO problem (1) .
+
+Fig. 4 Evolution of the objective function. 
+
+Fig. 5 Evolution of inequality constraints (left) and equality constraints (right). 
+
+9Uncertain parameter Constraint 
+
+> 𝑢 _𝑖𝑠𝑝 _𝑒𝑜𝑟 0
+> 𝑢 _𝑖𝑠𝑝 _𝑒𝑜𝑟 1
+> 𝑢 _𝑒 𝑓 𝑓  _𝑒𝑜𝑟 0
+> 𝑢 _𝑒 𝑓 𝑓  _𝑒𝑜𝑟 1
+> 𝑢 _𝑑𝑒𝑙𝑡𝑎𝑣 _𝑒𝑜𝑟 0
+> 𝑢 _𝑑𝑒𝑙𝑡𝑎𝑣 _𝑒𝑜𝑟 1
+> 𝑢 _𝑔𝑎𝑢𝑔𝑖𝑛𝑔 0
+> 𝑢 _𝑔𝑎𝑢𝑔𝑖𝑛𝑔 1
+> 𝑢 _𝑙𝑜𝑎𝑑𝑖𝑛𝑔 0
+> 𝑢 _𝑙𝑜𝑎𝑑𝑖𝑛𝑔 1
+> 𝑢 _𝑖𝑠𝑝 _𝑠𝑘 0
+> 𝑢 _𝑖𝑠𝑝 _𝑠𝑘 1
+> 𝑢 _𝑒 𝑓 𝑓  _𝑠𝑘 0
+> 𝑢 _𝑒 𝑓 𝑓  _𝑠𝑘 1
+> 𝑢 _𝑑𝑒𝑙𝑡𝑎𝑣 _𝑠𝑘 0
+> 𝑢 _𝑑𝑒𝑙𝑡𝑎𝑣 _𝑠𝑘 1
+> 𝑢 _𝑖𝑛𝑖𝑡 _𝑤𝑒𝑡 _𝑚𝑎𝑠𝑠 0
+> 𝑢 _𝑖𝑛𝑖𝑡 _𝑤𝑒𝑡 _𝑚𝑎𝑠𝑠 1
+
+𝑚𝑎𝑠𝑠 _𝑙𝑎𝑢𝑛𝑐ℎ𝑒𝑑 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 48 54 
+
+𝑒𝑙𝑒𝑐 _𝑝𝑟𝑜 𝑝𝑒𝑙𝑙𝑎𝑛𝑡 0 1 0 1 0 0 0 37 0 7 0 22 0 23 0 3 0 0 0
+
+𝑑𝑟 𝑦 _𝑚𝑎𝑠𝑠 0 28 0 26 0 8 0 0 0 0 0 16 0 17 0 1 0 6 0
+
+𝑒𝑜𝑟 _𝑑𝑢𝑟𝑎𝑡𝑖𝑜𝑛 0 51 0 48 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+
+𝑒𝑙𝑒𝑐 _𝑝𝑟𝑜 𝑝𝑒𝑙𝑙𝑎𝑛𝑡 1 0 2 0 1 0 0 0 44 0 9 0 20 0 19 0 2 0 0
+
+𝑑𝑟 𝑦 _𝑚𝑎𝑠𝑠 1 0 29 0 31 0 7 0 0 0 0 0 13 0 13 0 2 0 4
+
+𝑒𝑜𝑟 _𝑑𝑢𝑟𝑎𝑡𝑖𝑜𝑛 1 0 47 0 50 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+
+Table 2 Total order Sobol’ indices in percent coming from 20 000 points. C. Reliability analysis 
+
+The results of the initial reliability analysis are summarized Table 3, which presents the estimated failure probabilities and coefficients of variation for each constraint at the optimum solution of the MDO problem (1) . As expected the active constraints display failure probabilities near 50% , which highlights the necessity of better accounting for the uncertainties affecting the constraints. In a first rough approach, we investigate the addition of a margin on the threshold of the active constraint modifying the deterministic problem according to the Equation (4), 
+
+max 
+
+> 𝑖𝑛𝑖𝑡𝑖𝑎𝑙 _𝑤𝑒𝑡 _𝑚𝑎𝑠𝑠 0
+> 𝑖𝑛𝑖𝑡𝑖𝑎𝑙 _𝑤𝑒𝑡 _𝑚𝑎𝑠𝑠 1
+> 𝑒𝑜𝑟 _𝑒𝑥𝑡𝑒𝑛𝑠𝑖𝑜𝑛 0
+> 𝑒𝑜𝑟 _𝑒𝑥𝑡𝑒𝑛𝑠𝑖𝑜𝑛 1
+> 𝑙𝑖 𝑓 𝑒𝑡𝑖𝑚𝑒 0
+
+𝑙𝑖 𝑓 𝑒𝑡𝑖𝑚𝑒 0
+
+s.t. ∀𝑖 ∈ { 0, 1}, 𝑑𝑟 𝑦 _𝑚𝑎𝑠𝑠 𝑖 = 𝐷 𝑑𝑟 𝑦 _𝑚𝑎𝑠𝑠,𝑖 
+
+𝑒𝑜𝑟 _𝑑𝑢𝑟𝑎𝑡𝑖𝑜𝑛 0 ≤ 𝐷 𝑚𝑎𝑥 _𝑒𝑜𝑟 _𝑑𝑢𝑟 𝑎𝑡𝑖𝑜𝑛, 0 − 𝑀 𝑒𝑜𝑟 _𝑑𝑢𝑟 𝑎𝑡𝑖𝑜𝑛 0
+
+𝑒𝑜𝑟 _𝑑𝑢𝑟𝑎𝑡𝑖𝑜𝑛 1 ≤ 𝐷 𝑚𝑎𝑥 _𝑒𝑜𝑟 _𝑑𝑢𝑟 𝑎𝑡𝑖𝑜𝑛, 1
+
+𝑒𝑙𝑒𝑐 _𝑝𝑟𝑜 𝑝𝑒𝑙𝑙𝑎𝑛𝑡 0 ≤ 𝐷 𝑒𝑙𝑒𝑐 _ 𝑝𝑟 𝑜 𝑝𝑒𝑙𝑙𝑎𝑛𝑡 _𝑚𝑎𝑥 _𝑙𝑜𝑎𝑑𝑖𝑛𝑔, 0 − 𝑀 𝑒𝑙𝑒𝑐 _ 𝑝𝑟 𝑜 𝑝𝑒𝑙𝑙𝑎𝑛𝑡 0
+
+𝑒𝑙𝑒𝑐 _𝑝𝑟𝑜 𝑝𝑒𝑙𝑙𝑎𝑛𝑡 1 ≤ 𝐷 𝑒𝑙𝑒𝑐 _ 𝑝𝑟 𝑜 𝑝𝑒𝑙𝑙𝑎𝑛𝑡 _𝑚𝑎𝑥 _𝑙𝑜𝑎𝑑𝑖𝑛𝑔, 1
+
+𝑚𝑎𝑠𝑠 _𝑙𝑎𝑢𝑛𝑐ℎ𝑒𝑑 ≤ 𝐷 𝑚𝑎𝑥 _𝑚𝑎𝑠𝑠 _𝑙𝑎𝑢𝑛𝑐ℎ𝑒𝑑 
+
+(4) We tested the following values for the margins using the standard deviations 𝜎 𝑜 𝑝𝑡 1 estimated at the optimum solution of the deterministic problem 1. 
+
+𝑀 𝑒𝑜𝑟 _𝑑𝑢𝑟 𝑎𝑡𝑖𝑜𝑛 0 = 𝑘 × 𝜎 𝑜 𝑝𝑡 1 (𝑒𝑜𝑟 _𝑑𝑢𝑟𝑎𝑡𝑖𝑜𝑛 0)
+
+𝑀 𝑒𝑙𝑒𝑐 _ 𝑝𝑟 𝑜 𝑝𝑒𝑙𝑙𝑎𝑛𝑡 0 = 𝑘 × 𝜎 𝑜 𝑝𝑡 1 (𝑒𝑙𝑒𝑐 _𝑝𝑟𝑜 𝑝𝑒𝑙𝑙𝑎𝑛𝑡 0)
+
+with 𝑘 = 1, 2, and 3. The reliability analysis at the optimum solution of these deterministic problems presented and compared to the RBMDO solution Table 5. We can see that the objective decreases slightly and that the probabilities of satisfying the constraints tend to 100% when 𝑘 increases. 10 Constraint Coefficient of variation Reliability 
+
+= standard deviation mean (%) Probability of failure (%) Confidence interval (%) 
+
+𝑑𝑟 𝑦 _𝑚𝑎𝑠𝑠 0 0.22 – –
+
+𝑑𝑟 𝑦 _𝑚𝑎𝑠𝑠 1 0.24 – –
+
+𝑒𝑜𝑟 _𝑑𝑢𝑟𝑎𝑡𝑖𝑜𝑛 0 1.28 50.45 0.73 
+
+𝑒𝑜𝑟 _𝑑𝑢𝑟𝑎𝑡𝑖𝑜𝑛 1 1.29 0.0 0.01 
+
+𝑒𝑙𝑒𝑐 _𝑝𝑟𝑜 𝑝𝑒𝑙𝑙𝑎𝑛𝑡 0 1.43 50.30 0.73 
+
+𝑒𝑙𝑒𝑐 _𝑝𝑟𝑜 𝑝𝑒𝑙𝑙𝑎𝑛𝑡 1 1.51 0.0 0.01 
+
+𝑚𝑎𝑠𝑠 _𝑙𝑎𝑢𝑛𝑐ℎ𝑒𝑑 0.04 0.0 0.01 
+
+Table 3 Failure probability and coefficient of variation for each constraint at the optimum solution of the MDO problem 1. D. Reliability Based Multidisciplinary Design Optimization 
+
+The solution of the RBMDO problem given by Equation (3) is feasible, the value of the objective and the con-straints statistics are presented Table 4. The value of the objective function is reduced by 1.7% compared to the solution of the MDO problem, which corresponds to a loss of approximately 4 months in the lifetime. This was to be expected, as taking uncertainties into account in a design problem often leads to a more conservative average solution. 
+
+RBMDO output Optimal value 
+
+𝑙𝑖 𝑓 𝑒𝑡𝑖𝑚𝑒 0 (year) 20.09 
+
+E[𝑑𝑟 𝑦 _𝑚𝑎𝑠𝑠 0] − 𝐷 𝑑𝑟 𝑦 _𝑚𝑎𝑠𝑠, 0 −7 × 10 −5
+
+E[𝑑𝑟 𝑦 _𝑚𝑎𝑠𝑠 1] − 𝐷 𝑑𝑟 𝑦 _𝑚𝑎𝑠𝑠, 1 1 × 10 −5
+
+P[𝑒𝑜𝑟 _𝑑𝑢𝑟𝑎𝑡𝑖𝑜𝑛 0 ≥ 𝐷 𝑚𝑎𝑥 _𝑒𝑜𝑟 _𝑑𝑢𝑟 𝑎𝑡𝑖𝑜𝑛, 0] 0.
+
+P[𝑒𝑜𝑟 _𝑑𝑢𝑟𝑎𝑡𝑖𝑜𝑛 1 ≥ 𝐷 𝑚𝑎𝑥 _𝑒𝑜𝑟 _𝑑𝑢𝑟 𝑎𝑡𝑖𝑜𝑛, 1] 0.
+
+P[𝑒𝑙𝑒𝑐 _𝑝𝑟𝑜 𝑝𝑒𝑙𝑙𝑎𝑛𝑡 0 ≥ 𝐷 𝑒𝑙𝑒𝑐 _ 𝑝𝑟 𝑜 𝑝𝑒𝑙𝑙𝑎𝑛𝑡 _𝑚𝑎𝑥 _𝑙𝑜𝑎𝑑𝑖𝑛𝑔, 0] 3 × 10 −3
+
+P[𝑒𝑙𝑒𝑐 _𝑝𝑟𝑜 𝑝𝑒𝑙𝑙𝑎𝑛𝑡 1 ≥ 𝐷 𝑒𝑙𝑒𝑐 _ 𝑝𝑟 𝑜 𝑝𝑒𝑙𝑙𝑎𝑛𝑡 _𝑚𝑎𝑥 _𝑙𝑜𝑎𝑑𝑖𝑛𝑔, 1] 0.
+
+P[𝑚𝑎𝑠𝑠 _𝑙𝑎𝑢𝑛𝑐ℎ𝑒𝑑 ≥ 𝐷 𝑚𝑎𝑥 _𝑚𝑎𝑠𝑠 _𝑙𝑎𝑢𝑛𝑐ℎ𝑒𝑑 ] 0.
+
+Table 4 Optimal solution of the RBMDO problem (3). 
+
+Computational costs were significantly higher for the optimization under uncertainty, with each iteration taking roughly 100 times longer to complete than its deterministic counterpart, based on our computational infrastructure. This can be explained by the cost of obtaining the 40 training samples and building the sparse PCEs at each iteration of the optimization loop. The results of the objective and constraints history are presented, respectively, in Figures 6 and 7. For each iteration shown on the x-axis, the probability of failure of the inequality constraints and the expectation of the equality constraint are estimated and the difference between their estimation and their threshold is represented. On the left graph, the reliability threshold 𝜀 is so small that we have not represented the negative value of the difference; If the reliability condition is satisfied, it is represented in white, if not in red. The same applies to the graph on the left, which deals 11 Fig. 6 Evolution of the objective function during RBMDO. 
+
+Fig. 7 Evolution of inequality and equality constraints during RBMDO. 
+
+with equality constraints. Violations of these constraints are indicated by red or blue colors, depending on whether the constraint average exceeds or falls below its threshold. In contrast, if an equality constraint is satisfied, it is represented in white. Finally, we compare the objective values and failure probabilities for each method used in Table 5. We observe that the strategy of introducing margins on the constraints leads to an unnecessary degradation of the objective value without providing an a priori guarantee of meeting the reliability conditions. Specifically, the results indicate that a 3𝜎 margin would have been required to achieve the same level of reliability as in the RBMDO problem, resulting in a significant reduction of more than eight months in the lifetime compared to the RBMDO solution. 
+
+## V. Conclusion 
+
+We presented a comprehensive application of multidisciplinary design optimization under uncertainty to the design of an space system involving a pair of telecommunication satellites launched in a stacked configuration. By combining MDO and UQ&M techniques using the GEMSEO open source software, including SA and RBDO, we have demonstrated the significant benefit of accounting for uncertainties in the design process. Our results showed that this approach can lead to more optimal and reliable design solutions compared to traditional deterministic methods, which rely on generic safety margins. The study highlights the importance of incorporating uncertainty considerations into the design of complex systems, such as telecommunication satellites, and provides a valuable framework for future applications in the field. 12 Method Probability of failure (%) Objective 
+
+𝑒𝑜𝑟 _𝑑𝑢𝑟𝑎𝑡𝑖𝑜𝑛 0 𝑒𝑙𝑒𝑐 _𝑝𝑟𝑜 𝑝𝑒𝑙𝑙𝑎𝑛𝑡 0 𝑙𝑖 𝑓 𝑒𝑡𝑖𝑚𝑒 0 (year) MDO 50.45 50.30 20.43 RBMDO 0.00 0.26 20.09 MDO with 1𝜎 margins 17.70 16.39 20.08 MDO with 2𝜎 margins 1.46 1.89 19.74 MDO with 3𝜎 margins 0.00 0.01 19.41 
+
+Table 5 Comparison of optimization methods with respect to failure probabilities and objective. 
+
+Building on the multidisciplinary telecom system analyzed in this study, several optimization problems have been identified, providing a fertile ground for future investigation. A promising avenue for further research is to extend the current framework to accommodate constellations with more than two satellites, and to explore the optimization of orbital maneuver lifetime for all satellites using multi-objective optimization techniques, such as Pareto front analysis. This would enable the identification of optimal trade-offs between competing objectives, ultimately leading to improved design and operation of complex telecom systems. 
+
+## Acknowledgment 
+
+This work was supported by the French government under the France 2030 program under the reference ANR-10-AIRT-01. The authors wish to acknowledge the R-Evol project members Airbus, Airbus Defence and Space, Liebherr, Capgemini, Expleo, Cenaero, CERFACS and INSA Toulouse for their support, financial funding and own knowledge. The authors also thank J. Moulin for his invaluable contribution all along this work, his time and skills. 
+
+## References 
+
+[1] Martins, J. R., and Lambe, A. B., “Multidisciplinary design optimization: a survey of architectures,” AIAA journal , Vol. 51, No. 9, 2013, pp. 2049–2075. [2] Brevault, L., Balesdent, M., Morio, J., et al., Aerospace system analysis and optimization in uncertainty , Springer, 2020. [3] Aoues, Y., and Chateauneuf, A., “Benchmark study of numerical methods for reliability-based design optimization,” Structural and multidisciplinary optimization , Vol. 41, No. 2, 2010, pp. 277–294. [4] Xiu, D., Numerical methods for stochastic computations: a spectral method approach , Princeton university press, 2010. [5] Gallard, F., Vanaret, C., Guénot, D., Gachelin, V., Lafage, R., Pauwels, B., Barjhoux, P.-J., and Gazaix, A., “GEMS: A Python Library for Automation of Multidisciplinary Design Optimization Process Generation,” 2018 AIAA/ASCE/AHS/ASC Structures, Structural Dynamics, and Materials Conference , 2018. [6] De Lozzo, M., Laboulfie, C., Sapin, O., Roussouly, N., Gallard, F., Aziz-Alaoui, A., Dechaume, A., and Gazaix, A., “Multidisciplinary design optimization under uncertainty: the open source capabilities of GEMSEO,” 6th ECCOMAS Thematic Conference on Uncertainty Quantification in Computational Sciences and Engineering (UNCECOMP), Rhodes, Greece , 2025. [7] Iooss, B., and Lemaître, P., A Review on Global Sensitivity Analysis Methods , Springer US, Boston, MA, 2015, pp. 101–122. [8] Sobol, I., “Global sensitivity indices for nonlinear mathematical models and their Monte Carlo estimates,” Mathematics and Computers in Simulation , Vol. 55, No. 1, 2001, pp. 271–280. The Second IMACS Seminar on Monte Carlo Methods. [9] Saltelli, A., “Making best use of model evaluations to compute sensitivity indices,” Computer Physics Communications , Vol. 145, No. 2, 2002, pp. 280–297. [10] Baudin, M., Dutfoy, A., Iooss, B., and Popelin, A.-L., OpenTURNS: An Industrial Software for Uncertainty Quantification in Simulation , Springer International Publishing, 2015, p. 1–38. 
+
+13
