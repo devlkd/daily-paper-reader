@@ -1,0 +1,54 @@
+{
+  "label": "2026-07-31",
+  "date": "2026-07-31",
+  "generated_at": "2026-07-31T21:58:08",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202607/31/2607.23108v1-the-curse-of-precision-a-data-scaling-law-for-high-precision-robotic-manipulation",
+      "section": "deep",
+      "title_en": "The Curse of Precision: A Data Scaling Law for High-Precision Robotic Manipulation",
+      "authors": "Cuijie Xu, Yuanfan Xu, Min Xue, Jianjie Lin, Jian Wang, Xudong Zhang, Yu Wang, Jincheng Yu",
+      "date": "2026-07-25",
+      "pdf": "https://arxiv.org/pdf/2607.23108v1",
+      "score": "9.0",
+      "evidence": "高精度机器人操作的数据缩放定律，直接适用于卫星装配的精度控制",
+      "tldr": "机器人高精度操作的缩放律研究不足，本文系统探索数据与精度关系。发现为达固定成功率，所需演示次数随目标精度逼近系统极限呈超指数增长，符合log(N) ∝ 1/(P-c)模型。该极限并非任务固定常数，而是受传感器与专家策略影响的涌现属性，实验表明改进组件可降低极限并扩展可达成精度。该工作为高精度操作建立理论框架，提供量化评估系统能力的方法。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "While scaling laws for imitation learning have primarily focused on generalization in open-world settings, the relationship between data and precision in closed-world tasks like robotic assembly remains largely unexplored. This paper systematically investigates this relationship and introduces a novel scaling law. We find that to achieve a fixed success rate, the required number of demonstrations $N$ grows super-exponentially as the target precision $P$ approaches a limit $c$. This relationship is accurately captured by the model $\\log(N) \\propto 1/(P-c)$. Crucially, we reveal that the limit precision $c$ is not a static physical constant of the task but an emergent property of the entire agent system, including its sensors and expert policy. Through experiments on canonical manipulation tasks, we validate this law and demonstrate that improving system components, such as adding a wrist camera or using a more effective expert, measurably lowers $c$, thus expanding the system's achievable precision. Our work provides a new theoretical framework for precision in robotics and a quantitative metric to evaluate system capabilities. Furthermore, these findings provide a practical methodology for guiding the development and debugging of high-precision manipulation systems.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/31/2607.26583v1-r-slpr-region-based-small-to-large-point-cloud-registration-with-contrastive-learning",
+      "section": "quick",
+      "title_en": "R-SLPR: Region-based Small-to-Large Point-cloud Registration with Contrastive Learning",
+      "authors": "Yusen Wan, Zeyuan Chen, Qianshi Zou, Xu Chen",
+      "date": "2026-07-29",
+      "pdf": "https://arxiv.org/pdf/2607.26583v1",
+      "score": "7.0",
+      "evidence": "小到大点云配准框架，可用于装配对齐尺寸计量。",
+      "tldr": "针对部分点云与全局参考尺度不匹配的配准难题，提出基于区域的小到大点云配准框架R-SLPR，通过对比学习增强特征，在多种尺度差异场景下实现高精度对齐，为卫星装配等高精度尺寸计量提供了可迁移的鲁棒配准方法。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "Point-cloud (PC) registration is fundamental to three-dimensional (3D) perception in robotic systems. However, classic registration algorithms falter when aligning a source PC containing limited, incomplete, or ambiguous geometric cues against a reference. This challenge of registering a small, partial PC to a significantly larger global reference is pervasive in real-world deployment yet remains insufficiently addressed by existing learning-based approaches, which typically assume comparable scales and significant overlap. To bridge this gap, we propose the Region-based Small-to-Large Point-cloud Registra- tion framework (R-SLPR), a novel three-stage architecture that fundamentally reformulates the scale-mismatched registration problem into a sequence of region proposal, regional matching, and iterative refinement. Unlike conventional methods that fail to localize specific regions, R-SLPR explicitly identifies candidate regions prior to estimating rigid transformations, ensuring robust alignment even under severe scale mismatch. The framework introduces a Fibonacci Grid Segmentation method coupled with a contrastive learning objective to effectively generate and match local geometric patches. Building on this, a novel Cascade Anchor Selection and Refinement algorithm iteratively aligns the source with the target region to maximize precision. Extensive evaluation on ModelNet40 demonstrates that R-SLPR establishes a new state-of-the-art accuracy standard, outperforming prior approaches and significantly reducing position and rotation Mean Absolute Error (MAE) to 0.009 and 1.104, respectively.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202607/31/2607.20912v1-urf-a-unified-robot-control-policy-framework-for-stable-contact-aware-manipulation",
+      "section": "quick",
+      "title_en": "URF: A Unified Robot Control-Policy Framework for Stable Contact Aware Manipulation",
+      "authors": "Jiyou Shin, Youngjin Seo, Jaeseog Won, Sungwon Seo, Hyunjun Kim, Seokmin Yoon, Tuan Luong, Hyungpil Moon",
+      "date": "2026-07-23",
+      "pdf": "https://arxiv.org/pdf/2607.20912v1",
+      "score": "6.0",
+      "evidence": "通过统一阻抗-导纳控制实现稳定接触操作，适用于精密装配任务",
+      "tldr": "基于感知的学习策略通常将动作预测与底层控制器分离，在刚性接触下易引发不稳定、过载或损坏。URF框架将顺应动作预测与统一阻抗-导纳控制相结合，同时预测虚拟目标、刚度矩阵和切换比率，以协调运动精度与接触安全。在盒子翻转与线按压任务中，URF显著降低了力过冲、振荡及工具断裂等失效模式，并提高了任务成功率。该工作表明接触感知策略不仅应预测顺应动作，还需控制执行行为。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "Learning-based manipulation policies usually predict robot actions from sensory observations and leave their execution to a separate low-level controller. In rigid contact, this separation can be problematic: the same motion to a virtual target or compliant motion command can lead to unstable contact, tracking error, excessive loading, or tool damage, depending on the low-level controller. In this paper, we propose a \\textit{Unified Robot Control-Policy Framework} (URF), which connects compliant action prediction with unified impedance-admittance control. Given multimodal observations, URF predicts a virtual target, a stiffness matrix, and an impedance-admittance switch ratio. The switch ratio determines when the controller should behave more like admittance control for accurate motion tracking and when it should move toward impedance control for safer rigid contact. Because demonstration data do not provide ground-truth environment stiffness, we construct switch-ratio labels from measured contact forces and use them to supervise controller-mode prediction. Across box-flipping and line-pressing tasks, URF achieves higher task success rates while reducing failure modes observed with admittance-only execution, including rapid force buildup, large force oscillations, tool breakage, and robot safety stops. These results suggest that contact-aware policies benefit from predicting not only compliant actions but also the controller behavior used to execute them. Project page: https://jiyou384.github.io/urf_project_page/",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

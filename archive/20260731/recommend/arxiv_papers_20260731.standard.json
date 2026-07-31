@@ -1,0 +1,144 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-07-31T21:53:48.735195+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 1,
+    "deep_cap": 8,
+    "deep_selected": 1,
+    "quick_candidates": 2,
+    "quick_skim_target": 13,
+    "quick_selected": 2
+  },
+  "deep_dive": [
+    {
+      "id": "2607.23108v1",
+      "source": "arxiv",
+      "title": "The Curse of Precision: A Data Scaling Law for High-Precision Robotic Manipulation",
+      "abstract": "While scaling laws for imitation learning have primarily focused on generalization in open-world settings, the relationship between data and precision in closed-world tasks like robotic assembly remains largely unexplored. This paper systematically investigates this relationship and introduces a novel scaling law. We find that to achieve a fixed success rate, the required number of demonstrations $N$ grows super-exponentially as the target precision $P$ approaches a limit $c$. This relationship is accurately captured by the model $\\log(N) \\propto 1/(P-c)$. Crucially, we reveal that the limit precision $c$ is not a static physical constant of the task but an emergent property of the entire agent system, including its sensors and expert policy. Through experiments on canonical manipulation tasks, we validate this law and demonstrate that improving system components, such as adding a wrist camera or using a more effective expert, measurably lowers $c$, thus expanding the system's achievable precision. Our work provides a new theoretical framework for precision in robotics and a quantitative metric to evaluate system capabilities. Furthermore, these findings provide a practical methodology for guiding the development and debugging of high-precision manipulation systems.",
+      "authors": [
+        "Cuijie Xu",
+        "Yuanfan Xu",
+        "Min Xue",
+        "Jianjie Lin",
+        "Jian Wang",
+        "Xudong Zhang",
+        "Yu Wang",
+        "Jincheng Yu"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-07-25T08:41:52+00:00",
+      "link": "https://arxiv.org/pdf/2607.23108v1",
+      "tags": [
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:grav-offload"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "data scaling law for high-precision robotic manipulation, directly relevant to precision control in satellite assembly",
+      "llm_evidence_cn": "高精度机器人操作的数据缩放定律，直接适用于卫星装配的精度控制",
+      "llm_evidence": "高精度机器人操作的数据缩放定律，直接适用于卫星装配的精度控制",
+      "canonical_evidence": "高精度机器人操作的数据缩放定律，直接适用于卫星装配的精度控制",
+      "llm_tldr_en": "Reveals a super-exponential scaling law between required demonstrations and achieved precision in robotic assembly, with the limit precision being an emergent system property.",
+      "llm_tldr_cn": "模仿学习的缩放律主要关注开放世界泛化，本文首次系统研究封闭任务(如机器人装配)中数据量与精度之间关系，提出超指数缩放模型 log(N) ∝ 1/(P-c)，并揭示精度极限c不是静态任务常数而是整个智能体系统的涌现特性。该发现对卫星地面装配中基于学习的精密操作数据需求规划具有指导意义。",
+      "llm_tldr": "模仿学习的缩放律主要关注开放世界泛化，本文首次系统研究封闭任务(如机器人装配)中数据量与精度之间关系，提出超指数缩放模型 log(N) ∝ 1/(P-c)，并揭示精度极限c不是静态任务常数而是整个智能体系统的涌现特性。该发现对卫星地面装配中基于学习的精密操作数据需求规划具有指导意义。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "precision control in satellite assembly process",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.26583v1",
+      "source": "arxiv",
+      "title": "R-SLPR: Region-based Small-to-Large Point-cloud Registration with Contrastive Learning",
+      "abstract": "Point-cloud (PC) registration is fundamental to three-dimensional (3D) perception in robotic systems. However, classic registration algorithms falter when aligning a source PC containing limited, incomplete, or ambiguous geometric cues against a reference. This challenge of registering a small, partial PC to a significantly larger global reference is pervasive in real-world deployment yet remains insufficiently addressed by existing learning-based approaches, which typically assume comparable scales and significant overlap. To bridge this gap, we propose the Region-based Small-to-Large Point-cloud Registra- tion framework (R-SLPR), a novel three-stage architecture that fundamentally reformulates the scale-mismatched registration problem into a sequence of region proposal, regional matching, and iterative refinement. Unlike conventional methods that fail to localize specific regions, R-SLPR explicitly identifies candidate regions prior to estimating rigid transformations, ensuring robust alignment even under severe scale mismatch. The framework introduces a Fibonacci Grid Segmentation method coupled with a contrastive learning objective to effectively generate and match local geometric patches. Building on this, a novel Cascade Anchor Selection and Refinement algorithm iteratively aligns the source with the target region to maximize precision. Extensive evaluation on ModelNet40 demonstrates that R-SLPR establishes a new state-of-the-art accuracy standard, outperforming prior approaches and significantly reducing position and rotation Mean Absolute Error (MAE) to 0.009 and 1.104, respectively.",
+      "authors": [
+        "Yusen Wan",
+        "Zeyuan Chen",
+        "Qianshi Zou",
+        "Xu Chen"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-07-29T08:01:31+00:00",
+      "link": "https://arxiv.org/pdf/2607.26583v1",
+      "tags": [
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Small-to-large point-cloud registration framework applicable to dimensional metrology for assembly alignment.",
+      "llm_evidence_cn": "小到大点云配准框架，可用于装配对齐尺寸计量。",
+      "llm_evidence": "小到大点云配准框架，可用于装配对齐尺寸计量。",
+      "canonical_evidence": "小到大点云配准框架，可用于装配对齐尺寸计量。",
+      "llm_tldr_en": "Proposes R-SLPR, a three-stage framework for registering small partial point clouds to a large reference using contrastive learning, achieving high accuracy in scale-mismatched scenarios for assembly metrology tasks.",
+      "llm_tldr_cn": "针对部分点云与全局参考尺度不匹配的配准难题，提出基于区域的小到大点云配准框架R-SLPR，通过对比学习增强特征，在多种尺度差异场景下实现高精度对齐，为卫星装配等高精度尺寸计量提供了可迁移的鲁棒配准方法。",
+      "llm_tldr": "针对部分点云与全局参考尺度不匹配的配准难题，提出基于区域的小到大点云配准框架R-SLPR，通过对比学习增强特征，在多种尺度差异场景下实现高精度对齐，为卫星装配等高精度尺寸计量提供了可迁移的鲁棒配准方法。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "dimensional metrology for satellite assembly accuracy",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2607.20912v1",
+      "source": "arxiv",
+      "title": "URF: A Unified Robot Control-Policy Framework for Stable Contact Aware Manipulation",
+      "abstract": "Learning-based manipulation policies usually predict robot actions from sensory observations and leave their execution to a separate low-level controller. In rigid contact, this separation can be problematic: the same motion to a virtual target or compliant motion command can lead to unstable contact, tracking error, excessive loading, or tool damage, depending on the low-level controller. In this paper, we propose a \\textit{Unified Robot Control-Policy Framework} (URF), which connects compliant action prediction with unified impedance-admittance control. Given multimodal observations, URF predicts a virtual target, a stiffness matrix, and an impedance-admittance switch ratio. The switch ratio determines when the controller should behave more like admittance control for accurate motion tracking and when it should move toward impedance control for safer rigid contact. Because demonstration data do not provide ground-truth environment stiffness, we construct switch-ratio labels from measured contact forces and use them to supervise controller-mode prediction. Across box-flipping and line-pressing tasks, URF achieves higher task success rates while reducing failure modes observed with admittance-only execution, including rapid force buildup, large force oscillations, tool breakage, and robot safety stops. These results suggest that contact-aware policies benefit from predicting not only compliant actions but also the controller behavior used to execute them. Project page: https://jiyou384.github.io/urf_project_page/",
+      "authors": [
+        "Jiyou Shin",
+        "Youngjin Seo",
+        "Jaeseog Won",
+        "Sungwon Seo",
+        "Hyunjun Kim",
+        "Seokmin Yoon",
+        "Tuan Luong",
+        "Hyungpil Moon"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-07-23T04:46:19+00:00",
+      "link": "https://arxiv.org/pdf/2607.20912v1",
+      "tags": [
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "stable contact manipulation via unified impedance-admittance control, applicable to precision assembly tasks",
+      "llm_evidence_cn": "通过统一阻抗-导纳控制实现稳定接触操作，适用于精密装配任务",
+      "llm_evidence": "通过统一阻抗-导纳控制实现稳定接触操作，适用于精密装配任务",
+      "canonical_evidence": "通过统一阻抗-导纳控制实现稳定接触操作，适用于精密装配任务",
+      "llm_tldr_en": "Proposes URF, which connects compliant action prediction with unified impedance-admittance control to ensure stable contact in manipulation tasks like assembly.",
+      "llm_tldr_cn": "现有学习型操作策略在刚性接触中因高低层控制分离易导致不稳定。本文提出统一机器人控制-策略框架(URF)，将柔顺动作预测与统一阻抗-导纳控制相结合，基于多模态观测输出虚拟目标、刚度矩阵和切换系数，确保接触稳定性。实验表明该方法在装配类任务中能有效避免接触失稳，对精密卫星装配中的力位控制有方法论参考价值。",
+      "llm_tldr": "现有学习型操作策略在刚性接触中因高低层控制分离易导致不稳定。本文提出统一机器人控制-策略框架(URF)，将柔顺动作预测与统一阻抗-导纳控制相结合，基于多模态观测输出虚拟目标、刚度矩阵和切换系数，确保接触稳定性。实验表明该方法在装配类任务中能有效避免接触失稳，对精密卫星装配中的力位控制有方法论参考价值。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "precision control in satellite assembly process",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
