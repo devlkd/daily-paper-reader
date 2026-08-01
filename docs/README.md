@@ -6,31 +6,28 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-07-31
-- 运行时间：2026-07-31 21:57:58 UTC
+- 最新运行日期：2026-08-01
+- 运行时间：2026-08-01 21:39:03 UTC
 - 运行状态：成功
-- 本次总论文数：3
+- 本次总论文数：2
 - 精读区：1
-- 速读区：2
+- 速读区：1
 
 ### 今日简报（AI）
-今日聚焦机器人操作前沿，精读9分论文揭示了“精度诅咒”——训练数据量存在最优边界，过多高精度数据反而损害模型泛化。  
-最值得关注的是高精度操作的数据缩放定律，以及利用对比学习实现跨尺度点云配准的新思路。  
-想跟进的话，不妨先读这篇精读长文，它会重塑你对“数据越多越好”的认知。
-- 详情：[/202607/31/README](/202607/31/README)
+今日解读了两篇前沿研究，聚焦智能变形结构与灵巧手示教效率。  
+核心亮点是剪纸结构利用失稳实现双稳态形态变换，以及动觉示教让机器人灵巧手采集数据提速百倍。  
+下一步可关注这类物理智能与具身数据闭环如何碰撞出更灵活、更易训练的机器人系统。
+- 详情：[/202608/01/README](/202608/01/README)
 
 ### 精读区论文标签
-1. [The Curse of Precision: A Data Scaling Law for High-Precision Robotic Manipulation](/202607/31/2607.23108v1-the-curse-of-precision-a-data-scaling-law-for-high-precision-robotic-manipulation)  
-   标签：评分：9.0/10、query:sat-asm-prec
-   evidence：高精度机器人操作的数据缩放定律，直接适用于卫星装配的精度控制
+1. [Instability-induced bistable shape-morphing kirigami structures](/202608/01/2607.26941v1-instability-induced-bistable-shape-morphing-kirigami-structures)  
+   标签：评分：8.0/10、query:tf-sar
+   evidence：通过剪纸结构实现可编程形状变形，适用于航空航天可展开结构，可应用于薄膜SAR天线
 
 ### 速读区论文标签
-1. [R-SLPR: Region-based Small-to-Large Point-cloud Registration with Contrastive Learning](/202607/31/2607.26583v1-r-slpr-region-based-small-to-large-point-cloud-registration-with-contrastive-learning)  
-   标签：评分：7.0/10、query:sat-asm-prec
-   evidence：小到大点云配准框架，可用于装配对齐尺寸计量。
-2. [URF: A Unified Robot Control-Policy Framework for Stable Contact Aware Manipulation](/202607/31/2607.20912v1-urf-a-unified-robot-control-policy-framework-for-stable-contact-aware-manipulation)  
-   标签：评分：6.0/10、query:sat-asm-prec
-   evidence：通过统一阻抗-导纳控制实现稳定接触操作，适用于精密装配任务
+1. [DexDirect: Direct Kinesthetic Arm Guidance for Efficient Dexterous Demonstration Collection](/202608/01/2607.27784v1-dexdirect-direct-kinesthetic-arm-guidance-for-efficient-dexterous-demonstration-collection)  
+   标签：评分：7.0/10、query:grav-offload
+   evidence：采用重力补偿的六自由度机器人手臂进行直接动觉引导
 
 
 <div class="dpr-home-promo-card">

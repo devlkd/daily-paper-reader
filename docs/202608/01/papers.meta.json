@@ -1,0 +1,39 @@
+{
+  "label": "2026-08-01",
+  "date": "2026-08-01",
+  "generated_at": "2026-08-01T21:39:14",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202608/01/2607.26941v1-instability-induced-bistable-shape-morphing-kirigami-structures",
+      "section": "deep",
+      "title_en": "Instability-induced bistable shape-morphing kirigami structures",
+      "authors": "Xiaoyuan Ying, Marcelo A. Dias",
+      "date": "2026-07-29",
+      "pdf": "https://arxiv.org/pdf/2607.26941v1",
+      "score": "8.0",
+      "evidence": "通过剪纸结构实现可编程形状变形，适用于航空航天可展开结构，可应用于薄膜SAR天线",
+      "tldr": "可变形结构在软体机器人、航空航天等领域需求迫切，但现有kirigami系统多依赖各向同性变形或柔性材料，限制了几何可编程性和刚性应用。本文提出一种逆向设计框架，通过几何挫败和失稳诱导实现各向异性双稳态kirigami的可编程形状变形，并建立几何变换与能量景观的半解析关联。仿真和实验验证了结构的可调双稳态和方向性部署，能稳定从平面片转化为三维构型。该方法提供通用设计策略，可与各类主动驱动集成，拓展了刚性材料形状重构的工程应用。",
+      "tags": "query:tf-sar",
+      "abstract_en": "Deployable shape-morphing structures that transform from flat sheets into stable three-dimensional configurations are highly desirable for applications ranging from soft robotics and biomedical devices to adaptive architecture and aerospace systems. Existing kirigami-based morphing systems primarily rely on isotropic deployment, compliant soft materials, or external constraints to maintain deployed shapes, which limits geometric programmability, structural integrity, and applicability in rigid-material systems. Here, we present an inverse design framework for anisotropic bistable kirigami structures that enables programmable shape morphing through controlled geometric frustration and instability-induced deployment. The framework combines a semi-analytical mechanical model with geometry to establish a direct connection between geometric transformation and the underlying energy landscape. We show that instability-induced shape morphing leads to tunable bistability and directional deployment in anisotropic kirigami structures. The results are validated through finite element simulations and experiments, demonstrating stable deployed configurations and programmable anisotropic morphing. The proposed framework further provides a general design strategy that can be integrated with various active actuation systems, enabling broader engineering applications.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/01/2607.27784v1-dexdirect-direct-kinesthetic-arm-guidance-for-efficient-dexterous-demonstration-collection",
+      "section": "quick",
+      "title_en": "DexDirect: Direct Kinesthetic Arm Guidance for Efficient Dexterous Demonstration Collection",
+      "authors": "Beom Jun Kim, Shiu-Jen Wang, Jonathan Liu, Alvin Zhu, Quanyou Wang, Hanzhang Fang, Feng Xu, Mingzhang Zhu, Yuchen Cui, Dennis W. Hong",
+      "date": "2026-07-30",
+      "pdf": "https://arxiv.org/pdf/2607.27784v1",
+      "score": "7.0",
+      "evidence": "采用重力补偿的六自由度机器人手臂进行直接动觉引导",
+      "tldr": "为解决灵巧操作演示数据收集效率低的问题，DexDirect 系统采用重力补偿的六自由度机械臂，操作者直接拖动手柄，同时用摄像头将另一只手重定位到灵巧手。用户研究表明，与纯视觉遥操作相比，成功演示收集量提升17.2倍。该方法为机器人学习提供了高效的演示收集手段，重力补偿是其实现直接动觉引导的关键使能技术。",
+      "tags": "query:grav-offload",
+      "abstract_en": "Scalable collection of dexterous manipulation demonstrations remains a major bottleneck for robot learning. High-fidelity interfaces often require costly hardware and extensive setup, while low-setup, low cost alternatives tend to provide less precise control and impose greater cognitive workload on operators. We present DexDirect, a direct kinesthetic arm guidance for efficient dexterous demonstration collection. The operator drags a 6-DoF gravity-compensated robot arm directly by a handle, while a single webcam retargets operator's other hand onto a 16 joints 13-DoF dexterous robot hand. User studies suggest DexDirect collects 17.2x and 3.2x more successful demonstrations compared to purely vision (AnyTeleop) and pose-tracking (TeleDex) baselines. An adapted NASA-TLX shows DexDirect greatly reduces mental demand, effort, and frustration, despite raising physical demand. A diffusion policy trained on DexDirect demonstrations reaches a 90% success rate on a cube pick-and-place task. These results suggest that direct kinesthetic arm guidance combined with vision-based hand retargeting provides an efficient low-setup and scalable interface for collecting dexterous manipulation demonstrations",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

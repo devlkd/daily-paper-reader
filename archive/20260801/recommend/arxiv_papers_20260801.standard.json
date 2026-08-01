@@ -1,0 +1,103 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-01T21:34:59.646418+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 1,
+    "deep_cap": 8,
+    "deep_selected": 1,
+    "quick_candidates": 1,
+    "quick_skim_target": 13,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2607.26941v1",
+      "source": "arxiv",
+      "title": "Instability-induced bistable shape-morphing kirigami structures",
+      "abstract": "Deployable shape-morphing structures that transform from flat sheets into stable three-dimensional configurations are highly desirable for applications ranging from soft robotics and biomedical devices to adaptive architecture and aerospace systems. Existing kirigami-based morphing systems primarily rely on isotropic deployment, compliant soft materials, or external constraints to maintain deployed shapes, which limits geometric programmability, structural integrity, and applicability in rigid-material systems. Here, we present an inverse design framework for anisotropic bistable kirigami structures that enables programmable shape morphing through controlled geometric frustration and instability-induced deployment. The framework combines a semi-analytical mechanical model with geometry to establish a direct connection between geometric transformation and the underlying energy landscape. We show that instability-induced shape morphing leads to tunable bistability and directional deployment in anisotropic kirigami structures. The results are validated through finite element simulations and experiments, demonstrating stable deployed configurations and programmable anisotropic morphing. The proposed framework further provides a general design strategy that can be integrated with various active actuation systems, enabling broader engineering applications.",
+      "authors": [
+        "Xiaoyuan Ying",
+        "Marcelo A. Dias"
+      ],
+      "primary_category": "cond-mat.soft",
+      "categories": [
+        "cond-mat.soft",
+        "cond-mat.mtrl-sci",
+        "physics.class-ph"
+      ],
+      "published": "2026-07-29T14:10:07+00:00",
+      "link": "https://arxiv.org/pdf/2607.26941v1",
+      "tags": [
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Programmable shape morphing via kirigami for deployable aerospace structures applicable to thin film SAR antennas",
+      "llm_evidence_cn": "通过剪纸结构实现可编程形状变形，适用于航空航天可展开结构，可应用于薄膜SAR天线",
+      "llm_evidence": "通过剪纸结构实现可编程形状变形，适用于航空航天可展开结构，可应用于薄膜SAR天线",
+      "canonical_evidence": "通过剪纸结构实现可编程形状变形，适用于航空航天可展开结构，可应用于薄膜SAR天线",
+      "llm_tldr_en": "Proposes an inverse design framework for bistable kirigami structures that enables programmable shape morphing from flat sheets into 3D configurations, with potential applications in deployable spaceborne SAR antennas.",
+      "llm_tldr_cn": "针对现有剪纸变形系统主要依赖各向同性展开或柔性材料，限制了几何可编程性和刚性材料应用的局限，本文提出一种各向异性双稳态剪纸结构的逆设计框架。通过控制几何失稳和失稳驱动，实现从平板到稳定三维构型的可编程形状变形，并结合半解析力学模型与优化方法。研究表明该方法可设计出具有双稳态的复杂三维结构，适用于软体机器人、航空航天可展开系统等。对太空薄膜SAR天线而言，该技术有望实现轻量化、可展开的柔性天线阵列设计，显著提升部署灵活性。",
+      "llm_tldr": "针对现有剪纸变形系统主要依赖各向同性展开或柔性材料，限制了几何可编程性和刚性材料应用的局限，本文提出一种各向异性双稳态剪纸结构的逆设计框架。通过控制几何失稳和失稳驱动，实现从平板到稳定三维构型的可编程形状变形，并结合半解析力学模型与优化方法。研究表明该方法可设计出具有双稳态的复杂三维结构，适用于软体机器人、航空航天可展开系统等。对太空薄膜SAR天线而言，该技术有望实现轻量化、可展开的柔性天线阵列设计，显著提升部署灵活性。",
+      "llm_tags": [
+        "query:tf-sar:composite"
+      ],
+      "matched_query_tag": "query:tf-sar:composite",
+      "matched_query_text": "Papers central to 薄膜SAR天线, especially work that connects or combines: thin film antenna design for synthetic aperture radar applications; synthetic aperture radar antenna system; flexible antenna array for spaceborne SAR; how to design thin film antenna for synthetic aperture radar.",
+      "matched_requirement_id": "req-composite-tf-sar",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.27784v1",
+      "source": "arxiv",
+      "title": "DexDirect: Direct Kinesthetic Arm Guidance for Efficient Dexterous Demonstration Collection",
+      "abstract": "Scalable collection of dexterous manipulation demonstrations remains a major bottleneck for robot learning. High-fidelity interfaces often require costly hardware and extensive setup, while low-setup, low cost alternatives tend to provide less precise control and impose greater cognitive workload on operators. We present DexDirect, a direct kinesthetic arm guidance for efficient dexterous demonstration collection. The operator drags a 6-DoF gravity-compensated robot arm directly by a handle, while a single webcam retargets operator's other hand onto a 16 joints 13-DoF dexterous robot hand. User studies suggest DexDirect collects 17.2x and 3.2x more successful demonstrations compared to purely vision (AnyTeleop) and pose-tracking (TeleDex) baselines. An adapted NASA-TLX shows DexDirect greatly reduces mental demand, effort, and frustration, despite raising physical demand. A diffusion policy trained on DexDirect demonstrations reaches a 90% success rate on a cube pick-and-place task. These results suggest that direct kinesthetic arm guidance combined with vision-based hand retargeting provides an efficient low-setup and scalable interface for collecting dexterous manipulation demonstrations",
+      "authors": [
+        "Beom Jun Kim",
+        "Shiu-Jen Wang",
+        "Jonathan Liu",
+        "Alvin Zhu",
+        "Quanyou Wang",
+        "Hanzhang Fang",
+        "Feng Xu",
+        "Mingzhang Zhu",
+        "Yuchen Cui",
+        "Dennis W. Hong"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-07-30T07:17:28+00:00",
+      "link": "https://arxiv.org/pdf/2607.27784v1",
+      "tags": [
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Uses a 6-DoF gravity-compensated robot arm for direct kinesthetic guidance",
+      "llm_evidence_cn": "采用重力补偿的六自由度机器人手臂进行直接动觉引导",
+      "llm_evidence": "采用重力补偿的六自由度机器人手臂进行直接动觉引导",
+      "canonical_evidence": "采用重力补偿的六自由度机器人手臂进行直接动觉引导",
+      "llm_tldr_en": "DexDirect uses a gravity-compensated arm to collect dexterous manipulation demonstrations, achieving 17.2x more success than vision-only teleoperation, showing efficient demonstration collection with gravity compensation.",
+      "llm_tldr_cn": "为解决灵巧操作演示数据收集效率低的问题，DexDirect 系统采用重力补偿的六自由度机械臂，操作者直接拖动手柄，同时用摄像头将另一只手重定位到灵巧手。用户研究表明，与纯视觉遥操作相比，成功演示收集量提升17.2倍。该方法为机器人学习提供了高效的演示收集手段，重力补偿是其实现直接动觉引导的关键使能技术。",
+      "llm_tldr": "为解决灵巧操作演示数据收集效率低的问题，DexDirect 系统采用重力补偿的六自由度机械臂，操作者直接拖动手柄，同时用摄像头将另一只手重定位到灵巧手。用户研究表明，与纯视觉遥操作相比，成功演示收集量提升17.2倍。该方法为机器人学习提供了高效的演示收集手段，重力补偿是其实现直接动觉引导的关键使能技术。",
+      "llm_tags": [
+        "query:grav-offload"
+      ],
+      "matched_query_tag": "query:grav-offload",
+      "matched_query_text": "Space manipulator with gravity compensation system",
+      "matched_requirement_id": "req-11",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
