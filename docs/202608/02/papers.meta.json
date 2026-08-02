@@ -1,0 +1,39 @@
+{
+  "label": "2026-08-02",
+  "date": "2026-08-02",
+  "generated_at": "2026-08-02T21:37:52",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202608/02/2607.27457v1-tiny-observatory-for-telescope-optimization-toto-testing-algorithms-for-autonomous-on-orbit-alignment-for-space-based-telescope-systems",
+      "section": "deep",
+      "title_en": "Tiny Observatory for Telescope Optimization (TOTO): testing algorithms for autonomous on-orbit alignment for space-based telescope systems",
+      "authors": "Solvay A. Blomquist, Sanchit Sabhlok, Hyukmo Kang, Maggie Y. Kautz, Simran Agarwal, Heejoo Choi, Alexandra Kupersmith, Adam Schilperoort, Kelsey L. Miller, Kyle J. Van Gorkom, Corey Fucetola, Patrick Ingraham, Ewan S. Douglas, Daewook Kim",
+      "date": "2026-07-29",
+      "pdf": "https://arxiv.org/pdf/2607.27457v1",
+      "score": "9.0",
+      "evidence": "天基望远镜自主对准的地面测试平台",
+      "tldr": "TOTO测试平台评估天基望远镜的SPGD与聚焦差异相位恢复自主对准算法，验证了‘粗对准+精对准’策略可实现高精度波前控制，为卫星地面装配中光学部件精密对准提供了有效技术途径。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "The Tiny Observatory for Telescope Optimization (TOTO) is an optical testbed designed to evaluate the efficacy of autonomously driven alignment algorithms for space-based telescope systems. For space-based missions, active control of the telescope alignment on-orbit offers potential to relax passive alignment requirements and reduce on-ground verification activities. TOTO is used to evaluate and verify simulation work of two primary alignment algorithms, Stochastic Parallel Gradient Descent (SPGD) and focus-diverse phase retrieval (FDPR). Previous simulation work has confirmed that by using SPGD for coarse alignment followed by focus-diverse phase retrieval for fine alignment, we can reach diffraction-limited performance on-orbit. This paper presents the results of the autonomous alignment algorithm of a Cassegrain telescope using TOTO. We report the current status of TOTO as well as preliminary results from SPGD and phase retrieval on the testbed using monochromatic light source to simulate an on-axis point source.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/02/2607.24495v1-nsl-slam-high-fidelity-neural-structured-light-depth-for-practical-slam-and-reconstruction",
+      "section": "quick",
+      "title_en": "NSL-SLAM: High-Fidelity Neural Structured-Light Depth for Practical SLAM and Reconstruction",
+      "authors": "Jiaheng Li, Binsheng Zhang, Xinhai Chang, Wenzheng Chen",
+      "date": "2026-07-27",
+      "pdf": "https://arxiv.org/pdf/2607.24495v1",
+      "score": "7.0",
+      "evidence": "提高结构光深度精度用于计量",
+      "tldr": "结构光相机深度感知对SLAM至关重要，但现有神经解码方法仍受深度误差困扰。NSL-SLAM引入单目深度先验增强神经结构光立体解码，深度RMSE降低35%，并构建以密集深度为核心、稀疏视觉匹配与轻量BA为辅的SLAM管线。在合成和真实基准上，跟踪精度与重建F-score均达最优，真实场景下完全避免灾难性失败，轨迹偏差降低43.3%，系统在线运行达20.9 FPS，为实用高保真SLAM提供了有效方案。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "Structured-light (SL) cameras power depth sensing in millions of devices, and recent neural SL decoding methods have substantially improved their depth quality. SLAM systems can benefit greatly from such strong depth sensing, where reliable geometry enables stable tracking and faithful reconstruction. In this work, we present NSL-SLAM, a practical SLAM system tailored for high-fidelity structured-light depth. We first strengthen SL depth sensing: inspired by the neural structured-light (NSL) method, we further incorporate strong monocular depth priors into the SL stereo decoding, reducing depth RMSE by 35% on Replica-SL compared to NSL. We then build a depth-centric SLAM pipeline with this stronger depth: because structured-light geometry is dense and metrically accurate, we keep it as the primary tracking signal, and add only sparse visual correspondences for geometrically degenerate cases and lightweight bundle adjustment for long-range drift. Our depth estimator and SLAM design reinforce each other: stronger depth makes a simple SLAM pipeline effective, and the depth-centric pipeline ensures this advantage transfers to downstream reconstruction. Experimentally, on the synthetic Replica-SL benchmark, NSL-SLAM achieves the best tracking accuracy and improves reconstruction F-score by 1.6 points over the SOTA baseline under a shared-depth protocol. On a real benchmark of 8 challenging scenes, it is the only method that avoids catastrophic failure on all sequences while achieving 43.3% lower trajectory deviation than selected baselines. The SLAM system runs online at 20.9 FPS, demonstrating that stronger structured-light depth and depth-centric system design together enable practical, robust SLAM.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

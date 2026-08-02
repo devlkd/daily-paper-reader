@@ -1,0 +1,110 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-02T21:31:23.748795+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 1,
+    "deep_cap": 8,
+    "deep_selected": 1,
+    "quick_candidates": 1,
+    "quick_skim_target": 13,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2607.27457v1",
+      "source": "arxiv",
+      "title": "Tiny Observatory for Telescope Optimization (TOTO): testing algorithms for autonomous on-orbit alignment for space-based telescope systems",
+      "abstract": "The Tiny Observatory for Telescope Optimization (TOTO) is an optical testbed designed to evaluate the efficacy of autonomously driven alignment algorithms for space-based telescope systems. For space-based missions, active control of the telescope alignment on-orbit offers potential to relax passive alignment requirements and reduce on-ground verification activities. TOTO is used to evaluate and verify simulation work of two primary alignment algorithms, Stochastic Parallel Gradient Descent (SPGD) and focus-diverse phase retrieval (FDPR). Previous simulation work has confirmed that by using SPGD for coarse alignment followed by focus-diverse phase retrieval for fine alignment, we can reach diffraction-limited performance on-orbit. This paper presents the results of the autonomous alignment algorithm of a Cassegrain telescope using TOTO. We report the current status of TOTO as well as preliminary results from SPGD and phase retrieval on the testbed using monochromatic light source to simulate an on-axis point source.",
+      "authors": [
+        "Solvay A. Blomquist",
+        "Sanchit Sabhlok",
+        "Hyukmo Kang",
+        "Maggie Y. Kautz",
+        "Simran Agarwal",
+        "Heejoo Choi",
+        "Alexandra Kupersmith",
+        "Adam Schilperoort",
+        "Kelsey L. Miller",
+        "Kyle J. Van Gorkom",
+        "Corey Fucetola",
+        "Patrick Ingraham",
+        "Ewan S. Douglas",
+        "Daewook Kim"
+      ],
+      "primary_category": "astro-ph.IM",
+      "categories": [
+        "astro-ph.IM"
+      ],
+      "published": "2026-07-29T20:45:29+00:00",
+      "link": "https://arxiv.org/pdf/2607.27457v1",
+      "tags": [
+        "keyword:TF-SAR",
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:TF-SAR",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 9.0,
+      "llm_evidence_en": "ground testbed for autonomous alignment of space telescopes",
+      "llm_evidence_cn": "天基望远镜自主对准的地面测试平台",
+      "llm_evidence": "天基望远镜自主对准的地面测试平台",
+      "canonical_evidence": "天基望远镜自主对准的地面测试平台",
+      "llm_tldr_en": "TOTO testbed evaluates SPGD and FDPR alignment algorithms for space telescopes, showing that combined coarse-fine alignment achieves high precision, directly applicable to satellite component alignment on ground.",
+      "llm_tldr_cn": "TOTO测试平台评估天基望远镜的SPGD与聚焦差异相位恢复自主对准算法，验证了‘粗对准+精对准’策略可实现高精度波前控制，为卫星地面装配中光学部件精密对准提供了有效技术途径。",
+      "llm_tldr": "TOTO测试平台评估天基望远镜的SPGD与聚焦差异相位恢复自主对准算法，验证了‘粗对准+精对准’策略可实现高精度波前控制，为卫星地面装配中光学部件精密对准提供了有效技术途径。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "precision alignment of satellite components on ground",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2607.24495v1",
+      "source": "arxiv",
+      "title": "NSL-SLAM: High-Fidelity Neural Structured-Light Depth for Practical SLAM and Reconstruction",
+      "abstract": "Structured-light (SL) cameras power depth sensing in millions of devices, and recent neural SL decoding methods have substantially improved their depth quality. SLAM systems can benefit greatly from such strong depth sensing, where reliable geometry enables stable tracking and faithful reconstruction. In this work, we present NSL-SLAM, a practical SLAM system tailored for high-fidelity structured-light depth. We first strengthen SL depth sensing: inspired by the neural structured-light (NSL) method, we further incorporate strong monocular depth priors into the SL stereo decoding, reducing depth RMSE by 35% on Replica-SL compared to NSL. We then build a depth-centric SLAM pipeline with this stronger depth: because structured-light geometry is dense and metrically accurate, we keep it as the primary tracking signal, and add only sparse visual correspondences for geometrically degenerate cases and lightweight bundle adjustment for long-range drift. Our depth estimator and SLAM design reinforce each other: stronger depth makes a simple SLAM pipeline effective, and the depth-centric pipeline ensures this advantage transfers to downstream reconstruction. Experimentally, on the synthetic Replica-SL benchmark, NSL-SLAM achieves the best tracking accuracy and improves reconstruction F-score by 1.6 points over the SOTA baseline under a shared-depth protocol. On a real benchmark of 8 challenging scenes, it is the only method that avoids catastrophic failure on all sequences while achieving 43.3% lower trajectory deviation than selected baselines. The SLAM system runs online at 20.9 FPS, demonstrating that stronger structured-light depth and depth-centric system design together enable practical, robust SLAM.",
+      "authors": [
+        "Jiaheng Li",
+        "Binsheng Zhang",
+        "Xinhai Chang",
+        "Wenzheng Chen"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-07-27T14:31:55+00:00",
+      "link": "https://arxiv.org/pdf/2607.24495v1",
+      "tags": [
+        "keyword:TF-SAR",
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "improves structured-light depth accuracy for metrology",
+      "llm_evidence_cn": "提高结构光深度精度用于计量",
+      "llm_evidence": "提高结构光深度精度用于计量",
+      "canonical_evidence": "提高结构光深度精度用于计量",
+      "llm_tldr_en": "NSL-SLAM enhances structured-light depth by incorporating monocular priors, reducing depth RMSE by 35% on Replica-SL and enabling better SLAM, which can benefit precision dimensional metrology in satellite assembly.",
+      "llm_tldr_cn": "NSL-SLAM通过引入单目深度先验增强结构光深度感知，在Replica-SL上使深度RMSE降低35%，从而提升SLAM与重建质量，为卫星地面装配中的高精度尺寸计量提供了潜在技术支撑。",
+      "llm_tldr": "NSL-SLAM通过引入单目深度先验增强结构光深度感知，在Replica-SL上使深度RMSE降低35%，从而提升SLAM与重建质量，为卫星地面装配中的高精度尺寸计量提供了潜在技术支撑。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "dimensional metrology for satellite assembly accuracy",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
