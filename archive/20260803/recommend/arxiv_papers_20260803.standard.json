@@ -1,0 +1,64 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-03T21:49:47.455900+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 0,
+    "deep_cap": 8,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 13,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2607.28393v1",
+      "source": "arxiv",
+      "title": "Segment-level thermal sensitivity analysis for exo-Earth coronagraphy with segmented space telescopes",
+      "abstract": "Direct imaging and characterization of Earth-like planets require ultra-stable wavefronts to achieve a starlight suppression level of 100 parts per trillion (ppt) in the coronagraphic dark region of the host star. Thermal drifts in the telescope may affect the wavefront stability. In this context, we present a segment-level thermal stability error budget for segmented space telescopes crucial to Earth-like planet detection and specify requirements for an ultra-stable telescope. Our study utilizes multiple segmented primary mirror architectures, each with their respective apodizer solution developed by the Segmented Coronagraph Design & Analysis research team at the Space Telescope Science Institute, tailored to an off-axis ~6 m-aperture space telescope design. Using a detailed finite element model provided by L3Harris Technologies, we relate the temperature gradient at the location of the primary mirror to wavefront variations on each segment. We allocate both static and dynamic thermal tolerances for each segment using the Pair-based Analytical model for Segmented Telescope Imaging from Space sensitivity approach, and a batch-estimation algorithm respectively. Our analysis shows a non-uniform tolerance allocation across all segments of the primary mirror, as a result of apodization, and generally, with an increase in segment numbers, the tolerances for outer segments become less stringent. We observe trade-offs between segment size, tolerance relaxation and optimal wavefront sensing time to achieve a desired dark-hole contrast.",
+      "authors": [
+        "Ananya Sahoo",
+        "Laurent Pueyo",
+        "Iva Laginja",
+        "Bryony F. Nickson",
+        "Leonid Pogorelyuk",
+        "Laura E. Coyle",
+        "Rémi Soummer",
+        "Matthew East"
+      ],
+      "primary_category": "astro-ph.IM",
+      "categories": [
+        "astro-ph.IM",
+        "astro-ph.EP"
+      ],
+      "published": "2026-07-30T15:48:05+00:00",
+      "link": "https://arxiv.org/pdf/2607.28393v1",
+      "tags": [
+        "keyword:TF-SAR",
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:TF-SAR",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "thermal stability error budget for precision alignment of segmented telescope",
+      "llm_evidence_cn": "用于精密对准的分段级热稳定性误差预算分析",
+      "llm_evidence": "用于精密对准的分段级热稳定性误差预算分析",
+      "canonical_evidence": "用于精密对准的分段级热稳定性误差预算分析",
+      "llm_tldr_en": "Proposes a segment-level thermal stability error budget analysis for segmented space telescopes to achieve the wavefront stability required for direct imaging of Earth-like exoplanets, establishing precision alignment requirements that can inform tolerance control in satellite assembly.",
+      "llm_tldr_cn": "该论文针对直接成像系外类地行星所需的极高波前稳定性，提出了一种分段空间望远镜的分段级热稳定性误差预算分析方法。通过分析多种分段主镜架构的热漂移影响，为超稳定望远镜制定了精度对准要求，其误差预算思路可迁移至卫星地面装配的容差分析与控制。实验确定了满足100 ppt暗区抑制所需的镜面稳定性指标，为高精度光学集成提供了量化参考。",
+      "llm_tldr": "该论文针对直接成像系外类地行星所需的极高波前稳定性，提出了一种分段空间望远镜的分段级热稳定性误差预算分析方法。通过分析多种分段主镜架构的热漂移影响，为超稳定望远镜制定了精度对准要求，其误差预算思路可迁移至卫星地面装配的容差分析与控制。实验确定了满足100 ppt暗区抑制所需的镜面稳定性指标，为高精度光学集成提供了量化参考。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "tolerance analysis and control in satellite ground assembly processes",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}

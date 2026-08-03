@@ -6,28 +6,26 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-02
-- 运行时间：2026-08-02 21:37:38 UTC
+- 最新运行日期：2026-08-03
+- 运行时间：2026-08-03 21:51:32 UTC
 - 运行状态：成功
-- 本次总论文数：2
-- 精读区：1
+- 本次总论文数：1
+- 精读区：0
 - 速读区：1
 
 ### 今日简报（AI）
-今日聚焦太空望远镜在轨自主校准与结构光SLAM：精读《TOTO》用低成本地面台验证星载波前传感与控制算法，速读《NSL-SLAM》引入神经结构光深度提升室内建图保真度。  
-最值得关注：TOTO 的模拟台实现了 10 nm 级波前误差的闭环自主对齐，NSL-SLAM 则用学习先验让深度图边缘更锐利。  
-建议航空航天与机器人领域的读者深挖 TOTO 的评估框架，同时留意融合物理模型与学习的重建思路，可能催生更鲁棒的自主系统。
-- 详情：[/202608/02/README](/202608/02/README)
+今日速读《分段空间望远镜热灵敏度分析》，聚焦镜片热形变对系外类地行星直接成像的干扰。  
+研究指出分段镜片间微小热梯度会严重破坏日冕仪的星光抑制能力，必须实现皮米级热控精度。  
+建议持续关注自适应热控与新型镜面材料，它们是未来深空寻找“第二地球”的必经关口。
+- 详情：[/202608/03/README](/202608/03/README)
 
 ### 精读区论文标签
-1. [Tiny Observatory for Telescope Optimization (TOTO): testing algorithms for autonomous on-orbit alignment for space-based telescope systems](/202608/02/2607.27457v1-tiny-observatory-for-telescope-optimization-toto-testing-algorithms-for-autonomous-on-orbit-alignment-for-space-based-telescope-systems)  
-   标签：评分：9.0/10、query:sat-asm-prec
-   evidence：天基望远镜自主对准的地面测试平台
+- 本次无精读推荐。
 
 ### 速读区论文标签
-1. [NSL-SLAM: High-Fidelity Neural Structured-Light Depth for Practical SLAM and Reconstruction](/202608/02/2607.24495v1-nsl-slam-high-fidelity-neural-structured-light-depth-for-practical-slam-and-reconstruction)  
+1. [Segment-level thermal sensitivity analysis for exo-Earth coronagraphy with segmented space telescopes](/202608/03/2607.28393v1-segment-level-thermal-sensitivity-analysis-for-exo-earth-coronagraphy-with-segmented-space-telescopes)  
    标签：评分：7.0/10、query:sat-asm-prec
-   evidence：提高结构光深度精度用于计量
+   evidence：用于精密对准的分段级热稳定性误差预算分析
 
 
 <div class="dpr-home-promo-card">

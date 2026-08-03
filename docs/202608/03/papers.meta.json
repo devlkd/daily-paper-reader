@@ -1,0 +1,24 @@
+{
+  "label": "2026-08-03",
+  "date": "2026-08-03",
+  "generated_at": "2026-08-03T21:51:54",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202608/03/2607.28393v1-segment-level-thermal-sensitivity-analysis-for-exo-earth-coronagraphy-with-segmented-space-telescopes",
+      "section": "quick",
+      "title_en": "Segment-level thermal sensitivity analysis for exo-Earth coronagraphy with segmented space telescopes",
+      "authors": "Ananya Sahoo, Laurent Pueyo, Iva Laginja, Bryony F. Nickson, Leonid Pogorelyuk, Laura E. Coyle, Rémi Soummer, Matthew East",
+      "date": "2026-07-30",
+      "pdf": "https://arxiv.org/pdf/2607.28393v1",
+      "score": "7.0",
+      "evidence": "用于精密对准的分段级热稳定性误差预算分析",
+      "tldr": "直接成像类地行星需要100 ppt星冕仪暗区对比度，超稳定波前至关重要，而热漂移会破坏波前稳定性。本文针对分段空间望远镜，进行每段镜面热灵敏度分析，建立分段级热稳定误差预算。研究发现，由于切趾效应，各段容差分配非均匀，且分段数增加时外部分段容差要求降低。该工作为超稳分段望远镜设计和波前传感策略提供了定量指导。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "Direct imaging and characterization of Earth-like planets require ultra-stable wavefronts to achieve a starlight suppression level of 100 parts per trillion (ppt) in the coronagraphic dark region of the host star. Thermal drifts in the telescope may affect the wavefront stability. In this context, we present a segment-level thermal stability error budget for segmented space telescopes crucial to Earth-like planet detection and specify requirements for an ultra-stable telescope. Our study utilizes multiple segmented primary mirror architectures, each with their respective apodizer solution developed by the Segmented Coronagraph Design & Analysis research team at the Space Telescope Science Institute, tailored to an off-axis ~6 m-aperture space telescope design. Using a detailed finite element model provided by L3Harris Technologies, we relate the temperature gradient at the location of the primary mirror to wavefront variations on each segment. We allocate both static and dynamic thermal tolerances for each segment using the Pair-based Analytical model for Segmented Telescope Imaging from Space sensitivity approach, and a batch-estimation algorithm respectively. Our analysis shows a non-uniform tolerance allocation across all segments of the primary mirror, as a result of apodization, and generally, with an increase in segment numbers, the tolerances for outer segments become less stringent. We observe trade-offs between segment size, tolerance relaxation and optimal wavefront sensing time to achieve a desired dark-hole contrast.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
