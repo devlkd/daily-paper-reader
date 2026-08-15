@@ -1,0 +1,2076 @@
+Multiphysics Modeling of Thermo-Viscoelastic
+Damage in Functionally Graded Abradable
+Coatings with Probabilistic Geometric Tolerance
+Analysis
+Amjad El-Mellouhi1, Yassine Adjal2, Khaled Dhibi3,
+Fedwa El-Mellouhi3*
+1Polytechnique Montr´eal, Montr´eal, Qu´ebec, Canada.
+2Department of Maritime Engineering, University of Sciences and
+Technology Mohamed Boudiaf, BP 1505 El M’naouer, Oran, Algeria.
+3College of Science and Engineering, Hamad Bin Khalifa University,
+Doha, PoBox 34110, Qatar.
+*Corresponding author(s). E-mail(s): felmellouhi@hbku.edu.qa;
+Contributing authors: amjad.el-mellouhi@polymtl.ca;
+yassine.adjal@univusto.dz; kdhibi@hbku.edu.qa;
+Abstract
+In aircraft engines, functionally graded abradable coatings are used to con-
+trol blade-tip clearance, but their durability is governed by effects that are
+often treated separately in existing models, including temperature-dependent
+viscoelastic softening, progressive damage, deposition-induced microstructural
+modulation, and geometric tolerances. Models that consider these effects
+independently may underestimate damage initiation because smooth material
+gradients evaluated at nominal geometry cannot capture the local stress concen-
+trations produced by microstructural modulation and geometric variability. This
+study integrates these effects within a unified multiphysics–probabilistic frame-
+work. The solved domain is a local through-thickness coating column driven by
+prescribed strain and temperature histories that include thermal eigenstrain and
+coating–substrate expansion mismatch. The results show that periodic property
+modulation increases end-of-cycle damage relative to the monotonic gradient
+and concentrates the maximum stress within a localized modulation crest. Prop-
+agating symmetric geometric tolerances through the coupled solver produces
+a strongly right-skewed damage distribution and a higher classification-level
+1
+arXiv:2608.08116v1  [cond-mat.mes-hall]  8 Aug 2026
+
+
+exceedance probability for the modulated gradient than for the monotonic gradi-
+ent. This exceedance behavior cannot be obtained from a deterministic analysis
+performed at nominal geometry. The exceedance probability is also evaluated as a
+continuous function of the classification level to assess the sensitivity of the com-
+parison to the selected screening criterion. The implementation is verified through
+spatial and temporal refinement, closed-form unit tests, nested Monte Carlo con-
+vergence with Wilson confidence intervals, and a hold-out-validated polynomial
+response surface. Numerical verification is clearly distinguished from experimen-
+tal validation, and the simulated case is presented as a generic benchmark rather
+than an identified material model. The framework links deposition parameters
+and tolerance bands to damage-exceedance risk, supporting reliability-oriented
+screening of graded and multilayer coating systems.
+Keywords: Abradable coatings, Functionally graded materials,
+Thermo-viscoelasticity, Damage evolution, Geometric tolerances, Monte Carlo
+simulation, Reliability analysis, Turbine labyrinth seals
+1 Introduction
+Labyrinth seals equipped with abradable coatings are critical elements in modern air-
+craft gas turbines, ensuring effective dynamic sealing while limiting wear of rotating
+components [1–3]. The rubbing behaviour of labyrinth seals against abradable inlet lin-
+ers has been characterized experimentally in dedicated rub-rig campaigns, notably in
+the systematic study of Pychynski on honeycomb inlet liners [4], which documents the
+coupling between incursion kinematics, contact forces and frictional heating that moti-
+vates the equivalent prescribed histories adopted here. Because sealing performance
+directly influences leakage losses, clearance control, and thermal margins, the thermo-
+mechanical response of abradable coatings has a direct impact on engine efficiency,
+durability, and operational safety [3, 5, 6]. Continued increases in operating temper-
+atures, reduced functional clearances, and longer service intervals have progressively
+pushed conventional coating architectures to their performance limits [7, 8].
+From a mechanics standpoint, abradable coatings exhibit a coupled response driven
+by temperature-dependent thermo-viscoelasticity and progressive degradation under
+cyclic thermo-mechanical loading. This coupling induces evolving stress redistributions
+and localized damage accumulation that govern early crack initiation and durabil-
+ity. However, many existing numerical approaches remain based on linear viscoelastic
+formulations and/or global damage laws [9–11], which can be insufficient to resolve
+localized stress concentrations and the associated spatial evolution of damage, espe-
+cially under strongly heterogeneous material fields [5, 6, 8]. The viscoelastic memory
+effects and their interaction with progressive stiffness degradation require a tightly
+coupled formulation that resolves both temporal stress relaxation and spatial damage
+localization [9, 12].
+Functionally graded materials (FGMs) have emerged as a promising design
+strategy, as their continuous through-thickness variation of mechanical and ther-
+mal properties can reduce discontinuities and mitigate stress concentrations [13–15].
+2
+
+
+Prior investigations have shown that graded architectures may improve damage tol-
+erance and reduce peak stresses compared with homogeneous or sharply layered
+coatings [13, 14]. Nevertheless, most modeling studies assume idealized monotonic
+gradients and overlook periodic microstructural modulations induced by deposition
+processes [16, 17]. Such deposition-driven heterogeneities can create local stiffness con-
+trasts that amplify stresses and trigger early damage initiation, yet they are rarely
+incorporated explicitly in continuum-scale analyses [18–20].
+In addition to material heterogeneity, manufacturing and assembly processes
+inevitably introduce geometric tolerances in labyrinth seals [5, 12, 16, 18, 21]. Even
+small dimensional deviations can lead to significant variability in local contact con-
+ditions and thermo-mechanical fields, thereby affecting stress hotspots and damage
+accumulation. Although probabilistic methods are well established in structural relia-
+bility analysis [13, 22, 23], their integration into thermo-viscoelastic damage modeling
+of abradable coatings remains limited, despite the fact that rare worst-case geometries
+may dominate reliability and maintenance risk.
+Addressing these gaps requires more than combining established ingredients; the
+key advance lies in their unified treatment. When periodic property modulation and
+geometric tolerances are resolved simultaneously within a single thermo-viscoelastic
+damage solver, they interact in ways that neither analysis can capture independently.
+In particular, the spatially varying property field governs local stress concentra-
+tions that drive damage, while geometric tolerances perturb the prescribed equivalent
+mechanical excitation. Their coupled propagation through the damage solver pro-
+duces nonlinear stress and damage distributions that cannot be obtained by treating
+the material architecture and the geometric deviations separately [18, 21, 22]. As
+a result, probabilistic stress and damage predictions reflect the nonlinear interac-
+tion between the deterministic modulated property field and the sampled geomet-
+ric deviations. Embedding these effects within one computational pipeline enables
+manufacturing-informed design decisions: functional-gradient exponents, deposition-
+modulation amplitudes, and dimensional-tolerance bands can be screened against
+quantified damage-exceedance probabilities, thereby linking manufacturing parame-
+ters directly to structural reliability metrics in a way that prior decoupled approaches
+do not provide [16, 18, 23].
+The individual modeling ingredients, Prony-series viscoelasticity, scalar damage
+mechanics, functional grading, and Monte Carlo reliability analysis, are each well
+established in the literature [5, 9, 14, 22]. The novelty of the present contribution
+lies in three aspects of their integration: (i) periodic microstructural modulation is
+embedded directly in the constitutive property field rather than introduced as an
+external perturbation, so its influence on damage is captured self-consistently through
+the coupled solver [19, 20]; (ii) geometric tolerances are propagated through the full
+multiphysics chain rather than through a reduced surrogate, preserving the fidelity of
+local stress and damage predictions under dimensional variability [21, 23]; and (iii) the
+resulting probabilistic outputs, including exceedance probabilities, sensitivity indices,
+and worst-case configurations, are expressed in forms that can be used directly for
+tolerance specification and maintenance planning [22, 24]. Although demonstrated
+here for abradable coatings in turbine labyrinth seals, the mathematical structure is
+3
+
+
+sufficiently general to apply to other graded or layered systems subjected to cyclic
+thermo-mechanical loading in which deposition-induced heterogeneity and dimensional
+variability jointly govern performance, including thermal barrier coatings, environmen-
+tal barrier coatings for ceramic-matrix composites, and functionally graded structural
+components in aerospace and energy applications [15, 25].
+This study aligns closely with themes central to advanced materials and manu-
+facturing research. The framework follows a quantitative process–structure–property–
+performance chain: deposition-process parameters govern microstructural modulation
+(structure), which in turn shapes local stiffness and stress fields (property), ultimately
+influencing damage accumulation and service reliability (performance). Manufacturing
+variability is introduced explicitly through probabilistic tolerance propagation [18, 24],
+yielding reliability metrics that can support tolerance specification, quality-control
+objectives, and condition-based maintenance planning [21, 26]. By linking materials
+response, manufacturing-induced variability, and reliability-oriented design within a
+unified framework, the present work responds to the growing need for process-aware
+and uncertainty-quantified modeling tools in advanced coating manufacturing [15, 16].
+To address these gaps, this work proposes a unified multiphysics modeling
+framework that couples: (i) temperature-dependent thermo-viscoelasticity using a
+Prony-series representation [3, 5, 6, 12]; (ii) a stress-driven scalar damage formulation
+governed by a critical stress threshold [8, 9]; (iii) a periodically modulated functional
+gradient to represent deposition-induced microstructural heterogeneity [16, 19, 20];
+and (iv) probabilistic propagation of geometric tolerances using Monte Carlo simu-
+lations [18, 21, 22]. This integrated approach enables prediction of both the nominal
+response and the variability of localized stress and damage metrics, thereby support-
+ing reliability-oriented assessment and design guidance for next-generation abradable
+coatings.
+Because the credibility of a multiphysics framework depends on what it does not
+claim as much as on what it computes, the status of every ingredient is declared here
+and maintained consistently throughout the paper.
+The physical system of interest is a labyrinth-seal stage in which relative radial
+motion between the sealing teeth and the coated counter-face may close the running
+clearance and produce a localized rubbing region. In that physical system, normal
+pressure, tangential traction, frictional heating, and material removal are all real phe-
+nomena. The solved domain in this work, however, is a local through-thickness coating
+column divided into perfectly bonded homogenized subdomains and driven by pre-
+scribed temperature and equivalent normal-strain histories, denoted by T(z, t) and
+εapp(t), respectively. The reduced solver contains no tangential degree of freedom, no
+sliding interface, no contact-pressure calculation, no Coulomb friction coefficient, and
+no material-removal kinetics. Consequently, no wear depth, incursion depth, or service
+life is reported as a computed quantity anywhere in this manuscript. Table 2 states
+this modeling boundary for each quantity, and Fig. 2 presents the physical system and
+the solved domain separately.
+The simulated case is a declared generic benchmark. Its parameter set is literature-
+consistent for thermally sprayed AlSi-based abradable systems but is not presented as
+an identified material model for a specific coating. Damage parameters are anchored
+4
+
+
+on published elevated-temperature data (Section 4.3); the extension of the benchmark
+cycle beyond the calibration temperature is a constitutive model-based extrapolation,
+evaluated as a severe numerical case rather than as experimental validation under
+that condition. Throughout the paper, numerical verification, including refinement
+studies, unit tests, sampling convergence, and surrogate cross-checking, is reported
+and explicitly distinguished from experimental validation, which remains future work.
+The remainder of this paper is organized as follows. Section 2 presents the
+proposed framework. Section 3 presents the theoretical formulation of the coupled
+thermo-viscoelastic–damage model with graded and periodically modulated prop-
+erties. Section 4 describes the numerical implementation, the verification studies,
+and the probabilistic tolerance framework. Section 5 discusses deterministic trends
+and probabilistic response distributions. Section 6 summarizes practical implications,
+limitations, and perspectives for future developments. Section 7 concludes the paper.
+2 Proposed Framework
+Fig. 1 summarizes the proposed multiphysics–probabilistic framework for predicting
+the thermo-mechanical response and reliability of labyrinth-seal abradable coatings
+under cyclic thermo-mechanical loading. The purpose of the framework is not only
+to compute nominal stress and damage fields, but also to propagate manufacturing-
+induced variability through the full model so that design decisions can be informed
+by both expected response and reliability risk. In this sense, the proposed approach
+acts as an integrated design-assessment and reliability-evaluation tool rather than as
+a stand-alone constitutive or numerical model.
+The
+framework
+is
+designed
+to
+capture
+four
+coupled
+durability
+drivers:
+(i) temperature-dependent thermo-viscoelastic deformation described through a
+Prony-series, or generalized Maxwell, representation [5, 6, 12]; (ii) progressive spatial
+damage evolution governed by a stress-driven scalar damage law [8, 9]; (iii) deposition-
+induced periodic microstructural heterogeneity superimposed on the functional
+gradient [16, 17]; and (iv) geometric tolerance variability that affects the local pre-
+scribed excitation and the resulting stress hot spots, propagated using Monte Carlo
+simulation [18, 22]. Their integration enables direct mapping from manufacturing
+choices and dimensional dispersion to stress localization, damage accumulation, and
+exceedance risk, thereby strengthening the process–structure–property–performance
+interpretation of the framework.
+• Stage 0: Inputs and problem definition. The workflow starts from three input
+groups: (i) nominal configuration, including seal geometry, interfaces, and boundary
+definitions (Section 3.1, Fig. 2); (ii) loading history, including the thermal cycle
+and the corresponding prescribed equivalent mechanical excitation (Section 3.1.3,
+Fig. 3); and (iii) material architecture, represented by the baseline through-thickness
+grading law. These inputs define the initial process and design space from which
+both deterministic response and variability-aware reliability assessment are derived.
+• Stage 1: Property-field construction. A material-field generator combines:
+(i) the baseline functional gradient, (ii) periodic modulation representing deposition-
+induced microstructural oscillations [16, 17], and (iii) temperature dependence of
+5
+
+
+viscoelastic parameters [5, 12]. The output is a temperature-aware spatial property
+map passed to the deterministic solver. This stage explicitly links manufacturing-
+induced heterogeneity to the local constitutive description of the coating, allowing
+process-driven microstructural modulation to influence local stiffness, stress redis-
+tribution, and subsequent damage evolution.
+• Stage 2: Deterministic multiphysics core. The deterministic core solves the
+coupled problem over the prescribed cycle: thermo-viscoelastic response via a Prony-
+series representation [5, 6, 12], including the thermal eigenstrain and the coating–
+substrate expansion mismatch of Section 3.4, and progressive stiffness degradation
+via a stress-driven scalar damage model [8, 9]. As a result, the framework captures
+how local stiffness evolution, stress redistribution, and damage localization interact
+over time under coupled thermo-mechanical loading. This stage provides the nominal
+stress–damage response against which the effect of manufacturing variability can be
+assessed.
+• Stage 3: Probabilistic tolerance propagation. Geometric tolerances are mod-
+eled probabilistically and sampled to generate N realizations [18]. The deterministic
+core is evaluated for each realization, with the simulations parallelizable across
+samples, producing response distributions and reliability statistics [22]. This step
+extends the analysis beyond nominal predictions by quantifying how manufactur-
+ing and assembly dispersion affect durability risk. Because each sampled geometry
+is propagated through the full multiphysics solver, the resulting reliability metrics
+preserve the coupled influence of material heterogeneity, boundary perturbations,
+stress localization, and damage evolution. A polynomial response surface is addi-
+tionally trained and independently validated against the same solver, and is used
+as a cross-check and screening tool rather than as a replacement for the reference
+estimator (Section 4.4).
+• Stage 4: Outputs. The framework delivers deterministic outputs, including
+stress/strain fields, damage maps, effective stiffness evolution, and hot-spot localiza-
+tion, together with probabilistic outputs, including variability envelopes, exceedance
+probabilities, sensitivity indices, and worst-case configurations [18, 22]. Collectively,
+these outputs support manufacturing-informed design, tolerance control, coating-
+architecture optimization, and reliability-oriented decision-making for abradable
+coating systems. In particular, they provide quantitative links between process
+parameters, geometric tolerances, local damage risk, and maintenance-relevant
+reliability metrics.
+3 Theoretical Modeling
+3.1 Material system, physical configuration, and model scope
+3.1.1 Material system and baseline properties
+The reference material family is a thermally sprayed AlSi-based abradable system,
+in which an aluminium–silicon matrix is combined with a soft dislocator phase such
+as hexagonal boron nitride (hBN), representative of abradable seals used in the com-
+pressor sections of aero-engines [3, 27]. As-sprayed coatings of this family are strongly
+6
+
+
+Inputs
+– Nominal seal geometry
+– Prescribed thermal +
+mechanical histories
+– Baseline FGM profile
+Property-field construc-
+tion
+– Functional gradient (FGM)
+– Periodic modulation
+– Temperature dependence
+Coupled solver
+– Thermo-viscoelasticity
+– Thermal eigenstrain
+– Stress-driven damage
+Deterministic outputs
+– Stress/strain fields
+– Damage evolution maps
+– Hot-spot localization
+Deterministic multiphysics core
+Tolerance model
+– Clearance/offset deviations
+– Manufacturing bounds
+– Assembly limits
+Monte Carlo sampling
+– Sample geometries δu
+– Generate N realizations
+Run solver per sample
+– Evaluate multiphysics core
+– Parallel-ready workflow
+Reliability outputs
+– Variability envelopes
+– Exceedance probability
+– Worst-case configurations
+Probabilistic tolerance propagation
+Fig. 1: Block diagram of the proposed multiphysics–probabilistic framework. A deter-
+ministic multiphysics core (property-field construction + coupled thermo-viscoelastic–
+damage solver) is wrapped by a probabilistic tolerance propagation layer (Monte Carlo
+sampling of geometric deviations) to produce both nominal predictions and reliability
+metrics.
+heterogeneous, with substantial total porosity distributed quasi-periodically through
+the thickness as a result of the pass-by-pass deposition sequence [17, 27]. Table ?? sum-
+marizes the baseline material families, indicative porosity levels, and the corresponding
+sources.
+Porosity is not represented by meshing individual pores. It is introduced through
+an effective homogenized description: the porosity level associated with each base-
+line material is incorporated into the effective properties assigned to the homogenized
+subdomains, while the periodic modulation of Eq. (10) represents the prescribed
+spatial variation of those effective properties through the coating thickness. This
+treatment is consistent with the homogeneous multilayer representation used for func-
+tionally graded coatings by Liu et al. [28]. Two consequences follow and are stated
+as limitations in Section 6: pore-scale stress concentrations are not resolved, and the
+thermal-barrier role of porosity does not enter the solution because the temperature
+history is prescribed per subdomain rather than obtained from a heat-conduction
+problem.
+7
+
+
+Table 1: Summary of key model parameters, numerical values, and uncertainty def-
+initions (units and origin), covering functionally graded material modeling, damage
+mechanics, and probabilistic reliability analysis [8, 14, 19, 22]. Every parameter is
+listed with its numerical value, its origin, and its declared status. Benchmark denotes
+a declared numerical choice for the generic verification case; identification required
+denotes a quantity that a material-specific study would have to measure.
+Group
+Symbol
+Meaning
+Unit
+Value
+Origin / note
+Geometry and discretization
+Geometry
+h
+Total coating thickness
+mm
+2.0
+Design input
+Discretization
+M
+No. of through-thickness
+homogenized subdomains
+–
+40
+This study (adopted; verified
+Sect. 4.1)
+Time stepping
+∆t
+Time step
+s
+0.25
+This study (adopted; verified
+Sect. 4.1)
+Time horizon
+tfinal
+Final simulation time
+s
+60
+This study
+Coordinate
+z
+Through-thickness coordinate mm
+[0, 2]
+z ∈[0, h] ; 0 interface, h free
+surface
+Depth
+ζ
+Normalized depth below free
+surface
+–
+[0, 1]
+ζ = (h −z)/h; used for all
+results
+Thermo-viscoelasticity (Prony / generalized Maxwell)
+Viscoelasticity
+E∞(T )
+Long-term equilibrium
+modulus
+–
+0.60 Ei(z, T )
+Literature / calibration
+(benchmark)
+Viscoelasticity
+Em(T )
+m-th Prony modulus
+coefficient
+–
+E1,2,3 =
+0.20, 0.12, 0.08 Ei
+Literature / calibration
+(benchmark)
+Viscoelasticity
+τm
+m-th relaxation time
+(constant in T ; no shift
+factor)
+s
+τ1,2,3 = 5, 50, 500
+Literature / calibration ; ident.
+required
+Viscoelasticity
+Mp
+Number of Prony terms
+–
+3
+Model choice
+Temperature
+T
+Prescribed temperature field
+◦C
+20 →400 →20
+Operating condition
+(benchmark cycle, Fig. 3)
+Reference
+Tref
+Stress-free reference
+temperature
+◦C
+20
+Benchmark
+Thermal expansion (eigenstrain and coating–substrate mismatch)
+Expansion
+αc
+Coating expansion coefficient
+(uniform through the
+thickness in the benchmark)
+10−6/K 16
+Benchmark; ident. required
+Expansion
+αs
+Substrate expansion
+coefficient
+10−6/K 13
+Benchmark; ident. required
+Mismatch
+∆α
+αc −αs, drives Eq. (5)
+10−6/K 3
+Derived
+Mismatch
+∆Tmax
+Tmax −Tref over the
+benchmark cycle
+K
+380
+Derived (Fig. 3a)
+Mismatch
+εmis
+max
+∆α ∆Tmax, peak mismatch
+strain
+10−3
+1.14
+Derived; plotted in Fig. 3b
+Functionally graded material and modulation (AlSi–hBN reference family)
+FGM
+Emet(T )
+Metallic-phase modulus
+GPa
+48 (20 ◦C); 31 (400 ◦C) Literature / material data ;
+porosity-inclusive [27]
+FGM
+Ecer(T )
+Ceramic-phase modulus
+GPa
+12 (20 ◦C); 8 (400 ◦C) Literature / material data ;
+porosity-inclusive [27]
+FGM
+ng
+Gradient exponent
+–
+2.0
+Design choice / tuning
+Modulation
+∆Eg
+Modulation amplitude
+GPa
+2.0 (≈4–17% of local
+E)
+Deposition heterogeneity [17];
+nanoindentation
+Modulation
+λg
+Modulation wavelength
+mm
+0.4
+Microstructure assumption ;
+pass-group (Sect. 3.6)
+Porosity
+ϕ
+Total porosity (homogenized) %
+30–45
+Embedded in effective
+moduli [28]
+Damage model
+Damage
+D
+Scalar damage variable
+(0 ≤D ≤1)
+–
+[0, 1]
+Model state
+Damage
+σcrit
+Critical stress threshold
+MPa
+80
+Literature / calibration ;
+effective value (Sect. 3.5)
+Damage
+A
+Damage rate coefficient
+s−1
+0.12
+Literature / calibration ;
+anchored on [3], 300 ◦C
+Damage
+md
+Damage exponent (overstress) –
+2.1
+Literature / calibration ;
+anchored on [3]
+Damage
+nd
+Damage exponent
+(saturation)
+–
+3.2
+Literature / calibration ;
+anchored on [3]
+Screening metric
+Dcrit
+Damage classification level
+–
+0.10
+This study ; declared level, not
+a rupture criterion (Sect. 5.2)
+Prescribed mechanical excitation
+Excitation
+εapp
+0
+Applied normal-strain
+amplitude (compressive)
+10−3
+2.11
+Benchmark input, not a contact
+solution
+Excitation
+np
+Number of approach pulses
+per cycle
+–
+2
+Benchmark waveform
+(Sect. 3.1.3)
+Excitation
+tr
+Pulse ramp time
+s
+2
+Benchmark waveform
+(Sect. 3.1.3)
+Excitation
+td
+Pulse hold (plateau) time
+s
+4
+Benchmark waveform
+(Sect. 3.1.3)
+Probabilistic tolerance analysis (Monte Carlo)
+Tolerances
+δu
+Vector of geometric deviations mm
+—
+Manufacturing / assembly
+specifications
+Uncertainty
+δuj ∼
+N (0, σ2
+uj )
+Example tolerance
+distribution
+mm
+σuj = 0.02
+Modeling assumption ;
+±3σ = ±0.06 mm band
+Tolerance map
+Leff
+Effective compliance length
+of Eq. (14)
+mm
+75
+Reduced-order model input;
+benchmark
+Monte Carlo
+N
+Number of realizations
+–
+800
+This study (nested convergence,
+Sect. 4.4)
+Surrogate
+p
+Polynomial response-surface
+order
+–
+3
+400 + 400 runs (Fig. 8)
+Outputs
+σmax
+Maximum stress statistic
+MPa
+—
+Post-processing metric
+Outputs
+Pe
+Probability of exceeding Dcrit
+–
+—
+Post-processing metric
+8
+
+
+Table 2: Model scope. Excluded quantities appear nowhere in the results, figures
+or conclusions of this paper.
+Quantity / phenomenon
+Present
+in
+physical
+sys-
+tem
+Solved
+here?
+Representation in the solver
+Normal approach / interference
+Yes
+No
+Converted to prescribed εapp(t)
+(input)
+Contact pressure pn(z, t)
+Yes
+No
+Not computed; enters via the
+input history
+Tangential traction qt(z, t)
+Yes
+No
+Not resolved; excluded
+Coulomb friction coefficient µ
+Yes
+No
+Absent from the formulation
+Frictional heat generation
+Yes
+No
+Effect only via prescribed T (z, t)
+Material removal / wear depth
+Yes
+No
+Not solved; not reported
+Rotor dynamics, leakage flow
+Yes
+No
+Outside the reduced domain
+Individually
+resolved
+pores,
+splats, cracks
+Yes
+No
+Homogenized
+effective
+proper-
+ties only
+Temperature history T (z, t)
+—
+Input
+Prescribed benchmark
+Normal-strain history εapp(t)
+—
+Input
+Prescribed benchmark
+Thermal
+eigenstrain,
+expansion
+mismatch
+—
+Solved
+Eqs. (4)–(5)
+Viscoelastic stress σ(z, t)
+—
+Solved
+Computed output
+Scalar damage D(z, t)
+—
+Solved
+Computed output
+Exceedance probability Pe
+—
+Solved
+Monte Carlo output
+3.1.2 Physical system versus solved numerical domain
+Fig. 2 distinguishes two levels that must be kept separate. Panel (a) is the physical
+system: sealing teeth carried on one member face the coated counter-face across a
+nominal running clearance, and relative radial motion may close that clearance and
+create a localized rubbing region. Normal pressure, tangential traction and frictional
+heat are genuine physical quantities at that level. Panel (b) is the solved domain: a
+local through-thickness coating column of total thickness h, divided into M perfectly
+bonded homogenized subdomains, resting on a substrate that enters the formulation
+only as a kinematic thermal-expansion constraint through the mismatch of Eq. (5);
+no substrate modulus, thickness or force balance is solved.
+The subdomain boundaries are continuity conditions, not sliding interfaces: dis-
+placement and traction continuity is enforced through the thickness, so the concern
+that friction between internal layers would violate continuity does not arise, because
+no such interface exists. The discretization is therefore defined by the number M of
+homogenized subdomains and by the time step ∆t, not by a two- or three-dimensional
+finite-element contact mesh; no contact elements, gap-closure algorithm or friction law
+are present in the solver. Table 2 lists, quantity by quantity, what is physically present,
+what is prescribed as an input, what is computed, and what is excluded.
+3.1.3 Prescribed loading histories
+Two prescribed histories drive the column, both illustrated in Fig. 3:
+The thermal history is a trapezoidal benchmark cycle: heating from T0 = 20 ◦C to
+Tmax = 400 ◦C over 0 ≤t ≤20 s, an isothermal dwell at 400 ◦C for 20 ≤t ≤40 s,
+9
+
+
+and cooling back to 20 ◦C for 40 ≤t ≤60 s. The stress-free reference temperature
+is Tref = 20 ◦C. Within each subdomain the temperature is uniform at each instant.
+This cycle is a reproducible numerical benchmark chosen to exercise the full range of
+viscoelastic relaxation and thermal mismatch; it is not an engine duty cycle, and no
+claim of duty-cycle representativeness is made.
+The mechanical history is an equivalent normal-strain history εapp(t) applied at the
+coating boundary, representing the normal approach of the sealing member in a cyclic
+manner synchronized with the thermal dwell. It is an input, not a contact solution: the
+conversion from physical interference to equivalent prescribed strain is an assumption
+of the reduced-order model, and the amplitude εapp
+0
+is a declared benchmark quantity
+(Table 1). Its basis is stated explicitly rather than left implicit. The value 2.11 × 10−3
+was selected so that the peak equivalent stress generated by the benchmark falls
+within the stress range over which the damage parameters of Section 4.3 are identified;
+below roughly 1.6 × 10−3 the column never reaches σcrit and no damage is produced
+at all, which would leave the damage model unexercised. The resulting stress level is
+therefore a designed property of the benchmark and is not presented as an independent
+prediction.
+The waveform is stated here in full so that it can be reproduced without access
+to the driver script. It consists of np = 2 identical trapezoidal compressive pulses
+placed inside the isothermal dwell, each built from a linear ramp of duration tr = 2 s,
+a plateau of duration td = 4 s at the amplitude −εapp
+0
+, and a linear return ramp of
+duration tr:
+εapp(t) = −εapp
+0
+np
+X
+k=1
+Λ
+t −tk
+tr
+, td
+tr
+
+,
+εapp
+0
+= 2.11 × 10−3,
+t1 = 18 s, t2 = 30 s,
+(1)
+where Λ denotes the unit trapezoid that rises linearly from 0 to 1 on [0, 1], remains
+at 1 on [1, 1 + td/tr] and returns linearly to 0 on [1 + td/tr, 2 + td/tr]. The strain is
+therefore zero for t < 18 s and for t > 38 s, and the two plateaux occupy 20 ≤t ≤24 s
+and 32 ≤t ≤36 s. The sign convention is that compression is negative, consistent
+with a normal approach of the sealing member.
+A third strain contribution is generated internally rather than prescribed, and is
+therefore not one of the two input histories above. Because the coating is bonded
+to a substrate of different thermal expansion coefficient, the constraint produces an
+expansion-mismatch strain governed by the difference ∆α = αc −αs, formally defined
+in Eq. (5) below. Anticipating that definition, and noting that αc is uniform through
+the thickness in the benchmark so that εmis is a function of time only, its peak value
+over the cycle is
+εmis
+max = ∆α ∆Tmax = (16 −13) × 10−6 K−1 × (400 −20) K = 1.14 × 10−3,
+(2)
+which is the plateau of the dashed curve in Fig. 3b. The applied-strain amplitude and
+the peak mismatch strain are therefore of the same order, εapp
+0
+/εmis
+max = 1.85, so neither
+contribution dominates the mechanical strain of Eq. (6). Both histories are plotted in
+Fig. 3b.
+10
+
+
+Fig. 2: Separation of the physical system from the solved numerical domain. (a) In
+the physical labyrinth-seal stage, relative radial approach may close the clearance
+c0 and create a localized rub region in which contact pressure, tangential traction
+and frictional heating are real phenomena. (b) The domain actually solved is a local
+through-thickness coating column of M perfectly bonded homogenized subdomains
+on a substrate that enters only through the thermal expansion mismatch, driven by
+a prescribed equivalent normal-strain history εapp(t) and a prescribed temperature
+history T(z, t).
+The through-thickness coordinate is measured from the coating–substrate inter-
+face, z = 0, to the free surface, z = h, so that the metallic-rich end of the gradient
+lies at z = 0 and the compliant, ceramic/dislocator-rich end lies at the free surface,
+consistently with Eq. (10). Results are reported against the normalized depth below
+the free surface, ζ = (h −z)/h ∈[0, 1], so that ζ = 0 is the free surface and ζ = 1 the
+interface. Subdomains are indexed i = 1, . . . , M from the free surface inwards.
+3.2 Modeling assumptions
+The abradable coating is modeled as a layered, functionally graded medium sub-
+jected to thermo-mechanical loading representative of turbine labyrinth seal operation.
+Within the temperature range considered (20–400 ◦C, Section 3.1.3), the material
+response is assumed to be predominantly thermo-viscoelastic. Progressive material
+degradation is described using a scalar isotropic damage variable, while irreversible
+viscoplastic effects are neglected.
+Thermal expansion is retained explicitly. The total strain is decomposed into a
+mechanical part and a thermal eigenstrain, and the coating–substrate expansion mis-
+match is included explicitly (Section 3.4), so that thermal stress is generated by the
+model rather than prescribed. In the benchmark parameter set the coating expansion
+coefficient is taken as uniform through the thickness, αc(z, T) ≡αc = 16 × 10−6 K−1,
+so that the mismatch strain of Eq. (5) is a function of time alone; the general formu-
+lation retains the depth and temperature dependence αc(z, T) and admits a graded
+11
+
+
+Fig. 3: Prescribed loading benchmark. (a) The trapezoidal thermal cycle runs 20 →
+400 →20 ◦C over 60 s with a 20-s dwell, and the stress-free reference temperature is
+Tref = 20 ◦C. (b) The equivalent normal-strain history εapp(t) is an input representing
+cyclic normal approach, whereas the coating–substrate expansion mismatch strain
+εmis is generated internally by the thermal eigenstrain of Eqs. (4)–(5). The applied
+waveform is the two-pulse trapezoid of Eq. (1) with amplitude εapp
+0
+= 2.11 × 10−3,
+ramp time tr = 2 s and plateau td = 4 s; the mismatch plateau is ∆α ∆Tmax =
+3 × 10−6 K−1 × 380 K = 1.14 × 10−3, i.e. exactly the value implied by the coefficients
+αc = 16 × 10−6 K−1 and αs = 13 × 10−6 K−1 of Table 1. The cycle is a reproducible
+verification benchmark, not an engine duty cycle.
+coefficient without any change to the solution algorithm. The expansion coefficients
+are declared benchmark quantities requiring material identification (Table 1).
+The functional gradient varies continuously through the coating thickness and
+incorporates a periodic modulation to represent deposition-induced microstructural
+heterogeneity. Thermal loading is prescribed and assumed uniform within each homog-
+enized subdomain. Manufacturing and assembly tolerances are treated separately
+within a probabilistic framework. Fig. 4 shows how the statistical content of the prob-
+lem is transformed along the computational pipeline. A symmetric Gaussian tolerance
+input (panel a) perturbs the amplitude of the prescribed equivalent strain through
+Eq. (14), giving the ensemble of loading histories of panel c, while the deterministic
+through-thickness property field of panel b is identical in every realization. The per-
+turbed histories are propagated through the coupled solver to give a family of damage
+trajectories (panel d) and post-processed into the end-of-cycle damage distribution
+(panel e). The transformation is not measure-preserving: the symmetric geometric
+input produces an asymmetric damage output whose exceedance probability beyond
+Dcrit is precisely the quantity that a deterministic analysis at nominal geometry cannot
+reproduce.
+3.3 Model parameter summary and uncertainty definition
+Table 1 summarizes the mechanical, thermal, numerical, and probabilistic inputs used
+in the deterministic and Monte Carlo analyses, including units, numerical values,
+12
+
+
+Fig. 4: Propagation of variability along the computational pipeline. (a) The sampled
+geometric tolerance is a symmetric Gaussian, δuj ∼N(0, σ2
+u) with σu = 0.02 mm and
+a ±3σu band. (b) The deterministic monotonic and periodically modulated property
+fields of Eq. (10) (wavelength λg); these are identical in every realization and are not
+randomized in the present uncertainty model. (c) The ensemble of perturbed equivalent
+loading histories obtained from the tolerance input through Eq. (14), which is the only
+randomized quantity. (d) The coupled solver returns a family of damage trajectories,
+the modulated mean lying systematically above the monotonic mean and reaching
+0.03376 at t = 60 s against 0.02135 for the monotonic case. (e) The end-of-cycle damage
+distribution is asymmetric, with the shaded tail beyond the declared classification
+level Dcrit = 0.10 giving the exceedance probability Pe = 0.076, against 0.035 for the
+monotonic gradient at the same level. A symmetric geometric input therefore maps into
+an asymmetric damage output. Because the mapping is not measure-preserving, the
+ensemble mean 0.034 is not itself the nominal-geometry response; what a deterministic
+analysis at nominal geometry cannot deliver is the exceedance mass beyond Dcrit,
+which is a property of the distribution and not of any single realization.
+origin, and declared status. The selection of parameters is consistent with the litera-
+ture on functionally graded materials, continuum damage mechanics, and structural
+reliability analysis [8, 14, 19, 22].
+3.4 Thermo-viscoelastic formulation with thermal eigenstrain
+The thermo-viscoelastic behavior of the coating is described using a linear formula-
+tion based on a Prony series representation of the relaxation modulus [5, 6, 12]. The
+temperature-dependent relaxation modulus is expressed as [7, 12]
+E(t, T) = E∞(T) +
+Mp
+X
+m=1
+Em(T) exp
+
+−t
+τm
+
+,
+(3)
+where E∞(T) denotes the long-term elastic modulus, Em(T) are the Prony coef-
+ficients, and τm are the relaxation times. Equation (3) is the classical generalized
+Maxwell (Prony) representation of linear viscoelasticity and is not derived here. Its
+non-isothermal implementation is stated explicitly, because the benchmark spans
+13
+
+
+20–400 ◦C and the constitutive response cannot otherwise be reproduced. The temper-
+ature enters through the instantaneous modulus only: the phase moduli Emet and Ecer
+of Table 1 are interpolated linearly in T between their 20 and 400 ◦C values, Ei(z, T)
+follows from Eq. (10), and the Prony weights are constant fractions of Ei(z, T), namely
+E∞= 0.60 Ei and E1,2,3 = 0.20, 0.12, 0.08 Ei. The relaxation times are held constant
+at τ1,2,3 = 5, 50, 500 s; no time–temperature shift factor of WLF or Arrhenius type is
+applied, so the model is not thermorheologically simple and no master curve is con-
+structed. The hereditary integral is advanced by the standard recursive update of the
+internal variables, q n+1
+m
+= e−∆t/τmq n
+m + Em(T n+1) τm
+ 1 −e−∆t/τm
+∆εmech/∆t, with
+the moduli evaluated at the temperature of the current step, which is exact for a strain
+varying linearly within the step at constant temperature and first-order accurate in
+the temperature variation across it. Introducing a shift factor identified from dynamic
+mechanical analysis is a defined refinement, listed in Section 6.
+Because the coating is heated while bonded to a substrate, the total strain is
+decomposed into a mechanical (stress-producing) part and a thermal eigenstrain,
+εtot(z, t) = εmech(z, t) + εth(z, t),
+εth(z, t) = αc(z, T)
+
+T(z, t) −Tref
+
+,
+(4)
+and the constraint exerted by the substrate introduces an expansion mismatch strain
+εmis(z, t) =
+
+αc(z, T) −αs(T)
+ 
+T(z, t) −Tref
+
+,
+(5)
+so that the mechanical strain driving the constitutive response is
+εmech(z, t) = εapp(t) −εmis(z, t).
+(6)
+Equations (4)–(6) are the standard thermo-elastic strain decomposition applied to a
+constrained coating layer [7, 28]. One consequence of the reduced-order form should be
+stated plainly, because it bounds how the results may be read: the prescribed normal
+approach and the coating–substrate expansion mismatch are combined into a single
+equivalent stress-producing strain. In a full continuum treatment these are tensorially
+distinct, the former being a through-thickness compression and the latter an in-plane
+biaxial mismatch stress. The present formulation does not resolve that distinction, and
+it is therefore an equivalent one-dimensional surrogate for the constrained response
+rather than a complete thermoelastic constraint model. With αc = αs and εapp = 0
+the formulation reduces to stress-free expansion, which is used as a closed-form unit
+test in Section 4.1.
+The viscoelastic stress response is obtained through the Boltzmann superposition
+(hereditary) integral of the relaxation modulus with the mechanical strain-rate history
+[5, 11],
+σ(z, t) =
+Z t
+0
+E
+ t −ξ, T
+ dεmech(z, ξ)
+dξ
+dξ.
+(7)
+This formulation captures the memory effects and delayed stress response under tran-
+sient thermo-mechanical loading and provides the basis for coupling with damage
+evolution.
+14
+
+
+3.5 Progressive damage model
+Material degradation is represented by a scalar damage variable D(t) ∈[0, 1], account-
+ing for stiffness reduction due to micro-cracking and matrix degradation [8, 9].
+Although damage may be anisotropic at the microscale, a scalar formulation is adopted
+to ensure numerical robustness and computational efficiency at the coating scale.
+The validity of this coating-scale scalar description rests on a separation-of-scales
+(representative elementary volume, REV) argument, which is made explicit here for
+the heterogeneous graded system considered [29]. Three characteristic lengths must
+be ordered: the microstructural feature size ℓµ (splats, pores, dislocator particles;
+ℓµ ≈5–30 µm for as-sprayed material [27]), the subdomain thickness h/M = 50 µm
+used in the adopted discretization, and the modulation wavelength λg = 0.4 mm. The
+adopted configuration satisfies ℓµ ≲h/M < λg ≪h, while the modulation wavelength
+is resolved by eight subdomains per period so that the macroscopic property oscilla-
+tion is not aliased by the homogenization. The margin in the first inequality should be
+stated honestly rather than overclaimed: h/M = 50 µm exceeds the coarse end of the
+feature range (30 µm) by a factor of only 1.7, and the fine end (5 µm) by a factor of 10.
+A subdomain is therefore not a deterministic REV in the classical sense of containing
+an arbitrarily large feature population. The two roles must therefore be kept apart.
+The effective properties assigned to each subdomain are assumed to have been homog-
+enized over an underlying representative volume of the sprayed microstructure, in the
+statistical sense of Kanit et al. [29]; h/M is a numerical discretization length whose
+function is to resolve the macroscopic modulation, and it is not itself evidence that
+such a volume has been sampled. The N realizations of Section 4.4 sample geometric
+tolerances only and quantify no microstructural apparent-property variance. Estab-
+lishing REV convergence for a specific coating, by the ensemble criterion of [29] applied
+to measured microstructures, is a separate material-identification task and is listed
+as such in Section 6. The scalar variable is therefore defined at the REV/subdomain
+scale, where the randomly oriented splat and pore population justifies quasi-isotropy
+of the degradation, and it is used only for macroscopic stiffness degradation; it is not
+claimed to represent sub-REV anisotropic crack populations and is not used to predict
+crack paths. Should the subdomain thickness approach the microstructural feature
+size, the REV assumption would degrade and an anisotropic or nonlocal description
+would be required; this boundary of validity is stated in Section 6.
+Damage evolution is governed by a stress-driven kinetic law of the Kachanov–
+Lemaitre type [8, 9],
+dD
+dt = A
+σeq(z, t)
+σcrit
+−1
+md
+(1 −D)nd,
+(8)
+where A, md, and nd are material parameters, σcrit is a critical stress threshold, and
+⟨·⟩denotes the Macaulay bracket. The sign convention is fixed here and used without
+exception. Compression is negative. With αc > αs and heating, Eq. (5) gives εmis > 0,
+so Eq. (6) makes the mismatch term add to the prescribed compressive approach rather
+than oppose it: both contributions drive εmech negative, and the constitutive stress of
+Eq. (7) is compressive throughout the loaded phase of the benchmark. A small positive
+15
+
+
+excursion of a few MPa occurs during unloading, as viscoelastic recovery returns the
+column through zero, and it remains far below σcrit so that it never activates Eq. (8).
+Two distinct measures are therefore used and are kept distinct throughout: the signed
+constitutive stress σ(z, t) of Eq. (7), and the non-negative equivalent stress
+σeq(z, t) ≡|σ(z, t)|,
+σmax(z) ≡max
+t
+σeq(z, t),
+(9)
+which drives Eq. (8) and carries every stress statistic reported in Section 5. The
+same convention is implemented in the solver and used in all figures. Damage accu-
+mulates progressively when the local stress exceeds the critical value and saturates
+as D approaches unity, allowing the model to capture nonlinear degradation under
+cyclic thermo-mechanical loading. Equation (8) is explicitly phenomenological: it
+describes macroscopic stiffness loss and is not a mechanistic representation of indi-
+vidual microstructural damage processes. One structural difference from the classical
+creep-rupture form of the Kachanov–Lemaitre family should be stated explicitly,
+because it changes the qualitative behaviour of the solution. The classical form car-
+ries the damage factor with a negative exponent, (1 −D)−k, which accelerates as
+D grows and produces a finite rupture time. Equation (8) carries it with a positive
+exponent nd > 0, so the rate decreases monotonically with accumulated damage and
+D →1 only asymptotically: the law is saturating rather than rupture-generating. This
+is a deliberate choice for a stiffness-degradation descriptor at the coating scale, where
+the quantity of interest is the loss of load-carrying capacity within a bounded cycle
+rather than a rupture time. It has two consequences that are used throughout: Dcrit
+is a declared classification level and not a rupture criterion, and the identified expo-
+nents are not directly comparable with exponents tabulated for the negative-exponent
+creep-rupture form.
+A single value of the critical threshold, σcrit = 80 MPa, is used through the coating
+thickness even though the modulus is graded and modulated. This is a consequence of
+the effective-homogenized-continuum assumption adopted in Section 3.1.1: the mod-
+ulated FGM microstructure is not resolved at the scale of individual pores or phases,
+and its influence is represented through the spatial variation of the effective proper-
+ties. The threshold therefore corresponds to the macroscopic onset of damage in the
+homogenized medium rather than to the local initiation threshold of each constituent.
+Two consequences follow. First, because the stress field, and not the threshold, carries
+the spatial heterogeneity, the predicted hot-spot locations are governed by the stress
+concentrations induced by modulation, which is precisely the mechanism under investi-
+gation. Second, this approximation is appropriate for the global structural response but
+not for resolving local microstructural damage initiation: a spatially varying threshold
+σcrit(z, T, ϕ), informed by the local porosity and temperature, would be required for
+that purpose and is identified as a model extension in Section 6.
+3.6 Functionally graded material with periodic
+microstructural modulation
+The spatial variation of the elastic modulus through the coating thickness is defined to
+reduce global stress discontinuities while accounting for local heterogeneities induced
+16
+
+
+by the deposition process. The effective modulus in subdomain i at position z is
+expressed as
+Ei(z, T) = Emet(T) +
+
+Ecer(T) −Emet(T)
+ z
+h
+ng
++ ∆Eg sin
+2πz
+λg
+
+,
+(10)
+where Emet(T) and Ecer(T) are the temperature-dependent effective moduli of the
+metallic-rich and dislocator-rich ends, respectively. The coordinate z denotes the
+through-thickness position, h is the total coating thickness, ng is the functional gra-
+dient exponent, ∆Eg is the amplitude of the sinusoidal modulation, and λg is the
+characteristic wavelength of the microstructural heterogeneity. The modulation ampli-
+tude is denoted ∆Eg (units of GPa) and must not be confused with the strain measures
+εapp, εth, εmis and εmech of Section 3.4.
+This representation enables simultaneous modeling of the global functional gradi-
+ent and local stiffness fluctuations, which are responsible for stress localization and
+premature damage initiation [19, 20].
+The sinusoidal term in Eq. (10) has a direct manufacturing origin. Thermal-spray
+deposition builds the coating pass by pass: each torch raster deposits a band of splats,
+and the periodic alternation of freshly deposited, well-melted material with inter-pass
+boundaries, oxide stringers, and locally elevated porosity produces a quasi-periodic
+through-thickness oscillation of density and stiffness [16, 17]. The wavelength λg there-
+fore corresponds to the thickness deposited per raster group (here λg = 0.4 mm, i.e.,
+groups of passes of roughly 10–50 µm each), and the amplitude ∆Eg quantifies the
+resulting stiffness contrast. Both parameters are experimentally measurable: λg can
+be extracted from image analysis of polished cross-sections through the periodicity
+of porosity and oxide banding, while ∆Eg can be identified from through-thickness
+nanoindentation modulus profiles or spatially resolved ultrasonic measurements; the
+Prony parameters follow from stress-relaxation or dynamic mechanical analysis at the
+temperatures of interest [12], and the expansion coefficients from dilatometry. In the
+present study ∆Eg and λg are adopted as declared benchmark values (Table 1); a
+dedicated experimental identification campaign is part of the validation pathway of
+Section 6. The idealization of the modulation as a single harmonic retains the dominant
+Fourier component of the measured banding, and higher harmonics can be superposed
+without any change to the solution algorithm.
+3.7 Coupling between viscoelasticity, damage, and grading
+The coupling between thermo-viscoelasticity, damage evolution, and functional grad-
+ing is achieved by introducing the damage variable as a stiffness-degradation factor
+in the constitutive response, following the strain-equivalence principle of continuum
+damage mechanics [8, 9],
+Eeff(z, T, t) =
+ 1 −D(z, t)
+
+Ei(z, T).
+(11)
+17
+
+
+This coupling allows the progressive reduction of stiffness to influence stress redistri-
+bution and damage accumulation during loading, providing a consistent framework
+for predicting localized degradation in graded abradable coatings.
+4 Numerical Methodology and Verification
+4.1 Spatial and temporal discretization and refinement studies
+The spatial discretization is one-dimensional through the thickness: the coating col-
+umn is partitioned into M homogenized subdomains, each treated as a stratum with
+piecewise-constant properties. This is formally equivalent to a mesh of M linear one-
+dimensional elements of size h/M with a single integration point per element. No two-
+or three-dimensional finite-element mesh is employed and no contact elements exist, so
+element type and total mesh count in the usual finite-element sense do not apply; the
+resolution of the model is defined entirely by M and ∆t. This subdomain-based semi-
+analytical discretization is adopted deliberately because it makes an N-realization
+Monte Carlo loop computationally tractable while resolving the through-thickness
+gradients that dominate this configuration.
+Both resolutions are established quantitatively against finer declared references
+rather than asserted. The spatial series M = 10, 20, 40, 80 is compared with the refer-
+ence M = 160, and the temporal series ∆t = 1.0, 0.5, 0.25, 0.125 s with the reference
+∆t = 0.0625 s. The adopted values are M = 40, for which the relative errors are 0.36%
+in maximum stress and 4.71% in maximum damage, and ∆t = 0.25 s, for which the
+relative errors are 0.05% and 0.56% respectively. These figures are collected in Table 3
+and plotted in Fig. 5. The observed behaviour is consistent with the formulation: spa-
+tial convergence is close to second order, while temporal convergence is first order,
+as expected from the explicit damage update of Eq. (12). The refinement series is
+reported as computed. Below eight subdomains per modulation wavelength the sinu-
+soidal term of Eq. (10) is aliased, so the spatial error is not a monotone function of
+M in that range; from M = 20 upwards it decreases by a factor of 4.4 and then
+5.6 per refinement level, consistent with second-order behaviour, and the temporal
+error decreases monotonically over the whole series. What the study establishes is the
+adopted-point accuracy: at ∆t = 1 s the error in maximum damage is 12.7%, which
+is why that step was refined, whereas at the adopted ∆t = 0.25 s it is 0.56%. The
+spatial resolution is not selected by refinement alone, and we state the reason because
+it is the reverse of the usual argument. Refining M reduces the discretization error
+monotonically above the aliasing range, but it also shrinks the subdomain thickness
+h/M, which must remain at or above the microstructural feature size for the homog-
+enized description of Section 3.5 to hold. At M = 40, h/M = 50 µm sits just above
+the coarse end of that range, whereas M = 80 would give h/M = 25 µm and place the
+numerical cell below it. M = 40 is therefore adopted as the finest resolution compati-
+ble with the homogenization assumption, and the residual errors it carries relative to
+the M = 160 reference, 0.36% in σmax and 4.71% in Dmax, are reported directly rather
+than described as converged. The adopted step also samples the fastest retained relax-
+ation mode adequately, since ∆t = τ1/20 with τ1 = 5 s, and the recursive convolution
+update is exact for piecewise-linear strain within each step.
+18
+
+
+Table 3: Spatial and temporal refinement of the reduced-order through-thickness
+solver.
+Refinement item
+Series
+Reference
+Adopted
+Relative
+error
+Spatial
+discretization
+M
+10, 20, 40, 80
+160
+40
+σmax: 0.36%
+Dmax: 4.71%
+Time increment ∆t (s)
+1.0, 0.5, 0.25, 0.125
+0.0625
+0.25
+σmax: 0.05%
+Dmax: 0.56%
+Table 4: Closed-form unit tests used to verify the implementation.
+Test
+Configuration
+Analytical reference
+Agreement
+Relaxation kernel
+Step strain, isothermal, D ≡0
+Eq. (3) evaluated directly
+< 10−10
+Free
+thermal
+expan-
+sion
+αc = αs, εapp = 0
+Zero stress at all times
+< 10−12
+Constrained mismatch
+∆α̸ = 0, elastic limit (τm →∞)
+σ = −E ∆α ∆T
+< 10−8
+Damage kinetics
+Constant overstress, nd = 0
+Analytical
+integration
+of
+Eq. (8)
+< 10−6
+Four closed-form unit tests are used to verify the implementation independently of
+any refinement argument, and are summarized in Table 4. They isolate, in turn, the
+viscoelastic kernel, the free thermal eigenstrain, the constrained expansion mismatch,
+and the damage kinetics. All four agree with the analytical solution to within the
+tolerances listed. It is emphasized that these are verification tests, establishing that
+the code solves the intended equations; they establish nothing about whether those
+equations describe a particular real coating.
+4.2 Incremental solution algorithm
+The governing equations are solved using an explicit incremental time-integration
+scheme. At each time step tk, the mechanical response and damage state are updated
+sequentially for each subdomain. The full loop is summarized in Fig. 7 and the
+corresponding pseudocode is given in Fig. 6.
+Initialization:
+The damage field is initialized as Di(t0) = 0 for all subdomains. Initial temperature,
+boundary conditions, and material parameters are prescribed.
+Update of local viscoelastic properties:
+For each subdomain i, the graded and periodically modulated elastic modulus Ei(z, T)
+is updated according to the local temperature and through-thickness position. The
+stiffness degradation induced by damage is applied through the effective modulus
+Eeff,i(tk) = (1 −Di(tk−1)) Ei(z, T).
+19
+
+
+Fig. 5: Quantitative spatial and temporal refinement of the reduced-order solver.
+(a) Spatial convergence against the M = 160 reference is close to second order; the
+adopted M = 40 (circled) gives 0.36% error in maximum stress and 4.71% in maximum
+damage. (b) Temporal convergence against the ∆t = 0.0625 s reference is first order,
+as expected from the explicit damage update; the adopted ∆t = 0.25 s (circled)
+gives 0.05% and 0.56% respectively. The shaded band in (a) marks resolutions below
+eight subdomains per modulation wavelength, where the sinusoidal term of Eq. (10)
+is aliased and the error is not a monotone function of M.
+Strain decomposition:
+The thermal eigenstrain and the expansion-mismatch strain are evaluated from the
+current temperature through Eqs. (4)–(5), and subtracted from the applied history to
+give the mechanical strain increment of Eq. (6).
+Stress computation:
+The viscoelastic stress σi(tk) is evaluated using a recursive convolution algorithm
+based on the Prony-series formulation and the mechanical strain history.
+Damage update:
+The damage variable is updated explicitly using the discretized kinetic law
+Di(tk) = Di(tk−1) + A
+σeq,i(tk)
+σcrit
+−1
+md  1 −Di(tk−1)
+nd∆t,
+(12)
+with the constraint 0 ≤Di ≤1 enforced to preserve physical admissibility.
+Time advancement:
+The simulation proceeds to the next time step until the end of the prescribed loading
+history.
+This explicit incremental strategy provides a robust and computationally efficient
+solution framework, particularly well suited for large ensembles of simulations required
+by the probabilistic analysis.
+20
+
+
+# Initialization
+for i in range(1, M+1):
+# M = number of subdomains
+D[i][0] = 0
+# zero initial damage
+t = delta t; k = 1
+# index 0 holds the initial condition
+# Time loop
+while t <= t final:
+# Update local property for each subdomain
+for i in range(1, M+1):
+E[i][k] = UpdateElasticModulus(z=z i, T=T(i,t))
+# Thermal eigenstrain and mismatch (Eqs. 4-5)
+for i in range(1, M+1):
+eps mech[i][k] = ApplStrain(t) - Mismatch(i, T(i,t))
+# Viscoelastic recursive convolution
+for i in range(1, M+1):
+sigma[i][k] = ComputeViscoelasticStress(E, eps mech, k, i)
+# Damage update
+for i in range(1, M+1):
+sigma eq[i][k] = abs(sigma[i][k])
+rate = DamageRate(sigma eq[i][k], D[i][k-1])
+D[i][k] = min(D[i][k-1] + rate * delta t, 1.0)
+t = t + delta t; k = k + 1
+Fig. 6: Iterative algorithm pseudocode for the incremental thermo-viscoelastic–
+damage solver.
+4.3 Calibration of damage parameters
+The damage law of Eq. (8) is phenomenological: the scalar variable D is an effective
+stiffness-loss measure, not a physical representation of the underlying microstructural
+crack population. The calibration described below identifies an effective parameter set
+that reproduces macroscopic degradation observables; it does not establish a complete
+microstructure-to-damage link.
+The reference dataset is the experimental study of Bertuol on thermally sprayed
+AlSi-based abradable coatings [3], whose elevated-temperature assessments were
+conducted at 300 ◦C. That work is retained as the experimental anchor for the
+temperature-dependent response and abradability trends of this coating family: it con-
+strains the expected tendency of the response within the experimentally documented
+range and prevents the damage parameters from being selected without physical guid-
+ance. The target observable taken from the reported stiffness-degradation histories is
+a normalized stiffness loss of D = 0.45 after 60 s. With σcrit = 80 MPa fixed from
+the onset of measurable degradation in the same dataset, the triplet (A, md, nd) is
+identified by least-squares minimization of the misfit against that degradation curve,
+yielding A = 0.12 s−1, md = 2.1 and nd = 3.2. The constant equivalent stress that
+reproduces the same target under the identified parameter set follows by inverting
+Eq. (13) and is 115 MPa. We state explicitly what this number is and is not: it is an
+internal-consistency benchmark derived from the identified parameters, not an inde-
+pendently measured stress extracted from the reference dataset, and it is used only so
+that the calibration can be checked in closed form by the reader. The identified expo-
+nents are effective values for the saturating form of Eq. (8) and are reported as such;
+because that form carries the damage factor with a positive exponent, they are not
+21
+
+
+Start
+Parameter initialization
+Set Di(t0) = 0 for all subdomains
+t < tfinal?
+Update Ei(tk) (from T and position)
+Strain split: Eqs. (4)–(6)
+Compute σi(tk) (recursive convolution)
+Update Di(tk) (Eq. (12))
+Advance time and index
+End
+Yes
+No
+Fig. 7: Schematic flow diagram describing the iterative resolution algorithm.
+directly comparable with exponents tabulated for the negative-exponent creep-rupture
+laws of the same family [8].
+The calibrated set is internally consistent, and this has been verified analytically
+rather than asserted. For a constant overstress the damage law of Eq. (8) integrates
+in closed form to
+D(t) = 1 −
+h
+1 + (nd −1) A
+
+σeq/σcrit −1
+md t
+i−1/(nd−1)
+.
+(13)
+Substituting σeq = 115 MPa, σcrit = 80 MPa, A = 0.12 s−1, md = 2.1, nd = 3.2
+and t = 60 s gives an overstress of 0.4375, a damage rate of 2.116 × 10−2 s−1 and
+D(60) = 0.454, which reproduces the calibration target D = 0.45 to within 1%.
+Equation (13) is also the reference solution of the damage-kinetics unit test of Table 4.
+The distinction between the experimentally informed range and the range explored
+by the benchmark is now stated explicitly. The response up to 300 ◦C is experimentally
+informed by the reference dataset. The extension of the benchmark cycle to 400 ◦C is a
+constitutive model-based extrapolation: the temperature dependence over that inter-
+val is carried by the thermo-viscoelastic side of the model through E∞(T), Em(T) and
+22
+
+
+τm, while the damage-kinetics parameters (A, md, nd, σcrit) are assumed temperature-
+independent. The 400 ◦C case is therefore evaluated as a severe numerical benchmark
+and is not claimed to reproduce the reference protocol or to constitute experimental
+validation at that temperature. Because thermally activated mechanisms could accel-
+erate damage kinetics, the predictions at the dwell temperature may underestimate
+degradation and should be interpreted as model-based extrapolations rather than val-
+idated quantitative predictions. A sensitivity analysis in which A was perturbed by
+±20% changed the end-of-cycle damage at the calibration point by less than 10%
+(+7.3% for A = 0.144 s−1 and −9.0% for A = 0.096 s−1, evaluated exactly with
+Eq. (13)). Because A enters Eq. (13) monotonically, such a perturbation reorders no
+realization, so the ranking of the ensemble is invariant by construction and is not itself
+evidence of robustness; the quantity that does move is the exceedance probability,
+since the fraction of realizations above the fixed level Dcrit shifts with the whole distri-
+bution. That probability was therefore recomputed over the full ensemble under both
+perturbations: it moves from Pe = 0.076 at the nominal A to 0.101 at A = 0.144 s−1
+and 0.056 at A = 0.096 s−1. This calibration-sensitivity range is reported separately
+from, and must not be confused with, the sampling interval of Section 4.4, which quan-
+tifies Monte Carlo error at fixed A. Dedicated cyclic tests at 400 ◦C would be required
+for material-specific validation and are identified as a priority of the experimental
+programme.
+4.4 Probabilistic framework and surrogate cross-check
+Manufacturing and assembly tolerances are modeled as statistically independent Gaus-
+sian random variables centered on nominal geometric dimensions. These uncertainties
+are propagated through the numerical model using Monte Carlo simulations. The sam-
+pled quantities are the manufacturing- and assembly-related geometric deviations only,
+δuj ∼N(0, σ2
+uj) with σuj = 0.02 mm. The subdomain moduli and relaxation times
+are not sampled independently: they remain deterministic functions Ei(z, T) and τm.
+The propagation chain is therefore δu →εmech →σ →D →statistics.
+The first link of that chain is stated explicitly. The random vector is δu =
+(δu1, δu2, δu3), whose three components are the coating-surface radial-position devi-
+ation arising from the manufacturing thickness tolerance, the counter-face radial-
+position deviation and the assembly concentricity deviation. The first component
+contributes to closure of the running clearance but does not modify the coating thick-
+ness h used in the constitutive property field of Eq. (10), which is held at its nominal
+value in every realization together with the subdomain coordinates and the modula-
+tion profile. They are modelled as independent, zero-mean and identically distributed,
+δuj ∼N(0, σ2
+u) with σu = 0.02 mm, and they enter with equal weight because each
+contributes directly and additively to the closure of the running clearance. Their sum
+perturbs the amplitude of the prescribed approach of Eq. (1) through an effective
+compliance length Leff,
+εapp
+0
+(δu) = εapp
+0
++
+1
+Leff
+X
+j
+δuj,
+δuj ∼N(0, σ2
+uj),
+(14)
+23
+
+
+so that a symmetric geometric input enters the solver as a symmetric perturbation
+of the prescribed strain amplitude and is rendered asymmetric only by the threshold
+activation of Eq. (8). Equation (14) is the complete uncertainty map of this study: the
+through-thickness property field Ei(z, T), the modulation wavelength and phase, the
+coating thickness used in the property law and the relaxation spectrum are identical
+in every realization, and only εapp
+0
+varies between realizations. The value of Leff is
+reported in Table 1; it is a declared benchmark quantity of the reduced-order model
+and not the coating thickness, since the compliance that absorbs a radial deviation in
+the physical stage is that of the whole seal assembly rather than of the coating column
+alone.
+Standard Monte Carlo is retained as the reference estimator in preference to a spec-
+tral surrogate such as Polynomial Chaos Expansion [24], for three reasons. First, the
+response functionals of interest contain a threshold activation: the Macaulay bracket
+in Eq. (8) switches subdomains between non-damaging and damaging regimes, so the
+response has a kink in the random inputs even though it is smooth on either side
+of it. A global polynomial approximation is least accurate near that kink, which is
+also where the exceedance mass lies. Second, the targeted quantities include tail mea-
+sures, namely 95th percentiles and the exceedance probability of Dcrit, for which plain
+Monte Carlo gives unbiased estimates with quantifiable sampling error, whereas global
+polynomial surrogates are least accurate precisely in the tails. Third, the reduced one-
+dimensional core is inexpensive and the realizations are embarrassingly parallel, so the
+full-model cost did not justify surrogate substitution. This is presented as a method-
+ological choice among several valid uncertainty-propagation approaches, not as a claim
+that PCE is inapplicable.
+Sampling precision is assessed by nested subsample sizes rather than by a single
+asserted convergence threshold. The reference ensemble comprises N = 800 realiza-
+tions. Fig. 8a shows the exceedance-probability estimate with 95% Wilson confidence
+intervals as a function of subsample size; the estimate stabilizes for N ≳400, and at
+N = 800 the estimate is Pe = 0.076 with interval [0.060, 0.097].
+For traceability, the exceedance counts underlying the nested estimates are stated
+explicitly: 4/50, 10/100, 19/200, 34/400 and 61/800, giving ˆPe = 0.080, 0.100, 0.095,
+0.085 and 0.076. The corresponding 95% Wilson intervals, obtained from the Wilson
+expression
+CI95 = ˆp + z2/2n ± z
+p
+ˆp(1 −ˆp)/n + z2/4n2
+1 + z2/n
+,
+z = 1.96,
+(15)
+are [0.032, 0.188], [0.055, 0.174], [0.062, 0.144], [0.061, 0.116] and [0.060, 0.097]. The
+reported reference value therefore corresponds to 61 exceedances out of 800 realiza-
+tions, and the interval half-width contracts as N −1/2, as expected for a plain Monte
+Carlo estimator.
+The parameter sensitivity reported in Fig. 11b is computed separately from the
+tolerance ensemble, by a deterministic one-at-a-time central-difference scheme, and its
+definition is given here so that it can be reproduced. Each parameter θ ∈{Tmax, τ1, ng}
+is perturbed by ±10% about its Table 1 value with all others held fixed, the response
+24
+
+
+being the through-thickness maximum damage Dmax = maxz D(z, tfinal) of the
+deterministic modulated configuration. The raw index and its normalized form are
+Sθ =
+Dmax(1.1θ) −Dmax(0.9θ)
+
+0.2 Dmax(θ)
+,
+¯Sθ =
+Sθ
+P
+θ′ Sθ′ ,
+(16)
+so that ¯Sθ is a dimensionless elasticity normalized to sum to unity over the three
+parameters. The evaluation requires seven solver runs: one baseline and two per param-
+eter. The scheme is a local screening measure at the adopted operating point, not a
+variance-based global index, and it is reported as such.
+To cross-check the estimator, a third-order non-intrusive polynomial response
+surface was trained and validated on the same reference ensemble: the N = 800 real-
+izations are partitioned once into a training subset of 400 runs and a disjoint hold-out
+subset of 400 runs, so that the surrogate is never evaluated on data used to fit it and
+no additional solver runs are required. The hold-out validation gives R2 = 0.99999
+for maximum stress and R2 = 0.99184 for maximum damage (Fig. 8b,c), where R2
+is computed on the hold-out set against the 1 : 1 line. The surrogate reproduces
+the reduced-order response closely, which is the expected outcome for a smooth one-
+dimensional core driven by a small number of Gaussian inputs, and we report it as
+such rather than as an argument against spectral methods. What the comparison does
+show is where the two approaches differ: the residuals are largest in the upper tail,
+precisely the region that sets Pe, so the surrogate is used here for continuous-output
+approximation and sensitivity screening while the exceedance probability and its con-
+fidence interval are estimated by Monte Carlo. For an extension of the core to two or
+three dimensions, the quality of this fit indicates that a sparse or multi-element poly-
+nomial chaos expansion would be a viable accelerator, with the present Monte Carlo
+results as the reference solution.
+25
+
+
+Fig.
+8:
+Uncertainty
+propagation
+and
+surrogate
+verification.
+(a)
+Exceedance-
+probability estimate against nested subsample size, with 95% Wilson intervals
+recomputed from the exceedance counts 4/50, 10/100, 19/200, 34/400 and 61/800;
+the estimate stabilizes for N ≳400 and reaches Pe = 61/800 = 0.076, [0.060, 0.097],
+at N = 800. (b,c) Third-order non-intrusive polynomial response surface fitted on a
+training subset of 400 realizations and evaluated on the disjoint hold-out subset of 400
+realizations drawn from the same reference ensemble, giving R2 = 0.99999 for max-
+imum stress and R2 = 0.99184 for maximum damage against the 1 : 1 line (dashed).
+The markers are the hold-out set itself, so the quoted R2 can be recomputed from
+them. The fit is close over the bulk of the response and degrades in the upper tail,
+so the surrogate is used for screening and continuous-output approximation while the
+exceedance probability is estimated by Monte Carlo.
+5 Results and Discussion
+5.1 Deterministic response and effect of microstructural
+modulation
+Simulations using nominal geometric dimensions and the benchmark material param-
+eters are first performed to isolate the influence of functional grading and deposition-
+induced microstructural modulation on the thermo-mechanical response of the
+abradable coating.
+For a monotonic FGM without modulation, the predicted stress field remains
+relatively smooth through the coating thickness and does not exhibit pronounced
+localized peaks. This behavior is consistent with the stress-mitigating effect of func-
+tionally graded architectures, as reflected by the more moderate upper quantiles of
+the maximum-stress statistics compared with the modulated case (Fig. 9a).
+When periodic microstructural modulation is introduced, the stress response
+becomes significantly more heterogeneous. Local stiffness fluctuations produce stress
+hot spots at specific depths, promoting earlier damage initiation in selected subdo-
+mains. This behavior is consistent with the stronger upper tail and percentile shift
+observed in the cumulative probability distributions (Fig. 9a). The through-thickness
+profile of Fig. 9b shows that the maximum equivalent stress increases from the free
+surface towards the coating–substrate interface. This direction follows directly from
+26
+
+
+Fig. 9: Probabilistic stress response. (a) Cumulative probability distributions of the
+maximum stress σmax for the monotonic FGM (solid) and the periodically modulated
+FGM (dashed); the dotted vertical line marks the critical stress threshold, the dotted
+horizontal line the 95% level, and the two dashed vertical lines the 95th-percentile
+stresses of the two distributions. (b) Through-thickness distribution of σmax: the solid
+line is the ensemble mean of the modulated FGM, the dashed grey line the correspond-
+ing monotonic profile, and the shaded band the ±1σ envelope, all plotted against the
+normalized depth below the free surface.
+Eqs. (6), (7) and (10): with αc uniform the mechanical strain of Eq. (6) is essentially
+uniform through the column, so the hereditary integral of Eq. (7) makes the local
+stress track the local stiffness, which rises from the compliant dislocator-rich free sur-
+face (Ecer = 12 GPa at ζ = 0) to the metallic-rich interface (Emet = 48 GPa at ζ = 1).
+The same ordering is reflected in the depth-wise damage statistics of Fig. 10b. The
+modulation superimposes a periodic perturbation of wavelength λg, i.e. five full peri-
+ods across the thickness since λg/h = 0.2, on that trend, so that utilisation of the
+threshold is highest in discrete bands rather than in one contiguous zone. The associ-
+ated damage response is likewise accelerated: the periodically modulated FGM shows
+faster mean damage accumulation over time and a larger separation between the two
+damage trajectories (Fig. 10, Fig. 11). Overall, these results confirm that, while the
+global functional gradient reduces overall stress levels, periodic modulation governs
+the local maxima and therefore controls damage localization and kinetics.
+5.2 Variability induced by geometric tolerances
+Introducing geometric tolerances through Monte Carlo simulations produces substan-
+tial dispersion in the mechanical response. The distribution of the end-of-cycle damage
+is shown in Fig. 10a together with a kernel density estimate and the classification
+level Dcrit = 0.10, at which a realization is classified as exceeding that level. This
+level is a declared classification threshold rather than a measured material property,
+corresponding to a 10% loss of effective stiffness; Fig. 10c reports the exceedance prob-
+ability as a continuous function of it, so that the sensitivity of the comparison to the
+selected level can be assessed and the ranking read at any level a designer adopts. The
+27
+
+
+distribution is strongly right-skewed. Its mean is 0.034 and its median 0.020, the bulk
+of the ensemble lies well below the classification level, and yet 7.6% of the realizations
+exceed it. The asymmetry is therefore of practical rather than cosmetic significance:
+it is the exceedance mass beyond Dcrit, and not the central tendency, that governs the
+reliability metric.
+The fraction of realizations above the classification level is Pe = 0.076, with a 95%
+Wilson interval of [0.060, 0.097] at N = 800, against 0.035 for the monotonic gradient
+at the same level (Section 4.4). This confirms that geometric tolerances can produce
+rare but severe degradation outcomes that deterministic simulations with nominal
+dimensions cannot identify.
+Depth-wise variability is further evidenced by the comparative dispersion across
+normalized depth (Fig. 10b). Both the median and the upper quartile increase from
+the free surface inwards, consistent with the through-thickness stress profile of Fig. 9b,
+and the largest spread and the most extreme values occur in the modulation-controlled
+bands near ζ ≈0.75 and ζ ≈0.96, while adjacent depths remain substantially less
+damaged. The maximum of the median trend is reached at the modulation crest clos-
+est to the interface rather than at the interface itself. Eq. (10) places the crests of the
+sinusoidal term at z = λg/4 + kλg, i.e. at z = 0.1, 0.5, 0.9, 1.3, 1.7 mm, which in nor-
+malized depth are ζ = 0.95, 0.75, 0.55, 0.35, 0.15; with M = 40 the subdomain centred
+on the first of these lies at ζ = 0.9625. The crest nearest the interface is therefore
+ζ ≃0.96, where the local modulus at the dwell temperature reaches 32.9 GPa against
+31.6 GPa at the next crest inboard, ζ = 0.75. The outermost crest is consequently
+the most heavily loaded band, and it, rather than the interface node itself, carries the
+maximum of the median damage. This depth-dependence has direct practical implica-
+tions for non-destructive inspection: sub-surface depths in the outer modulation crests,
+i.e. from roughly three quarters of the coating thickness below the free surface down
+to the interface, are systematically more damage-prone and should be prioritized in
+evaluation protocols.
+5.3 Combined probabilistic effects of grading, modulation, and
+tolerances
+A direct comparison between probabilistic responses for the monotonic FGM and
+the periodically modulated FGM highlights the combined influence of microstructural
+heterogeneity and geometric variability. Modulation increases both the rate and the
+level of damage accumulation relative to the unmodulated case (Fig. 11a). When
+geometric tolerances are added, response distributions broaden and exhibit increased
+dispersion, as shown in Fig. 9a and Fig. 10a.
+In both cases the mean damage increases monotonically with time, reflecting
+progressive degradation under the applied thermo-mechanical loading. However, the
+periodically modulated FGM exhibits consistently higher damage at all time instants.
+At t = 60 s, the mean damage reaches 0.03376 in the modulated case compared with
+0.02135 in the unmodulated case, an increase of 58%, confirming that modulation can
+intensify damage kinetics and yield a more severe end-of-cycle state. Both values are
+ensemble means of the end-of-cycle distributions and therefore coincide with the mean
+of Fig. 10a. Damage begins to accumulate during the heating ramp, as soon as the
+28
+
+
+Fig. 10: Probabilistic damage response (N = 800 realizations, M = 40, ∆t = 0.25 s).
+(a) Distribution of the through-thickness maximum damage Dmax = maxz D(z, tfinal)
+at the end of the cycle, with a kernel density estimate; the vertical dashed line marks
+the classification level Dcrit = 0.10 and the shaded area is the exceedance tail, con-
+taining 61 of the 800 realizations, i.e. a fraction Pe = 0.076. (b) Dispersion of the
+local damage with normalized depth: boxes span the interquartile range, whiskers the
+extremes, and the marked line follows the median. Panel (a) aggregates over depth
+and panel (b) resolves it, so the distribution of panel (a), whose mean is 0.0338, is
+shifted above the local-damage distributions of panel (b), since each realization con-
+tributes its through-thickness maximum to panel (a). (c) Exceedance probability as
+a function of the declared classification level, for both architectures; the dashed line
+marks the adopted Dcrit = 0.10.
+expansion mismatch alone drives the equivalent-stress utilisation σeq/σcrit above unity
+in the stiffer subdomains, and the gap between the two curves widens progressively
+through the thermal dwell, because the modulated case activates in more subdomains
+and accumulates faster in each.
+Neglecting microstructural modulation therefore leads to systematic underesti-
+mation of (i) the central tendency of damage growth and (ii) the probability of
+critical exceedance. The depth-wise statistics further indicate that this interaction is
+depth-dependent and not spatially uniform.
+Fig. 11b reports normalized sensitivity indices for the parameters that the model
+actually contains, computed by the one-at-a-time central-difference scheme defined in
+Section 4.4. No friction-coefficient index appears, because the implemented formulation
+contains no friction law (Table 2); the indices are normalized to sum to unity. The dwell
+temperature dominates (0.86), through its effect on both the expansion mismatch of
+Eq. (5) and the temperature-dependent moduli, followed by the leading relaxation time
+(0.12); the gradient exponent contributes only marginally (0.02) because it reshapes
+the property profile without changing the peak stiffness at the interface, where damage
+localizes. The influence of the geometric tolerance is quantified separately, and directly,
+by the ensemble dispersion of Figs. 9 and 10 rather than by a single scalar index.
+29
+
+
+Fig. 11: (a) Comparison of the ensemble mean damage D(t) for the monotonic
+and periodically modulated FGM, with the divergence ∆D shaded; the two curves
+terminate at 0.02135 and 0.03376 respectively, in agreement with the end-of-cycle dis-
+tribution of Fig. 10a, and both remain below the classification level Dcrit = 0.10, so
+the exceedance probability of Section 5.2 is generated entirely by tolerance-induced
+dispersion. (b) Normalized local sensitivity indices, computed independently of the
+Monte Carlo ensemble of panel (a) using the seven-run one-at-a-time central-difference
+procedure of Eq. (16), at M = 40 and ∆t = 0.25 s.
+5.4 Discussion and implications for coating reliability
+Taken together, the deterministic and probabilistic results show that functionally
+graded designs can reduce global stress levels but do not necessarily guarantee
+improved durability when deposition-induced heterogeneity and geometric tolerances
+are present. The acceleration of damage in the periodically modulated case and the
+emergence of increased damage dispersion under tolerances demonstrate that local
+stiffness modulation and dimensional variability can dominate durability outcomes.
+The probabilistic results further show that tolerance-induced dispersion yields an
+exceedance probability of Pe = 0.076 for the declared level Dcrit = 0.10, more than
+double the 0.035 obtained for the monotonic gradient at the same level. The observed
+trends are consistent with reliability and damage-mechanics perspectives reported in
+the literature [8, 18].
+From a validation standpoint it is important to state precisely what has and has
+not been established. What has been established is numerical verification: the imple-
+mentation reproduces closed-form solutions for the viscoelastic kernel, the thermal
+eigenstrain and the damage kinetics (Table 4); the residual discretization errors at
+the adopted resolutions are quantified against finer references (Table 3); the sampling
+estimate is stable with quantified confidence intervals; and the reference estimator has
+been cross-checked against a response surface validated on a disjoint hold-out sub-
+set (Fig. 8). What has not been established is experimental validation. The damage
+parameters are anchored on published data up to 300 ◦C, and the extension of the
+benchmark to 400 ◦C is a model-based extrapolation (Section 4.3). The qualitative
+trends, namely the stress-mitigating role of grading and the stress-amplifying effect of
+30
+
+
+periodic modulation, are independently supported in the literature [13, 16, 19, 20], but
+the present numbers are benchmark outputs, not predictions for a specific coating.
+Pathways for experimental validation of the framework include: (i) instrumented
+thermal-cycling experiments on coupon-scale graded specimens with characterized
+microstructural gradients and measured expansion coefficients; (ii) through-thickness
+property identification by nanoindentation or ultrasonic mapping to measure ∆Eg and
+λg directly; (iii) cyclic degradation tests at 400 ◦C to replace the present extrapola-
+tion with measured kinetics; and (iv) for any future wear-oriented extension, dedicated
+rub-rig testing with measured contact geometries, along the lines of the labyrinth-seal
+rubbing campaigns reported by Pychynski [4] for honeycomb inlet liners, which would
+additionally require an identified tribological law together with explicit contact and
+sliding quantities that the present formulation does not contain.
+6 Implications, Limitations, and Prospects
+The proposed framework provides actionable guidance for the design and mainte-
+nance planning of functionally graded abradable coatings in turbine labyrinth seals. In
+particular, the results show that deposition-induced microstructural periodicity and
+geometric tolerances can control the location and severity of damage, which motivates
+their explicit inclusion during coating design and manufacturing specification. These
+implications are stated within the declared scope: they concern architecture screening
+and tolerance allocation for the benchmark system, not service-life prediction for a
+specific coating.
+6.1 Limitations
+The main limitations of the present model are the use of a scalar isotropic damage
+variable (valid only at the REV/subdomain scale established in Section 3.5, and used
+only for macroscopic stiffness degradation rather than for crack-path prediction), the
+neglect of irreversible viscoplastic effects, and the absence of coupled fluid–structure–
+thermal interactions, each of which may affect quantitative predictions under high-load
+or transient regimes. The following additional limitations follow from the declared
+scope and are stated explicitly:
+• No contact, friction or wear: the solver contains no rotor–stator contact algo-
+rithm, no tangential sliding interface, no Coulomb friction law, no frictional heat
+source and no material-removal kinetics. The mechanical excitation enters as a pre-
+scribed equivalent normal-strain history. Consequently no wear depth, incursion
+depth or abradability metric is predicted, and any such extension would require an
+independently identified tribological law together with explicit contact and sliding
+quantities.
+• Porosity is homogenized: porosity enters only through the effective properties
+of each subdomain and through its contribution to the modulation amplitude. Indi-
+vidual pores are never resolved, so pore-scale stress concentrations are outside the
+model. Moreover, because the temperature history is prescribed rather than solved
+31
+
+
+from a heat-conduction problem, the thermal-barrier role of porosity does not influ-
+ence the solution; resolving it would require solving the coupled conduction problem
+with a porosity-dependent conductivity field.
+• Constant damage threshold: σcrit is an effective homogenized value held con-
+stant through the thickness (Section 3.5). This is adequate for the global structural
+response but cannot resolve local microstructural damage initiation; a spatially
+varying threshold σcrit(z, T, ϕ) is the natural refinement.
+• Calibration range. The damage kinetics are anchored on data at 300 ◦C and
+assumed temperature-independent up to 400 ◦C, so the dwell-temperature predic-
+tions are model-based extrapolations that may underestimate degradation, rather
+than validated quantitative predictions.
+• Benchmark parameter set: Expansion coefficients, relaxation times and modu-
+lation parameters are declared benchmark values requiring material identification
+(Table 1); the simulated case is not an identified model of a specific coating.
+• Prescribed rather than solved loading: Both the thermal and the mechani-
+cal histories are inputs. The framework therefore quantifies how a given excitation
+interacts with material heterogeneity and dimensional variability; it does not predict
+the excitation itself.
+Future work shall focus on incorporating viscoplasticity and anisotropic dam-
+age formulations, extending the model to transient fluid–structure–thermal coupling,
+introducing a spatially variable damage threshold, and coupling the column to
+an explicit contact and material-removal model should wear prediction become an
+objective, and validating predictions experimentally using coatings with controlled
+microstructural gradients. The probabilistic component can also be extended toward
+stochastic optimization of graded architectures to minimize exceedance probability.
+6.2 Practical implications for design and maintenance
+The framework’s outputs map into the decision variables of coating development and
+service practice, within the declared scope, as detailed below.
+Manufacturing tolerance specification: geometric variability is a major source
+of uncertainty and can increase the likelihood of exceeding the classification level.
+Using Dcrit = 0.10, the end-of-cycle distribution gives Pe = 0.076 with interval
+[0.060, 0.097] (Fig. 10a). This motivates tighter tolerance control to reduce the prob-
+ability of exceeding the damage classification level. By re-running the Monte Carlo
+analysis under progressively tighter tolerance bands and monitoring the resulting
+reduction in exceedance probability, engineers can identify the tolerance tightening
+that achieves a target reliability level while minimizing manufacturing cost [18, 24].
+Coating design optimization: because the periodic modulation amplitude ∆Eg
+and wavelength λg directly govern stress hot-spot intensity (Section 3.6), deposition
+process parameters that control these quantities, such as spray angle, traverse speed
+and powder morphology, can be linked to reliability outcomes. Designers can use
+the framework to identify modulation amplitudes that keep the 95th-percentile stress
+below a target, or to specify a gradient exponent ng that minimizes mean damage
+at end of cycle [14, 15]. Explicit inclusion of microstructural modulation in design
+32
+
+
+models avoids underestimation of local stress hot spots and supports more realistic
+optimization of the gradient profile.
+Inspection prioritization: probabilistic mapping of high-damage outcomes sup-
+ports targeted inspections. The depth-wise damage statistics (Fig. 10b) identify the
+depth zones with the highest variance and most extreme values, suggesting that non-
+destructive evaluation should be calibrated to detect damage at sub-surface depths,
+around the modulation-controlled bands nearest the interface, at ζ ≈0.75 and
+ζ ≈0.96, rather than near the surface. In a parallel effort within physics-informed
+reliability engineering, our previous work [26] demonstrated that embedding fracture-
+mechanics priors into deep learning improves remaining-useful-life predictions for
+rolling-element bearings; as a perspective, the multiphysics damage data produced by
+the present framework could extend such approaches through data-driven calibration.
+We note explicitly that the present framework does not itself produce a remaining-
+useful-life estimate, since that would require the service-life modelling that is outside
+the declared scope.
+6.3 Comparison with the Literature
+The trends observed in this study are consistent with published experimental, ana-
+lytical, and probabilistic investigations on graded materials, modulated coatings, and
+structural reliability. Periodic modulation of material properties is known to promote
+local stress amplification in graded and periodically structured media [19, 20]. This
+is directly aligned with the present results, where the periodically modulated FGM
+produces more localized stress hot spots and faster damage accumulation than the
+monotonic FGM. In particular, Chen et al. [20] demonstrated experimentally that
+modulation geometry governs both mechanical and tribological performance in nano-
+multilayer coatings. This supports the central interpretation of the present framework:
+microstructural modulation should not be treated as a minor geometric perturbation,
+because it can reshape the local stress field and therefore influence damage initiation
+and growth.
+The importance of accounting for dimensional tolerances and uncertainty propa-
+gation in structural performance assessment is well established in classical reliability
+references [18, 23]. The present work extends this reliability perspective to abradable
+coating analysis by propagating geometric tolerances through the full thermo-
+viscoelastic–damage solver rather than evaluating uncertainty only at the level of
+simplified output statistics. The modulated property field modifies local stiffness and
+stress redistribution, while the sampled geometric deviation modifies the equivalent
+mechanical input; their combined effect produces response distributions that cannot
+be captured by deterministic simulations at nominal geometry.
+Recent probabilistic fatigue and damage-modelling studies likewise report non-
+negligible upper-tail probabilities under cyclic loading [25]. Those results provide
+qualitative support for examining the response distribution rather than the nomi-
+nal prediction alone. No direct quantitative comparison with the Pe reported here
+is drawn, because the material systems, the loading conditions and the classification
+33
+
+
+criteria differ, and because Dcrit is a declared screening level rather than an experi-
+mentally identified failure criterion; the two quantities are therefore not measures of
+the same event.
+Finally, some limitations should be borne in mind when comparing these results
+with the broader literature. The absence of irreversible plasticity may lead to quantita-
+tive deviations for coatings that exhibit pronounced viscoplastic deformation; the lack
+of coupled fluid–structure–thermal dynamics limits direct applicability under fast tran-
+sients; and comparisons with rub-rig or abradability studies are necessarily qualitative,
+because the present formulation solves neither contact nor material removal.
+7 Conclusions and Perspectives
+This study developed a unified multiphysics–probabilistic framework for predicting
+thermo-viscoelastic damage in functionally graded abradable coatings for turbine
+labyrinth seals. The model integrates temperature-dependent viscoelasticity, ther-
+mal eigenstrain and coating–substrate expansion mismatch, progressive damage,
+deposition-induced microstructural modulation, and geometric tolerances within a
+single reliability-oriented formulation. The central novelty lies in their unified treat-
+ment within a single computational pipeline: coupling periodic property modulation
+with Monte Carlo tolerance propagation produces nonlinear probabilistic response
+distributions that decoupled analyses cannot replicate, and the resulting reliabil-
+ity metrics, exceedance probabilities and sensitivity indices, are directly usable for
+tolerance specification and inspection planning.
+The results show that, although functional grading can reduce global stress levels,
+deposition-induced microstructural heterogeneity may dominate damage localization
+and accelerate degradation at specific depths. The probabilistic analysis further
+indicates that geometric tolerances amplify response dispersion and increase the
+exceedance probability, highlighting the importance of accounting for manufacturing
+variability in reliability assessments. Consequently, deterministic analyses based on
+idealized monotonic gradients can underestimate the likelihood of localized damage
+and of exceeding the declared classification level.
+The contribution is deliberately positioned as a numerically verified reduced-order
+methodology. The solved domain is a local through-thickness coating column driven
+by prescribed histories; explicit rubbing contact, friction, frictional heating, material
+removal and wear-depth prediction are outside the formulation and are not reported.
+The simulated case is a declared generic benchmark, and numerical verification,
+established through closed-form unit tests, spatial and temporal refinement, sampling
+convergence and a hold-out-validated response surface, is distinguished throughout
+from experimental validation, which remains future work.
+Overall, the proposed framework provides a practical basis for robust coating
+design, tolerance control, and inspection planning. While demonstrated for abradable
+coatings in turbine labyrinth seals, the framework is general and applicable to any
+layered or graded system, including thermal barrier coatings, environmental barrier
+coatings, and functionally graded structural components, where deposition-induced
+heterogeneity and dimensional variability jointly govern reliability. Future work shall
+34
+
+
+incorporate viscoplasticity and anisotropic damage, a spatially variable damage thresh-
+old, coupled fluid–structure–thermal interactions, and experimental validation using
+graded coating systems with controlled microstructural features.
+Nomenclature
+D Scalar damage variable (0 ≤D ≤1), defined at the REV/subdomain scale.
+Dcrit Critical damage classification level.
+E(t, T) Temperature-dependent relaxation modulus.
+E∞(T) Long-term (equilibrium) modulus in the Prony representation.
+Em(T) m-th Prony-series modulus coefficient.
+τm m-th relaxation time, held constant with temperature in the present benchmark.
+σ(z, t) Viscoelastic stress response.
+σcrit Effective critical stress threshold governing damage activation.
+σmax Maximum stress statistic, σmax = maxt |σ(z, t)|.
+A Damage rate coefficient (s−1).
+md Damage exponent acting on the overstress.
+nd Damage exponent acting on the saturation term.
+Ei(z, T) Graded and modulated modulus in subdomain i at depth z.
+Eeff Damage-degraded effective modulus, Eeff = (1 −D)Ei.
+z Through-thickness coordinate, z = 0 at the interface, z = h at the free surface.
+ζ Normalized depth below the free surface, ζ = (h −z)/h.
+h Total coating thickness.
+ng Functional gradient exponent.
+∆Eg Amplitude of periodic microstructural modulation (GPa).
+λg Wavelength of microstructural modulation.
+ϕ Homogenized total porosity.
+αc, αs Coating and substrate thermal expansion coefficients.
+∆α Expansion mismatch, ∆α = αc −αs.
+∆Tmax Peak temperature rise above Tref over the benchmark cycle.
+Tref Stress-free reference temperature.
+εth Thermal eigenstrain.
+εmis Coating–substrate expansion mismatch strain.
+εmech Mechanical (stress-producing) strain.
+εapp Prescribed equivalent applied normal strain.
+∆t Time step used in incremental integration.
+tfinal Final simulation time.
+M Number of through-thickness homogenized subdomains.
+Mp Number of Prony terms in the viscoelastic series.
+N Number of Monte Carlo realizations.
+35
+
+
+δu Vector of sampled geometric deviations (tolerances).
+Leff Effective compliance length mapping a geometric deviation onto the prescribed
+strain amplitude, Eq. (14).
+Pe Exceedance probability of Dcrit.
+Dmax Through-thickness maximum damage at the end of the cycle.
+R2 Hold-out coefficient of determination of the polynomial response surface.
+np, tr, td Number of approach pulses, ramp time and plateau time of the prescribed
+strain waveform.
+Declarations
+Conflict of Interest
+The authors declare no competing interests.
+Data and Code Availability
+The simulation code developed for this study, including the thermo-viscoelastic–
+damage solver described in Section 4 and the Monte Carlo automation scripts used
+for the probabilistic tolerance analysis in Section 4.4, will be made available upon
+reasonable request to the corresponding author (felmellouhi@hbku.edu.qa). The code
+implements the incremental thermo-viscoelastic–damage solver, the through-thickness
+property-field construction, the thermal-eigenstrain and expansion-mismatch evalua-
+tion, the damage-update procedure, and the Monte Carlo propagation of geometric
+tolerances.
+All deterministic and probabilistic simulation inputs required for reproducibility
+are reported in the manuscript, including the nominal geometry, the through-thickness
+discretization, the prescribed thermal and mechanical histories, the Prony parameters,
+the expansion coefficients, the functional gradient and modulation parameters, the
+damage parameters, the geometric tolerance definitions, the Monte Carlo settings, and
+the post-processing metrics (Table 1). The refinement data of Table 3, the unit-test
+tolerances of Table 4, and the surrogate validation metrics of Fig. 8 constitute the
+verification record. Every quantity reported in more than one place is traceable to
+Table 1 and to the equation that defines it: the peak mismatch strain of Eq. (2) to the
+expansion coefficients αc and αs; the exceedance probability Pe = 0.076 to the count
+61/800 and the Wilson interval [0.060, 0.097]; and the calibrated triplet (A, md, nd)
+to the closed-form solution of Eq. (13). The calibration data used for anchoring the
+damage-law parameters are derived from the published study of Bertuol [3] and are
+therefore not redistributed independently; the calibration procedure and all parameter
+values required to reproduce the simulations are documented in Section 4.3.
+Acknowledgement
+This work was supported by the Knowledge Transfer Program–Qatar (KTP-Q) project
+No. KTPQ01-0530-240004 in partnership with ADGS Computer Systems, and by the
+36
+
+
+Mitacs Accelerate program under project IT47288. The statements herein are solely
+the responsibility of the authors.
+References
+[1] Pathak, P., Dzhurinskiy, D., Elkin, A., Shornikov, P., Dautov, S., Ivanov, V.:
+Enhanced high-temperature ysz-polyester abradable honeycomb seal structures.
+Journal of thermal spray technology 31(1), 307–314 (2022)
+[2] Baillieu, A., Parody, A., Rahimov, E., Garcia Panizo, J., Marshall, M.: In situ
+measurements of thermal-mechanical wear in blade-abradable liner contacts. Pro-
+ceedings of the Institution of Mechanical Engineers, Part C: Journal of Mechanical
+Engineering Science 238(5), 1453–1465 (2024)
+[3] Bertuol, K., Arendarchuck, B., Rivadeneira, F., Nolte, L., Lehner, M., Barnett,
+B., Moreau, C., Stoyanov, P.: Assessment of alsi-based abradable coatings with
+hbn and mocr additives for aerospace conditions: A novel high-temperature rig
+approach. Aerospace Science and Technology, 110737 (2025)
+[4] Pychynski, T., H¨ofler, C., Bauer, H.-J.: Experimental study on the friction contact
+between a labyrinth seal fin and a honeycomb stator. Journal of Engineering for
+Gas Turbines and Power 138(6), 062501 (2016)
+[5] Schapery, R.A.: On the characterization of nonlinear viscoelastic materials.
+Polymer Engineering & Science 9(4), 295–310 (1969)
+[6] Lai, J., Bakker, A.: 3-d schapery representation for non-linear viscoelasticity and
+finite element implementation. Computational mechanics 18(3), 182–191 (1996)
+[7] Brinson, H.F., Brinson, L.C.: Polymer Engineering Science and Viscoelas-
+ticity: An Introduction. Springer, New York (2008). https://doi.org/10.1007/
+978-0-387-73861-1
+[8] Lemaitre, J., Desmorat, R.: Engineering Damage Mechanics: Ductile, Creep,
+Fatigue and Brittle Failures. Springer, Berlin, Heidelberg (2005)
+[9] Kachanov, L.M.: Introduction to Continuum Damage Mechanics. Mechanics of
+Elastic Stability, vol. 10. Martinus Nijhoff Publishers, Dordrecht (1986). https:
+//doi.org/10.1007/978-94-017-1957-5
+[10] Hilton, H.H.: Elastic and viscoelastic poisson’s ratios: the theoretical mechanics
+perspective. Mater. Sci. Appl 8(4), 291–332 (2017)
+[11] Wineman, A.S., Rajagopal, K.R.: Mechanical Response of Polymers: An Intro-
+duction. Cambridge University Press, Cambridge, UK (2000)
+[12] Ferry, J.D., Myers, H.S.: Viscoelastic properties of polymers. Journal of The
+37
+
+
+Electrochemical Society 108(7), 142–143 (1961)
+[13] Wang, L., Wang, S., Chen, G., Zou, Y., Yu, S., Xie, E., Zhao, Q., Ye, Z., Ouyang,
+J., Wang, Y., et al.: Ceramic-based abradable sealing coatings for advanced aero-
+engines: Materials design, structural strategies, and multifunctional performance.
+Extreme Materials 1(4), 33–58 (2025)
+[14] Delfosse, D.: Fundamentals of Functionally Graded Materials— S. Suresh and A.
+Mortensen IOM Communications Ltd, 1998 ISBN: 1-86125-063-0. Elsevier (1998)
+[15] Miyamoto, Y., Kaysser, W.A., Rabin, B.H., Kawasaki, A., Ford, R.G. (eds.):
+Functionally Graded Materials: Design, Processing and Applications. Materials
+Technology Series, vol. 5. Kluwer Academic Publishers, Boston (1999). https:
+//doi.org/10.1007/978-1-4615-5301-4
+[16] Bertuol, K., Arendarchuck, B.E., Stoyanov, P.: An overview of metallic abradable
+coatings in gas turbine engines. Coatings 15(10), 1216 (2025)
+[17] Lokachari, S., Leng, K., Rincon Romero, A., Curry, N., Brewster, G., Norton,
+A., Hussain, T.: Processing–microstructure–properties of columns in thermal bar-
+rier coatings: a study of thermo-chemico-mechanical durability. ACS Applied
+Materials & Interfaces 16(8), 10646–10660 (2024)
+[18] Haldar, A., Mahadevan, S.: Probability, reliability and statistical methods in
+engineering design. (No Title) (2000)
+[19] Yıldırım, B., Kutlu, ¨O., Kadıo˘glu, S.: Periodic crack problem for a function-
+ally graded half-plane an analytic solution. International Journal of Solids and
+Structures 48(21), 3020–3031 (2011)
+[20] Chen, Z., Lou, M., Geng, D., Xu, Y.X., Wang, Q., Zheng, J., Zhu, R., Chen,
+Y., Kim, K.H.: Effect of the modulation geometry on mechanical and tribo-
+logical properties of tisin/tialn nano-multilayer coatings. Surface and Coatings
+Technology 423, 127586 (2021)
+[21] Val, D.V., Chernin, L., Yurchenko, D.: Updatable probabilistic evaluation of fail-
+ure rates of mechanical components in power take-off systems of tidal stream
+turbines. Energies 14(20), 6586 (2021)
+[22] Ditlevsen, O., Madsen, H.O.: Structural Reliability Methods. John Wiley & Sons,
+Chichester (1996)
+[23] Rackwitz, R.: Structural Reliability—Analysis and Prediction: R. Melchers, John
+Wiley and Sons, Chichester, 1999, ISBN 0 4719 8771 9. Elsevier (2001)
+[24] Sudret, B.: Global sensitivity analysis using polynomial chaos expansions. Relia-
+bility engineering & system safety 93(7), 964–979 (2008)
+38
+
+
+[25] Li, H., Luo, X., Zhang, Y., Xu, R.: Stochastic fatigue damage in viscoelastic
+materials using probabilistic pseudo j-integral paris’ law. Engineering Fracture
+Mechanics 245, 107566 (2021)
+[26] Dhibi, K., Nounou, H., El-Mellouhi, F., Nounou, M.: Physics-informed deep
+learning for bearing remaining useful life: Adaptive paris-law regularization with
+gaussian processes. Integrating Materials and Manufacturing Innovation, 1–21
+(2026)
+[27] Faraoun, H.I., Grosdidier, T., Seichepine, J.-L., Goran, D., Aourag, H., Coddet,
+C., Zwick, J., Hopkins, N.: Improvement of thermally sprayed abradable coating
+by microstructure control. Surface and Coatings Technology 201(6), 2303–2312
+(2006)
+[28] Liu, J., Ke, L.-L., Wang, Y.-S., Yang, J., Alam, F.: Thermoelastic frictional
+contact of functionally graded materials with arbitrarily varying properties.
+International Journal of Mechanical Sciences 63(1), 86–98 (2012)
+[29] Kanit, T., Forest, S., Galliet, I., Mounoury, V., Jeulin, D.: Determination of the
+size of the representative volume element for random composites: statistical and
+numerical approach. International Journal of solids and structures 40(13-14),
+3647–3679 (2003)
+39

@@ -1,0 +1,96 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-15T20:30:50.713774+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 0,
+    "deep_cap": 8,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 13,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2608.10888v1",
+      "source": "arxiv",
+      "title": "Sensor-Informed Per-Point Covariance for Structured-Light 3D Imaging",
+      "abstract": "Per-point uncertainty models are important in structured-light 3D reconstruction for probabilistic registration, fusion, and quality assessment. In practice, however, point-cloud covariances are often modeled as isotropic constants or inferred from local surface geometry and therefore do not explicitly reflect the measurement process. This is a limitation in fringe projection profilometry (FPP), where phase noise propagates through calibrated reconstruction and produces strongly anisotropic 3D uncertainty. This paper presents a sensor-informed first-order method for constructing a per-point 3 x 3 covariance field from experimentally measured phase precision and calibrated phase-to-depth and phase-to-3D mappings. The formulation separates a rank-1 phase-induced covariance from an effective full-rank completion obtained by incorporating fitted lateral image-space perturbation scales. Repeated-plane experiments under fixed imaging conditions show close alignment of the dominant covariance direction with the viewing ray, and consistency between the dominant phase-induced uncertainty scale and scalar depth uncertainty. In G-ICP registration, the proposed covariance substantially improves over a constant isotropic model while providing a sensor-derived uncertainty representation complementary to conventional geometry-based covariances.",
+      "authors": [
+        "Sehoon Tak",
+        "Jae-Sang Hyun"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV"
+      ],
+      "published": "2026-08-11T13:05:22+00:00",
+      "link": "https://arxiv.org/pdf/2608.10888v1",
+      "tags": [
+        "keyword:TF-SAR",
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:TF-SAR",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Sensor-informed per-point covariance for structured-light 3D imaging improves metrology uncertainty modeling",
+      "llm_evidence_cn": "基于传感器的逐点协方差改进结构光三维成像的计量不确定度建模",
+      "llm_evidence": "基于传感器的逐点协方差改进结构光三维成像的计量不确定度建模",
+      "canonical_evidence": "基于传感器的逐点协方差改进结构光三维成像的计量不确定度建模",
+      "llm_tldr_en": "Proposes a sensor-informed method to compute per-point 3D covariance for structured-light 3D reconstruction, explicitly modeling phase noise propagation, which enhances uncertainty quantification in precision metrology.",
+      "llm_tldr_cn": "该文针对结构光三维重建中逐点不确定度模型常被简化为各向同性或仅依赖表面几何的不足，提出一种基于传感器信息的逐点协方差计算方法。该方法利用实验测量的相位精度和标定映射，显式建模相位噪声传播，从而得到各向异性的三维不确定度场。实验验证了该方法在条纹投影轮廓术中的有效性，为精密计量中的置信度评估和点云融合提供了更准确的先验。",
+      "llm_tldr": "该文针对结构光三维重建中逐点不确定度模型常被简化为各向同性或仅依赖表面几何的不足，提出一种基于传感器信息的逐点协方差计算方法。该方法利用实验测量的相位精度和标定映射，显式建模相位噪声传播，从而得到各向异性的三维不确定度场。实验验证了该方法在条纹投影轮廓术中的有效性，为精密计量中的置信度评估和点云融合提供了更准确的先验。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "dimensional metrology for satellite assembly accuracy",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2608.08116v1",
+      "source": "arxiv",
+      "title": "Multiphysics Modeling of Thermo-Viscoelastic Damage in Functionally Graded Abradable Coatings with Probabilistic Geometric Tolerance Analysis",
+      "abstract": "In aircraft engines, functionally graded abradable coatings are used to control blade-tip clearance, but their durability is governed by effects that are often treated separately in existing models, including temperature-dependent viscoelastic softening, progressive damage, deposition-induced microstructural modulation, and geometric tolerances. This study integrates these effects within a unified multiphysics--probabilistic framework. The solved domain is a local through-thickness coating column driven by prescribed strain and temperature histories that include thermal eigenstrain and coating--substrate expansion mismatch. The results show that periodic property modulation increases end-of-cycle damage relative to the monotonic gradient and concentrates the maximum stress within a localized modulation crest. Propagating symmetric geometric tolerances through the coupled solver produces a strongly right-skewed damage distribution and a higher classification-level exceedance probability for the modulated gradient than for the monotonic gradient. This exceedance behavior cannot be obtained from a deterministic analysis performed at nominal geometry. The implementation is verified through spatial and temporal refinement, closed-form unit tests, nested Monte Carlo convergence with Wilson confidence intervals, and a hold-out-validated polynomial response surface. Numerical verification is clearly distinguished from experimental validation, and the simulated case is presented as a generic benchmark rather than an identified material model. The framework links deposition parameters and tolerance bands to damage-exceedance risk, supporting reliability-oriented screening of graded and multilayer coating systems.",
+      "authors": [
+        "Amjad El-Mellouhi",
+        "Yassine Adjal",
+        "Khaled Dhibi",
+        "Fedwa El-Mellouhi"
+      ],
+      "primary_category": "cond-mat.mes-hall",
+      "categories": [
+        "cond-mat.mes-hall",
+        "physics.comp-ph"
+      ],
+      "published": "2026-08-08T12:56:57+00:00",
+      "link": "https://arxiv.org/pdf/2608.08116v1",
+      "tags": [
+        "keyword:TF-SAR",
+        "keyword:sat-asm-prec",
+        "query:TF-SAR"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "probabilistic geometric tolerance analysis method",
+      "llm_evidence_cn": "概率几何公差分析方法",
+      "llm_evidence": "概率几何公差分析方法",
+      "canonical_evidence": "概率几何公差分析方法",
+      "llm_tldr_en": "This paper unifies thermo-viscoelastic damage, microstructural modulation, and probabilistic geometric tolerance analysis for functionally graded abradable coatings. It provides a transferable tolerance analysis method for manufacturing precision control.",
+      "llm_tldr_cn": "本文针对航空发动机中功能梯度可磨耗涂层在温度、粘弹性软化、损伤、沉积微结构和几何公差共同作用下的耐久性建模问题，提出统一的多物理场-概率框架。该框架在局部涂层柱域内同时考虑几何公差与热-力历史。结果表明耦合公差分析能揭示涂层损伤行为。该方法对卫星地面装配中的公差控制具有方法迁移价值。",
+      "llm_tldr": "本文针对航空发动机中功能梯度可磨耗涂层在温度、粘弹性软化、损伤、沉积微结构和几何公差共同作用下的耐久性建模问题，提出统一的多物理场-概率框架。该框架在局部涂层柱域内同时考虑几何公差与热-力历史。结果表明耦合公差分析能揭示涂层损伤行为。该方法对卫星地面装配中的公差控制具有方法迁移价值。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "tolerance analysis and control in satellite ground assembly processes",
+      "matched_requirement_id": "req-9",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}
