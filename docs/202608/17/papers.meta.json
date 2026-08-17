@@ -1,0 +1,39 @@
+{
+  "label": "2026-08-17",
+  "date": "2026-08-17",
+  "generated_at": "2026-08-17T20:47:14",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202608/17/2608.13640v1-laser-metrology-for-precision-alignment-of-transmission-gratings-in-the-redsox-soft-x-ray-polarimeter",
+      "section": "deep",
+      "title_en": "Laser Metrology for Precision Alignment of Transmission Gratings in the REDSoX Soft X-ray Polarimeter",
+      "authors": "Swati Ravi, Alan Garner, Jill Juneau, F. Elio Angile, Ralf K. Heilmann, Herman L. Marshall, Sarah N. T. Heine",
+      "date": "2026-08-13",
+      "pdf": "https://arxiv.org/pdf/2608.13640v1",
+      "score": "8.0",
+      "evidence": "激光计量用于透射光栅精密对准",
+      "tldr": "REDSoX软X射线偏振仪需将48个临界角透射光栅在偏航、俯仰、滚转方向对准至6角分内。本文采用扫描激光反射计量技术，通过三个位置敏感探测器测量法向反射、斜反射和衍射紫外光束，重建每个光栅的三维姿态并提供实时反馈。对含两个光栅的原型组件进行测试，经历振动试验后相对取向保持1角分以内，优于公差17%。该工作为大型透射光栅阵列的组装与验证提供了可重复、可扩展的方法。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "The Rocket Experiment Demonstration of a Soft X-ray Polarimeter (REDSoX) is a NASA sounding-rocket mission designed to perform the first astrophysical spectropolarimetry in the 0.2-0.4 keV energy band. The instrument uses critical-angle transmission (CAT) gratings to disperse incident X-rays onto laterally graded multilayer (LGML) mirrors, requiring 48 individual gratings to be co-aligned to within 6 arcminutes in yaw, pitch, and roll. To support the systematic assembly of the grating array, we adapted a scanning laser-reflection metrology technique in which normal-reflected, angled-reflected, and diffracted ultraviolet laser beams are measured using three position-sensitive detectors (PSDs). Changes in the measured beam positions are used to reconstruct the local yaw, pitch, and roll of each grating and provide real-time feedback during mechanical adjustment. We demonstrate the system using a prototype miniature grating structure containing two gratings. Following co-alignment, the assembly underwent a flight-level random-vibration test followed by a qualification-level sine sweep. Measurements obtained before and after testing showed that the relative grating orientations were retained to within 1 arcminute, less than 17% of the REDSoX co-alignment tolerance. This work establishes a reproducible and scalable approach to the assembly and verification of large transmission-grating arrays for REDSoX and future X-ray spectroscopic instruments.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/17/2608.14244v1-vibration-suppression-in-collaborative-flexible-payload-manipulation-using-passive-force-control",
+      "section": "quick",
+      "title_en": "Vibration Suppression in Collaborative Flexible Payload Manipulation Using Passive Force Control",
+      "authors": "Alaa Abderrahim, Antonio Rosales, Ferdinando Milella, Markku Suomalainen, Shuai Li",
+      "date": "2026-08-14",
+      "pdf": "https://arxiv.org/pdf/2608.14244v1",
+      "score": "7.0",
+      "evidence": "针对柔性载荷精确操作的振动抑制",
+      "tldr": "大型柔性结构在运动中易产生振动，影响精确操作，这是未来聚变堆远程维护等尖端项目的关键难题。本文提出领导者-跟随者双机器人协作操作策略：领导者以整形速度命令引导运动，跟随者通过导纳控制器顺应领导者施加的估计外力。采用等效质量-弹簧-阻尼模型建模，证明合适导纳参数下系统总能量被动耗散，实现振动抑制。仿真与实验验证了方法的有效性，并表明其支持异构机器人协作操作更大更重的柔性载荷。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "In large and heavy structures, vibrations arise during motion, posing significant challenges for precise manipulation. To accomplish the desired motion, control algorithms must effectively suppress these structural vibrations. In cutting edge projects, such as remote maintenance of future fusion energy reactors (tokamaks), the manipulation of this type of structure is defined as a crucial task. This paper presents a control strategy to suppress transverse vibrations in flexible payloads during motion using a collaborative payload manipulation approach. Two different industrial robot arms are arranged in a leader follower configuration for the manipulation strategy. The leader robot guides the motion with shaped velocity commands, while the follower robot ensures compliance with the estimated external forces applied by the leader on the payload through an admittance controller. Unlike existing methods, the proposed approach enables collaborative manipulation of heavier and larger flexible objects, addressing additional challenges such as vibration suppression and heterogeneous robot specifications. The dynamics of the leader follower payload system are modeled using an equivalent mass spring damper model, and it is shown that, with appropriate admittance parameters, the total energy of the system is passively dissipated. A stability proof is also provided. Numerical simulations validate the proposed method, and experimental results demonstrate its effectiveness.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

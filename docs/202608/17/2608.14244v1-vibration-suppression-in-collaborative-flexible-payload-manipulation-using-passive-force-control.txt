@@ -1,0 +1,259 @@
+Title: Vibration Suppression in Collaborative Flexible Payload Manipulation Using Passive Force Control
+
+URL Source: https://arxiv.org/pdf/2608.14244v1
+
+Published Time: Mon, 17 Aug 2026 00:46:08 GMT
+
+Number of Pages: 6
+
+Markdown Content:
+# Vibration Suppression in Collaborative Flexible Payload Manipulation Using Passive Force Control 
+
+Alaa Abderrahim 1,4, Antonio Rosales 1∗, Ferdinando Milella, 2 Markku Suomalainen 1, and Shuai Li 1,3
+
+Abstract — In large and heavy structures, vibrations arise during motion, posing significant challenges for precise manip-ulation. To accomplish the desired motion, control algorithms must effectively suppress these structural vibrations. In cutting-edge projects, such as remote maintenance of future fusion energy reactors (tokamaks), the manipulation of this type of structure is defined as a crucial task. This paper presents a con-trol strategy to suppress transverse vibrations in flexible pay-loads during motion using a collaborative payload manipulation approach. Two different industrial robot arms are arranged in a leader–follower configuration for the manipulation strategy. The leader robot guides the motion with shaped velocity com-mands, while the follower robot ensures compliance with the estimated external forces applied by the leader on the payload through an admittance controller. Unlike existing methods, the proposed approach enables collaborative manipulation of heav-ier and larger flexible objects, addressing additional challenges such as vibration suppression and heterogeneous robot speci-fications. The dynamics of the leader–follower–payload system are modeled using an equivalent mass-spring-damper model, and it is shown that, with appropriate admittance parameters, the total energy of the system is passively dissipated. A stability proof is also provided. Numerical simulations validate the proposed method, and experimental results (see online video [1] ) demonstrate its effectiveness. 
+
+I. I NTRODUCTION 
+
+Massive and considerably large structures that present flexibility due to their size represent a challenge in the context of flexible object manipulation. The manipulation of these objects is essential for ongoing and future cutting-edge projects, such as performing on-orbit services [2] and remote maintenance of fusion energy reactors [3]. The control of robots that manipulate and handle flex-ible materials is not straightforward. Suppressing/damping the oscillations that appear during the manipulation of the flexible object is crucial since these oscillations may damage 
+
+This project has received funding from Research Council of Finland project UNITE: Unifying and optimizing representations in robot learning. This work has been carried out within the framework of the EUROfusion Consortium, funded by the European Union via the Euratom Research and Training Programme (Grant Agreement No 101052200 — EUROfusion). Views and opinions expressed are however those of the author(s) only and do not necessarily reflect those of the European Union or the European Commission. Neither the European Union nor the European Commission can be held responsible for them.  
+
+> 1
+
+A. Abderrahim, A. Rosales, M. Suomalainen, and S. Li are with VTT Technical Research Centre of Finland Ltd, Oulu, Finland.  
+
+> 2
+
+Ferdinando Milella is with the UK Atomic Energy Authority, Oxford-shire, England, United Kingdom. 
+
+> 3
+
+Shuai Li is with the Faculty of Information Technology and Electrical Engineering, University of Oulu, Finland.  
+
+> 4
+
+A. Abderrahim is an electrical engineering student at the, RP Technical University of Kaiserslautern, Germany *Corresponding author: antonio.rosales@vtt.fi 
+
+Fig. 1. (a) Model simulation of the breeding blanket in the conceptual DEMOnstration power plant, and (b) its removal process. 
+
+the object itself and produce disturbances on the robot. The controller must be capable of accomplishing the desired mo-tion task while suppressing/damping oscillations that emerge on the object [4]. Research on the manipulation of flexible objects has mostly been focused on relatively light and small objects, such as flexible beams and metal sheets. In the case of massive structure manipulation, research focuses on proof-of-concepts using simulations [5] and industrial robots for experimental tests [6] since there are no real-scale experi-mental setups. In this paper, we study the manipulation of flexible objects using industrial robots. The aim is to investigate a solution for the manipulation of massive and large objects, such as in-vessel remote handling of breeding blankets, a critical challenge in the Demonstration Fusion Power Plant (DEMO) project [3]. Figure 1 presents a simulation model of the DEMO plant. The blanket segments to be manipulated are longer than 10 meters and weigh more than 80 tonnes, see its size compared with a human in Figure 1.(a). The blankets should be removed after several years of use, when they have already lost their rigidity. Also, the manipulation of the structure is not in free space, see Figure 1.(b), increasing the difficulty of the task. It is envisaged that clearance around blanket segments in future tokamaks will be very small (below 1cm), which makes oscillation damping even more crucial. Recently, a Two-port Mover (TPM) solution has been proposed to overcome the difficulties of blanket segment handling in DEMO [5]. However, the proposed solution (based on a system of cables and pulleys) does not provide the required capability of damping oscillations during the extraction manoeuvre. Therefore, alternative solutions based arXiv:2608.14244v1 [cs.RO] 14 Aug 2026 on the deployment of two fully actuated robotic systems at the upper and lower ports of the tokamak vessel are currently being considered. Although the concept design of a fully actuated TPM is not yet fully defined, the related control problem can be essentially represented as a two-robot cooperative handling of a flexible payload. For a preliminary assessment of the best control strategy to develop for a TPM, we have considered the simple case of two robotic arms with differing capabilities that manipulate a flexible bar, as shown in Figure 2. One heavy-duty arm prioritizes strength and executes high-force tasks, such as lifting, and a second lightweight arm executes high-precision tasks like positioning/alignment. This strategy aligns with the fully actuated TPM concept under investigation. The two robot arms are coordinated using a leader-follower approach based on admittance control. The suppression of oscillations/vibrations on flexible structures during their manipulation with robot arms is mainly addressed by the following two approaches. One approach utilizes online feedback from the oscilla-tions/vibrations of the structure to compute the control input of the robot. Feedback signals such as deflection, rotation, strain, and shear forces are used. One example is adaptive control with online deflection measurements to actively suppress oscillations by adjusting the control gains [7]. One more example is the work presented in [8], where a linear observer is used to estimate information about the vibration, and these estimated variables are used to compute the control law. The second approach to suppress oscillations/vibrations on flexible structures does not utilize any online information about the vibrations/oscillations of the structure to compute the control input. Input shaping is one of these methods, as it involves designing an input command that avoids exciting the resonance frequency of the flexible body [9]. Another example is the PD (Proportional-Derivative) controller, which regulates the position of the flexible beam without requiring information about the vibra-tion [10]. Despite the vast literature addressing the oscillation suppression of flexible structures using two-robot arms, few of the presented approaches are validated experimentally. The integration of admittance and impedance control into leader-follower schemes has been mainly used to manipulate rigid objects. For example, a leader-follower approach to manipulate rigid objects was proposed in [11]. In [12], the authors presented a leader-follower scheme focused on a nuclear industry study. An adaptive impedance control approach for leader-follower robotic systems is presented in [13]. The manipulation of flexible objects is rarely addressed via leader-follower approaches with admittance control. A two-robot collaborative method for manipulating flex-ible structures that does not use online information about the structure vibrations is presented in this paper. The mo-tivation to propose a solution without vibration feedback for computing the control input is the difficulty of plac-ing vibration/deflection sensors on structures like breeding blankets, where sensor placement is not easy due to gamma radiation [6]. We present a leader-follower scheme, where the leader element is an industrial robot that lifts/carries the flexible payload from one side, and the follower element is a lightweight robot holding the payload from the other side. Then, the industrial robot leads the manipulation, moving the payload, while the lightweight robot follows the move-ment. Compliance is added to the lightweight robot via an admittance control that maps the force estimated/measured at the tip of the industrial robot to velocity commands sent to the lightweight robot. The lightweight robot admittance is mainly damping to suppress oscillations on the flexi-ble object. Simulations of the collaborative method using Matlab/Simulink are presented. Experimental tests using a KUKA-quantek robot collaborating with a KUKA-Iiwa robot to move a flexible sheet demonstrate the effectiveness of the proposed scheme. The novelty of this paper lies firstly in the use of a leader-follower scheme with admittance to manipulate flexible objects. Also, compared with most of the leader-follower robot arm schemes, we are considering robots with different load capabilities, allowing the manipulation of heavy objects. Furthermore, a distinctive contribution of this study is that, unlike much of the existing literature, which remains largely simulation-based, we provide experimental validation of the proposed method on a physical setup, demonstrating its prac-tical feasibility and effectiveness in real robotic applications. II. D ESCRIPTION OF THE COLLABORATIVE SYSTEM 
+
+The two-robot collaborative system consists of one heavy-duty robot and one lightweight robot handling a flexible payload. The payload is a flexible rectangular structure. Only translational vibrations on the structure are considered, see Figure 2. The task to be performed is to collaboratively move the flexible structure in the horizontal direction ( y-direction), avoiding oscillations on the structure. The goal is to develop a collaborative control scheme for the robots to achieve the motion task.  
+
+> Fig. 2. Two-robot collaborative system
+
+The proposed collaborative scheme works as follows. The heavy-duty robot leads the collaboration, receiving a veloc-ity/position command in the y-direction. When the heavy-duty robot begins the motion, an interaction force generated by the physical attachment with the flexible structure and the lightweight robot is exerted on its end-effector. This interac-tion force is measured/estimated and sent to the lightweight Fig. 3. Block diagram of collaborative scheme. ˙x∗    
+
+> dis the leader’s velocity command, ˙x2is the follower’s velocity command, and the estimated interaction force is Fest
+
+robot via an admittance controller. Then, the lightweight robot follows the movement of the structure and the leader robot. The details of the design of the collaborative control scheme are presented in the next section III. III. V IBRATION SUPPRESSION VIA PASSIVE FORCE CONTROL 
+
+A block diagram of the proposed collaborative scheme is presented in Figure 3. The leader robot tracks a reference trajectory ˙x∗ 
+
+> d
+
+provided by either an external operator or a path-planning algorithm while grasping, lifting, and pulling the payload from the top side. The leader should behave as if it was carrying the payload alone. On the other hand, the follower robot grasps the payload from the bottom side, and it dynamically adjusts its motion to remain compliant with the leader. Admittance control is used in the follower robot to have compliance. In the classical formulation of admittance control, the input to the admittance block is an external force measured by force/torque sensors, and the output is a velocity command. Here, to account for the vibrations of the flexible body and noise, we adopt a variation inspired by cross-coupling control [14]. Instead of directly using force measurements, we use an elastic model considering the position error between the leader and follower robots, multiply it by a stiffness gain, and treat this signal as an estimated force Fest . This estimated force is fed to the follower admittance controller, whose parameters are chosen to have only mass-damping dynamics without spring effect. Then, the follower generates compliant velocity commands that drive its motion to reduce the position error following the leader more effectively. 
+
+A. Passivity Analysis 
+
+In this subsection, we present a total energy analysis of the follower-payload system to demonstrate how the proposed control strategy suppresses vibrations. The follower robot is modeled as a lumped mass–damper system, and the flexible payload is represented as a mass–spring–damper system. An external force Fleader is applied to the system by the leader robot, see Figure 4. Consider the mass-spring damper representation in Fig-ure 4, the dynamics of the system are given by: 
+
+M ¨x2 = k(x1 − x2) + b( ˙ x1 − ˙x2) − B ˙x2, (1) 
+
+m¨x1 = Fleader − k(x1 − x2) − b( ˙ x1 − ˙x2), (2)  
+
+> Fig. 4. Mass-spring damper system representation of the follower-payload system with force applied from the leader robot
+
+where M , x2, and ˙x2 are the mass, displacement, and velocity of the follower robot, respectively. The mass, dis-placement, and velocity of the payload are m, x1, and 
+
+˙x1, respectively. The constants B and b are the damping coefficients of the follower and the payload, respectively, while k is the spring constant of the payload. The total mechanical energy ET of the system is com-posed of the kinetic energy Kf of the follower robot and the payload Kp, which represents their motion, as well as the elastic potential energy stored in the payload spring Up,which reflects the vibrations. 
+
+ET = Kf + Kp + Up = 12 M ˙x22 + 12 m ˙x21 + 12 ke 2, (3) where e = x1 −x2 is the relative displacement error between payload and follower. Taking the time derivative of the total energy: 
+
+˙ET = M ˙x2 ¨x2 + m ˙x1 ¨x1 + ke ˙e. (4) By substituting the dynamics equations (1) and (2) into the above expression, we obtain: 
+
+˙ET = ˙ x2
+
+ ke + b ˙e − B ˙x2
+
+ + ˙ x1
+
+ Fleader − ke − b ˙e + ke ˙e. (5) After simplification, the total energy rate becomes: 
+
+˙ET = ˙ x1Fleader − B ˙x22 − b ˙e2. (6) For every value for ˙x2 and ˙e, the terms −B ˙x22 − b ˙e2
+
+are negative, corresponding to the energy dissipated by the damping elements of the follower and the payload. The rate of change of the total energy satisfies 
+
+˙ET (t) = ˙ x1(t)Fleader (t) − B ˙x22(t) − b ˙e2(t). (7) Integration of this relation from t = 0 to t = T gives 
+
+ET (T ) = ET (0) + 
+
+Z T
+
+> 0
+
+˙x1(t)Fleader (t) dt 
+
+−
+
+Z T
+
+> 0
+
+ B ˙x22(t) + b ˙e2(t) dt. 
+
+(8) This expression shows that the total mechanical energy at time T is equal to the initial stored energy, plus the energy supplied by the leader through the term R T 
+
+> 0
+
+˙x1Fleader dt ,minus the energy dissipated by the damping elements. In particular, if Fleader ≡ 0, the total energy decreases mono-tonically, ensuring asymptotic decay of vibrations. Furthermore, since 
+
+Z T
+
+> 0
+
+˙x1(t)Fleader (t) dt ≥ − ET (0) , (9) the system satisfies the passivity inequality with input Fleader 
+
+and output ˙x1 [15]. Physically, this means that the energy which can be extracted from the system is always bounded by the initial stored energy. The follower–payload dynamics therefore constitute a passive mapping from the leader’s force input to the payload’s velocity output, ensuring robustness against excitation and providing a natural mechanism for vibration suppression. 
+
+B. Stability Analysis of the Scheme 
+
+From the equation dynamics (1) and (2) we choose the state x = x1 x2 ˙x1 ˙x2
+
+⊤ the force as input u =
+
+Fleader , and the velocities as output y =  ˙x1 ˙x2
+
+⊤, which yields the state–space model 
+
+˙x =
+
+" 0 0 1 00 0 0 1       
+
+> −kmkm−bmbmkM−kMbM−b+BM
+
+#| {z }
+
+> A
+
+x +
+
+" 001
+
+> m
+> 0
+
+#| {z } 
+
+> B
+
+u, y = [ 0 0 1 0 0 0 0 1 ]
+
+| {z }
+
+> C
+
+x, 
+
+The transfer functions are obtained as G(s) = C(sI −
+
+A)−1B +D = 1∆( s)
+
+h M s 2+( B+b)s+kbs +k
+
+i
+
+,where ∆( s) = a3s3 +
+
+a2s2 + a1s + a0, with a3 = M m , a2 = Bm + M b + bm ,
+
+a1 = Bb + ( M + m)k, and a0 = Bk .All coefficients are strictly positive for m, M, k > 0, b ≥
+
+0, and B > 0. According to the Routh-Hurwitz criterion, a cubic polynomial is Hurwitz (i.e., all roots lie in the open left half-plane) if a3, a 2, a 1, a 0 > 0 and a2a1 > a 3a0. Here, this inequality expands to 
+
+ Bm + M b + bm    Bb + M k + mk  − (M m )( Bk ) > 0,
+
+where the underlined terms are substracted. Since all the remaining terms are strictly positive, the inequality is always satisfied. which is always satisfied since every term is pos-itive. Therefore, ∆( s) is Hurwitz, and all poles of G(s) lie in the open left half-plane. It follows that the input–output map Fleader 7 → ( ˙ x1, ˙x2) is BIBO stable .
+
+C. Design of the leader control input 
+
+The leader robot feeds energy to the collaborative system. Thus, a poorly planned reference input might introduce more undesired residual vibrations, decreasing accuracy and compromising the structural integrity [16]. Therefore, we decided to use input shaping to compute the input of the leader. Input-shaping modifies the reference motion/velocity command signal for a dynamic system by effectively split-ting it into multiple sub-signals and introducing specific time delays between them, based on the half-period of the unwanted frequency [17], such that it avoids introducing unwanted oscillations in the system. It is important to note  
+
+> Fig. 5. Block diagram of input-shaping.
+
+that the proposed input shaping method is purely feed-forward. Even though external sensors are required to find the natural frequency of the robot manipulator, it does not require constant feedback. Moreover, input shaping only requires the ”model” of the system in the weakest sense, namely, the natural frequency of the system is sufficient; thus, heavy modeling work can be avoided. To achieve a pure, vibration-free response, we can apply the following shaped input [9]: 
+
+˙x∗
+
+> d
+
+(t) = k0
+
+1 + k0
+
+˙xd(t − T / 2) + 11 + k0
+
+˙xd(t), (10) where ˙xd is the desired velocity reference and ˙x∗ 
+
+> d
+
+is the shaped velocity commands to the leader robot. Here, T is the vibration period and k0 is the damping factor representing the reduction in vibration magnitude over a time interval of 
+
+T / 2. We can express this as 
+
+−k0 y(t − T / 2) = y(t), (11) where y denotes the undesired vibration. Equation (11) rep-resents the physical principle of vibration cancellation arising from the periodic oscillatory nature of the signal, where the cancelling term is introduced with a delay of T/2.This input shaping can be easily implemented using the block diagram shown in Figure 5. An important design consideration is that the shaping coefficients must satisfy k1 + k2 = 1 , ensuring that no loss occurs in the velocity reference. The two main parameters of an input shaper are the time delay T / 2 and the damping factor k0. These parameters can be determined after one movement of the payload using optical trackers, see section IV. A good tuning would, in theory, cancel the vibrations entirely. But in practice, finding the exact values is very difficult, since the system response depends on many external factors, such as delays in the control system. Selecting values of the sufficiently close parameters still leads to a significant, though not complete, reduction in vibrations. 
+
+D. Force estimator 
+
+The force estimator (see Figure 3) ensures that the virtual force used as input to the admittance controller is a smoother representation of the interaction force at the follower manip-ulator, which in turn enables the controller to drive the pose error between the robots toward zero, effectively restoring the estimated interaction force to its initial value (zero in this case). The gain Ke of the force estimator is identified experimentally. The flexible body is rigidly attached to both robots, and only the leader is commanded to move. Then, the ratio of the measured force at the tip of the follower and the corresponding position error ∆x is evaluated as Ke = F/ ∆x. For sufficiently small displacements, this ratio 
+
+Ke remains approximately constant, and its value is adopted as the estimator gain. A force estimator provides a force signal with lower noise than the force sensor attached to the follower robot. 
+
+E. Follower control architecture 
+
+An admittance controller governs the follower robot to maintain compliance with the leader’s motion. The admit-tance controller receives the interaction force provided by the force estimator (section III-D) and it generates a velocity command for the follower robot that makes it follow the leader, i.e., the follower robot is compliant to the leader robot. The admittance controller can be defined as ˙x2 
+
+> Fest
+
+=1/(M s + B), where only the virtual mass M and damping 
+
+B are considered, see [18]. As a result, the follower does not resist the leader’s motion through any elastic restoring force, but rather responds according to the selected inertial and damping parameters. The leader dictates the motion via the interaction force Fest , and the follower adapts through the admittance law and contributes to vibration suppression by being passive. Note that the admittance pole is at ωa =
+
+B/M . One should select the values of B and M that make 
+
+ωa smaller than the lowest natural frequency at which the payload vibrates to suppress vibrations. Also, the selection of 
+
+B and M (ωa) should take into account the velocity control-loop bandwidth of the follower robot. To accurately track the velocity commands, the value of ωa should not be bigger than the velocity control-loop bandwidth. If the velocity control bandwidth of the follower robot is known, the maximum velocity ˙x2max that the follower can track can be estimated. And, if the maximum interaction force Fest max is known, the value of B can be estimated as 
+
+B ≈ Festmax 
+
+> ˙x2max
+
+, and M can be computed as M = B/ω a.IV. S IMULATION AND EXPERIMENTS 
+
+The collaborative method was tested in a simulation using Matlab/Simulink software. The Simscape tool was used for simulating the flexible structure using its multibody blocks. The robot leader and follower were simulated using transfer function blocks containing the dynamics of the robot’s ve-locity controllers. The elastic model was implemented as in Figure 3 to estimate the force. The values of the admittance parameters, and input shaping gains used in simulation are 
+
+M = 0 .01 [kg], B = 6 [Ns/m], and K = 0 [N/m], and 
+
+K1 = 0 .49 and K2 = 0 .51 , respectively. The experimental setup is composed of a KUKA Quantek robot (leader) lifting a flexible acrylic sheet from one side, and an iiwa robot (follower) holding the other side of the flexible body. An NDI Vega XT position sensor was used to measure the vibrations of the flexible body. Six markers were attached along the flexible beam, with the first and last mark-ers defining a reference segment. The vibration amplitude was computed as the sum of the distances of the intermediate markers from this reference segment. Measurements were recorded both during and after the motion to capture the                            
+
+> Fig. 6. Experimental setup TABLE I COMPARISON OF CONTROL STRATEGIES IN SIMULATION AND EXPERIMENT .Case Control type Highest amp. [mm] Settling time [s] Amp. red. [%] Simulation None 28.8 4.65 –Admittance 15.6 3.57 45.8 Input-shaping 16.5 3.57 42.7 Adm. + IS 5.8 1.26 79.9 Experiment None 26.3 2.38 –Admittance 11.4 1.37 56.7 Input-shaping 19.6 1.2 25.5 Adm. + IS 5.4 1.18 79.5
+
+transient and residual vibrations. The sensor provides data at a sampling frequency of up to 60 Hz. The experimental test was performed using the admittance parameters M =0.03 [kg], B = 3 [Ns/m], and K = 0 [N/m], and input shaping gains K1 = 0 .25 and K2 = 0 .75 
+
+The testing scenario is to move the payload 10 cm in 0.5 seconds, a considerably fast and challenging motion that likely induces more vibrations. The scenario was tested in simulations and with the real robots using four different control strategies, recording the payload vibrations. Figs. 7 and 8 show the vibrations recorded from sim-ulations and experiments, respectively. The vertical black lines in the figures denote the time window of the transient motion. The four control strategies are compared in Table I using metrics such as the highest amplitude (during transient motion), settling time, and amplitude reduction percentage (compared with no control case). The percentage of reduction is defined as Amp. red. (%) = Anone − Acontrol 
+
+Anone 
+
+× 100 ,
+
+where A denotes the peak vibration amplitude. From Figs. 7 and 8, and Table I, one can observe that the response shows slowly decaying vibrations without control. Adding control clearly improves both peak amplitude and settling time. In simulation, admittance provides slightly better suppression than input shaping. In the laboratory, input-shaping is less effective at reducing peak amplitude time [s] 7 8 9 10 11 12 13 14 15 16 deflection [m] 00.005 0.01 0.015 0.02 0.025 0.03 Without Control Admittance Control Input-shaping Admittance & Input-shaping motion Fig. 7. Simulation results of the vibrations of the flexible beam over time with different control methods time [s] 7 8 9 10 11 12 13 14 15 16 deflection [m] 00.005 0.01 0.015 0.02 0.025 0.03 Without Control Admittance Control Input-shaping Admittance & Input-shaping motion 
+
+Fig. 8. Experimental results of the vibrations of the flexible beam over time with different control methods 
+
+(only 25 .5% ) but still yields faster settling than admittance control. This is because it avoids exciting the mode —an effect that becomes evident after about T / 2 of the vibration period— while admittance control introduces damping from the beginning of the motion. Pairing input shaping with admittance yields the most effective suppression of resid-ual vibrations, achieving roughly ≈ 80% peak reduction. Differences between simulation and experiment arise from unmodeled dynamics and sensor/actuator limits. V. C ONCLUSION 
+
+In this work, we present an effective solution for suppress-ing vibrations during the collaborative handling of a flexible payload by two heterogeneous manipulators. We achieved this by using an admittance controller in conjunction with a force estimator and an input shaper. This dissipates potential energy (vibrations) and reduces excitation of the dominant mode. Across simulation and lab trials, the combined strategy provided the largest vibration decay. The proposed approach aims to provide a solution for the manipulation of massive and large objects, such as in-vessel remote handling of breeding blankets. For future work, a 3D-printed model of the breeding blanket will be tested as the flexible payload, and various obstacle scenarios can be tested. The extension of our method to three dimensions is expected. Therefore, separate admittance parameters are required for each linear axis and for each rotation axis, depending on the system’s minimum velocities. Our current method uses industrial robots controlled in Cartesian space. Then, the application of our method in larger systems controlled in Cartesian space, such as cranes, is possible. REFERENCES [1] A. Abderrahim. (2025) Vibration suppression in collaborative flexible payload manipulation using passive force control. YouTube. [Online]. Available: https://www.youtube.com/watch?v=QEHIIYiPbew [2] Y. Kawai, T. Endo, and F. Matsuno, “Cooperative control of large flexible space structure by two planar robots,” IET Control Theory & Applications , vol. 15, no. 5, pp. 771–783, 2021. [3] O. Crofts, A. Loving, M. Torrance, S. Budden, B. Drumm, T. Treme-thick, D. Chauvin, M. Siuko, W. Brace, V. Milushev, M. Mittwollen, T. Lehmann, F. Rauscher, G. Fischer, P. Pagani, Y. Wang, C. Baars, and A. Vale, “Eu demo remote maintenance system development during the pre-concept design phase,” Fusion Engineering and Design , vol. 179, pp. 113 – 121, 2022. [4] A. Cherubini, Manipulation of Flexible Objects . Berlin, Heidelberg: Springer Berlin Heidelberg, 2020, pp. 1–7. [5] P. Tikka, H. Saarinen, H. Martikainen, W. Brace, and J. Lyytinen, “Simulated installation of a breeding blanket segment in a two-port mover context,” Fusion Engineering and Design , vol. 215, p. 114989, 2025. [6] S. Herschmann, F. Milella, M. Torrance, S. Wainwright, and O. Crofts, “Investigation into optimal feedforward control for remote handling of tokamak breeding blankets,” Fusion Engineering and Design , vol. 202, p. 114392, 2024. [7] T. Lee, S. Ge, and Z. Wang, “Adaptive robust controller design for multi-link flexible robots,” Mechatronics , vol. 11, no. 8, pp. 951–967, 2001. [8] A. Tavasoli, M. Eghtesad, and H. Jafarian, “Two-time scale control and observer design for trajectory tracking of two cooperating robot manipulators moving a flexible beam,” Robotics and Autonomous Systems , vol. 57, no. 2, pp. 212–221, 2009, selected papers from 9th International Conference on Intelligent Autonomous Systems (IAS-9). [9] J. Kotaniemi, J. Saukkoriipi, S. Li, and M. Suomalainen, “Data driven approach to input shaping for vibration suppression in a flexible robot arm,” in 2025 IEEE 8th International Conference on Soft Robotics (RoboSoft) . IEEE, 2025, pp. 1–6. [10] Y. Liu and D. Sun, “Stabilizing a flexible beam handled by two manipulators via pd feedback,” IEEE Transactions on Automatic Control , vol. 45, no. 11, pp. 2159–2164, 2000. [11] M. Jin, Z. Zhang, F. Ni, and H. Liu, “Cartesian space synchronous impedance control of two 7-dof robot arm manipulators,” in 2014 IEEE/RSJ International Conference on Intelligent Robots and Systems ,2014, pp. 4750–4756. [12] X. Zhao, Y. Tang, Y. Yang, and Q. Lv, “The leader-follower joint space synchronous impedance control for coordinated operation in nuclear industry,” in 2023 3rd International Conference on Computer, Control and Robotics (ICCCR) , 2023, pp. 277–281. [13] M. Satvati, H. Karimpour, K. Torabi, and M. Motaharifar, “Adaptive impedance control in master-slave robotic systems: Real-time esti-mation with update of reference impedance coefficients,” European Journal of Control , vol. 85, p. 101274, 2025. [14] D. Sun, R. Lu, J. K. Mills, and C. Wang, “Synchronous tracking control of parallel manipulators using cross-coupling approach,” The International Journal of Robotics Research , vol. 25, no. 11, pp. 1137– 1147, 2006. [15] B. Brogliato, R. Lozano, B. Maschke, O. Egeland et al. , “Dissipative systems analysis and control,” Theory and applications , vol. 2, pp. 2–5, 2007. [16] A. H. Khan and S. Li, “Sliding mode control with pid sliding surface for active vibration damping of pneumatically actuated soft robots,” 
+
+IEEE access , vol. 8, pp. 88 793–88 800, 2020. [17] N. C. Singer and W. P. Seering, “Preshaping command inputs to reduce system vibration,” Journal of dynamic systems, measurement, and control , vol. 112, no. 1, pp. 76–82, 1990. [18] A. Q. Keemink, H. Van der Kooij, and A. H. Stienen, “Admittance control for physical human–robot interaction,” The International Jour-nal of Robotics Research , vol. 37, no. 11, pp. 1421–1444, 2018.

@@ -1,0 +1,104 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-17T20:43:02.852464+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 1,
+    "deep_cap": 8,
+    "deep_selected": 1,
+    "quick_candidates": 1,
+    "quick_skim_target": 13,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2608.13640v1",
+      "source": "arxiv",
+      "title": "Laser Metrology for Precision Alignment of Transmission Gratings in the REDSoX Soft X-ray Polarimeter",
+      "abstract": "The Rocket Experiment Demonstration of a Soft X-ray Polarimeter (REDSoX) is a NASA sounding-rocket mission designed to perform the first astrophysical spectropolarimetry in the 0.2-0.4 keV energy band. The instrument uses critical-angle transmission (CAT) gratings to disperse incident X-rays onto laterally graded multilayer (LGML) mirrors, requiring 48 individual gratings to be co-aligned to within 6 arcminutes in yaw, pitch, and roll. To support the systematic assembly of the grating array, we adapted a scanning laser-reflection metrology technique in which normal-reflected, angled-reflected, and diffracted ultraviolet laser beams are measured using three position-sensitive detectors (PSDs). Changes in the measured beam positions are used to reconstruct the local yaw, pitch, and roll of each grating and provide real-time feedback during mechanical adjustment. We demonstrate the system using a prototype miniature grating structure containing two gratings. Following co-alignment, the assembly underwent a flight-level random-vibration test followed by a qualification-level sine sweep. Measurements obtained before and after testing showed that the relative grating orientations were retained to within 1 arcminute, less than 17% of the REDSoX co-alignment tolerance. This work establishes a reproducible and scalable approach to the assembly and verification of large transmission-grating arrays for REDSoX and future X-ray spectroscopic instruments.",
+      "authors": [
+        "Swati Ravi",
+        "Alan Garner",
+        "Jill Juneau",
+        "F. Elio Angile",
+        "Ralf K. Heilmann",
+        "Herman L. Marshall",
+        "Sarah N. T. Heine"
+      ],
+      "primary_category": "astro-ph.IM",
+      "categories": [
+        "astro-ph.IM",
+        "astro-ph.HE"
+      ],
+      "published": "2026-08-13T18:00:00+00:00",
+      "link": "https://arxiv.org/pdf/2608.13640v1",
+      "tags": [
+        "keyword:TF-SAR",
+        "keyword:sat-asm-prec",
+        "query:TF-SAR",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "laser metrology for precision alignment of transmission gratings",
+      "llm_evidence_cn": "激光计量用于透射光栅精密对准",
+      "llm_evidence": "激光计量用于透射光栅精密对准",
+      "canonical_evidence": "激光计量用于透射光栅精密对准",
+      "llm_tldr_en": "Presents a scanning laser-reflection metrology technique to align 48 transmission gratings for the REDSoX X-ray polarimeter, achieving sub-arcminute precision.",
+      "llm_tldr_cn": "针对REDSoX软X射线旋光仪需要将48个透射光栅在偏航、俯仰和滚动方向上对准到6角分以内的需求，本文提出一种扫描激光反射计量技术，利用三个位置敏感探测器测量紫外激光的反射和衍射光束，实现高精度对准，支持光栅阵列的系统化装配。",
+      "llm_tldr": "针对REDSoX软X射线旋光仪需要将48个透射光栅在偏航、俯仰和滚动方向上对准到6角分以内的需求，本文提出一种扫描激光反射计量技术，利用三个位置敏感探测器测量紫外激光的反射和衍射光束，实现高精度对准，支持光栅阵列的系统化装配。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "dimensional metrology for satellite assembly accuracy",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2608.14244v1",
+      "source": "arxiv",
+      "title": "Vibration Suppression in Collaborative Flexible Payload Manipulation Using Passive Force Control",
+      "abstract": "In large and heavy structures, vibrations arise during motion, posing significant challenges for precise manipulation. To accomplish the desired motion, control algorithms must effectively suppress these structural vibrations. In cutting edge projects, such as remote maintenance of future fusion energy reactors (tokamaks), the manipulation of this type of structure is defined as a crucial task. This paper presents a control strategy to suppress transverse vibrations in flexible payloads during motion using a collaborative payload manipulation approach. Two different industrial robot arms are arranged in a leader follower configuration for the manipulation strategy. The leader robot guides the motion with shaped velocity commands, while the follower robot ensures compliance with the estimated external forces applied by the leader on the payload through an admittance controller. Unlike existing methods, the proposed approach enables collaborative manipulation of heavier and larger flexible objects, addressing additional challenges such as vibration suppression and heterogeneous robot specifications. The dynamics of the leader follower payload system are modeled using an equivalent mass spring damper model, and it is shown that, with appropriate admittance parameters, the total energy of the system is passively dissipated. A stability proof is also provided. Numerical simulations validate the proposed method, and experimental results demonstrate its effectiveness.",
+      "authors": [
+        "Alaa Abderrahim",
+        "Antonio Rosales",
+        "Ferdinando Milella",
+        "Markku Suomalainen",
+        "Shuai Li"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "eess.SY"
+      ],
+      "published": "2026-08-14T12:24:47+00:00",
+      "link": "https://arxiv.org/pdf/2608.14244v1",
+      "tags": [
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "vibration suppression for precise manipulation of flexible payloads",
+      "llm_evidence_cn": "针对柔性载荷精确操作的振动抑制",
+      "llm_evidence": "针对柔性载荷精确操作的振动抑制",
+      "canonical_evidence": "针对柔性载荷精确操作的振动抑制",
+      "llm_tldr_en": "Addresses vibration-induced precision loss in manipulating large flexible structures; proposes passive force control with two collaborative robots and shaped velocity commands to suppress transverse vibrations; experiments show improved precision, transferable to satellite assembly.",
+      "llm_tldr_cn": "为解决大型柔性结构运动中振动影响精确操作的问题，本文提出了一种基于被动力控制的协作操作策略。采用主从式两台工业机器人，通过整形速度指令引导运动并抑制柔性载荷的横向振动。实验验证了该方法能有效抑制振动，提升操作精度。该技术可迁移应用于卫星地面装配中大型柔性部件的精确操控。",
+      "llm_tldr": "为解决大型柔性结构运动中振动影响精确操作的问题，本文提出了一种基于被动力控制的协作操作策略。采用主从式两台工业机器人，通过整形速度指令引导运动并抑制柔性载荷的横向振动。实验验证了该方法能有效抑制振动，提升操作精度。该技术可迁移应用于卫星地面装配中大型柔性部件的精确操控。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "precision control in satellite assembly process",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
