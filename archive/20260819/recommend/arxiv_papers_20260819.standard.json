@@ -1,0 +1,158 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-19T21:00:28.983233+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 0,
+    "deep_cap": 8,
+    "deep_selected": 0,
+    "quick_candidates": 3,
+    "quick_skim_target": 13,
+    "quick_selected": 3
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2608.17691v1",
+      "source": "arxiv",
+      "title": "Force-Based Offset Estimation for Keyed Peg-in-Hole Assembly Using Local Gaussian Process Regression",
+      "abstract": "Key-keyway assembly tasks impose strict geometric constraints and are highly sensitive to grasp pose deviations in uncertain environments. This work presents a force-based offset estimation method for keyed peg-in-hole assembly, embedded within a perception-validation-insertion pipeline. Residual misalignment is estimated directly from wrist force/torque measurements using a local KNN-Gaussian Process hybrid regressor. The framework distinguishes between two contact regimes, hard collision and guided chamfer insertion, and routes inference to a dedicated model for each. Regime classification is achieved via a contact-window duration threshold. KNN combined with a deterministic search using the results of a post-grasp monocular visual validation contributes to an increased accuracy of the regressor model. This approach achieves accurate radial offset estimation in chamfered peg insertion, during a keypoint detection-based pick and place application. Experiments using the integrated force/torque sensor of a collaborative robot arm showed an increase in insertion success rate from 67% to 87% after the pipeline was applied.",
+      "authors": [
+        "Chandra Yuvesh Aubeeluck",
+        "Abilash Philip Madavath",
+        "Augustin Raju",
+        "Nicolas Pyschny",
+        "Felix Hackelöer",
+        "Florian Zwanzig"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-08-18T12:06:35+00:00",
+      "link": "https://arxiv.org/pdf/2608.17691v1",
+      "tags": [
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "Force-based misalignment estimation for peg-in-hole assembly provides precision alignment technique applicable to satellite component assembly",
+      "llm_evidence_cn": "基于力的销孔装配错位估计为卫星部件装配提供精密对准技术",
+      "llm_evidence": "基于力的销孔装配错位估计为卫星部件装配提供精密对准技术",
+      "canonical_evidence": "基于力的销孔装配错位估计为卫星部件装配提供精密对准技术",
+      "llm_tldr_en": "The paper addresses misalignment in keyed peg-in-hole assembly by using wrist force/torque with a KNN-Gaussian process hybrid regressor to estimate offsets, enabling precise insertion. It provides a transferable technique for high-precision component alignment.",
+      "llm_tldr_cn": "该文针对键槽销孔装配中抓取位姿偏差导致的对准难题，提出了利用腕部力/力矩信号的偏移估计方法。方法采用局部KNN-高斯过程混合回归器，通过接触窗口时长阈值区分硬碰撞与引导倒角插入两种状态，并分别进行偏移推断。实验表明该方法能有效估计残余错位，提升了精密装配的对准精度，为卫星部件等高精度装配场景提供了可迁移的力觉修正技术。",
+      "llm_tldr": "该文针对键槽销孔装配中抓取位姿偏差导致的对准难题，提出了利用腕部力/力矩信号的偏移估计方法。方法采用局部KNN-高斯过程混合回归器，通过接触窗口时长阈值区分硬碰撞与引导倒角插入两种状态，并分别进行偏移推断。实验表明该方法能有效估计残余错位，提升了精密装配的对准精度，为卫星部件等高精度装配场景提供了可迁移的力觉修正技术。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "alignment and integration techniques for high precision satellite assembly",
+      "matched_requirement_id": "req-8",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    },
+    {
+      "id": "2608.14031v1",
+      "source": "arxiv",
+      "title": "Demonstration of Space Robot Teleoperation over a Lossy and Delayed Network using ATMOS",
+      "abstract": "We present a demonstration showcasing the Autonomy Testbed for Multi-purpose Orbiting Systems (ATMOS), a planar spacecraft-analog robot designed for hardware-in-the-loop evaluation of guidance and control strategies in microgravity-like conditions. Using ATMOS as the physical test platform, we investigate the design, analysis, and performance evaluation of control architectures for remotely operated spacecraft under round-trip communication delays. In this work, we develop and experimentally validate a control strategy that combines state prediction and trajectory tracking control to perform a docking maneuver, accounting for time-varying random communication latency between ground operators and the ATMOS system. The demonstration includes a long-distance remote control experiment between Seoul and Stockholm, introducing realistic intercontinental delays and variability. The results highlight the capability of ATMOS to support rapid, reliable, and cost-effective testing of spacecraft teleoperation concepts, establishing a first step toward robust validation of on-orbit operations in microgravity-like environments.",
+      "authors": [
+        "Inkyu Jang",
+        "Gregorio Marchesini",
+        "Nicola De Carli",
+        "Byeongjun Kim",
+        "Sunwoo Hwang",
+        "Dabin Kim",
+        "Elias Krantz",
+        "Youngkyoung Kong",
+        "Frank J. Jiang",
+        "Annika Wong",
+        "Pedro Roque",
+        "Prasetyo W. L. Sanjaya",
+        "Nicola Bastianello",
+        "Mani H. Dhullipalla",
+        "Karl H. Johansson",
+        "Hyungbo Shim",
+        "Dimos V. Dimarogonas",
+        "H. Jin Kim"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "eess.SY",
+        "math.OC"
+      ],
+      "published": "2026-08-14T07:20:40+00:00",
+      "link": "https://arxiv.org/pdf/2608.14031v1",
+      "tags": [
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Ground testbed for space robot, microgravity-like planar robot platform",
+      "llm_evidence_cn": "用于空间机器人的地面试验台，微重力模拟平面机器人平台",
+      "llm_evidence": "用于空间机器人的地面试验台，微重力模拟平面机器人平台",
+      "canonical_evidence": "用于空间机器人的地面试验台，微重力模拟平面机器人平台",
+      "llm_tldr_en": "Demonstrates teleoperation of a space robot using ATMOS, a planar spacecraft-analog testbed in microgravity-like conditions, under lossy and delayed networks. The control combines state prediction and trajectory tracking for docking. Results validate performance under communication delays.",
+      "llm_tldr_cn": "针对空间机器人地面遥操作在有损和延迟网络下的性能验证问题，本文利用ATMOS平面航天器模拟平台在微重力类似条件下开展实验。提出结合状态预测与轨迹跟踪的控制策略以应对时变通信延迟。实验结果表明该策略能在延迟条件下实现对接操作，为空间机器人地面测试提供了参考。",
+      "llm_tldr": "针对空间机器人地面遥操作在有损和延迟网络下的性能验证问题，本文利用ATMOS平面航天器模拟平台在微重力类似条件下开展实验。提出结合状态预测与轨迹跟踪的控制策略以应对时变通信延迟。实验结果表明该策略能在延迟条件下实现对接操作，为空间机器人地面测试提供了参考。",
+      "llm_tags": [
+        "query:grav-offload"
+      ],
+      "matched_query_tag": "query:grav-offload",
+      "matched_query_text": "Ground testbed for space robot gravity compensation",
+      "matched_requirement_id": "req-13",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.17962v1",
+      "source": "arxiv",
+      "title": "PRISM: Precision and contact-rich Real-world Industrial Skill dataset with Multimodal sensing",
+      "abstract": "Recent progress in robotic learning has been fueled by large-scale datasets collected in everyday environments. However, most existing datasets emphasize short-horizon, low-contact tasks such as pick-and-place, and therefore do not capture the precision control, force/torque or tactile regulation, and multimodal feedback required for industrial assembly. To address this gap, we introduce PRISM, a large-scale multimodal dataset for contact-rich industrial operations. The dataset spans more than 25 manipulation tasks (e.g., electronic components plug/unplug, conveyor-based sorting) and covers diverse mechanical constraints. PRISM includes more than 5,000 trajectories totaling 45 hours of teleoperated demonstrations, recorded using synchronized multi-view RGB-D, force/torque, tactile, and robot-state measurements. In contrast to datasets collected in household or laboratory settings, PRISM provides a realistic benchmark for multimodal perception and control under high-precision industrial constraints, and serves as a foundation for contact-rich, generalizable manipulation in real-world manufacturing environments. The dataset is open-sourced at: https://tengbo-yu.github.io/PRISM/",
+      "authors": [
+        "Tengbo Yu",
+        "Jiahao Wu",
+        "Hanning Wang",
+        "Rui Chen",
+        "Chuanhou Liu",
+        "Chuang Sun",
+        "Hangxin Liu"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-08-18T16:16:23+00:00",
+      "link": "https://arxiv.org/pdf/2608.17962v1",
+      "tags": [
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "Dataset of precision, contact-rich industrial assembly tasks with force/torque/tactile modalities, supporting precision control in assembly",
+      "llm_evidence_cn": "提供精密接触丰富工业装配任务的多模态数据集，支持装配精度控制",
+      "llm_evidence": "提供精密接触丰富工业装配任务的多模态数据集，支持装配精度控制",
+      "canonical_evidence": "提供精密接触丰富工业装配任务的多模态数据集，支持装配精度控制",
+      "llm_tldr_en": "PRISM introduces a large-scale multimodal dataset for contact-rich industrial assembly, capturing precision control, force/torque, and tactile feedback across 25+ tasks, enabling learning of precision assembly skills.",
+      "llm_tldr_cn": "该文针对现有机器人数据集缺乏精密装配所需力/力矩与触觉反馈的问题，构建了大规模多模态工业操作数据集PRISM。数据集包含超过25种接触丰富任务（如电子元件插拔），拥有5000多条轨迹共45小时遥操作演示。该数据集为学习精密装配技能提供了关键训练资源，有望迁移用于卫星地面装配等需要严格精度控制的场景。",
+      "llm_tldr": "该文针对现有机器人数据集缺乏精密装配所需力/力矩与触觉反馈的问题，构建了大规模多模态工业操作数据集PRISM。数据集包含超过25种接触丰富任务（如电子元件插拔），拥有5000多条轨迹共45小时遥操作演示。该数据集为学习精密装配技能提供了关键训练资源，有望迁移用于卫星地面装配等需要严格精度控制的场景。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "precision control in satellite assembly process",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

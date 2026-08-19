@@ -1,0 +1,349 @@
+Title: Force-Based Offset Estimation for Keyed Peg-in-Hole Assembly Using Local Gaussian Process Regression
+
+URL Source: https://arxiv.org/pdf/2608.17691v1
+
+Published Time: Wed, 19 Aug 2026 00:54:05 GMT
+
+Number of Pages: 6
+
+Markdown Content:
+# Force-Based Offset Estimation for Keyed Peg-in-Hole Assembly Using Local Gaussian Process Regression 
+
+Chandra Yuvesh Aubeeluck 1, Abilash Philip Madavath 1, Augustin Raju 1
+
+Nicolas Pyschny 1, Felix Hackel¨ oer 1, Florian Zwanzig 1
+
+> © 2026 IEEE. Personal use of this material is permitted. Permission from IEEE must be obtained for all other uses, in any current or future media, including reprinting/republishing this material for advertising or promotional purposes, creating new collective works, for resale or redistribution to servers or lists, or reuse of any copyrighted component of this work in other works.
+
+Abstract — Key–keyway assembly tasks impose strict geo-metric constraints and are highly sensitive to grasp pose deviations in uncertain environments. This work presents a force-based offset estimation method for keyed peg-in-hole assembly, embedded within a perception–validation–insertion pipeline. Residual misalignment is estimated directly from wrist force/torque measurements using a local KNN–Gaussian Process hybrid regressor. The framework distinguishes between two contact regimes, hard collision and guided chamfer in-sertion, and routes inference to a dedicated model for each. Regime classification is achieved via a contact-window duration threshold. KNN combined with a deterministic search using the results of a post-grasp monocular visual validation contributes to an increased accuracy of the regressor model. This approach achieves accurate radial offset estimation in chamfered peg insertion, during a keypoint detection-based pick and place ap-plication. Experiments using the integrated force/torque sensor of a collaborative robot arm showed an increase in insertion success rate from 67% to 87% after the pipeline was applied. 
+
+keywords: machine learning, robot dynamics and con-trol, complex assembly, precision placement 
+
+I. I NTRODUCTION AND RELATED WORK 
+
+[1] Precision placement in robotics is classically repre-sented by the peg-in-hole problem, where a component must be inserted into a geometrically corresponding counterpart under tight tolerances. Keyed hole setups, such as motor shafts and torque-driven components, extend this problem by imposing additional circumferential orientation constraints, making validated insertion without collision considerably more demanding [2]. When geometric variability is present, systems typically rely on visual pose estimation and force feedback. AI-models for pose-estimation provide reliable pre-grasp localization [3], while two-stage pipelines using external cameras refine object pose via robot kinematics and multi-view keypoint consistency [4], [5]. During insertion, interaction between the peg and hole generates characteristic force/torque (F/T) signatures that encode contact-state and residual misalignment information [6]. This work investi-gates continuous radial and angular offset estimation from wrist F/T signatures and the integration of post-grasp pose validation into trajectory planning, enabling deterministic insertion correction rather than heuristic search.            
+
+> *This work is supported by the InnoFaktur project through the European Regional Development Fund (EFRE 20500002).
+> 1Institute of Mechanical Engineering, Cologne Univer-sity of Applied Sciences, Campus Gummersbach, Germany
+
+chandra yuvesh.aubeeluck@th-koeln.de Stacking Precision Placement 
+
+> Random Geometry Keyed-Hole
+
+Fig. 1: Insertion process with keyed circular hole. 
+
+A. Related Work 
+
+Force-based peg-in-hole alignment methods can be cate-gorized into analytical contact models, contact-state estima-tion, or active search strategies driven by deterministic F/T feedback. Early analytical approaches, such as the closed-form three-point-contact alignment model, estimate insertion misalignment using known geometry and calibrated friction parameters [1], while more recent learning-based methods extend force-profile interpretation toward contact-manifold modelling and data-driven insertion correction [7]. Sup-port Vector Machines (SVMs) and Gaussian Process (GP)-based approaches have demonstrated effective contact-state estimation and force-manifold learning. In the context of keyed circular assemblies, Huang et al. [8] achieved 93–95% deviation-state classification accuracy using GA-optimized SVMs trained across 180 samples per offset condition under discrete insertion states. In parallel, GP Regression (GPR) has been investigated for contact-force modelling and force-aware Model Predictive Control (MPC), to improve motion regulation under uncertainty [9]. Together, these works moti-vate local GPR-based continuous insertion-offset estimation from contact wrench signatures and pose-informed feedback. 
+
+B. Problem Statement 
+
+The considered use-case is an industrial autonomous re-assembly process in which cylindrical discs with off-centered keyed holes and eccentric profiles are stacked onto a keyed shaft, as illustrated in Fig. 1, using a 6-axis collaborative robot arm. The shaft includes a chamfer and a delayed key engagement, requiring correct alignment during initial inser-tion before final keyway coupling. The peg–hole clearance is arXiv:2608.17691v1 [cs.RO] 18 Aug 2026 (a) Rotational and radial error, centered hole. 
+
+(b) Radial error, off-centered hole. 
+
+(c) Rotational and radial er-ror, off-centered hole, me-chanically fitted. 
+
+(d) Rotational error, off-centered hole, mechanically fitted. 
+
+Fig. 2: Representative grasp-induced error configurations. Blue cross-hair: TCP; red cross-hair: keyed hole axis. only 0.6 mm . In practice, grasping in cluttered environments introduces residual pose errors that propagate into the inser-tion stage. Representative grasp-induced error configurations are shown in Fig. 2. Since the key engages only after full insertion, common search strategies such as spiral and key-way search, cannot be applied during initial contact. Force-based reasoning therefore becomes the primary mechanism for detecting misalignment, but distinguishing hard collisions from chamfer-guided insertion is non-trivial. 
+
+Research Questions. This work therefore addresses the following research questions for chamfered delayed key– keyway insertion: ( RQ1 ) Can a regressor model estimate continuous planar insertion misalignment directly from wrist F/T measurements across hard-collision and chamfer-guided insertion contact regimes? ( RQ2 ) Can post-grasp visual pose validation improve force-guided insertion correction and trajectory re-parameterization under contact-rich assembly conditions? 
+
+Contributions. This work presents: (1) a local KNN– GP force-to-offset regression framework that estimates con-tinuous residual planar misalignment for trajectory re-parameterization using visual post-grasp pose validation; and (2) a dual-regime insertion architecture distinguishing hard-collision and guided-insertion contact conditions during chamfer-guided keyed assembly. II. P OSE -V ALIDATED PLACEMENT PIPELINE 
+
+The pipeline integrates monocular pose estimation, closed-loop planar pose regulation, and probabilistic force-based offset inference in three stages: (1) pre-grasp pose estimation, (2) post-grasp planar pose validation, and (3) F/T -based trajectory correction. The pipeline is illustrated in Fig. 3. 
+
+A. Pre-Grasp Pose Estimation 
+
+A custom-trained YOLOv8 pose-estimation model pre-dicts bounding boxes and 2D keypoints ( k1–k4): three struc-Grasp  Object       
+
+> Object Pose in
+> Gripper
+> Apply IBVS
+> Place Pose
+> Avoid Collision
+> During Grasp
+> Regression Model
+> Force
+> Features
+> Offset
+> Estimation
+> Test Collision
+> During Insertion
+> 𝑇 𝑝𝑟𝑒_𝑔𝑟𝑎𝑠𝑝
+> 𝑇 𝑝𝑜𝑠𝑡_𝑔𝑟𝑎𝑠𝑝
+> ∆𝒓
+> ∆𝝋
+> 𝐟 collision
+> Trajectory
+> Correction
+> Insertion
+> Success
+
+Fig. 3: Complete pipeline for picking and insertion. tural reference points and one keyway feature (Fig. 4). The hole center ch is the mean of the structural keypoints and the grasp orientation lgrasp is the vector from the centroid to the keyway keypoint. The gripper antipodal axis is checked for collision against neighbouring bounding boxes. If detected, the grasp is iteratively rotated by ∆θ until feasible, and the result is stored as Tpre -grasp .
+
+B. Post-Grasp Planar Pose Validation 
+
+Rather than re-estimating the full SE (3) pose after grasp-ing, a task-constrained planar regulation approach, SE (2) ,based on Image-Based Visual Servoing (IBVS) is adopted. The manipulator moves to a predefined waypoint above an externally mounted, calibrated camera whose optical axis is aligned with the TCP, as shown in Fig. 5. The transform 
+
+Tpre -grasp is applied to reduce the initial pixel misalignment 
+
+(∆ u, ∆v) between the detected hole center and the image center, cI , as well as the angular offset ∆γ between lgrasp 
+
+and the image vertical axis. Convergence, and thus IBVS success, is declared when: 
+
+|∆u| ≤ 4 pixels , |∆v| ≤ 4 pixels , |∆γ| ≤ 0.5◦ (1) The misalignments are regulated to zero via closed-loop IBVS. With T0 denoting the TCP pose at the onset of IBVS and Tf the converged pose, the validated planar correction (relative transform) is given by 
+
+Tpost −grasp = T −10 Tf =
+
+R p
+
+0 1
+
+
+
+. (2) 𝐈′ grasp   
+
+> Bounding Box
+> ∆θ
+> +
+> +
+> +
+> +
+> 𝐈 grasp
+> 𝒄 ℎ
+> Grasp Position
+> 𝑘 1
+> 𝑘 4
+> 𝑘 3
+> 𝑘 2
+
+Fig. 4: Collision-aware grasp planning. Blue disc: target; others: obstacles. 𝐈 grasp 
+
+> Gripper
+> Camera
+> Workpiece
+> Aligned
+> Axis
+> ∆𝛾
+> ∆u
+> ∆v
+> 𝒄 𝒉
+
+# *𝒄 𝒉 
+
+> 𝒄 𝐼
+
+# *Fig. 5: IBVS setup for post-grasp planar pose validation. Because Tpost −grasp is derived from encoder-measured dis-placement after visual convergence, it constitutes a metric correction exploiting the sub-millimeter repeatability of mod-ern manipulators. 
+
+C. Probabilistic Force/Torque-Based Trajectory Correction 
+
+The disc is then placed at the end of the keyed shaft. After applying the correction Tpost-grasp to align the hole center with the keyed shaft, insertion is initiated. The regression target is the residual planar offset ∆r = [∆ x, ∆y]T , as well as the angular offset φoff , quantifying misalignment in the insertion plane, as illustrated in Fig. 6 and Fig. 7. Residual misalignment generates characteristic contact wrenches w =[Fx, F y , F z , τ x, τ y , τ z ]T at the robot wrist. 
+
+Contact Regime Classification: Two distinct contact sce-narios arise depending on offset magnitude relative to the shaft chamfer. (a) Guided insertion : When the offset is small enough for the chamfer to capture the disc, a sustained force profile is generated. (b) Hard collision : When the offset exceeds that radial length of the chamfer, ∥∆r∥ > d chamfer ,the disc impacts the shaft rim and the robot halts due to the force limit along its T CP z − axis , producing a short transient contact. For the key–keyway configuration, guided insertion is feasible for φoff < ±6◦. At larger offsets ( ±8◦–
+
+±11 ◦), partial collisions occur before reaching the critical angle φcrit , resulting in hard collision . These regimes (a) (b) (c) (d) 
+
+> 𝐹 ௭𝜑௢௙௙ = 𝜑଴ 𝐹 ௫𝐹 ௭𝐹 ௭𝐹 ௫𝜑௢௙௙ ≥ 𝜑௖௥௜௧ 𝜑௢௙௙ ≤ 𝜑௖௥௜௧ 𝜑଴ < 𝜑௢௙௙ < 𝜑௖௥௜௧
+
+Fig. 6: Key–keyway contact wrench distribution during disc insertion under angular misalignment. yield fundamentally two different sets of force signatures, motivating a dual-model architecture. During contact with a chamfer inclined at an angle 
+
+α, radial misalignment induces a contact force with axial component Fy ∝ FN cos α and lateral component Fz ∝
+
+FN sin α. During guided insertion, angular misalignment between the key and keyway produces asymmetric torque signatures about τz , while residual radial offset contributes to τx and τy . Under larger angular deviations, the contact transitions toward unstable edge interaction and collision-dominant behaviour, resulting in less consistent rotational torque signatures. In hard-collision conditions, distinct wrist torque vectors arise from eccentric contact forces acting through the offset-dependent moment arm between the con-tact point and the wrist frame. Fig. 8 demonstrates contact torque signature during insertion. 
+
+Force Feature Representation: For each F/T channel c
+
+over the detected contact window Ncontact , five summary statistics are extracted: mean, Root Mean Square (RMS), maximum, minimum, and standard deviation. For guided insertion, all six channels yield a 30-dimensional feature vector fins ; for hard collision, only τx and τy are used, yielding a 10-dimensional vector fcol . For angular offset, 
+
+fcol is used, until φoff approaches φcrit , after which, the key–key-way collision triggers no signficant force signatures, and post-grasp validation has to be reiterated. The torque channels directly encode the contact moment arm. The fea-ture vector fins validates successful insertion after correction and confirms offset adequacy, since the chamfer continues to exert radial wrist forces during guided entry. 
+
+Local KNN–GP Hybrid Regression: A GP model approx-imates the nonlinear mapping 
+
+∆r = g(f ) + ϵ, g(f ) ∼ GP (μ(f ), k (f , f ′)) , (3) where g(f ) is modelled as a GP with mean function μ(f )
+
+and covariance kernel k(f , f ′). The mapping is modeled using a Squared Exponential kernel with Automatic Rele-vance Determination (ARD) [10]. While the ARD kernel improves flexibility, a global GP exhibits smoothing-induced bias in sparse regions. Therefore, for each query f∗, the ❑ Lateral Forces and Torques  ❑ Contact Force 𝐹 𝑧 and Torques       
+
+> 𝐹 𝑖𝑛
+> 𝑇 𝑦 Shaft
+> (a) (b)
+> 𝑇 𝑥
+> Insertion
+> 𝐹 𝑖𝑛
+> Collision
+> 𝐹 𝑁
+> 𝑇 𝑦
+> 𝑇 𝑥
+> Disc
+> 𝐹 𝑁 𝐹 𝑁 cos 𝛼
+> 𝐹 𝑁 sin 𝛼
+> dchamfer
+> ∆𝐫
+> z
+> yx
+
+Fig. 7: Contact wrench distribution under radial misalign-ment during insertion (z-axis). k = 30 nearest neighbours are retrieved in normalized force-space, and a local GP is fitted on this subset only, separately for the planar components of ∆r, restricting inference to the relevant region of the force manifold. To ensure local consistency, the IBVS-based offset estimate 
+
+Tpost −grasp is incorporated as an informative prior in the GP model, which predicts a residual correction relative to this estimate, while neighbor retrieval remains based solely on the force-feature space. Its translational component provides an offset estimate Tpost −grasp = pxy from Eq. (2). The PCA projection in Fig. 9 illustrates the local structure of the force–feature manifold, where neighbouring samples exhibit similar ground-truth radial offsets, ∆rgt . Predictions remain stable for neighbourhood sizes k ∈ { 10 , 15 , 30 }, supporting the assumption of a locally smooth mapping between contact wrench signatures and planar misalignment. 
+
+Trajectory re-parameterization: The final predicted offset 
+
+ˆ∆r is then applied as a supplemental translational correction: 
+
+Tpred = ( Tshaft Tpost-grasp )
+
+I3×3 ˆ∆r
+
+0 1
+
+
+
+, (4) yielding a deterministic trajectory re-parameterization at the moment of contact, at the shaft pose Tshaf t .III. E XPERIMENTAL SETUP 
+
+The setup replicated an industrial key–keyway mounting scenario, executed as grasp → check → place with parallel 
+
+F/T logging. Ground truth relied on the planar offset ∆rgt 
+
+and angular offset φgt . The primary metrics were the pre-dicted offsets and the insertion success rate. Jamming during precise-placement constituted a failed insertion. The insertion success criteria was stated as ∥∆r∥ ≤ dchamfer . As shown in Fig. 10(a), a Universal Robots UR5e manipulator with integrated wrist F/T sensing was fitted with mechanical centering gripper fingers. The UR5e has a wrench sensor with ±3.5 N force and ±0.2 N m torque accuracy. The keyed shaft was localized via four coplanar ArUco markers. A wrist-mounted RealSense D415 provided RGB imagery for pose estimation and depth for workpiece and shaft localization. The shaft chamfer had an inclination α of 15 ◦
+
+Fig. 8: Contact torque signature comparison over a number of trials for insertion scenarios. TABLE I: Dataset Summary                        
+
+> Insertion Collision Angular Trials 125 160 40 Conditions 24 32 8Radial offset (mm) 0.5–1.5 2.0–3.5 –Angular offset ( ◦)––±8–11
+> Feature dim. 30 (6 ch.) 10 (2 ch.) 10 (2 ch.) Contact data rows ≥100 <100 <100
+
+with axial length of 4 mm thus dchamfer = 1.07 mm .A custom-trained YOLOv8 pose-estimation model, trained with 30 000 synthetically generated images, was used for keypoint-based grasp initialization. During IBVS, keypoint jitter was suppressed by a Kalman filter (Q = 10 −9,
+
+R = 0 .3) at 25 Hz, prioritizing physical motion consistency over detector noise. Insertion proceeded at a creep speed of 
+
+0.01 m /s after taring the sensor and recording a 2.0 s static baseline to eliminate F/T bias and acceleration artifacts. Contact onset was detected by simultaneous F/T value increase and velocity reduction which were registered as data rows through the integrated Real-Time Data Exchange (RTDE) protocol of Universal Robots at 125 Hz . A force limit along the insertion axis, |Fz | > F th with Fth = 30 N 
+
+(selected over 5 N and 15 N thresholds for cleaner regime separation), routed hard collisions ( <100 post-onset data rows) to the GP-collision model, while completed insertions (≥100 data rows) were passed to the GP-insertion model. The KNN–GP was implemented in scikit-learn with an ARD–RBF kernel. For each workpiece a dataset of 325 data samples were collected, containing the corresponding feature vectors fins 
+
+and fcol , as well as ∆rgt and φgt . An automated sweep controller iterated the robot waypoints over a predefined grid of planar offsets, executing five repeat trials per condition and logging synchronized F/T values, TCP pose and ve-locity via RTDE. Table I summarizes dataset configurations, where each conditions had 5 trials. Algorithm 1 shows the implemented trajectory re-parameterization procedure. 
+
+Fig. 9: PCA projection of force-feature space, coloured by 
+
+∥∆rgt ∥. Star: query; circles: k nearest neighbours. (a)  (b)  (c)  
+
+> Disc
+> Gripper
+> Markers
+> Shaft
+> Collision Correction
+
+Fig. 10: (a) Gripper and disc setup, with ArUco markers for shaft localization, (b) collision during placement, (c) trajectory correction applied. IV. E XPERIMENTAL RESULTS AND DISCUSSION 
+
+The validation experiments were conducted over 30 trials of pick, post-grasp validation, and placement using three workpiece variants with hole offsets between 0 and 8 mm 
+
+relative to the workpiece centre. To ensure a controlled comparison between conditions, only the correction strategy (Baseline, GP, GP+KNN, and GP+KNN+Mean Prior) was varied between runs, while the shaft localisation data and task execution order remained fixed. The baseline relied solely on pose estimation and ArUco-based shaft localisation with-out IBVS or force-based correction. Across all conducted experiments, the pose-estimation model achieved approxi-mately 92% keypoint detection success, while post-grasp IBVS converged in approximately 95% of trials according to Eq. (1). Differences in insertion performance therefore primarily reflect the contribution of the correction framework rather than variability in perception or manipulation. 
+
+A. Baseline Condition without Offset Regression 
+
+Of the 30 baseline trials, 20 resulted in successful inser-tion, corresponding to a baseline insertion success rate of 
+
+67% . Most failures originated from hard collisions between the shaft and disc caused by residual hand–eye calibration error and camera-to-TCP transformation uncertainty. Inaccu-rate keypoint detection resulted in invalid pose estimates in 2 trials, while pose-estimation and calibration errors introduced additional insertion misalignment in 8 trials, leading to inaccurate localization of the hole pose within the gripper frame. 
+
+B. Force-Based Offset Regression 
+
+The full pipeline, with and without post-grasp IBVS validation and GPR-based trajectory correction (GP +KNN +Mean Prior), was evaluated over the same 30 trials under identical conditions. A mean of 26 of the 30 trials resulted in successful insertion ( 87% ), with trajectory re-parameterisation completed within two correction attempts in all successful cases. Failures primarily occurred when insertion offsets exceeded the trained manifold boundary of ±3.5 mm after repeated collision attempts, where the GP could no longer reliably extrapolate from the available force-feature gradients. 
+
+Algorithm 1 Force-based Contact Correction for Insertion  
+
+> 1:
+
+Move robot to pre-insertion pose Tshaf t  
+
+> 2:
+
+Start force/torque data collection  
+
+> 3:
+
+repeat  
+
+> 4:
+
+Execute nominal insertion along TCP axis z 
+
+> 5:
+
+Monitor rolling feature window f (t) 
+
+> 6:
+
+if Fz > F th (contact detected) then  
+
+> 7:
+
+Stop motion at contact pose p 
+
+> 8:
+
+Extract Ncontact from recorded data  
+
+> 9:
+
+Calculate Tpred using Eq. 3 and Eq. 4  
+
+> 10:
+
+Retract along insertion axis  
+
+> 11:
+
+Update insertion trajectory: 
+
+p′(s) = p + Tpred + s z 
+
+> 12:
+
+Resume along re-parameterized trajectory  
+
+> 13:
+
+else  
+
+> 14:
+
+Continue insertion  
+
+> 15:
+
+Monitor rolling feature window for insertion  
+
+> 16:
+
+end if  
+
+> 17:
+
+until successful insertion or maximum retries reached  
+
+> 18:
+
+Finish insertion These failures originated mainly from pose-estimation inaccuracies propagating beyond the trained force-manifold range. Fig. 11 shows the predicted versus ground-truth offsets estimated by the GP–KNN model. Predictions cluster around discrete offset conditions within [−3.5, 3.5] mm, confirming accurate planar misalignment recovery in cases where the initial pose estimation was insufficient for direct insertion. Extending the training dataset range to ±4.5 mm resolved these failure cases; however, these trials were retained in the reported success-rate evaluation over the full 30 trials. As the insertion offset approaches the boundary regions of the chamfer capture range, the interaction transitions from sus-tained chamfer-guided contact toward transient edge-impact behaviour, producing shorter and less distinctive contact-wrench signatures. This reduces the local feature separability within the force manifold and limits reliable GP inference near the extrapolation boundary. 
+
+1) Gaussian Process Regression: The performance of the dual-model architecture is summarized in Table II, demon-
+
+Fig. 11: Predicted vs. ground-truth planar offsets and cumu-lative error distribution. TABLE II: LOCO cross-validation results evaluating gener-alization to held-out offset conditions.                                            
+
+> Metric GP GP+KNN GP+KNN+Mean Prior MAE dx0.535 mm 0.520 mm 0.458 mm MAE dz1.004 mm 0.721 mm 0.734 mm MAE |e|1.216 mm 0.972 mm 0.947 mm RMSE |e|1.487 mm 1.182 mm 1.148 mm Median error 0.972 mm 0.729 mm 0.719 mm 90th-percentile error 2.441 mm 1.889 mm 1.804 mm
+
+strating the effectiveness of the local KNN–GP regressor in resolving residual planar misalignments. The mean inference latency was 472 ms, requiring a minimum contact window of 80 data rows ( 640 ms at 125 Hz) before inference. The Leave-one-angle-out cross-validation (LOCO) evaluation as-sessed generalization to held-out offset conditions within the dataset, showing that the proposed KNN-GP with mean prior achieved the lowest average and tail errors across all metrics. Although the evaluated workpieces included hole offsets up to 8.0 mm , the IBVS-derived GP prior reduced prediction errors by guiding inference toward geometrically consistent corrections within the typical insertion range. When the predicted correction exceeded the chamfer capture threshold, 
+
+|epred | > d chamfer , indicating unreliable estimates, the system fell back to the nearest-neighbour offset to ensure a stable correction, together with the mean prior. 
+
+2) Angular Offset Estimation: Leave-one-angle-out cross-validation yielded an overall MAE of 0.97 ◦ and RMSE of 
+
+1.04 ◦, with per-condition MAE ranging from 0.61 ◦ (φgt =+9 ◦) to 1.32 ◦ (φgt = −8◦). For φ values between ±1 ◦
+
+and ±7 ◦, since the fixture incorporates a chamfered entry and an automatic wrist-roll correction stage, residual angular errors were mechanically absorbed during final seating, and no placement failures were observed across all evaluated trials. 
+
+C. End-to-End Insertion and Discussion 
+
+Two principal findings emerge: (1) The GP regression reli-ably provides continuous radial and angular offset estimates using a total of fewer than 400 training samples, unlike the GA-SVM which requires 180 samples per deviation and is limited to discrete classification. (2) The local KNN–GP with ARD kernel achieves highest accuracy without CAD-based contact modeling, by constraining inference to locally similar force signatures and fusing with the IBVS prior. The mean prior improved prediction accuracy and robustness near the manifold boundaries. Furthermore, the dual-model architecture extends estima-tion to hard-collision scenarios via contact-duration routing and torque-only features, recovering accurate estimates from transient ( ≈ 1.0 s ) events with fewer attempts, critical for preventing repeated insertion attempts that could damage hardware. Insertion success increased from 67% to 87%. It should also be noted that while a YOLOv8 pose estimator and IBVS-based post-grasp validation are employed in this work, the GP regression framework depends only on the metric correction Tpost-grasp as an informative mean prior and is agnostic to the specific visual pipeline used to derive it. One major limitation is the out-of-distribution scenario, as the GP cannot extrapolate beyond the training envelope. The integrated wrist F/T sensor of the UR5e ( ±3.5 N force accuracy, ±0.2 Nm torque accuracy) imposes a noise floor that bounds the minimum resolvable offset: misalignments generating contact wrenches below this threshold cannot be reliably distinguished from sensor noise. Dedicated external F/T sensors would improve overall metric measurement accuracy. V. C ONCLUSION 
+
+This work presented a structured precision placement framework for delayed key–keyway assemblies, integrating pre-grasp keypoint-based pose estimation, post-grasp IBVS validation, and force-driven trajectory re-parameterization. The proposed local KNN–GP regressor estimates planar misalignment directly from contact force features, replacing discrete classification with continuous force-to-offset map-ping. Experimental results show that post-grasp validation improves insertion reliability from 67% to 87%, while the dual-model architecture achieves mean errors below 1 mm 
+
+from both guided-insertion and transient collision events across continuous offset conditions. The probabilistic offset estimate provides a principled conditioning variable for fu-ture integration with adaptive movement primitives. REFERENCES [1] T. Tang, H.-C. Lin, Y. Zhao, W. Chen, and M. Tomizuka, “Autonomous alignment of peg and hole by force/torque measurement for robotic assembly,” in 2016 IEEE International Conference on Automation Science and Engineering (CASE) , 2016, pp. 162–167. [2] D. E. Whitney, “Quasi-static assembly of compliantly supported rigid parts,” Journal of Dynamic Systems, Measurement, and Control , vol. 104, no. 1, pp. 65–77, 1982. [3] K. Ordoumpozanis and G. A. Papakostas, “Reviewing 6d pose estimation: Model strengths, limitations, and application fields,”

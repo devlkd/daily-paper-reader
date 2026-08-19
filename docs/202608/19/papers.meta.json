@@ -1,0 +1,54 @@
+{
+  "label": "2026-08-19",
+  "date": "2026-08-19",
+  "generated_at": "2026-08-19T21:03:01",
+  "count": 3,
+  "papers": [
+    {
+      "paper_id": "202608/19/2608.17691v1-force-based-offset-estimation-for-keyed-peg-in-hole-assembly-using-local-gaussian-process-regression",
+      "section": "quick",
+      "title_en": "Force-Based Offset Estimation for Keyed Peg-in-Hole Assembly Using Local Gaussian Process Regression",
+      "authors": "Chandra Yuvesh Aubeeluck, Abilash Philip Madavath, Augustin Raju, Nicolas Pyschny, Felix Hackelöer, Florian Zwanzig",
+      "date": "2026-08-18",
+      "pdf": "https://arxiv.org/pdf/2608.17691v1",
+      "score": "7.0",
+      "evidence": "基于力的销孔装配错位估计为卫星部件装配提供精密对准技术",
+      "tldr": "键槽装配任务几何约束严格，对抓取位姿偏差高度敏感，现有方法成功率不足。本研究提出基于腕部力/力矩的偏移估计方法，采用局部KNN-高斯过程混合回归器，从力/力矩测量中估计残余未对准；框架通过接触窗口时长阈值区分硬碰撞与导引倒角插入，并集成单目视觉验证结果提升回归精度。实验在协作机器人上验证，插入成功率从67%提升至87%，显著增强了键销孔装配的鲁棒性。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "Key-keyway assembly tasks impose strict geometric constraints and are highly sensitive to grasp pose deviations in uncertain environments. This work presents a force-based offset estimation method for keyed peg-in-hole assembly, embedded within a perception-validation-insertion pipeline. Residual misalignment is estimated directly from wrist force/torque measurements using a local KNN-Gaussian Process hybrid regressor. The framework distinguishes between two contact regimes, hard collision and guided chamfer insertion, and routes inference to a dedicated model for each. Regime classification is achieved via a contact-window duration threshold. KNN combined with a deterministic search using the results of a post-grasp monocular visual validation contributes to an increased accuracy of the regressor model. This approach achieves accurate radial offset estimation in chamfered peg insertion, during a keypoint detection-based pick and place application. Experiments using the integrated force/torque sensor of a collaborative robot arm showed an increase in insertion success rate from 67% to 87% after the pipeline was applied.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/19/2608.14031v1-demonstration-of-space-robot-teleoperation-over-a-lossy-and-delayed-network-using-atmos",
+      "section": "quick",
+      "title_en": "Demonstration of Space Robot Teleoperation over a Lossy and Delayed Network using ATMOS",
+      "authors": "Inkyu Jang, Gregorio Marchesini, Nicola De Carli, Byeongjun Kim, Sunwoo Hwang, Dabin Kim, Elias Krantz, Youngkyoung Kong, Frank J. Jiang, Annika Wong, Pedro Roque, Prasetyo W. L. Sanjaya, Nicola Bastianello, Mani H. Dhullipalla, Karl H. Johansson, Hyungbo Shim, Dimos V. Dimarogonas, H. Jin Kim",
+      "date": "2026-08-14",
+      "pdf": "https://arxiv.org/pdf/2608.14031v1",
+      "score": "6.0",
+      "evidence": "用于空间机器人的地面试验台，微重力模拟平面机器人平台",
+      "tldr": "远程航天器操作面临高延迟和丢包挑战，导致控制性能下降甚至任务失败。本研究针对时变随机通信延迟，提出结合状态预测与轨迹跟踪控制的遥操作策略，并在平面航天器模拟机器人ATMOS上执行对接任务验证。通过在首尔与斯德哥尔摩之间建立跨洲远程实验，引入真实延迟和抖动，实验结果表明该策略能有效完成对接。该演示验证了ATMOS作为低成本高效测试平台的能力，为微重力环境下在轨操作验证迈出第一步。",
+      "tags": "query:grav-offload",
+      "abstract_en": "We present a demonstration showcasing the Autonomy Testbed for Multi-purpose Orbiting Systems (ATMOS), a planar spacecraft-analog robot designed for hardware-in-the-loop evaluation of guidance and control strategies in microgravity-like conditions. Using ATMOS as the physical test platform, we investigate the design, analysis, and performance evaluation of control architectures for remotely operated spacecraft under round-trip communication delays. In this work, we develop and experimentally validate a control strategy that combines state prediction and trajectory tracking control to perform a docking maneuver, accounting for time-varying random communication latency between ground operators and the ATMOS system. The demonstration includes a long-distance remote control experiment between Seoul and Stockholm, introducing realistic intercontinental delays and variability. The results highlight the capability of ATMOS to support rapid, reliable, and cost-effective testing of spacecraft teleoperation concepts, establishing a first step toward robust validation of on-orbit operations in microgravity-like environments.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/19/2608.17962v1-prism-precision-and-contact-rich-real-world-industrial-skill-dataset-with-multimodal-sensing",
+      "section": "quick",
+      "title_en": "PRISM: Precision and contact-rich Real-world Industrial Skill dataset with Multimodal sensing",
+      "authors": "Tengbo Yu, Jiahao Wu, Hanning Wang, Rui Chen, Chuanhou Liu, Chuang Sun, Hangxin Liu",
+      "date": "2026-08-18",
+      "pdf": "https://arxiv.org/pdf/2608.17962v1",
+      "score": "6.0",
+      "evidence": "提供精密接触丰富工业装配任务的多模态数据集，支持装配精度控制",
+      "tldr": "现有机器人操作数据集多聚焦短程低接触任务，难以覆盖工业装配对精密控制、力/触觉调节及多模态反馈的需求。PRISM 数据集面向接触丰富的工业操作，涵盖电子元件插拔、传送带分拣等超过25个任务，包含5000余条轨迹、45小时遥操作演示，同步采集多视角RGB-D、力/扭矩、触觉和机器人状态。该数据集为高精度工业约束下的多模态感知与控制提供真实基准，推动可泛化的接触丰富操作研究。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "Recent progress in robotic learning has been fueled by large-scale datasets collected in everyday environments. However, most existing datasets emphasize short-horizon, low-contact tasks such as pick-and-place, and therefore do not capture the precision control, force/torque or tactile regulation, and multimodal feedback required for industrial assembly. To address this gap, we introduce PRISM, a large-scale multimodal dataset for contact-rich industrial operations. The dataset spans more than 25 manipulation tasks (e.g., electronic components plug/unplug, conveyor-based sorting) and covers diverse mechanical constraints. PRISM includes more than 5,000 trajectories totaling 45 hours of teleoperated demonstrations, recorded using synchronized multi-view RGB-D, force/torque, tactile, and robot-state measurements. In contrast to datasets collected in household or laboratory settings, PRISM provides a realistic benchmark for multimodal perception and control under high-precision industrial constraints, and serves as a foundation for contact-rich, generalizable manipulation in real-world manufacturing environments. The dataset is open-sourced at: https://tengbo-yu.github.io/PRISM/",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
