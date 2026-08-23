@@ -1,0 +1,60 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-23T20:34:45.245251+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 0,
+    "deep_cap": 8,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 13,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2608.19536v1",
+      "source": "arxiv",
+      "title": "CVSD-Reg: Cross-Modal Visual Semantic Prior Distillation for Robust LiDAR Registration",
+      "abstract": "Learning-based global point cloud registration has achieved remarkable progress, yet its reliance on geometric representations makes existing methods sensitive to variations in point density, scan pattern, viewpoint, and sensor characteristics. We propose CVSD-Reg, a robust global LiDAR registration framework that distills visual semantic priors from a vision foundation model into LiDAR representations. In Stage 1, a Point Transformer V3 student learns from a frozen DINOv2 teacher through contrastive distillation and spherical-manifold alignment, which preserves the hyperspherical geometry of the teacher embedding space. Self-supervised InfoNCE consistency and soft $\\mathrm{SE}(3)$ invariance further encourage viewpoint-robust descriptors. In Stage 2, the distilled representation is adapted to registration through correspondence learning, density-aware point-dropout augmentation, and end-to-end pose optimization. With a single checkpoint, CVSD-Reg generalizes to both single-sensor and zero-shot cross-sensor scenarios without sensor-specific adaptation and remains entirely camera-free at inference. On KITTI, nuScenes, and HeLiPR, CVSD-Reg achieves strict success rate (SR@0.5\\,m/$1^\\circ$) of 97.7$\\%$, 99.0$\\%$, and 99.3$\\%$, respectively, including 97.3$\\%$ on sparse 16-beam Velodyne scans. It outperforms state-of-the-art geometric registration methods by up to 44.0 percentage points without requiring camera inputs or post-hoc ICP refinement.",
+      "authors": [
+        "Eunsoo Im",
+        "Junghun Suh",
+        "Gyeonggwan Lee",
+        "Seunghwan Hong"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.AI",
+        "cs.RO"
+      ],
+      "published": "2026-08-20T01:17:12+00:00",
+      "link": "https://arxiv.org/pdf/2608.19536v1",
+      "tags": [
+        "keyword:TF-SAR",
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "robust LiDAR registration for alignment of 3D point clouds",
+      "llm_evidence_cn": "用于卫星部件地面精密对准的鲁棒LiDAR点云配准",
+      "llm_evidence": "用于卫星部件地面精密对准的鲁棒LiDAR点云配准",
+      "canonical_evidence": "用于卫星部件地面精密对准的鲁棒LiDAR点云配准",
+      "llm_tldr_en": "Addresses robust global LiDAR registration under variations in point density, viewpoint, and sensor by distilling visual semantic priors into LiDAR features. This improves alignment robustness and can enable precise component alignment in satellite ground assembly.",
+      "llm_tldr_cn": "针对LiDAR点云配准对点密度、扫描模式、视角和传感器差异敏感的问题，提出CVSD-Reg框架，通过从视觉基础模型蒸馏语义先验到LiDAR表示，增强全局配准鲁棒性。在Stage 1中利用Point Transformer V3从冻结DINOv2教师蒸馏，采用对比蒸馏和球面流形对齐保留超球几何，并引入自监督InfoNCE一致性和软SE(3)不变性。实验表明该方法在多种变化下取得鲁棒配准结果。该技术可作为卫星地面装配中精密部件对准的通用点云对齐工具。",
+      "llm_tldr": "针对LiDAR点云配准对点密度、扫描模式、视角和传感器差异敏感的问题，提出CVSD-Reg框架，通过从视觉基础模型蒸馏语义先验到LiDAR表示，增强全局配准鲁棒性。在Stage 1中利用Point Transformer V3从冻结DINOv2教师蒸馏，采用对比蒸馏和球面流形对齐保留超球几何，并引入自监督InfoNCE一致性和软SE(3)不变性。实验表明该方法在多种变化下取得鲁棒配准结果。该技术可作为卫星地面装配中精密部件对准的通用点云对齐工具。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "precision alignment of satellite components on ground",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

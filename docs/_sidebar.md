@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-08-23 <!--dpr-date:20260823-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202608/23/2608.19536v1-cvsd-reg-cross-modal-visual-semantic-prior-distillation-for-robust-lidar-registration" data-sidebar-item="{&quot;title&quot;: &quot;CVSD-Reg: Cross-Modal Visual Semantic Prior Distillation for Robust LiDAR Registration&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2608.19536v1-cvsd-reg-cross-modal-visual-semantic-prior-distillation-for-robust-lidar-registration&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;sat-asm-prec&quot;}], &quot;evidence&quot;: &quot;用于卫星部件地面精密对准的鲁棒LiDAR点云配准&quot;}">CVSD-Reg: Cross-Modal Visual Semantic Prior Distillation for Robust LiDAR Registration</a>
   * 2026-08-19 <!--dpr-date:20260819-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202608/19/2608.17691v1-force-based-offset-estimation-for-keyed-peg-in-hole-assembly-using-local-gaussian-process-regression" data-sidebar-item="{&quot;title&quot;: &quot;Force-Based Offset Estimation for Keyed Peg-in-Hole Assembly Using Local Gaussian Process Regression&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2608.17691v1-force-based-offset-estimation-for-keyed-peg-in-hole-assembly-using-local-gaussian-process-regression&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;sat-asm-prec&quot;}], &quot;evidence&quot;: &quot;基于力的销孔装配错位估计为卫星部件装配提供精密对准技术&quot;}">Force-Based Offset Estimation for Keyed Peg-in-Hole Assembly Using Local Gaussian Process Regression</a>

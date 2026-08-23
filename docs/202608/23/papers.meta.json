@@ -1,0 +1,24 @@
+{
+  "label": "2026-08-23",
+  "date": "2026-08-23",
+  "generated_at": "2026-08-23T20:36:17",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202608/23/2608.19536v1-cvsd-reg-cross-modal-visual-semantic-prior-distillation-for-robust-lidar-registration",
+      "section": "quick",
+      "title_en": "CVSD-Reg: Cross-Modal Visual Semantic Prior Distillation for Robust LiDAR Registration",
+      "authors": "Eunsoo Im, Junghun Suh, Gyeonggwan Lee, Seunghwan Hong",
+      "date": "2026-08-20",
+      "pdf": "https://arxiv.org/pdf/2608.19536v1",
+      "score": "6.0",
+      "evidence": "用于卫星部件地面精密对准的鲁棒LiDAR点云配准",
+      "tldr": "现有学习型LiDAR点云配准依赖几何特征，对点密度、扫描模式、视角和传感器差异敏感。本文提出CVSD-Reg，通过从视觉基础模型DINOv2蒸馏语义先验到Point Transformer V3，增强描述符的视角鲁棒性。在KITTI、nuScenes和HeLiPR上，无需相机输入或ICP细化，严格成功率分别达97.7%、99.0%和99.3%，稀疏16线扫描达97.3%。该方法显著超越几何配准方法，实现单模型跨传感器泛化。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "Learning-based global point cloud registration has achieved remarkable progress, yet its reliance on geometric representations makes existing methods sensitive to variations in point density, scan pattern, viewpoint, and sensor characteristics. We propose CVSD-Reg, a robust global LiDAR registration framework that distills visual semantic priors from a vision foundation model into LiDAR representations. In Stage 1, a Point Transformer V3 student learns from a frozen DINOv2 teacher through contrastive distillation and spherical-manifold alignment, which preserves the hyperspherical geometry of the teacher embedding space. Self-supervised InfoNCE consistency and soft $\\mathrm{SE}(3)$ invariance further encourage viewpoint-robust descriptors. In Stage 2, the distilled representation is adapted to registration through correspondence learning, density-aware point-dropout augmentation, and end-to-end pose optimization. With a single checkpoint, CVSD-Reg generalizes to both single-sensor and zero-shot cross-sensor scenarios without sensor-specific adaptation and remains entirely camera-free at inference. On KITTI, nuScenes, and HeLiPR, CVSD-Reg achieves strict success rate (SR@0.5\\,m/$1^\\circ$) of 97.7$\\%$, 99.0$\\%$, and 99.3$\\%$, respectively, including 97.3$\\%$ on sparse 16-beam Velodyne scans. It outperforms state-of-the-art geometric registration methods by up to 44.0 percentage points without requiring camera inputs or post-hoc ICP refinement.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
