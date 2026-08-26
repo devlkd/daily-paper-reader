@@ -1,0 +1,24 @@
+{
+  "label": "2026-08-26",
+  "date": "2026-08-26",
+  "generated_at": "2026-08-26T22:31:40",
+  "count": 1,
+  "papers": [
+    {
+      "paper_id": "202608/26/2608.22100v1-contact-rich-robotic-manipulation-in-construction-via-zero-shot-learning-a-diffusion-policy-guided-adaptive-control",
+      "section": "quick",
+      "title_en": "Contact-Rich Robotic Manipulation in Construction via Zero-Shot Learning: A Diffusion Policy-Guided Adaptive Control",
+      "authors": "Roman Ibrahimov, Salma Mozaffari, Arash Adel",
+      "date": "2026-08-22",
+      "pdf": "https://arxiv.org/pdf/2608.22100v1",
+      "score": "7.0",
+      "evidence": "面向紧公差和不确定接触动力学的接触丰富机器人装配操作",
+      "tldr": "建筑接触丰富装配因公差紧、制造误差和接触动力学不确定而面临可靠性挑战。本文提出扩散策略与L1启发自适应控制器耦合框架，利用仿真生成的姿态与力/力矩数据训练策略，并在线修正动作以补偿未建模接触动力学。在木工榫接、管道装配和连续桁架装配中，单任务成功率达100%，连续子任务成功率为90-100%，接触力更低更稳定。该框架实现零样本仿真到真实迁移，减少真实数据采集，推动多阶段装配自动化。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "Construction robotics and automation offer promising means of improving productivity, alleviating workforce shortages, and reducing workers' exposure to physically demanding tasks. However, reliable contact-rich robotic assembly remains challenging under tight tolerances, fabrication inaccuracies, and uncertain contact dynamics. To address this challenge, we present a framework coupling diffusion policies trained on simulation-generated pose and force/torque data with an L1-inspired adaptive controller that corrects policy-predicted actions online to compensate for unmodeled contact dynamics. We benchmark the framework against baselines in timber joinery, pipe fitting, and sequential full-scale truss assembly. It achieves 100% success on single-task assemblies and 90-100% success across sequential truss assembly subtasks, with lower, more stable contact forces than the baselines. By enabling zero-shot sim-to-real transfer for force-aware contact-rich assembly, the framework reduces costly, labor-intensive real-world data collection for policy training and advances scalable, robust automation of multistage assembly, motivating extension to broader contact-rich manipulation tasks in construction.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}

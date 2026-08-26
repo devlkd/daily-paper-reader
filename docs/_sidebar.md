@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-08-26 <!--dpr-date:20260826-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202608/26/2608.22100v1-contact-rich-robotic-manipulation-in-construction-via-zero-shot-learning-a-diffusion-policy-guided-adaptive-control" data-sidebar-item="{&quot;title&quot;: &quot;Contact-Rich Robotic Manipulation in Construction via Zero-Shot Learning: A Diffusion Policy-Guided Adaptive Control&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2608.22100v1-contact-rich-robotic-manipulation-in-construction-via-zero-shot-learning-a-diffusion-policy-guided-adaptive-control&quot;, &quot;score&quot;: &quot;7.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;sat-asm-prec&quot;}], &quot;evidence&quot;: &quot;面向紧公差和不确定接触动力学的接触丰富机器人装配操作&quot;}">Contact-Rich Robotic Manipulation in Construction via Zero-Shot Learning: A Diffusion Policy-Guided Adaptive Control</a>
   * 2026-08-23 <!--dpr-date:20260823-->
     * 速读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202608/23/2608.19536v1-cvsd-reg-cross-modal-visual-semantic-prior-distillation-for-robust-lidar-registration" data-sidebar-item="{&quot;title&quot;: &quot;CVSD-Reg: Cross-Modal Visual Semantic Prior Distillation for Robust LiDAR Registration&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2608.19536v1-cvsd-reg-cross-modal-visual-semantic-prior-distillation-for-robust-lidar-registration&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;sat-asm-prec&quot;}], &quot;evidence&quot;: &quot;用于卫星部件地面精密对准的鲁棒LiDAR点云配准&quot;}">CVSD-Reg: Cross-Modal Visual Semantic Prior Distillation for Robust LiDAR Registration</a>

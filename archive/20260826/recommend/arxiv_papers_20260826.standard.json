@@ -1,0 +1,56 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-26T22:29:47.333205+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 0,
+    "deep_cap": 8,
+    "deep_selected": 0,
+    "quick_candidates": 1,
+    "quick_skim_target": 13,
+    "quick_selected": 1
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2608.22100v1",
+      "source": "arxiv",
+      "title": "Contact-Rich Robotic Manipulation in Construction via Zero-Shot Learning: A Diffusion Policy-Guided Adaptive Control",
+      "abstract": "Construction robotics and automation offer promising means of improving productivity, alleviating workforce shortages, and reducing workers' exposure to physically demanding tasks. However, reliable contact-rich robotic assembly remains challenging under tight tolerances, fabrication inaccuracies, and uncertain contact dynamics. To address this challenge, we present a framework coupling diffusion policies trained on simulation-generated pose and force/torque data with an L1-inspired adaptive controller that corrects policy-predicted actions online to compensate for unmodeled contact dynamics. We benchmark the framework against baselines in timber joinery, pipe fitting, and sequential full-scale truss assembly. It achieves 100% success on single-task assemblies and 90-100% success across sequential truss assembly subtasks, with lower, more stable contact forces than the baselines. By enabling zero-shot sim-to-real transfer for force-aware contact-rich assembly, the framework reduces costly, labor-intensive real-world data collection for policy training and advances scalable, robust automation of multistage assembly, motivating extension to broader contact-rich manipulation tasks in construction.",
+      "authors": [
+        "Roman Ibrahimov",
+        "Salma Mozaffari",
+        "Arash Adel"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-08-22T20:41:23+00:00",
+      "link": "https://arxiv.org/pdf/2608.22100v1",
+      "tags": [
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 7.0,
+      "llm_evidence_en": "contact-rich robotic manipulation for assembly under tight tolerances and uncertain contact dynamics",
+      "llm_evidence_cn": "面向紧公差和不确定接触动力学的接触丰富机器人装配操作",
+      "llm_evidence": "面向紧公差和不确定接触动力学的接触丰富机器人装配操作",
+      "canonical_evidence": "面向紧公差和不确定接触动力学的接触丰富机器人装配操作",
+      "llm_tldr_en": "Presents a framework coupling diffusion policies with L1-inspired adaptive control for contact-rich robotic assembly under tight tolerances and fabrication inaccuracies.",
+      "llm_tldr_cn": "针对建筑机器人接触丰富装配在紧公差、制造误差和不确定接触动力学下的可靠性挑战，本文提出扩散策略与L1自适应控制器结合的框架，在仿真生成位姿和力/力矩数据上训练扩散策略，并通过在线自适应修正补偿未建模接触动力学。在木结构接合、管件装配和桁架装配等基准测试中验证了方法，对卫星地面精密装配中的接触丰富操作具有借鉴意义。",
+      "llm_tldr": "针对建筑机器人接触丰富装配在紧公差、制造误差和不确定接触动力学下的可靠性挑战，本文提出扩散策略与L1自适应控制器结合的框架，在仿真生成位姿和力/力矩数据上训练扩散策略，并通过在线自适应修正补偿未建模接触动力学。在木结构接合、管件装配和桁架装配等基准测试中验证了方法，对卫星地面精密装配中的接触丰富操作具有借鉴意义。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "precision control in satellite assembly process",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "7"
+    }
+  ]
+}
