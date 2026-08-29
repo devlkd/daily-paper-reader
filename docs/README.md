@@ -7,25 +7,21 @@
 
 ## 每次日报
 - 最新运行日期：2026-08-29
-- 运行时间：2026-08-29 03:40:12 UTC
+- 运行时间：2026-08-29 22:52:19 UTC
 - 运行状态：成功
-- 本次总论文数：1
+- 本次总论文数：0
 - 精读区：0
-- 速读区：1
+- 速读区：0
 
 ### 今日简报（AI）
-今日速读一篇天文仪器论文，聚焦用深度学习为分布式孔径望远镜 SELF 做粗对准与共相。  
-值得关注的是深度学习有望简化共相标定流程，并服务于系外行星直接成像。  
-下一步可关注该方法在真实望远镜数据与更复杂环境下的验证效果。
+> 今日无新推荐，系统未产出可展示论文。
 - 详情：[/202608/29/README](/202608/29/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Deep Learning-Based Coarse Alignment and Cophasing of a Distributed-Aperture Telescope. Application to the Small ExoLife Finder (SELF)](/202608/29/2608.25173v1-deep-learning-based-coarse-alignment-and-cophasing-of-a-distributed-aperture-telescope-application-to-the-small-exolife-finder-self)  
-   标签：评分：6.0/10、query:sat-asm-prec
-   evidence：深度学习实现分布式孔径望远镜微米级粗对准
+- 本次无速读推荐。
 
 
 <div class="dpr-home-promo-card">

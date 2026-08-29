@@ -1,24 +1,8 @@
 {
   "label": "2026-08-29",
   "date": "2026-08-29",
-  "generated_at": "2026-08-29T03:40:36",
-  "count": 1,
-  "papers": [
-    {
-      "paper_id": "202608/29/2608.25173v1-deep-learning-based-coarse-alignment-and-cophasing-of-a-distributed-aperture-telescope-application-to-the-small-exolife-finder-self",
-      "section": "quick",
-      "title_en": "Deep Learning-Based Coarse Alignment and Cophasing of a Distributed-Aperture Telescope. Application to the Small ExoLife Finder (SELF)",
-      "authors": "N. Arteaga-Marrero, J. Iborra-Luis, A. Padrón-Brito, J. Kuhn",
-      "date": "2026-08-25",
-      "pdf": "https://arxiv.org/pdf/2608.25173v1",
-      "score": "6.0",
-      "evidence": "深度学习实现分布式孔径望远镜微米级粗对准",
-      "tldr": "分布式孔径望远镜（如SELF）需精确共相以直接探测系外行星生命特征，但子孔径间光程差必须控制在波长小量级，传统对准困难。本文提出用卷积神经网络从焦平面图像直接回归活塞与倾斜失调，实现微米级粗对准。基于高保真光学仿真训练自定义CNN，可在毫秒级推理并重建所有镜对失调，且在噪声下保持鲁棒。研究验证了数据驱动焦平面波前传感的可行性，为自主高效共相策略奠定基础。",
-      "tags": "query:sat-asm-prec",
-      "abstract_en": "The ExoLife Finder (ELF), a 35--50-meter-class Fizeau interferometric telescope, was designed to detect biosignatures on exoplanets through direct imaging. The Small ExoLife Finder (SELF), a 3.5-meter prototype, serves as a testbed for the innovative technologies required for such a facility. A key challenge is the precise cophasing of its distributed aperture, where the optical path differences between subapertures must remain below a small fraction of the operating wavelength. This work investigates convolutional neural networks (CNNs) to estimate alignment errors directly from focal-plane images, enabling fast, data-driven coarse alignment to the few-micrometer level.   A supervised regression framework was developed using a custom CNN to model the nonlinear mapping between subaperture misalignments and focal-plane intensity distributions. Training and validation datasets were generated from high-fidelity optical simulations of the simplified SELF system. Gaussian-noise augmentation was used to assess robustness, and several established CNN architectures were evaluated for comparison. The proposed approach reconstructed piston and tilt misalignments across all mirror pairs, demonstrating that focal-plane interference patterns can be exploited for alignment estimation. The custom CNN provided a favorable balance between estimation performance, robustness, and computational efficiency, with millisecond-scale inference times. A trade-off between performance and noise robustness was identified, with noise augmentation improving reconstruction at low signal-to-noise ratios but reduced performance under near noise-free conditions.   These results demonstrate the feasibility of data-driven focal-plane wavefront sensing for distributed-aperture telescopes and provide a basis for autonomous, computationally efficient cophasing strategies for future high-resolution interferometric systems.",
-      "source": "arxiv",
-      "selection_source": "fresh_fetch"
-    }
-  ],
+  "generated_at": "2026-08-29T22:52:19",
+  "count": 0,
+  "papers": [],
   "errors": []
 }
