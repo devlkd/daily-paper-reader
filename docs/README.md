@@ -6,26 +6,26 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-26
-- 运行时间：2026-08-26 22:31:12 UTC
+- 最新运行日期：2026-08-29
+- 运行时间：2026-08-29 03:40:12 UTC
 - 运行状态：成功
 - 本次总论文数：1
 - 精读区：0
 - 速读区：1
 
 ### 今日简报（AI）
-今日速读一篇关于建筑机器人接触丰富操作的研究，用零样本学习与扩散策略引导自适应控制。  
-值得关注的是：无需大量新训练样本，机器人就能在建筑施工等接触密集场景中尝试更灵活的动作控制。  
-普通读者可先了解“扩散策略”如何让机器人从示例中学会适应新任务，再关注它在真实工地中的可行性。
-- 详情：[/202608/26/README](/202608/26/README)
+今日速读一篇天文仪器论文，聚焦用深度学习为分布式孔径望远镜 SELF 做粗对准与共相。  
+值得关注的是深度学习有望简化共相标定流程，并服务于系外行星直接成像。  
+下一步可关注该方法在真实望远镜数据与更复杂环境下的验证效果。
+- 详情：[/202608/29/README](/202608/29/README)
 
 ### 精读区论文标签
 - 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Contact-Rich Robotic Manipulation in Construction via Zero-Shot Learning: A Diffusion Policy-Guided Adaptive Control](/202608/26/2608.22100v1-contact-rich-robotic-manipulation-in-construction-via-zero-shot-learning-a-diffusion-policy-guided-adaptive-control)  
-   标签：评分：7.0/10、query:sat-asm-prec
-   evidence：面向紧公差和不确定接触动力学的接触丰富机器人装配操作
+1. [Deep Learning-Based Coarse Alignment and Cophasing of a Distributed-Aperture Telescope. Application to the Small ExoLife Finder (SELF)](/202608/29/2608.25173v1-deep-learning-based-coarse-alignment-and-cophasing-of-a-distributed-aperture-telescope-application-to-the-small-exolife-finder-self)  
+   标签：评分：6.0/10、query:sat-asm-prec
+   evidence：深度学习实现分布式孔径望远镜微米级粗对准
 
 
 <div class="dpr-home-promo-card">
