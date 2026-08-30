@@ -1,0 +1,99 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-08-30T22:59:00.457186+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 0,
+    "deep_cap": 8,
+    "deep_selected": 0,
+    "quick_candidates": 2,
+    "quick_skim_target": 13,
+    "quick_selected": 2
+  },
+  "deep_dive": [],
+  "quick_skim": [
+    {
+      "id": "2608.21804v1",
+      "source": "arxiv",
+      "title": "FlashReg: GPU-Accelerated 3-Clique Point Cloud Registration for Real-Time Correspondence-to-Pose Estimation",
+      "abstract": "Graph-based point cloud registration achieves high robustness by identifying geometrically consistent correspondence sets, but constructing second-order compatibility graphs and enumerating candidate cliques remain compute- and memory-intensive. This work presents FlashReg, a GPU-oriented correspondence-to-pose estimator that avoids materializing the dense scored second-order graph. Its Fast First- and Second-Order Graph (FFSOG) construction builds a capacity-bounded sparse second-order graph directly from the binary first-order graph. A dataflow-optimized three-node clique (3-clique) search then selects pivots from compact per-row candidate pools and enumerates triples through sorted sparse-neighborhood intersections. Across indoor and outdoor benchmarks, FlashReg reduces correspondence-to-pose latency by 2--3x relative to TurboReg at comparable registration recall, while using about 50% of its peak allocated tensor memory on an embedded GPU. These results make FlashReg suitable as a high-throughput registration backend within onboard perception pipelines.",
+      "authors": [
+        "Ziyang Yu",
+        "Xiang Li",
+        "Qiong Chang",
+        "Jun Miyazaki"
+      ],
+      "primary_category": "cs.CV",
+      "categories": [
+        "cs.CV",
+        "cs.DC"
+      ],
+      "published": "2026-08-22T06:53:42+00:00",
+      "link": "https://arxiv.org/pdf/2608.21804v1",
+      "tags": [
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "GPU-accelerated point cloud registration for real-time pose estimation can enable high-precision alignment and dimensional metrology in satellite assembly",
+      "llm_evidence_cn": "用于实时位姿估计的GPU加速点云配准可支持卫星装配中的高精度对准与尺寸计量",
+      "llm_evidence": "用于实时位姿估计的GPU加速点云配准可支持卫星装配中的高精度对准与尺寸计量",
+      "canonical_evidence": "用于实时位姿估计的GPU加速点云配准可支持卫星装配中的高精度对准与尺寸计量",
+      "llm_tldr_en": "FlashReg is a GPU-oriented correspondence-to-pose estimator that builds sparse second-order graphs and uses 3-clique search for fast robust point cloud registration, enabling real-time pose estimation useful for precision alignment tasks.",
+      "llm_tldr_cn": "针对图基点云配准构建二阶相容图并枚举团计算量大、内存占用高的问题，提出GPU导向的实时对应到位姿估计方法。该方法直接构建容量有界的稀疏二阶图，并通过数据流优化的三节点团搜索选取枢轴、枚举三元组。实验表明能够实现实时配准与位姿估计，为卫星装配中的高精度对准和尺寸计量提供有力工具。",
+      "llm_tldr": "针对图基点云配准构建二阶相容图并枚举团计算量大、内存占用高的问题，提出GPU导向的实时对应到位姿估计方法。该方法直接构建容量有界的稀疏二阶图，并通过数据流优化的三节点团搜索选取枢轴、枚举三元组。实验表明能够实现实时配准与位姿估计，为卫星装配中的高精度对准和尺寸计量提供有力工具。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "dimensional metrology for satellite assembly accuracy",
+      "matched_requirement_id": "req-6",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    },
+    {
+      "id": "2608.25173v1",
+      "source": "arxiv",
+      "title": "Deep Learning-Based Coarse Alignment and Cophasing of a Distributed-Aperture Telescope. Application to the Small ExoLife Finder (SELF)",
+      "abstract": "The ExoLife Finder (ELF), a 35--50-meter-class Fizeau interferometric telescope, was designed to detect biosignatures on exoplanets through direct imaging. The Small ExoLife Finder (SELF), a 3.5-meter prototype, serves as a testbed for the innovative technologies required for such a facility. A key challenge is the precise cophasing of its distributed aperture, where the optical path differences between subapertures must remain below a small fraction of the operating wavelength. This work investigates convolutional neural networks (CNNs) to estimate alignment errors directly from focal-plane images, enabling fast, data-driven coarse alignment to the few-micrometer level.   A supervised regression framework was developed using a custom CNN to model the nonlinear mapping between subaperture misalignments and focal-plane intensity distributions. Training and validation datasets were generated from high-fidelity optical simulations of the simplified SELF system. Gaussian-noise augmentation was used to assess robustness, and several established CNN architectures were evaluated for comparison. The proposed approach reconstructed piston and tilt misalignments across all mirror pairs, demonstrating that focal-plane interference patterns can be exploited for alignment estimation. The custom CNN provided a favorable balance between estimation performance, robustness, and computational efficiency, with millisecond-scale inference times. A trade-off between performance and noise robustness was identified, with noise augmentation improving reconstruction at low signal-to-noise ratios but reduced performance under near noise-free conditions.   These results demonstrate the feasibility of data-driven focal-plane wavefront sensing for distributed-aperture telescopes and provide a basis for autonomous, computationally efficient cophasing strategies for future high-resolution interferometric systems.",
+      "authors": [
+        "N. Arteaga-Marrero",
+        "J. Iborra-Luis",
+        "A. Padrón-Brito",
+        "J. Kuhn"
+      ],
+      "primary_category": "astro-ph.IM",
+      "categories": [
+        "astro-ph.IM"
+      ],
+      "published": "2026-08-25T21:40:43+00:00",
+      "link": "https://arxiv.org/pdf/2608.25173v1",
+      "tags": [
+        "keyword:TF-SAR",
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:TF-SAR",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "deep learning estimates alignment errors for precision alignment",
+      "llm_evidence_cn": "深度学习估计对准误差用于精密对准",
+      "llm_evidence": "深度学习估计对准误差用于精密对准",
+      "canonical_evidence": "深度学习估计对准误差用于精密对准",
+      "llm_tldr_en": "The paper addresses precise cophasing of a distributed-aperture telescope by using CNNs to estimate alignment errors from focal-plane images; it demonstrates coarse alignment to few-micrometer level, providing a transferable precision alignment method for satellite component integration.",
+      "llm_tldr_cn": "该论文针对分布式孔径望远镜（如SELF原型）精密共相中对准误差需控制在极小范围的挑战，提出一种基于卷积神经网络的监督回归方法，从焦面图像快速估计对准误差，实现几微米级粗对准。该方法将深度学习引入高精度光学对准，为卫星地面装配中精密组件对准、公差控制与先进计量提供了可迁移的技术手段。实验结果验证了其有效性，为后续精对准奠定基础。",
+      "llm_tldr": "该论文针对分布式孔径望远镜（如SELF原型）精密共相中对准误差需控制在极小范围的挑战，提出一种基于卷积神经网络的监督回归方法，从焦面图像快速估计对准误差，实现几微米级粗对准。该方法将深度学习引入高精度光学对准，为卫星地面装配中精密组件对准、公差控制与先进计量提供了可迁移的技术手段。实验结果验证了其有效性，为后续精对准奠定基础。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "precision alignment of satellite components on ground",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

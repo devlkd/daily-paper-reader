@@ -1,0 +1,39 @@
+{
+  "label": "2026-08-30",
+  "date": "2026-08-30",
+  "generated_at": "2026-08-30T23:00:44",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202608/30/2608.21804v1-flashreg-gpu-accelerated-3-clique-point-cloud-registration-for-real-time-correspondence-to-pose-estimation",
+      "section": "quick",
+      "title_en": "FlashReg: GPU-Accelerated 3-Clique Point Cloud Registration for Real-Time Correspondence-to-Pose Estimation",
+      "authors": "Ziyang Yu, Xiang Li, Qiong Chang, Jun Miyazaki",
+      "date": "2026-08-22",
+      "pdf": "https://arxiv.org/pdf/2608.21804v1",
+      "score": "6.0",
+      "evidence": "用于实时位姿估计的GPU加速点云配准可支持卫星装配中的高精度对准与尺寸计量",
+      "tldr": "基于图的三维点云配准高鲁棒但二阶图构建与团枚举计算密集。FlashReg提出GPU加速的对应到姿态估计器，通过FFSOG直接从一阶图构建容量有界稀疏二阶图，并用数据流优化的3-clique搜索避免物化稠密图。在室内外基准上，FlashReg比TurboReg降低2-3倍对应到姿态延迟，召回率相当，嵌入式GPU峰值张量内存减半。该方法适合作为机载感知管道的高吞吐量配准后端。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "Graph-based point cloud registration achieves high robustness by identifying geometrically consistent correspondence sets, but constructing second-order compatibility graphs and enumerating candidate cliques remain compute- and memory-intensive. This work presents FlashReg, a GPU-oriented correspondence-to-pose estimator that avoids materializing the dense scored second-order graph. Its Fast First- and Second-Order Graph (FFSOG) construction builds a capacity-bounded sparse second-order graph directly from the binary first-order graph. A dataflow-optimized three-node clique (3-clique) search then selects pivots from compact per-row candidate pools and enumerates triples through sorted sparse-neighborhood intersections. Across indoor and outdoor benchmarks, FlashReg reduces correspondence-to-pose latency by 2--3x relative to TurboReg at comparable registration recall, while using about 50% of its peak allocated tensor memory on an embedded GPU. These results make FlashReg suitable as a high-throughput registration backend within onboard perception pipelines.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202608/30/2608.25173v1-deep-learning-based-coarse-alignment-and-cophasing-of-a-distributed-aperture-telescope-application-to-the-small-exolife-finder-self",
+      "section": "quick",
+      "title_en": "Deep Learning-Based Coarse Alignment and Cophasing of a Distributed-Aperture Telescope. Application to the Small ExoLife Finder (SELF)",
+      "authors": "N. Arteaga-Marrero, J. Iborra-Luis, A. Padrón-Brito, J. Kuhn",
+      "date": "2026-08-25",
+      "pdf": "https://arxiv.org/pdf/2608.25173v1",
+      "score": "6.0",
+      "evidence": "深度学习估计对准误差用于精密对准",
+      "tldr": "针对分布式孔径望远镜共相难题，本文研究基于卷积神经网络从焦平面图像直接估计子孔径失调。利用高保真光学模拟生成训练数据，开发自定义CNN实现微米级粗对准。该方法在SELF原型上重构活塞与倾斜误差，推理速度达毫秒级，并揭示噪声鲁棒性与性能的权衡。结果验证了数据驱动波前传感的可行性，为自主高效共相策略奠定基础。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "The ExoLife Finder (ELF), a 35--50-meter-class Fizeau interferometric telescope, was designed to detect biosignatures on exoplanets through direct imaging. The Small ExoLife Finder (SELF), a 3.5-meter prototype, serves as a testbed for the innovative technologies required for such a facility. A key challenge is the precise cophasing of its distributed aperture, where the optical path differences between subapertures must remain below a small fraction of the operating wavelength. This work investigates convolutional neural networks (CNNs) to estimate alignment errors directly from focal-plane images, enabling fast, data-driven coarse alignment to the few-micrometer level.   A supervised regression framework was developed using a custom CNN to model the nonlinear mapping between subaperture misalignments and focal-plane intensity distributions. Training and validation datasets were generated from high-fidelity optical simulations of the simplified SELF system. Gaussian-noise augmentation was used to assess robustness, and several established CNN architectures were evaluated for comparison. The proposed approach reconstructed piston and tilt misalignments across all mirror pairs, demonstrating that focal-plane interference patterns can be exploited for alignment estimation. The custom CNN provided a favorable balance between estimation performance, robustness, and computational efficiency, with millisecond-scale inference times. A trade-off between performance and noise robustness was identified, with noise augmentation improving reconstruction at low signal-to-noise ratios but reduced performance under near noise-free conditions.   These results demonstrate the feasibility of data-driven focal-plane wavefront sensing for distributed-aperture telescopes and provide a basis for autonomous, computationally efficient cophasing strategies for future high-resolution interferometric systems.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
