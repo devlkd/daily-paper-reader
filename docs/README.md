@@ -6,22 +6,26 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-08-31
-- 运行时间：2026-09-01 00:20:00 UTC
+- 最新运行日期：2026-09-02
+- 运行时间：2026-09-02 23:08:28 UTC
 - 运行状态：成功
-- 本次总论文数：0
-- 精读区：0
-- 速读区：0
+- 本次总论文数：2
+- 精读区：1
+- 速读区：1
 
 ### 今日简报（AI）
-> 今日无新推荐，系统未产出可展示论文。
-- 详情：[/202608/31/README](/202608/31/README)
+今日精读《Peg-in-Bench》并速读《Facet-0》，聚焦机器人高精度插入与接触丰富精确操作。最值得关注模块化插入基准的评测设计，以及基础模型在精细操作上的尝试。普通读者可先看《Peg-in-Bench》了解评测维度，再跟进《Facet-0》的模型思路。
+- 详情：[/202609/02/README](/202609/02/README)
 
 ### 精读区论文标签
-- 本次无精读推荐。
+1. [Peg-in-Bench: A Modular Benchmark for High-Precision Robotic Insertion](/202609/02/2609.00906v1-peg-in-bench-a-modular-benchmark-for-high-precision-robotic-insertion)  
+   标签：评分：8.0/10、query:sat-asm-prec
+   evidence：可重构轴孔插入基准用于高精度装配对准与公差
 
 ### 速读区论文标签
-- 本次无速读推荐。
+1. [Facet-0: A Robotic Foundation Model for Contact-Rich Precise Manipulation](/202609/02/2609.01596v1-facet-0-a-robotic-foundation-model-for-contact-rich-precise-manipulation)  
+   标签：评分：6.0/10、query:sat-asm-prec
+   evidence：亚毫米公差机器人装配，接触丰富精密操作
 
 
 <div class="dpr-home-promo-card">

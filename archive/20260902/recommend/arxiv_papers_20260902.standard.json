@@ -1,0 +1,106 @@
+{
+  "mode": "standard",
+  "generated_at": "2026-09-02T23:04:07.257170+00:00",
+  "stats": {
+    "mode": "standard",
+    "tag_count": 3,
+    "deep_divecandidates": 1,
+    "deep_cap": 8,
+    "deep_selected": 1,
+    "quick_candidates": 1,
+    "quick_skim_target": 13,
+    "quick_selected": 1
+  },
+  "deep_dive": [
+    {
+      "id": "2609.00906v1",
+      "source": "arxiv",
+      "title": "Peg-in-Bench: A Modular Benchmark for High-Precision Robotic Insertion",
+      "abstract": "High-precision insertion remains a fundamental challenge in robotic manipulation due to the strict alignment requirements and contact-rich interactions involved. Although peg-in-hole tasks are widely used for evaluation, existing bench- marks often rely on fixed task configurations, limiting their ability to assess robustness and generalization across different insertion scenarios. This paper introduces a reconfigurable peg-in-hole benchmark designed to evaluate task generalization in high-precision insertion. The benchmark consists of a set of fully 3D-printable modular components, including multiple peg geometries, tolerance levels, and configurable base structures that can be combined to generate a large variety of insertion and assembly tasks. By varying object layouts, orientations, and task structures while maintaining controlled physical conditions, the benchmark enables systematic evaluation of adaptation to unseen scenarios. To support reproducibility, we additionally provide a scenario generation tool capable of producing standardized task configurations and machine-readable task descriptions. The scenario generation tool and the STL files of the benchmark pieces are available through the project repository: https://github.com/aistairc/peg-in-bench.",
+      "authors": [
+        "Yosel Delgado",
+        "José G. Buenaventura-Carreón",
+        "Floris Erich",
+        "Roman Mykhailyshyn",
+        "Tomohiro Motoda",
+        "Koshi Makihara",
+        "Yukiyasu Domae"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO"
+      ],
+      "published": "2026-09-01T08:37:31+00:00",
+      "link": "https://arxiv.org/pdf/2609.00906v1",
+      "tags": [
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 8.0,
+      "llm_evidence_en": "Reconfigurable peg-in-hole benchmark for high-precision assembly alignment and tolerance",
+      "llm_evidence_cn": "可重构轴孔插入基准用于高精度装配对准与公差",
+      "llm_evidence": "可重构轴孔插入基准用于高精度装配对准与公差",
+      "canonical_evidence": "可重构轴孔插入基准用于高精度装配对准与公差",
+      "llm_tldr_en": "The paper introduces a modular peg-in-hole benchmark with multiple geometries and tolerance levels to evaluate high-precision insertion, offering a testbed for alignment and tolerance control in robotic assembly applicable to satellite integration.",
+      "llm_tldr_cn": "针对现有插入任务基准配置固定、难以评估泛化性的问题，提出可重构的轴孔插入基准Peg-in-Bench。该基准包含多种轴几何形状、公差等级和可配置基座，可组合生成大量插入装配任务。通过模块化设计，能够评估机器人在不同对准约束下的插入能力，为高精度装配（如卫星组件集成）提供测试平台。",
+      "llm_tldr": "针对现有插入任务基准配置固定、难以评估泛化性的问题，提出可重构的轴孔插入基准Peg-in-Bench。该基准包含多种轴几何形状、公差等级和可配置基座，可组合生成大量插入装配任务。通过模块化设计，能够评估机器人在不同对准约束下的插入能力，为高精度装配（如卫星组件集成）提供测试平台。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "precision alignment of satellite components on ground",
+      "matched_requirement_id": "req-4",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "quick_skim": [
+    {
+      "id": "2609.01596v1",
+      "source": "arxiv",
+      "title": "Facet-0: A Robotic Foundation Model for Contact-Rich Precise Manipulation",
+      "abstract": "Real-world robotic assembly at sub-millimeter tolerances demands spatial precision, compliant interaction, and robustness to contact failures. We present Facet-0, a robotic foundation model that predicts and values the contact consequences of its actions. Facet-0 unifies multimodal representation learning and reinforcement learning (RL) post-training around a joint action-wrench proposal: a causal wrench history is aligned with vision-language semantics and kinematic state, and flow matching generates each action chunk together with the future wrist-wrench profile it is expected to induce. Deployment rollouts train a distributional Action-Wrench Critic to distinguish motions with similar task progress but different contact outcomes, while phase-aware rewards and contact-selective credit concentrate policy improvement on decisive interactions. To accommodate part-specific dynamics, a lightweight bounded actor reuses the frozen representation for on-robot adaptation; RL remains defined over executable Cartesian actions, while an auxiliary wrench head preserves predictive, non-commanded action-contact coupling. Trained on ManuFacet-1K, a 1,000-hour force-synchronized corpus spanning three embodiments and multiple manufacturing cells, the bounded task-adapted system reaches 82% mean success on five sub-millimeter computer-assembly tasks, compared with 15% for the strongest baseline, with 0.5 mm placement accuracy and 50 ms command latency.",
+      "authors": [
+        "Haoyuan Deng",
+        "Haichao Liu",
+        "Wenkai Guo",
+        "Yuan Ling",
+        "Zaijia Yang",
+        "Yuanjiang Xue",
+        "Haosheng Sun",
+        "Liangzi Wang",
+        "Ziwei Wang"
+      ],
+      "primary_category": "cs.RO",
+      "categories": [
+        "cs.RO",
+        "cs.LG"
+      ],
+      "published": "2026-09-01T17:58:07+00:00",
+      "link": "https://arxiv.org/pdf/2609.01596v1",
+      "tags": [
+        "keyword:grav-offload",
+        "keyword:sat-asm-prec",
+        "query:grav-offload",
+        "query:sat-asm-prec"
+      ],
+      "llm_score": 6.0,
+      "llm_evidence_en": "robotic assembly at sub-millimeter tolerances, contact-rich precise manipulation",
+      "llm_evidence_cn": "亚毫米公差机器人装配，接触丰富精密操作",
+      "llm_evidence": "亚毫米公差机器人装配，接触丰富精密操作",
+      "canonical_evidence": "亚毫米公差机器人装配，接触丰富精密操作",
+      "llm_tldr_en": "Facet-0 addresses sub-millimeter robotic assembly by unifying multimodal representation and RL to predict future wrist-wrench profiles. A distributional action-wrench critic distinguishes similar motions with different contact outcomes. This model offers transferable precision assembly capabilities for satellite ground integration.",
+      "llm_tldr_cn": "针对真实机器人装配在亚毫米公差下需兼顾空间精度与接触鲁棒性的挑战，本文提出Facet-0机器人基础模型，通过联合动作-腕力提案统一多模态表征与强化学习后训练，预测并评估动作的接触后果。实际部署中训练分布式动作-腕力批评家以区分相似任务进度下不同接触结果，实现接触丰富的精密操作。该框架可迁移至卫星等高精度地面装配场景，提升装配精度与容错能力。",
+      "llm_tldr": "针对真实机器人装配在亚毫米公差下需兼顾空间精度与接触鲁棒性的挑战，本文提出Facet-0机器人基础模型，通过联合动作-腕力提案统一多模态表征与强化学习后训练，预测并评估动作的接触后果。实际部署中训练分布式动作-腕力批评家以区分相似任务进度下不同接触结果，实现接触丰富的精密操作。该框架可迁移至卫星等高精度地面装配场景，提升装配精度与容错能力。",
+      "llm_tags": [
+        "query:sat-asm-prec"
+      ],
+      "matched_query_tag": "query:sat-asm-prec",
+      "matched_query_text": "precision control in satellite assembly process",
+      "matched_requirement_id": "req-3",
+      "selection_source": "fresh_fetch",
+      "quick_tier": "6"
+    }
+  ]
+}

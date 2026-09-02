@@ -1,0 +1,39 @@
+{
+  "label": "2026-09-02",
+  "date": "2026-09-02",
+  "generated_at": "2026-09-02T23:08:55",
+  "count": 2,
+  "papers": [
+    {
+      "paper_id": "202609/02/2609.00906v1-peg-in-bench-a-modular-benchmark-for-high-precision-robotic-insertion",
+      "section": "deep",
+      "title_en": "Peg-in-Bench: A Modular Benchmark for High-Precision Robotic Insertion",
+      "authors": "Yosel Delgado, José G. Buenaventura-Carreón, Floris Erich, Roman Mykhailyshyn, Tomohiro Motoda, Koshi Makihara, Yukiyasu Domae",
+      "date": "2026-09-01",
+      "pdf": "https://arxiv.org/pdf/2609.00906v1",
+      "score": "8.0",
+      "evidence": "可重构轴孔插入基准用于高精度装配对准与公差",
+      "tldr": "高精度插入因严格对齐与接触交互成为机器人操作难点，现有peg-in-hole基准任务固定，限制泛化评估。本文提出模块化可重构基准Peg-in-Bench，由3D打印组件构成多种钉几何、公差和基础结构，可组合生成大量插入任务。通过变化布局、方向与结构，系统评估对未见场景的适应性，并提供场景生成工具与STL文件，促进高精度插入研究的可复现与泛化评估。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "High-precision insertion remains a fundamental challenge in robotic manipulation due to the strict alignment requirements and contact-rich interactions involved. Although peg-in-hole tasks are widely used for evaluation, existing bench- marks often rely on fixed task configurations, limiting their ability to assess robustness and generalization across different insertion scenarios. This paper introduces a reconfigurable peg-in-hole benchmark designed to evaluate task generalization in high-precision insertion. The benchmark consists of a set of fully 3D-printable modular components, including multiple peg geometries, tolerance levels, and configurable base structures that can be combined to generate a large variety of insertion and assembly tasks. By varying object layouts, orientations, and task structures while maintaining controlled physical conditions, the benchmark enables systematic evaluation of adaptation to unseen scenarios. To support reproducibility, we additionally provide a scenario generation tool capable of producing standardized task configurations and machine-readable task descriptions. The scenario generation tool and the STL files of the benchmark pieces are available through the project repository: https://github.com/aistairc/peg-in-bench.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    },
+    {
+      "paper_id": "202609/02/2609.01596v1-facet-0-a-robotic-foundation-model-for-contact-rich-precise-manipulation",
+      "section": "quick",
+      "title_en": "Facet-0: A Robotic Foundation Model for Contact-Rich Precise Manipulation",
+      "authors": "Haoyuan Deng, Haichao Liu, Wenkai Guo, Yuan Ling, Zaijia Yang, Yuanjiang Xue, Haosheng Sun, Liangzi Wang, Ziwei Wang",
+      "date": "2026-09-01",
+      "pdf": "https://arxiv.org/pdf/2609.01596v1",
+      "score": "6.0",
+      "evidence": "亚毫米公差机器人装配，接触丰富精密操作",
+      "tldr": "亚毫米级接触丰富装配任务要求机器人在空间精度和柔顺交互上兼顾，现有方法难以应对接触失败。Facet-0通过多模态表示学习与强化学习后训练，联合预测动作及其腕部力/力矩后果，并利用分布评论家和相位感知奖励聚焦关键接触。在1000小时力同步数据训练后，任务适应系统在五项亚毫米计算机装配任务上平均成功率达82%，远超最强基线15%，实现0.5mm放置精度和50ms命令延迟。该模型为接触丰富精密操作提供了可扩展的机器人基础模型方案。",
+      "tags": "query:sat-asm-prec",
+      "abstract_en": "Real-world robotic assembly at sub-millimeter tolerances demands spatial precision, compliant interaction, and robustness to contact failures. We present Facet-0, a robotic foundation model that predicts and values the contact consequences of its actions. Facet-0 unifies multimodal representation learning and reinforcement learning (RL) post-training around a joint action-wrench proposal: a causal wrench history is aligned with vision-language semantics and kinematic state, and flow matching generates each action chunk together with the future wrist-wrench profile it is expected to induce. Deployment rollouts train a distributional Action-Wrench Critic to distinguish motions with similar task progress but different contact outcomes, while phase-aware rewards and contact-selective credit concentrate policy improvement on decisive interactions. To accommodate part-specific dynamics, a lightweight bounded actor reuses the frozen representation for on-robot adaptation; RL remains defined over executable Cartesian actions, while an auxiliary wrench head preserves predictive, non-commanded action-contact coupling. Trained on ManuFacet-1K, a 1,000-hour force-synchronized corpus spanning three embodiments and multiple manufacturing cells, the bounded task-adapted system reaches 82% mean success on five sub-millimeter computer-assembly tasks, compared with 15% for the strongest baseline, with 0.5 mm placement accuracy and 50 ms command latency.",
+      "source": "arxiv",
+      "selection_source": "fresh_fetch"
+    }
+  ],
+  "errors": []
+}
