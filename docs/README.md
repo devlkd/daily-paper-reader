@@ -6,26 +6,26 @@
 </div>
 
 ## 每次日报
-- 最新运行日期：2026-09-02
-- 运行时间：2026-09-02 23:08:28 UTC
+- 最新运行日期：2026-09-03
+- 运行时间：2026-09-03 23:11:43 UTC
 - 运行状态：成功
-- 本次总论文数：2
-- 精读区：1
+- 本次总论文数：1
+- 精读区：0
 - 速读区：1
 
 ### 今日简报（AI）
-今日精读《Peg-in-Bench》并速读《Facet-0》，聚焦机器人高精度插入与接触丰富精确操作。最值得关注模块化插入基准的评测设计，以及基础模型在精细操作上的尝试。普通读者可先看《Peg-in-Bench》了解评测维度，再跟进《Facet-0》的模型思路。
-- 详情：[/202609/02/README](/202609/02/README)
+今日速读了一篇关于高效鲁棒绝对位姿估计的论文，核心是重力先验驱动的变换解耦与位姿优化。  
+最值得关注的方向：利用重力先验降低绝对位姿估计的复杂度并提升鲁棒性。  
+建议普通读者先了解视觉定位中的重力约束原理，再跟踪该方法后续的开源或实验进展。
+- 详情：[/202609/03/README](/202609/03/README)
 
 ### 精读区论文标签
-1. [Peg-in-Bench: A Modular Benchmark for High-Precision Robotic Insertion](/202609/02/2609.00906v1-peg-in-bench-a-modular-benchmark-for-high-precision-robotic-insertion)  
-   标签：评分：8.0/10、query:sat-asm-prec
-   evidence：可重构轴孔插入基准用于高精度装配对准与公差
+- 本次无精读推荐。
 
 ### 速读区论文标签
-1. [Facet-0: A Robotic Foundation Model for Contact-Rich Precise Manipulation](/202609/02/2609.01596v1-facet-0-a-robotic-foundation-model-for-contact-rich-precise-manipulation)  
+1. [Efficient and Robust Absolute Pose Estimation via Gravity-Prior-Driven Transformation Decoupling and Pose Refinement](/202609/03/2609.00713v1-efficient-and-robust-absolute-pose-estimation-via-gravity-prior-driven-transformation-decoupling-and-pose-refinement)  
    标签：评分：6.0/10、query:sat-asm-prec
-   evidence：亚毫米公差机器人装配，接触丰富精密操作
+   evidence：重力先验驱动的位姿估计方法，可用于部件精密对准。
 
 
 <div class="dpr-home-promo-card">

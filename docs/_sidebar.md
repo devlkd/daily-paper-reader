@@ -1,6 +1,9 @@
 * <a class="dpr-sidebar-root-link" href="#/">首页</a>
 * <a class="dpr-sidebar-root-link dpr-sidebar-noactive-link" href="javascript:void(0)" data-dpr-hash="#/tutorial/README">使用教程</a>
 * Daily Papers
+  * 2026-09-03 <!--dpr-date:20260903-->
+    * 速读区
+      * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202609/03/2609.00713v1-efficient-and-robust-absolute-pose-estimation-via-gravity-prior-driven-transformation-decoupling-and-pose-refinement" data-sidebar-item="{&quot;title&quot;: &quot;Efficient and Robust Absolute Pose Estimation via Gravity-Prior-Driven Transformation Decoupling and Pose Refinement&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2609.00713v1-efficient-and-robust-absolute-pose-estimation-via-gravity-prior-driven-transformation-decoupling-and-pose-refinement&quot;, &quot;score&quot;: &quot;6.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;sat-asm-prec&quot;}], &quot;evidence&quot;: &quot;重力先验驱动的位姿估计方法，可用于部件精密对准。&quot;}">Efficient and Robust Absolute Pose Estimation via Gravity-Prior-Driven Transformation Decoupling and Pose Refinement</a>
   * 2026-09-02 <!--dpr-date:20260902-->
     * 精读区
       * <a class="dpr-sidebar-item-link dpr-sidebar-item-structured" href="#/202609/02/2609.00906v1-peg-in-bench-a-modular-benchmark-for-high-precision-robotic-insertion" data-sidebar-item="{&quot;title&quot;: &quot;Peg-in-Bench: A Modular Benchmark for High-Precision Robotic Insertion&quot;, &quot;link&quot;: &quot;https://arxiv.org/abs/2609.00906v1-peg-in-bench-a-modular-benchmark-for-high-precision-robotic-insertion&quot;, &quot;score&quot;: &quot;8.0&quot;, &quot;tags&quot;: [{&quot;kind&quot;: &quot;query&quot;, &quot;label&quot;: &quot;sat-asm-prec&quot;}], &quot;evidence&quot;: &quot;可重构轴孔插入基准用于高精度装配对准与公差&quot;}">Peg-in-Bench: A Modular Benchmark for High-Precision Robotic Insertion</a>
